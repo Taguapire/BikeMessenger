@@ -3,10 +3,209 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data.SQLite;
 
 namespace BikeMessenger
 {
     class Bm_Recursos_Database
     {
+        // public SQLiteFactory BM_DB;
+        public SQLiteConnection BM_Connection;
+        SQLiteCommand BK_Cmd_Recursos;
+        SQLiteDataReader BK_Reader_Recursos;
+        SQLiteCommand BK_Cmd_Recursos_Pais;
+        SQLiteDataReader BK_Reader_Recursos_Pais;
+        string StrAgregar_Recursos;
+        string StrModificar_Recursos;
+        string StrBorrar_Recursos;
+        readonly string StrBuscar_Recursos = "SELECT * FROM RECURSOS";
+        readonly String StrBuscar_Recursos_Pais = "SELECT * FROM PAIS ORDER BY PAIS ASC";
+
+        // Campos Recursos
+        public string BK_RUTID { get; set; }
+        public string BK_DIGVER { get; set; }
+        public string BK_PROPIETARIO { get; set; }
+        public string BK_DESCRIPCION { get; set; }
+        public string BK_PATENTE { get; set; }
+        public string BK_MARCA { get; set; }
+        public string BK_MODELO { get; set; }
+        public string BK_VARIANTE { get; set; }
+        public string BK_ANO { get; set; }
+        public string BK_COLOR { get; set; }
+        public string BK_CIUDAD { get; set; }
+        public string BK_COMUNA { get; set; }
+        public string BK_REGION { get; set; }
+        public string BK_PAIS { get; set; }
+        public string BK_OBSERVACIONES { get; set; }
+        public string BK_FOTO { get; set; }
+
+        // Campos de PAIS
+        public Int16 BK_E_CODPAIS { get; set; }
+        public string BK_E_PAIS { get; set; }
+
+        public Boolean BM_CreateDatabase(SQLiteConnection BM_Connection)
+        {
+            this.BM_Connection = BM_Connection;
+            try
+            {
+                //  BM_DB = new SQLiteFactory();
+                // Crear Automaticamente la Base de Datos
+                // BM_Connection = (SQLiteConnection)BM_DB.CreateConnection();
+
+                // BM_Connection.ConnectionString = "Data Source=" + Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\BikeMessenger.db; PRAGMA journal_mode = WAL; Version = 3; New = True; Compress = True; Connection Timeout=0";
+
+                // BM_Connection.Open();
+
+                // Verificar que Base es nueva o ya esta creada con objetos
+                // Db_Empresa = new Bm_Empresa_Database(BM_Connection);
+
+                // Si es nueva deben crearse los objetos
+
+                return true;
+            }
+            catch (System.Data.SQLite.SQLiteException)
+            {
+                return false;
+            }
+        }
+
+        public bool Bm_Recursos_Agregar()
+        {
+            StrAgregar_Recursos = "INSERT INTO RECURSOS (";
+            StrAgregar_Recursos += "RUTID,";
+            StrAgregar_Recursos += "DIGVER,";
+            StrAgregar_Recursos += "PROPIETARIO,";
+            StrAgregar_Recursos += "DESCRIPCION,";
+            StrAgregar_Recursos += "PATENTE,";
+            StrAgregar_Recursos += "MARCA,";
+            StrAgregar_Recursos += "MODELO,";
+            StrAgregar_Recursos += "VARIANTE,";
+            StrAgregar_Recursos += "ANO,";
+            StrAgregar_Recursos += "COLOR,";
+            StrAgregar_Recursos += "CIUDAD,";
+            StrAgregar_Recursos += "COMUNA,";
+            StrAgregar_Recursos += "REGION,";
+            StrAgregar_Recursos += "PAIS,";
+            StrAgregar_Recursos += "OBSERVACIONES,";
+            StrAgregar_Recursos += "FOTO) VALUES (";
+            StrAgregar_Recursos += "'" + BK_RUTID + "',";
+            StrAgregar_Recursos += "'" + BK_DIGVER + "',";
+            StrAgregar_Recursos += "'" + BK_PROPIETARIO + "',";
+            StrAgregar_Recursos += "'" + BK_DESCRIPCION + "',";
+            StrAgregar_Recursos += "'" + BK_PATENTE + "',";
+            StrAgregar_Recursos += "'" + BK_MARCA + "',";
+            StrAgregar_Recursos += "'" + BK_MODELO + "',";
+            StrAgregar_Recursos += "'" + BK_VARIANTE + "',";
+            StrAgregar_Recursos += "'" + BK_ANO + "',";
+            StrAgregar_Recursos += "'" + BK_COLOR + "',";
+            StrAgregar_Recursos += "'" + BK_CIUDAD + "',";
+            StrAgregar_Recursos += "'" + BK_COMUNA + "',";
+            StrAgregar_Recursos += "'" + BK_REGION + "',";
+            StrAgregar_Recursos += "'" + BK_PAIS + "',";
+            StrAgregar_Recursos += "'" + BK_OBSERVACIONES + "',";
+            StrAgregar_Recursos += "'" + BK_FOTO + "')";
+            BK_Cmd_Recursos = new SQLiteCommand(StrAgregar_Recursos, BM_Connection);
+            BK_Cmd_Recursos.ExecuteNonQuery();
+            return true;
+        }
+
+        public bool Bm_Personal_Buscar()
+        {
+            BK_Cmd_Recursos = new SQLiteCommand(StrBuscar_Recursos, BM_Connection);
+            BK_Reader_Recursos = BK_Cmd_Recursos.ExecuteReader();
+
+            if (BK_Reader_Recursos.Read())
+            {
+                // Llenar Valores de Recursos
+
+                BK_RUTID = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("RUTID"));
+                BK_DIGVER = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("DIGVER"));
+                BK_PROPIETARIO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("PROPIETARIO"));
+                BK_DESCRIPCION = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("DESCRIPCION"));
+                BK_PATENTE = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("PATENTE"));
+                BK_MARCA = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("MARCA"));
+                BK_MODELO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("MODELO"));
+                BK_VARIANTE = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("VARIANTE"));
+                BK_ANO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("ANO"));
+                BK_COLOR = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("COLOR"));
+                BK_CIUDAD = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("CIUDAD"));
+                BK_COMUNA = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("COMUNA"));
+                BK_REGION = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("REGION"));
+                BK_PAIS = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("PAIS"));
+                BK_OBSERVACIONES = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("OBSERVACIONES"));
+                BK_FOTO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("FOTO"));
+                return true;
+            }
+            else
+            {
+                // No existe Recursos
+                return false;
+            }
+
+        }
+
+        // Procedimiento Modificar Recursos
+        public bool Bm_Recursos_Modificar()
+        {
+            StrModificar_Recursos = "UPDATE RECURSOS SET ";
+            StrModificar_Recursos += "PROPIETARIO = '" + BK_PROPIETARIO + "',";
+            StrModificar_Recursos += "DESCRIPCION = '" + BK_DESCRIPCION + "',";
+            StrModificar_Recursos += "MARCA = '" + BK_MARCA + "',";
+            StrModificar_Recursos += "MODELO = '" + BK_MODELO + "',";
+            StrModificar_Recursos += "VARIANTE = '" + BK_VARIANTE + "',";
+            StrModificar_Recursos += "ANO = '" + BK_ANO + "',";
+            StrModificar_Recursos += "COLOR = '" + BK_COLOR + "',";
+            StrModificar_Recursos += "CIUDAD = '" + BK_CIUDAD + "',";
+            StrModificar_Recursos += "COMUNA = '" + BK_COMUNA + "',";
+            StrModificar_Recursos += "REGION = '" + BK_REGION + "',";
+            StrModificar_Recursos += "PAIS = '" + BK_PAIS + "',";
+            StrModificar_Recursos += "OBSERVACIONES = '" + BK_OBSERVACIONES + "',";
+            StrModificar_Recursos += "FOTO = '" + BK_FOTO + "' ";
+            StrModificar_Recursos += "WHERE ";
+            StrModificar_Recursos += "RUTID = '" + BK_RUTID + "' AND ";
+            StrModificar_Recursos += "DIGVER = '" + BK_DIGVER + "' AND " ;
+            StrModificar_Recursos += "PATENTE = '" + BK_PATENTE + "'";
+            BK_Cmd_Recursos = new SQLiteCommand(StrModificar_Recursos, BM_Connection);
+            BK_Cmd_Recursos.ExecuteNonQuery();
+            return true;
+        }
+
+        // Procedimiento Borrar Recursos
+        public bool Bm_Recursos_Borrar()
+        {
+            StrBorrar_Recursos = "DELETE FROM RECURSOS ";
+            StrBorrar_Recursos += "WHERE ";
+            StrBorrar_Recursos += "WHERE ";
+            StrBorrar_Recursos += "RUTID = '" + BK_RUTID + "' AND ";
+            StrBorrar_Recursos += "DIGVER = '" + BK_DIGVER + "' AND ";
+            StrBorrar_Recursos += "PATENTE = '" + BK_PATENTE + "'";
+            BK_Cmd_Recursos = new SQLiteCommand(StrBorrar_Recursos, BM_Connection);
+            BK_Cmd_Recursos.ExecuteNonQuery();
+            return true;
+        }
+
+        // Procedimiento Buscar Pais
+        public bool Bm_E_Pais_EjecutarSelect()
+        {
+            BK_Cmd_Recursos_Pais = new SQLiteCommand(StrBuscar_Recursos_Pais, BM_Connection);
+            BK_Reader_Recursos_Pais = BK_Cmd_Recursos_Pais.ExecuteReader();
+            return true;
+        }
+
+        public bool Bm_E_Pais_Buscar()
+        {
+            if (BK_Reader_Recursos_Pais.Read())
+            {
+                // Llenar Valores de Recursos
+                BK_E_CODPAIS = BK_Reader_Recursos_Pais.GetInt16(BK_Reader_Recursos_Pais.GetOrdinal("CODPAIS"));
+                BK_E_PAIS = BK_Reader_Recursos_Pais.GetString(BK_Reader_Recursos_Pais.GetOrdinal("PAIS"));
+                return true;
+            }
+            else
+            {
+                // No existe Recursos
+                return false;
+            }
+        }
     }
 }

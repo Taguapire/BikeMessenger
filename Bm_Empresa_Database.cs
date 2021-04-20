@@ -9,7 +9,8 @@ namespace BikeMessenger
 {
     class Bm_Empresa_Database
     {
-        readonly SQLiteConnection BM_Connection;
+        // public SQLiteFactory BM_DB;
+        public SQLiteConnection BM_Connection;
         SQLiteCommand BK_Cmd_Empresa;
         SQLiteCommand BK_Cmd_Empresa_Pais;
         SQLiteDataReader BK_Reader_Empresa;
@@ -21,7 +22,6 @@ namespace BikeMessenger
         // Campos de Empresa
         public string BK_RUTID { get; set; }
         public string BK_DIGVER { get; set; }
-        public string BK_LOGO { get; set; }
         public string BK_NOMBRE { get; set; }
         public string BK_ACTIVIDAD1 { get; set; }
         public string BK_ACTIVIDAD2 { get; set; }
@@ -39,16 +39,38 @@ namespace BikeMessenger
         public string BK_CODIGOPOSTAL { get; set; }
         public string BK_PAIS { get; set; }
         public string BK_OBSERVACIONES { get; set; }
-
+        public string BK_LOGO { get; set; }
 
         // Campos de PAIS
         public Int16 BK_E_CODPAIS { get; set; }
         public string BK_E_PAIS { get; set; }
 
+        // Comandos de acceso por Area
 
-        public Bm_Empresa_Database (SQLiteConnection BM_Connection)
+        public Boolean BM_CreateDatabase(SQLiteConnection BM_Connection)
         {
             this.BM_Connection = BM_Connection;
+            try
+            {
+                //  BM_DB = new SQLiteFactory();
+                // Crear Automaticamente la Base de Datos
+                // BM_Connection = (SQLiteConnection)BM_DB.CreateConnection();
+
+                // BM_Connection.ConnectionString = "Data Source=" + Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\BikeMessenger.db; PRAGMA journal_mode = WAL; Version = 3; New = True; Compress = True; Connection Timeout=0";
+
+                // BM_Connection.Open();
+
+                // Verificar que Base es nueva o ya esta creada con objetos
+                // Db_Empresa = new Bm_Empresa_Database(BM_Connection);
+
+                // Si es nueva deben crearse los objetos
+
+                return true;
+            }
+            catch (System.Data.SQLite.SQLiteException)
+            {
+                return false;
+            }
         }
 
         // Procedimiento Buscar Empresa
@@ -62,7 +84,6 @@ namespace BikeMessenger
                 // Llenar Valores de la Empresa
                 BK_RUTID = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("RUTID"));
                 BK_DIGVER = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("DIGVER"));
-                BK_LOGO = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("LOGO"));
                 BK_NOMBRE = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("NOMBRE"));
                 BK_ACTIVIDAD1 = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("ACTIVIDAD1"));
                 BK_ACTIVIDAD2 = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("ACTIVIDAD2"));
@@ -80,6 +101,7 @@ namespace BikeMessenger
                 BK_CODIGOPOSTAL = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("CODIGOPOSTAL"));
                 BK_PAIS = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("PAIS"));
                 BK_OBSERVACIONES = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("OBSERVACIONES"));
+                BK_LOGO = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("LOGO"));
                 return true;
             }
             else
@@ -115,12 +137,11 @@ namespace BikeMessenger
 
         // Procedimiento Insertar Empresa
         // Procedimiento Modificar Empresa
-        public bool Bm_Modificar_Empresa()
+        public bool Bm_Empresa_Modificar()
         {
             StrModificar_Empresa_Pais = "UPDATE EMPRESA SET ";
             StrModificar_Empresa_Pais += "RUTID = '" + BK_RUTID + "',";
             StrModificar_Empresa_Pais += "DIGVER = '" + BK_DIGVER + "',";
-            StrModificar_Empresa_Pais += "LOGO = '" + BK_LOGO + "',";
             StrModificar_Empresa_Pais += "NOMBRE = '" + BK_NOMBRE + "',";
             StrModificar_Empresa_Pais += "ACTIVIDAD1 = '" + BK_ACTIVIDAD1 + "',";
             StrModificar_Empresa_Pais += "ACTIVIDAD2 = '" + BK_ACTIVIDAD2 + "',";
@@ -137,7 +158,8 @@ namespace BikeMessenger
             StrModificar_Empresa_Pais += "ESTADOREGION = '" + BK_ESTADOREGION + "',";
             StrModificar_Empresa_Pais += "CODIGOPOSTAL = '" + BK_CODIGOPOSTAL + "',";
             StrModificar_Empresa_Pais += "PAIS = '" + BK_PAIS + "',";
-            StrModificar_Empresa_Pais += "OBSERVACIONES = '" + BK_OBSERVACIONES + "'";
+            StrModificar_Empresa_Pais += "OBSERVACIONES = '" + BK_OBSERVACIONES + "',";
+            StrModificar_Empresa_Pais += "LOGO = '" + BK_LOGO + "'";
             BK_Cmd_Empresa = new SQLiteCommand(StrModificar_Empresa_Pais, BM_Connection);
             BK_Cmd_Empresa.ExecuteNonQuery();
             return true;

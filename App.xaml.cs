@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using System.Data.SQLite;
 
 namespace BikeMessenger
 {
@@ -22,12 +23,19 @@ namespace BikeMessenger
     /// </summary>
     sealed partial class App : Application
     {
+        public SQLiteFactory BM_DB;
+        public SQLiteConnection BM_Connection;
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
         public App()
         {
+            BM_DB = new SQLiteFactory();
+            // Crear Automaticamente la Base de Datos
+            BM_Connection = (SQLiteConnection) BM_DB.CreateConnection();
+            BM_Connection.ConnectionString = "Data Source=" + Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\BikeMessenger.db; Version = 3";
+            BM_Connection.Open();
             this.InitializeComponent();
             this.Suspending += OnSuspending;
         }
@@ -78,11 +86,9 @@ namespace BikeMessenger
 
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
-            Frame rootFrame = Window.Current.Content as Frame;
-
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
-            if (rootFrame == null)
+            if (!(Window.Current.Content is Frame rootFrame))
             {
                 // Create a Frame to act as the navigation context and navigate to the first page
                 rootFrame = new Frame();
@@ -102,7 +108,8 @@ namespace BikeMessenger
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
                 // parameter
-                rootFrame.Navigate(typeof(PageEmpresa), e.Arguments);
+                // rootFrame.Navigate(typeof(PageEmpresa), e.Arguments);
+                rootFrame.Navigate(typeof(PageEmpresa), BM_Connection);
             }
             // Ensure the current window is active
             Window.Current.Activate();

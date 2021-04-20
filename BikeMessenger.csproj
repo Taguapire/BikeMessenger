@@ -122,7 +122,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BK_Database.cs" />
     <Compile Include="Bm_Clientes_Database.cs" />
     <Compile Include="Bm_Empresa_Database.cs" />
     <Compile Include="Bm_Personal_Database.cs" />

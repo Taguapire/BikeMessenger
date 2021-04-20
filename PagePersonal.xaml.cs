@@ -1,17 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Graphics.Imaging;
+using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
+using System.Data.SQLite;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -22,8 +28,12 @@ namespace BikeMessenger
     /// </summary>
     public sealed partial class PagePersonal : Page
     {
+        Bm_Personal_Database BM_Database_Personal = new Bm_Personal_Database();
+        SQLiteConnection BM_Connection;
+
         public PagePersonal()
         {
+            // this.BM_Connection = BM_Connection;
             this.InitializeComponent();
             this.NavigationCacheMode = Windows.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
         }
@@ -36,19 +46,36 @@ namespace BikeMessenger
             }
             else
             {
-                //greeting.Text = "Hi!";
+                BM_Connection = (SQLiteConnection)e.Parameter;
+                if (BM_Database_Personal.BM_CreateDatabase(BM_Connection))
+                {
+                    if (BM_Database_Personal.Bm_Personal_Buscar())
+                    {
+                        LlenarPantallaConDb();
+                        // BM_Existe_Empresa = true;
+                    }
+                    else
+                    {
+                        // textBoxNombreEmpresa.Text = "Sin Empresa";
+                    }
+                }
             }
             base.OnNavigatedTo(e);
         }
 
+        private void btnSeleccionarRecursos(object sender, RoutedEventArgs e)
+        {
+            this.Frame.Navigate(typeof(PageRecursos), BM_Connection);
+        }
+
         private void btnSeleccionarEmpresa(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PageEmpresa));
+            this.Frame.Navigate(typeof(PageEmpresa), BM_Connection);
         }
 
         private void btnSeleccionarPersonal(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PagePersonal));
+            this.Frame.Navigate(typeof(PagePersonal), BM_Connection);
         }
 
         private void btnPersonalCargarFoto(UIElement sender, RoutedEventArgs args)
@@ -88,6 +115,127 @@ namespace BikeMessenger
                     imageFotoPersonal.Source = bitmapImage;
                 }
             }
+        }
+
+        private void LlenarPantallaConDb()
+        {
+            try
+            {
+                textBoxRut.Text = BM_Database_Personal.BK_RUTID;
+                textBoxDigitoVerificador.Text = BM_Database_Personal.BK_DIGVER;
+                textBoxNombres.Text = BM_Database_Personal.BK_NOMBRES;
+                textBoxApellidos.Text = BM_Database_Personal.BK_APELLIDOS;
+                textBoxTelefono1.Text = BM_Database_Personal.BK_TELEFONO1;
+                textBoxTelefono2.Text = BM_Database_Personal.BK_TELEFONO2;
+                textBoxCargo.Text = BM_Database_Personal.BK_CARGO;
+                textBoxDomicilio.Text = BM_Database_Personal.BK_DOMICILIO;
+                textBoxNumero.Text = BM_Database_Personal.BK_NUMERO;
+                textBoxPiso.Text = BM_Database_Personal.BK_PISO;
+                textBoxDepartamento.Text = BM_Database_Personal.BK_DPTO;
+                textBoxCodigoPostal.Text = BM_Database_Personal.BK_CODIGOPOSTAL;
+
+                if (BM_Database_Personal.Bm_E_Pais_EjecutarSelect())
+                {
+                    while (BM_Database_Personal.Bm_E_Pais_Buscar())
+                    {
+                        comboBoxPais.Items.Add(BM_Database_Personal.BK_E_PAIS);
+                    }
+                }
+                comboBoxRegion.Items.Add(BM_Database_Personal.BK_PAIS);
+                comboBoxPais.SelectedValue = BM_Database_Personal.BK_PAIS;
+
+                comboBoxRegion.Items.Add(BM_Database_Personal.BK_REGION);
+                comboBoxRegion.SelectedValue = BM_Database_Personal.BK_REGION;
+
+                comboBoxComuna.Items.Add(BM_Database_Personal.BK_COMUNA);
+                comboBoxComuna.SelectedValue = BM_Database_Personal.BK_COMUNA;
+
+                comboBoxCiudad.Items.Add(BM_Database_Personal.BK_CIUDAD);
+                comboBoxCiudad.SelectedValue = BM_Database_Personal.BK_CIUDAD;
+
+                textBoxObservaciones.Text = BM_Database_Personal.BK_OBSERVACIONES;
+
+                imageFotoPersonal.Source = Base64StringToBitmap(BM_Database_Personal.BK_FOTO);
+            }
+            catch (System.ArgumentNullException)
+            {
+                ;
+            }
+        }
+
+
+        private async System.Threading.Tasks.Task LlenarDbConPantallaAsync()
+        {
+            BM_Database_Personal.BK_FOTO = await ConvertirImageABase64Async();
+            BM_Database_Personal.BK_RUTID = textBoxRut.Text;
+            BM_Database_Personal.BK_DIGVER = textBoxDigitoVerificador.Text;
+            BM_Database_Personal.BK_APELLIDOS = textBoxApellidos.Text;
+            BM_Database_Personal.BK_NOMBRES = textBoxNombres.Text;
+            BM_Database_Personal.BK_TELEFONO1 = textBoxTelefono1.Text;
+            BM_Database_Personal.BK_TELEFONO2 = textBoxTelefono2.Text;
+            BM_Database_Personal.BK_CARGO = textBoxCargo.Text;
+            BM_Database_Personal.BK_DOMICILIO = textBoxDomicilio.Text;
+            BM_Database_Personal.BK_NUMERO = textBoxNumero.Text;
+            BM_Database_Personal.BK_PISO = textBoxPiso.Text;
+            BM_Database_Personal.BK_DPTO = textBoxDepartamento.Text;
+            BM_Database_Personal.BK_CODIGOPOSTAL = textBoxCodigoPostal.Text;
+            BM_Database_Personal.BK_CIUDAD = comboBoxCiudad.Text;
+            BM_Database_Personal.BK_COMUNA = comboBoxComuna.Text;
+            BM_Database_Personal.BK_REGION = comboBoxRegion.Text;
+            BM_Database_Personal.BK_PAIS = comboBoxPais.Text;
+            BM_Database_Personal.BK_OBSERVACIONES = comboBoxComuna.Text;
+        }
+
+        private async void BtnModificarPersonal(object sender, RoutedEventArgs e)
+        {
+            await LlenarDbConPantallaAsync();
+            BM_Database_Personal.Bm_Personal_Modificar();
+        }
+
+        private async void BtnAgregarPersonal(object sender, RoutedEventArgs e)
+        {
+            await LlenarDbConPantallaAsync();
+            BM_Database_Personal.Bm_Personal_Agregar();
+        }
+
+        private async System.Threading.Tasks.Task<string> ConvertirImageABase64Async()
+        {
+            var bitmap = new RenderTargetBitmap();
+            await bitmap.RenderAsync(imageFotoPersonal);
+
+            var image = (await bitmap.GetPixelsAsync()).ToArray();
+            var width = (uint)bitmap.PixelWidth;
+            var height = (uint)bitmap.PixelHeight;
+
+            double dpiX = 96;
+            double dpiY = 96;
+
+            var encoded = new Windows.Storage.Streams.InMemoryRandomAccessStream();
+            var encoder = await Windows.Graphics.Imaging.BitmapEncoder.CreateAsync(Windows.Graphics.Imaging.BitmapEncoder.PngEncoderId, encoded);
+
+            encoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Straight, width, height, dpiX, dpiY, image);
+            await encoder.FlushAsync();
+            encoded.Seek(0);
+
+            var bytes = new byte[encoded.Size];
+            await encoded.AsStream().ReadAsync(bytes, 0, bytes.Length);
+
+            var base64String = Convert.ToBase64String(bytes);
+
+            return base64String;
+        }
+
+        private BitmapImage Base64StringToBitmap(string source)
+        {
+            var ims = new InMemoryRandomAccessStream();
+            var bytes = Convert.FromBase64String(source);
+            var dataWriter = new DataWriter(ims);
+            dataWriter.WriteBytes(bytes);
+            _ = dataWriter.StoreAsync();
+            ims.Seek(0);
+            var img = new BitmapImage();
+            img.SetSource(ims);
+            return img;
         }
     }
 }
