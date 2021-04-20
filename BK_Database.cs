@@ -60,5 +60,17 @@ namespace BikeMessenger
                 return false;
             }
         }
+        public bool Modificar_Empresa()
+        {
+            // Buscar Datos Empresa
+            if (Db_Empresa.Bm_Modificar_Empresa())
+            {
+                return true; // Empresa modificada
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }

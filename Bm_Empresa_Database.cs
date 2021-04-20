@@ -16,14 +16,18 @@ namespace BikeMessenger
         SQLiteDataReader BK_Reader_Empresa_Pais;
         readonly String StrBuscar_Empresa = "SELECT * FROM EMPRESA";
         readonly String StrBuscar_Empresa_Pais = "SELECT * FROM PAIS ORDER BY PAIS ASC";
+        string StrModificar_Empresa_Pais;
 
         // Campos de Empresa
         public string BK_RUTID { get; set; }
         public string BK_DIGVER { get; set; }
         public string BK_LOGO { get; set; }
         public string BK_NOMBRE { get; set; }
-        public string BK_ACTIVIDAD { get; set; }
-        public string BK_REPRESENTANTES { get; set; }
+        public string BK_ACTIVIDAD1 { get; set; }
+        public string BK_ACTIVIDAD2 { get; set; }
+        public string BK_REPRESENTANTE1 { get; set; }
+        public string BK_REPRESENTANTE2 { get; set; }
+        public string BK_REPRESENTANTE3 { get; set; }
         public string BK_DOMICILIO1 { get; set; }
         public string BK_DOMICILIO2 { get; set; }
         public string BK_NUMERO { get; set; }
@@ -34,6 +38,8 @@ namespace BikeMessenger
         public string BK_ESTADOREGION { get; set; }
         public string BK_CODIGOPOSTAL { get; set; }
         public string BK_PAIS { get; set; }
+        public string BK_OBSERVACIONES { get; set; }
+
 
         // Campos de PAIS
         public Int16 BK_E_CODPAIS { get; set; }
@@ -58,8 +64,11 @@ namespace BikeMessenger
                 BK_DIGVER = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("DIGVER"));
                 BK_LOGO = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("LOGO"));
                 BK_NOMBRE = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("NOMBRE"));
-                BK_ACTIVIDAD = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("ACTIVIDAD"));
-                BK_REPRESENTANTES = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("REPRESENTANTES"));
+                BK_ACTIVIDAD1 = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("ACTIVIDAD1"));
+                BK_ACTIVIDAD2 = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("ACTIVIDAD2"));
+                BK_REPRESENTANTE1 = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("REPRESENTANTE1"));
+                BK_REPRESENTANTE2 = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("REPRESENTANTE2"));
+                BK_REPRESENTANTE3 = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("REPRESENTANTE3"));
                 BK_DOMICILIO1 = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("DOMICILIO1"));
                 BK_DOMICILIO2 = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("DOMICILIO2"));
                 BK_NUMERO = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("NUMERO"));
@@ -70,6 +79,7 @@ namespace BikeMessenger
                 BK_ESTADOREGION = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("ESTADOREGION"));
                 BK_CODIGOPOSTAL = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("CODIGOPOSTAL"));
                 BK_PAIS = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("PAIS"));
+                BK_OBSERVACIONES = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("OBSERVACIONES"));
                 return true;
             }
             else
@@ -105,6 +115,33 @@ namespace BikeMessenger
 
         // Procedimiento Insertar Empresa
         // Procedimiento Modificar Empresa
+        public bool Bm_Modificar_Empresa()
+        {
+            StrModificar_Empresa_Pais = "UPDATE EMPRESA SET ";
+            StrModificar_Empresa_Pais += "RUTID = '" + BK_RUTID + "',";
+            StrModificar_Empresa_Pais += "DIGVER = '" + BK_DIGVER + "',";
+            StrModificar_Empresa_Pais += "LOGO = '" + BK_LOGO + "',";
+            StrModificar_Empresa_Pais += "NOMBRE = '" + BK_NOMBRE + "',";
+            StrModificar_Empresa_Pais += "ACTIVIDAD1 = '" + BK_ACTIVIDAD1 + "',";
+            StrModificar_Empresa_Pais += "ACTIVIDAD2 = '" + BK_ACTIVIDAD2 + "',";
+            StrModificar_Empresa_Pais += "REPRESENTANTE1 = '" + BK_REPRESENTANTE1 + "',";
+            StrModificar_Empresa_Pais += "REPRESENTANTE2 = '" + BK_REPRESENTANTE2 + "',";
+            StrModificar_Empresa_Pais += "REPRESENTANTE3 = '" + BK_REPRESENTANTE3 + "',";
+            StrModificar_Empresa_Pais += "DOMICILIO1 = '" + BK_DOMICILIO1 + "',";
+            StrModificar_Empresa_Pais += "DOMICILIO2 = '" + BK_DOMICILIO2 + "',";
+            StrModificar_Empresa_Pais += "NUMERO = '" + BK_NUMERO + "',";
+            StrModificar_Empresa_Pais += "PISO = '" + BK_PISO + "',";
+            StrModificar_Empresa_Pais += "OFICINA = '" + BK_OFICINA + "',";
+            StrModificar_Empresa_Pais += "CIUDAD = '" + BK_CIUDAD + "',";
+            StrModificar_Empresa_Pais += "COMUNA = '" + BK_COMUNA + "',";
+            StrModificar_Empresa_Pais += "ESTADOREGION = '" + BK_ESTADOREGION + "',";
+            StrModificar_Empresa_Pais += "CODIGOPOSTAL = '" + BK_CODIGOPOSTAL + "',";
+            StrModificar_Empresa_Pais += "PAIS = '" + BK_PAIS + "',";
+            StrModificar_Empresa_Pais += "OBSERVACIONES = '" + BK_OBSERVACIONES + "'";
+            BK_Cmd_Empresa = new SQLiteCommand(StrModificar_Empresa_Pais, BM_Connection);
+            BK_Cmd_Empresa.ExecuteNonQuery();
+            return true;
+        }
         // Procedimiento Eliminar Empresa
         // Procedimientos Buscar Siguente
         // Procedimientos Buscar Anterior
