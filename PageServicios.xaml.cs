@@ -36,6 +36,10 @@ namespace BikeMessenger
             {
                 //greeting.Text = $"Hi, {e.Parameter.ToString()}";
             }
+            else
+            {
+                BM_Connection = (SQLiteConnection) e.Parameter;
+            }
  
             base.OnNavigatedTo(e);
         }
@@ -68,6 +72,11 @@ namespace BikeMessenger
         private void BtnSeleccionarPersonal(object sender, RoutedEventArgs e)
         {
             this.Frame.Navigate(typeof(PagePersonal), BM_Connection, new SuppressNavigationTransitionInfo());
+        }
+
+        private void labelObservaciones_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
         }
     }
 }
