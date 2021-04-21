@@ -15,13 +15,12 @@
             <CommandBar.Content>
                 <TextBlock Text="Bike Messenger por PENTALPHA E.I.R.L." Margin="12,8"/>
             </CommandBar.Content>
-            <AppBarButton x:Name="appBarButtonEmpresa" Icon="Home" Label="Empresa" Click="btnSeleccionarEmpresa"/>
-            <AppBarButton x:Name="appBarButtonPersonal" Icon="ContactPresence" Label="Personal" Click="btnSeleccionarPersonal"/>
-            <AppBarButton x:Name="appBarButtonRecursos" Icon="Library" Label="Recursos" Click="btnSeleccionarRecursos"/>
-            <AppBarButton x:Name="appBarButtonClientes" Icon="Contact" Label="Clientes"/>
-            <AppBarButton x:Name="appBarButtonServicios" Icon="Directions" Label="Servicios"/>
-            <AppBarButton x:Name="appBarButtonAjustes" Icon="Setting" Label="Ajustes"/>
-        </CommandBar>
+            <AppBarButton x:Name="appBarButtonEmpresa" Icon="Home" Label="Empresa" Click="BtnSeleccionarEmpresa"/>
+            <AppBarButton x:Name="appBarButtonPersonal" Icon="ContactPresence" Label="Personal" Click="BtnSeleccionarPersonal"/>
+            <AppBarButton x:Name="appBarButtonRecursos" Icon="Library" Label="Recursos" Click="BtnSeleccionarRecursos"/>
+            <AppBarButton x:Name="appBarButtonClientes" Icon="Contact" Label="Clientes" Click="BtnSeleccionarClientes"/>
+            <AppBarButton x:Name="appBarButtonServicios" Icon="Directions" Label="Servicios" Click="BtnSeleccionarServicios"/>
+            <AppBarButton x:Name="appBarButtonAjustes" Icon="Setting" Label="Ajustes" Click="BtnSeleccionarAjustes"/>        </CommandBar>
     </Page.TopAppBar>
     <Page.BottomAppBar>
         <CommandBar x:Name="CommandBarBottomPersonal" DefaultLabelPosition="Right"  Background="#FFC5CCCF" HorizontalAlignment="Center">
@@ -76,7 +75,7 @@
                 <SolidColorBrush/>
             </Image.FocusVisualSecondaryBrush>
         </Image>
-        <Button x:Name="btnCargarFoto" Content="Cargar Foto" Height="32" Margin="505,20,0,0" VerticalAlignment="Top" Width="135" Click="btnPersonalCargarFoto"/>
+        <Button x:Name="btnCargarFoto" Content="Cargar Foto" Height="32" Margin="505,20,0,0" VerticalAlignment="Top" Width="135" Click="BtnPersonalCargarFoto"/>
         <TextBox x:Name="textBoxObservaciones" HorizontalAlignment="Left" Margin="160,371,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="480" BorderThickness="1,1,1,1" Background="#6626C7F7" Height="145" TabIndex="16"/>
         <TextBox x:Name="labelDepartamento_Copy" HorizontalAlignment="Left" Margin="501,212,0,0" Text="ZP" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="54" BorderThickness="1,1,1,1" IsReadOnly="True" IsTabStop="False" AllowFocusOnInteraction="False" IsTextPredictionEnabled="False" IsDoubleTapEnabled="False" IsHoldingEnabled="False" IsRightTapEnabled="False" IsTapEnabled="False" ManipulationMode="None" FocusVisualPrimaryThickness="1,1,1,1" HighContrastAdjustment="None"/>
         <TextBox x:Name="textBoxCodigoPostal" HorizontalAlignment="Left" Margin="555,212,0,0" TextWrapping="Wrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Background="#6626C7F7" Width="85" TabIndex="11"/>

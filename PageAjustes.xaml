@@ -15,13 +15,12 @@
             <CommandBar.Content>
                 <TextBlock Text="Bike Messenger por PENTALPHA E.I.R.L." Margin="12,8"/>
             </CommandBar.Content>
-            <AppBarButton x:Name="appBarButtonEmpresa" Icon="Home" Label="Empresa"/>
-            <AppBarButton x:Name="appBarButtonPersonal" Icon="ContactPresence" Label="Personal"/>
-            <AppBarButton x:Name="appBarButtonRecursos" Icon="Library" Label="Recursos"/>
-            <AppBarButton x:Name="appBarButtonClientes" Icon="Contact" Label="Clientes"/>
-            <AppBarButton x:Name="appBarButtonServicios" Icon="Directions" Label="Servicios"/>
-            <AppBarButton x:Name="appBarButtonAjustes" Icon="Setting" Label="Ajustes"/>
-        </CommandBar>
+            <AppBarButton x:Name="appBarButtonEmpresa" Icon="Home" Label="Empresa" Click="BtnSeleccionarEmpresa"/>
+            <AppBarButton x:Name="appBarButtonPersonal" Icon="ContactPresence" Label="Personal" Click="BtnSeleccionarPersonal"/>
+            <AppBarButton x:Name="appBarButtonRecursos" Icon="Library" Label="Recursos" Click="BtnSeleccionarRecursos"/>
+            <AppBarButton x:Name="appBarButtonClientes" Icon="Contact" Label="Clientes" Click="BtnSeleccionarClientes"/>
+            <AppBarButton x:Name="appBarButtonServicios" Icon="Directions" Label="Servicios" Click="BtnSeleccionarServicios"/>
+            <AppBarButton x:Name="appBarButtonAjustes" Icon="Setting" Label="Ajustes" Click="BtnSeleccionarAjustes"/>        </CommandBar>
     </Page.TopAppBar>
     <Page.BottomAppBar>
         <CommandBar x:Name="CommandBarBottomAjustes" DefaultLabelPosition="Right"  Background="#FFC5CCCF" HorizontalAlignment="Center">

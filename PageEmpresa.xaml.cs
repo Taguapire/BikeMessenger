@@ -1,23 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Graphics.Imaging;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using System.Data.SQLite;
+using Windows.UI.Xaml.Media.Animation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -28,7 +20,6 @@ namespace BikeMessenger
     /// </summary>
     public sealed partial class PageEmpresa : Page
     {
-        private bool BM_Existe_Empresa = false;
         private Bm_Empresa_Database BM_Database_Empresa = new Bm_Empresa_Database();
         SQLiteConnection BM_Connection;
 
@@ -39,6 +30,14 @@ namespace BikeMessenger
             this.NavigationCacheMode = Windows.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
         }
 
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            base.OnNavigatedFrom(e);
+            if (e.NavigationMode == NavigationMode.Back)
+            {
+                NavigationCacheMode = NavigationCacheMode.Disabled;
+            }
+        }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
@@ -54,7 +53,6 @@ namespace BikeMessenger
                     if (BM_Database_Empresa.Bm_Empresa_Buscar())
                     {
                         LlenarPantallaConDb();
-                        BM_Existe_Empresa = true;
                     }
                     else
                     {
@@ -65,21 +63,34 @@ namespace BikeMessenger
             base.OnNavigatedTo(e);
         }
 
-        private void btnSeleccionarRecursos(object sender, RoutedEventArgs e)
+        private void BtnSeleccionarAjustes(object sender, RoutedEventArgs e)
         {
-            if (BM_Existe_Empresa) // Verifica que exista una empresa
-                this.Frame.Navigate(typeof(PageRecursos), BM_Connection);
+            this.Frame.Navigate(typeof(PageAjustes), BM_Connection, new SuppressNavigationTransitionInfo());
+        }
+
+        private void BtnSeleccionarServicios(object sender, RoutedEventArgs e)
+        {
+            this.Frame.Navigate(typeof(PageServicios), BM_Connection, new SuppressNavigationTransitionInfo());
+        }
+
+        private void BtnSeleccionarClientes(object sender, RoutedEventArgs e)
+        {
+            this.Frame.Navigate(typeof(PageClientes), BM_Connection, new SuppressNavigationTransitionInfo());
+        }
+
+        private void BtnSeleccionarRecursos(object sender, RoutedEventArgs e)
+        {
+            this.Frame.Navigate(typeof(PageRecursos), BM_Connection, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarEmpresa(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PageEmpresa), BM_Connection);
+            // this.Frame.Navigate(typeof(PageEmpresa), BM_Connection, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarPersonal(object sender, RoutedEventArgs e)
         {
-            if (BM_Existe_Empresa) // Verifica que exista una empresa
-                this.Frame.Navigate(typeof(PagePersonal), BM_Connection);
+            this.Frame.Navigate(typeof(PagePersonal), BM_Connection, new SuppressNavigationTransitionInfo());
         }
 
         //private void flipView_SelectionChanged(object sender, SelectionChangedEventArgs e)

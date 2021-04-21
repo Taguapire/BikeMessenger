@@ -17,10 +17,10 @@
             </CommandBar.Content>
             <AppBarButton x:Name="appBarButtonEmpresa" Icon="Home" Label="Empresa" Click="BtnSeleccionarEmpresa"/>
             <AppBarButton x:Name="appBarButtonPersonal" Icon="ContactPresence" Label="Personal" Click="BtnSeleccionarPersonal"/>
-            <AppBarButton x:Name="appBarButtonRecursos" Icon="Library" Label="Recursos" Click="btnSeleccionarRecursos"/>
-            <AppBarButton x:Name="appBarButtonClientes" Icon="Contact" Label="Clientes"/>
-            <AppBarButton x:Name="appBarButtonServicios" Icon="Directions" Label="Servicios"/>
-            <AppBarButton x:Name="appBarButtonAjustes" Icon="Setting" Label="Ajustes"/>
+            <AppBarButton x:Name="appBarButtonRecursos" Icon="Library" Label="Recursos" Click="BtnSeleccionarRecursos"/>
+            <AppBarButton x:Name="appBarButtonClientes" Icon="Contact" Label="Clientes" Click="BtnSeleccionarClientes"/>
+            <AppBarButton x:Name="appBarButtonServicios" Icon="Directions" Label="Servicios" Click="BtnSeleccionarServicios"/>
+            <AppBarButton x:Name="appBarButtonAjustes" Icon="Setting" Label="Ajustes" Click="BtnSeleccionarAjustes"/>
         </CommandBar>
     </Page.TopAppBar>
     <Page.BottomAppBar>
