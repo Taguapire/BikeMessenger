@@ -180,7 +180,7 @@ namespace BikeMessenger
             }
             catch (System.ArgumentNullException)
             {
-                ;
+                ErrorDeRecuperacionDialog();
             }
         }
 
@@ -261,6 +261,18 @@ namespace BikeMessenger
             var img = new BitmapImage();
             img.SetSource(ims);
             return img;
+        }
+
+        private async void ErrorDeRecuperacionDialog()
+        {
+            ContentDialog noErrorRecuperacionDialog = new ContentDialog
+            {
+                Title = "Acceso a Base de Datos",
+                Content = "El registro a recuperar tiene valores nulos.",
+                CloseButtonText = "Ok"
+            };
+
+            ContentDialogResult result = await noErrorRecuperacionDialog.ShowAsync();
         }
     }
 }

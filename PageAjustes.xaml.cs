@@ -60,5 +60,17 @@ namespace BikeMessenger
         {
             this.Frame.Navigate(typeof(PagePersonal), BM_Connection, new SuppressNavigationTransitionInfo());
         }
+
+        private async void ErrorDeRecuperacionDialog()
+        {
+            ContentDialog noErrorRecuperacionDialog = new ContentDialog
+            {
+                Title = "Acceso a Base de Datos",
+                Content = "El registro a recuperar tiene valores nulos.",
+                CloseButtonText = "Ok"
+            };
+
+            ContentDialogResult result = await noErrorRecuperacionDialog.ShowAsync();
+        }
     }
 }
