@@ -28,11 +28,11 @@
             <CommandBar.Content>
                 <TextBlock Text="Empresa" Margin="12,8"/>
             </CommandBar.Content>
-            <AppBarButton x:Name="appBarAgregar" Icon="Add" Label="Agregar" IsTabStop="False" IsHitTestVisible="False" IsEnabled="False"/>
+            <AppBarButton x:Name="appBarAgregar" Icon="Add" Label="Agregar" Click="BtnAgregarEmpresa"/>
             <AppBarButton x:Name="appBarModificar" Icon="Edit" Label="Modificar" Click="BtnModificarEmpresa"/>
-            <AppBarButton x:Name="appBarBorrar" Icon="Delete" Label="Borrar" IsTabStop="False" IsHitTestVisible="False" IsEnabled="False"/>
-            <AppBarButton x:Name="appBarAceptar" Icon="Save" Label="Aceptar" IsTabStop="False" IsHitTestVisible="False" IsEnabled="False"/>
-            <AppBarButton x:Name="appBarCancelar" Icon="Cancel" Label="Cancelar" IsTabStop="False" IsHitTestVisible="False" IsEnabled="False"/>
+            <AppBarButton x:Name="appBarBorrar" Icon="Delete" Label="Borrar" Click="BtnBorrarEmpresa"/>
+            <AppBarButton x:Name="appBarAceptar" Icon="Save" Label="Aceptar"/>
+            <AppBarButton x:Name="appBarSalir" Icon="Go" Label="Salir" Click="BtnSalirEmpresa"/>
         </CommandBar>
     </Page.BottomAppBar>
     <Grid x:Name="GridEmpresas" AutomationProperties.AccessibilityView="Content" RequestedTheme="Default" MinWidth="1280" MinHeight="720" MaxWidth="1280" MaxHeight="720" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">

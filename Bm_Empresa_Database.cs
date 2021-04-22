@@ -17,7 +17,10 @@ namespace BikeMessenger
         SQLiteDataReader BK_Reader_Empresa_Pais;
         readonly String StrBuscar_Empresa = "SELECT * FROM EMPRESA";
         readonly String StrBuscar_Empresa_Pais = "SELECT * FROM PAIS ORDER BY PAIS ASC";
-        string StrModificar_Empresa_Pais;
+
+        string StrAgregar_Empresa;
+        string StrModificar_Empresa;
+        string StrBorrar_Empresa;
 
         // Campos de Empresa
         public string BK_RUTID { get; set; }
@@ -136,35 +139,115 @@ namespace BikeMessenger
         }
 
         // Procedimiento Insertar Empresa
+
+        public bool Bm_Empresa_Agregar()
+        {
+            StrAgregar_Empresa = "INSERT INTO EMPRESA (";
+            StrAgregar_Empresa += "RUTID,";
+            StrAgregar_Empresa += "DIGVER,";
+            StrAgregar_Empresa += "NOMBRE,";
+            StrAgregar_Empresa += "ACTIVIDAD1,";
+            StrAgregar_Empresa += "ACTIVIDAD2,";
+            StrAgregar_Empresa += "REPRESENTANTE1,";
+            StrAgregar_Empresa += "REPRESENTANTE2,";
+            StrAgregar_Empresa += "REPRESENTANTE3,";
+            StrAgregar_Empresa += "DOMICILIO1,";
+            StrAgregar_Empresa += "DOMICILIO2,";
+            StrAgregar_Empresa += "NUMERO,";
+            StrAgregar_Empresa += "PISO,";
+            StrAgregar_Empresa += "OFICINA,";
+            StrAgregar_Empresa += "CIUDAD,";
+            StrAgregar_Empresa += "COMUNA,";
+            StrAgregar_Empresa += "ESTADOREGION,";
+            StrAgregar_Empresa += "CODIGOPOSTAL,";
+            StrAgregar_Empresa += "PAIS,";
+            StrAgregar_Empresa += "OBSERVACIONES,";
+            StrAgregar_Empresa += "LOGO) VALUES (";
+            StrAgregar_Empresa += "'" + BK_RUTID + "',";
+            StrAgregar_Empresa += "'" + BK_DIGVER + "',";
+            StrAgregar_Empresa += "'" + BK_NOMBRE + "',";
+            StrAgregar_Empresa += "'" + BK_ACTIVIDAD1 + "',";
+            StrAgregar_Empresa += "'" + BK_ACTIVIDAD2 + "',";
+            StrAgregar_Empresa += "'" + BK_REPRESENTANTE1 + "',";
+            StrAgregar_Empresa += "'" + BK_REPRESENTANTE2 + "',";
+            StrAgregar_Empresa += "'" + BK_REPRESENTANTE3 + "',";
+            StrAgregar_Empresa += "'" + BK_DOMICILIO1 + "',";
+            StrAgregar_Empresa += "'" + BK_DOMICILIO2 + "',";
+            StrAgregar_Empresa += "'" + BK_NUMERO + "',";
+            StrAgregar_Empresa += "'" + BK_PISO + "',";
+            StrAgregar_Empresa += "'" + BK_OFICINA + "',";
+            StrAgregar_Empresa += "'" + BK_CIUDAD + "',";
+            StrAgregar_Empresa += "'" + BK_COMUNA + "',";
+            StrAgregar_Empresa += "'" + BK_ESTADOREGION + "',";
+            StrAgregar_Empresa += "'" + BK_CODIGOPOSTAL + "',";
+            StrAgregar_Empresa += "'" + BK_PAIS + "',";
+            StrAgregar_Empresa += "'" + BK_OBSERVACIONES + "',";
+            StrAgregar_Empresa += "'" + BK_LOGO + "')";
+            
+            try
+            {
+                BK_Cmd_Empresa = new SQLiteCommand(StrAgregar_Empresa, BM_Connection);
+                BK_Cmd_Empresa.ExecuteNonQuery();
+                return true;
+            }
+            catch (SQLiteException)
+            {
+                return false;
+            }
+        }
+
         // Procedimiento Modificar Empresa
         public bool Bm_Empresa_Modificar()
         {
-            StrModificar_Empresa_Pais = "UPDATE EMPRESA SET ";
-            StrModificar_Empresa_Pais += "RUTID = '" + BK_RUTID + "',";
-            StrModificar_Empresa_Pais += "DIGVER = '" + BK_DIGVER + "',";
-            StrModificar_Empresa_Pais += "NOMBRE = '" + BK_NOMBRE + "',";
-            StrModificar_Empresa_Pais += "ACTIVIDAD1 = '" + BK_ACTIVIDAD1 + "',";
-            StrModificar_Empresa_Pais += "ACTIVIDAD2 = '" + BK_ACTIVIDAD2 + "',";
-            StrModificar_Empresa_Pais += "REPRESENTANTE1 = '" + BK_REPRESENTANTE1 + "',";
-            StrModificar_Empresa_Pais += "REPRESENTANTE2 = '" + BK_REPRESENTANTE2 + "',";
-            StrModificar_Empresa_Pais += "REPRESENTANTE3 = '" + BK_REPRESENTANTE3 + "',";
-            StrModificar_Empresa_Pais += "DOMICILIO1 = '" + BK_DOMICILIO1 + "',";
-            StrModificar_Empresa_Pais += "DOMICILIO2 = '" + BK_DOMICILIO2 + "',";
-            StrModificar_Empresa_Pais += "NUMERO = '" + BK_NUMERO + "',";
-            StrModificar_Empresa_Pais += "PISO = '" + BK_PISO + "',";
-            StrModificar_Empresa_Pais += "OFICINA = '" + BK_OFICINA + "',";
-            StrModificar_Empresa_Pais += "CIUDAD = '" + BK_CIUDAD + "',";
-            StrModificar_Empresa_Pais += "COMUNA = '" + BK_COMUNA + "',";
-            StrModificar_Empresa_Pais += "ESTADOREGION = '" + BK_ESTADOREGION + "',";
-            StrModificar_Empresa_Pais += "CODIGOPOSTAL = '" + BK_CODIGOPOSTAL + "',";
-            StrModificar_Empresa_Pais += "PAIS = '" + BK_PAIS + "',";
-            StrModificar_Empresa_Pais += "OBSERVACIONES = '" + BK_OBSERVACIONES + "',";
-            StrModificar_Empresa_Pais += "LOGO = '" + BK_LOGO + "'";
-            BK_Cmd_Empresa = new SQLiteCommand(StrModificar_Empresa_Pais, BM_Connection);
-            BK_Cmd_Empresa.ExecuteNonQuery();
-            return true;
+            StrModificar_Empresa = "UPDATE EMPRESA SET ";
+            StrModificar_Empresa += "RUTID = '" + BK_RUTID + "',";
+            StrModificar_Empresa += "DIGVER = '" + BK_DIGVER + "',";
+            StrModificar_Empresa += "NOMBRE = '" + BK_NOMBRE + "',";
+            StrModificar_Empresa += "ACTIVIDAD1 = '" + BK_ACTIVIDAD1 + "',";
+            StrModificar_Empresa += "ACTIVIDAD2 = '" + BK_ACTIVIDAD2 + "',";
+            StrModificar_Empresa += "REPRESENTANTE1 = '" + BK_REPRESENTANTE1 + "',";
+            StrModificar_Empresa += "REPRESENTANTE2 = '" + BK_REPRESENTANTE2 + "',";
+            StrModificar_Empresa += "REPRESENTANTE3 = '" + BK_REPRESENTANTE3 + "',";
+            StrModificar_Empresa += "DOMICILIO1 = '" + BK_DOMICILIO1 + "',";
+            StrModificar_Empresa += "DOMICILIO2 = '" + BK_DOMICILIO2 + "',";
+            StrModificar_Empresa += "NUMERO = '" + BK_NUMERO + "',";
+            StrModificar_Empresa += "PISO = '" + BK_PISO + "',";
+            StrModificar_Empresa += "OFICINA = '" + BK_OFICINA + "',";
+            StrModificar_Empresa += "CIUDAD = '" + BK_CIUDAD + "',";
+            StrModificar_Empresa += "COMUNA = '" + BK_COMUNA + "',";
+            StrModificar_Empresa += "ESTADOREGION = '" + BK_ESTADOREGION + "',";
+            StrModificar_Empresa += "CODIGOPOSTAL = '" + BK_CODIGOPOSTAL + "',";
+            StrModificar_Empresa += "PAIS = '" + BK_PAIS + "',";
+            StrModificar_Empresa += "OBSERVACIONES = '" + BK_OBSERVACIONES + "',";
+            StrModificar_Empresa += "LOGO = '" + BK_LOGO + "'";
+ 
+            try
+            {
+                BK_Cmd_Empresa = new SQLiteCommand(StrModificar_Empresa, BM_Connection);
+                BK_Cmd_Empresa.ExecuteNonQuery();
+                return true;
+            }
+            catch (SQLiteException)
+            {
+                return false;
+            }
         }
         // Procedimiento Eliminar Empresa
+        
+        public bool Bm_Empresa_Borrar()
+        {
+            StrBorrar_Empresa = "DELETE FROM EMPRESA";
+            try
+            {
+                BK_Cmd_Empresa = new SQLiteCommand(StrBorrar_Empresa, BM_Connection);
+                BK_Cmd_Empresa.ExecuteNonQuery();
+                return true;
+            }
+            catch (SQLiteException)
+            {
+                return false;
+            }
+        }
         // Procedimientos Buscar Siguente
         // Procedimientos Buscar Anterior
         // 

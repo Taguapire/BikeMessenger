@@ -21,7 +21,7 @@ namespace BikeMessenger
     public sealed partial class PageEmpresa : Page
     {
         private Bm_Empresa_Database BM_Database_Empresa = new Bm_Empresa_Database();
-        SQLiteConnection BM_Connection;
+        TransferVar LvrTransferVar;
 
         public PageEmpresa()
         {
@@ -47,16 +47,41 @@ namespace BikeMessenger
             }
             else
             {
-                BM_Connection = (SQLiteConnection) e.Parameter;
-                if (BM_Database_Empresa.BM_CreateDatabase(BM_Connection))
+                LvrTransferVar = (TransferVar) e.Parameter;
+                if (BM_Database_Empresa.BM_CreateDatabase(LvrTransferVar.TV_Connection))
                 {
                     if (BM_Database_Empresa.Bm_Empresa_Buscar())
                     {
                         LlenarPantallaConDb();
+
+                        appBarButtonEmpresa.IsEnabled = true;
+                        appBarButtonPersonal.IsEnabled = true;
+                        appBarButtonRecursos.IsEnabled = true;
+                        appBarButtonClientes.IsEnabled = true;
+                        appBarButtonServicios.IsEnabled = true;
+                        appBarButtonAjustes.IsEnabled = true;
+
+                        appBarAgregar.IsEnabled = false;
+                        appBarModificar.IsEnabled = true;
+                        appBarBorrar.IsEnabled = true;
+                        appBarAceptar.IsEnabled = false;
+                        appBarAceptar.IsEnabled = false;
                     }
                     else
                     {
-                        textBoxNombreEmpresa.Text = "Sin Empresa";
+                        appBarButtonEmpresa.IsEnabled = true;
+                        appBarButtonPersonal.IsEnabled = false;
+                        appBarButtonRecursos.IsEnabled = false;
+                        appBarButtonClientes.IsEnabled = false;
+                        appBarButtonServicios.IsEnabled = false;
+                        appBarButtonAjustes.IsEnabled = false;
+
+                        appBarAgregar.IsEnabled = true;
+                        appBarModificar.IsEnabled = false;
+                        appBarBorrar.IsEnabled = false;
+                        appBarAceptar.IsEnabled = false;
+                        appBarAceptar.IsEnabled = false;
+                        AvisoOperacionEmpresaDialog("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
                     }
                 }
             }
@@ -65,32 +90,32 @@ namespace BikeMessenger
 
         private void BtnSeleccionarAjustes(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PageAjustes), BM_Connection, new SuppressNavigationTransitionInfo());
+            this.Frame.Navigate(typeof(PageAjustes), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarServicios(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PageServicios), BM_Connection, new SuppressNavigationTransitionInfo());
+            this.Frame.Navigate(typeof(PageServicios), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarClientes(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PageClientes), BM_Connection, new SuppressNavigationTransitionInfo());
+            this.Frame.Navigate(typeof(PageClientes), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarRecursos(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PageRecursos), BM_Connection, new SuppressNavigationTransitionInfo());
+            this.Frame.Navigate(typeof(PageRecursos), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarEmpresa(object sender, RoutedEventArgs e)
         {
-            // this.Frame.Navigate(typeof(PageEmpresa), BM_Connection, new SuppressNavigationTransitionInfo());
+            // this.Frame.Navigate(typeof(PageEmpresa), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarPersonal(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PagePersonal), BM_Connection, new SuppressNavigationTransitionInfo());
+            this.Frame.Navigate(typeof(PagePersonal), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         //private void flipView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -137,9 +162,6 @@ namespace BikeMessenger
         {
             try
             {
-                // List<DataGridActividadFilas> sourceActividad = new List<DataGridActividadFilas>();
-                // List<DataGridRepresentanteFilas> sourceRepresentante = new List<DataGridRepresentanteFilas>();
-
                 textBoxRut.Text = BM_Database_Empresa.BK_RUTID;
                 textBoxDigitoVerificador.Text = BM_Database_Empresa.BK_DIGVER;
                 textBoxNombreEmpresa.Text = BM_Database_Empresa.BK_NOMBRE;
@@ -148,57 +170,6 @@ namespace BikeMessenger
                 textBoxRepresentantes1.Text = BM_Database_Empresa.BK_REPRESENTANTE1;
                 textBoxRepresentantes2.Text = BM_Database_Empresa.BK_REPRESENTANTE2;
                 textBoxRepresentantes3.Text = BM_Database_Empresa.BK_REPRESENTANTE3;
-
-                // dataGridActividad
-                //sourceActividad.Add(new DataGridActividadFilas() { Actividad = "Actividad 1" });
-                //sourceActividad.Add(new DataGridActividadFilas() { Actividad = "Actividad 2" });
-                //sourceActividad.Add(new DataGridActividadFilas() { Actividad = "Actividad 3" });
-                //sourceActividad.Add(new DataGridActividadFilas() { Actividad = "Actividad 4" });
-                //sourceActividad.Add(new DataGridActividadFilas() { Actividad = "Actividad 5" });
-                //dataGridActividad.ItemsSource = sourceActividad;
-
-                // dataGridRepresentantes
-                //sourceRepresentante.Add(new DataGridRepresentanteFilas() { 
-                //    Nombre = "Nombre 1",
-                //    Apellido = "Apellido 1",
-                //    Cargo = "Cargo 1",
-                //    Telefono = "Telefono 1",
-                //    Email = "Email 1"
-                //});
-                //sourceRepresentante.Add(new DataGridRepresentanteFilas()
-                //{
-                //    Nombre = "Nombre 2",
-                //    Apellido = "Apellido 2",
-                //    Cargo = "Cargo 2",
-                //    Telefono = "Telefono 2",
-                //    Email = "Email 2"
-                //});
-                //sourceRepresentante.Add(new DataGridRepresentanteFilas()
-                //{
-                //    Nombre = "Nombre 3",
-                //    Apellido = "Apellido 3",
-                //    Cargo = "Cargo 3",
-                //    Telefono = "Telefono 3",
-                //    Email = "Email 3"
-                //});
-                //sourceRepresentante.Add(new DataGridRepresentanteFilas()
-                //{
-                //    Nombre = "Nombre 4",
-                //    Apellido = "Apellido 4",
-                //    Cargo = "Cargo 4",
-                //    Telefono = "Telefono 4",
-                //    Email = "Email 4"
-                //});
-                //sourceRepresentante.Add(new DataGridRepresentanteFilas()
-                //{
-                //    Nombre = "Nombre 5",
-                //    Apellido = "Apellido 5",
-                //    Cargo = "Cargo 5",
-                //    Telefono = "Telefono 5",
-                //    Email = "Email 5"
-                //});
-
-                // dataGridRepresentantes.ItemsSource = sourceRepresentante;
 
                 textBoxCalleAvenida1.Text = BM_Database_Empresa.BK_DOMICILIO1;
                 textBoxCalleAvenida2.Text = BM_Database_Empresa.BK_DOMICILIO2;
@@ -229,13 +200,13 @@ namespace BikeMessenger
 
                 imageLogoEmpresa.Source = Base64StringToBitmap(BM_Database_Empresa.BK_LOGO);
             }
-            catch (System.ArgumentNullException)
-            {
-                ErrorDeRecuperacionDialog();
+            catch (System.ArgumentNullException e)
+            {   
+                AvisoOperacionEmpresaDialog("Acceso a Base de Datos", e.Message);
             }
         }
 
-            private async System.Threading.Tasks.Task LlenarDbConPantallaAsync()
+        private async System.Threading.Tasks.Task LlenarDbConPantallaAsync()
         {
             BM_Database_Empresa.BK_LOGO = await ConvertirImageABase64Async();
             BM_Database_Empresa.BK_RUTID = textBoxRut.Text;
@@ -259,26 +230,113 @@ namespace BikeMessenger
             BM_Database_Empresa.BK_OBSERVACIONES = textBoxObservaciones.Text;
         }
 
-        public class DataGridActividadFilas
+        private async void BtnAgregarEmpresa(object sender, RoutedEventArgs e)
         {
-            public string Actividad { get; set; }
-        }
+            try
+            {
+                await LlenarDbConPantallaAsync();
+                if (BM_Database_Empresa.Bm_Empresa_Agregar())
+                {
+                    appBarButtonEmpresa.IsEnabled = true;
+                    appBarButtonPersonal.IsEnabled = true;
+                    appBarButtonRecursos.IsEnabled = true;
+                    appBarButtonClientes.IsEnabled = true;
+                    appBarButtonServicios.IsEnabled = true;
+                    appBarButtonAjustes.IsEnabled = true;
 
-        public class DataGridRepresentanteFilas
-        {
-            public string Nombre { get; set; }
-            public string Apellido { get; set; }
-            public string Cargo { get; set; }
-            public string Telefono { get; set; }
-            public string Email { get; set; }
+                    appBarAgregar.IsEnabled = false;
+                    appBarModificar.IsEnabled = true;
+                    appBarBorrar.IsEnabled = true;
+                    appBarAceptar.IsEnabled = false;
+                    appBarAceptar.IsEnabled = false;
+
+                    AvisoOperacionEmpresaDialog("Agregando Empresa", "Operación completada con exito.");
+                }
+                else
+                {
+                    AvisoOperacionEmpresaDialog("Agregando Empresa", "Se a producido un error al intentar agregar la empresa.");
+                }
+            }
+            catch (System.ArgumentException)
+            {
+                AvisoOperacionEmpresaDialog("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
+            }
         }
 
         private async void BtnModificarEmpresa(object sender, RoutedEventArgs e)
         {
-            await LlenarDbConPantallaAsync();
-            BM_Database_Empresa.Bm_Empresa_Modificar();
+            try
+            {
+                await LlenarDbConPantallaAsync();
+                if (BM_Database_Empresa.Bm_Empresa_Modificar())
+                    AvisoOperacionEmpresaDialog("Modificando Empresa", "Operación completada con exito.");
+                else
+                    AvisoOperacionEmpresaDialog("Modificando Empresa", "Se a producido un error al intentar agregar la empresa.");
+            }
+            catch (System.ArgumentException)
+            {
+                AvisoOperacionEmpresaDialog("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
+            }
         }
 
+        private void BtnBorrarEmpresa(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (BM_Database_Empresa.Bm_Empresa_Borrar())
+                {
+                    appBarButtonEmpresa.IsEnabled = true;
+                    appBarButtonPersonal.IsEnabled = false;
+                    appBarButtonRecursos.IsEnabled = false;
+                    appBarButtonClientes.IsEnabled = false;
+                    appBarButtonServicios.IsEnabled = false;
+                    appBarButtonAjustes.IsEnabled = false;
+
+                    appBarAgregar.IsEnabled = true;
+                    appBarModificar.IsEnabled = false;
+                    appBarBorrar.IsEnabled = false;
+                    appBarAceptar.IsEnabled = false;
+                    appBarAceptar.IsEnabled = false;
+
+                    BM_Database_Empresa.BK_LOGO = "";
+                    BM_Database_Empresa.BK_RUTID = "";
+                    BM_Database_Empresa.BK_DIGVER = "";
+                    BM_Database_Empresa.BK_NOMBRE = "";
+                    BM_Database_Empresa.BK_ACTIVIDAD1 = "";
+                    BM_Database_Empresa.BK_ACTIVIDAD2 = "";
+                    BM_Database_Empresa.BK_REPRESENTANTE1 = "";
+                    BM_Database_Empresa.BK_REPRESENTANTE2 = "";
+                    BM_Database_Empresa.BK_REPRESENTANTE3 = "";
+                    BM_Database_Empresa.BK_DOMICILIO1 = "";
+                    BM_Database_Empresa.BK_DOMICILIO2 = "";
+                    BM_Database_Empresa.BK_NUMERO = "";
+                    BM_Database_Empresa.BK_PISO = "";
+                    BM_Database_Empresa.BK_OFICINA = "";
+                    BM_Database_Empresa.BK_CODIGOPOSTAL = "";
+                    BM_Database_Empresa.BK_PAIS = "";
+                    BM_Database_Empresa.BK_ESTADOREGION = "";
+                    BM_Database_Empresa.BK_COMUNA = "";
+                    BM_Database_Empresa.BK_CIUDAD = "";
+                    BM_Database_Empresa.BK_OBSERVACIONES = "";
+                    AvisoOperacionEmpresaDialog("Borrando Empresa", "Operación completada con exito.");
+                    LlenarPantallaConDb();
+                }
+                else
+                {
+                    AvisoOperacionEmpresaDialog("Borrando Empresa", "Se a producido un error al intentar borrar la empresa.");
+                }
+            }
+            catch (System.ArgumentException)
+            {
+                AvisoOperacionEmpresaDialog("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
+            }
+        }
+
+        private void BtnSalirEmpresa(object sender, RoutedEventArgs e)
+        {
+            LvrTransferVar.TV_Connection.Close();
+            Application.Current.Exit();
+        }
         private async System.Threading.Tasks.Task<string> ConvertirImageABase64Async()
         {
             var bitmap = new RenderTargetBitmap();
@@ -319,16 +377,16 @@ namespace BikeMessenger
             return img;
         }
 
-        private async void ErrorDeRecuperacionDialog()
+        private async void AvisoOperacionEmpresaDialog(string xTitulo, string xDescripcion)
         {
-            ContentDialog noErrorRecuperacionDialog = new ContentDialog
+            ContentDialog AvisoOperacionEmpresaDialog = new ContentDialog
             {
-                Title = "Acceso a Base de Datos",
-                Content = "El registro a recuperar tiene valores nulos.",
-                CloseButtonText = "Ok"
+                Title = xTitulo,
+                Content = xDescripcion,
+                CloseButtonText = "Continuar"
             };
 
-            ContentDialogResult result = await noErrorRecuperacionDialog.ShowAsync();
+            ContentDialogResult result = await AvisoOperacionEmpresaDialog.ShowAsync();
         }
     }
 }

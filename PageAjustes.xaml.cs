@@ -24,41 +24,63 @@ namespace BikeMessenger
     /// </summary>
     public sealed partial class PageAjustes : Page
     {
-        SQLiteConnection BM_Connection;
+        TransferVar LvrTransferVar;
 
         public PageAjustes()
         {
             this.InitializeComponent();
         }
 
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            base.OnNavigatedFrom(e);
+            if (e.NavigationMode == NavigationMode.Back)
+            {
+                NavigationCacheMode = NavigationCacheMode.Disabled;
+            }
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            if (e.Parameter is string && !string.IsNullOrWhiteSpace((string)e.Parameter))
+            {
+                //greeting.Text = $"Hi, {e.Parameter.ToString()}";
+            }
+            else
+            {
+                LvrTransferVar = (TransferVar) e.Parameter;
+            }
+            base.OnNavigatedTo(e);
+        }
+
         private void BtnSeleccionarAjustes(object sender, RoutedEventArgs e)
         {
-            // this.Frame.Navigate(typeof(PageAjustes), BM_Connection, new SuppressNavigationTransitionInfo());
+            // this.Frame.Navigate(typeof(PageAjustes), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarServicios(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PageServicios), BM_Connection, new SuppressNavigationTransitionInfo());
+            this.Frame.Navigate(typeof(PageServicios), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarClientes(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PageClientes), BM_Connection, new SuppressNavigationTransitionInfo());
+            this.Frame.Navigate(typeof(PageClientes), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarRecursos(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PageRecursos), BM_Connection, new SuppressNavigationTransitionInfo());
+            this.Frame.Navigate(typeof(PageRecursos), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarEmpresa(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PageEmpresa), BM_Connection, new SuppressNavigationTransitionInfo());
+            this.Frame.Navigate(typeof(PageEmpresa), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarPersonal(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PagePersonal), BM_Connection, new SuppressNavigationTransitionInfo());
+            this.Frame.Navigate(typeof(PagePersonal), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private async void ErrorDeRecuperacionDialog()

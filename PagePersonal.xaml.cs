@@ -21,7 +21,7 @@ namespace BikeMessenger
     public sealed partial class PagePersonal : Page
     {
         Bm_Personal_Database BM_Database_Personal = new Bm_Personal_Database();
-        SQLiteConnection BM_Connection;
+        TransferVar LvrTransferVar;
 
         public PagePersonal()
         {
@@ -48,8 +48,8 @@ namespace BikeMessenger
             }
             else
             {
-                BM_Connection = (SQLiteConnection)e.Parameter;
-                if (BM_Database_Personal.BM_CreateDatabase(BM_Connection))
+                LvrTransferVar = (TransferVar) e.Parameter;
+                if (BM_Database_Personal.BM_CreateDatabase(LvrTransferVar.TV_Connection))
                 {
                     if (BM_Database_Personal.Bm_Personal_Buscar())
                     {
@@ -67,40 +67,42 @@ namespace BikeMessenger
 
         private void BtnSeleccionarAjustes(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PageAjustes), BM_Connection, new SuppressNavigationTransitionInfo());
+            this.Frame.Navigate(typeof(PageAjustes), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarServicios(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PageServicios), BM_Connection, new SuppressNavigationTransitionInfo());
+            this.Frame.Navigate(typeof(PageServicios), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarClientes(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PageClientes), BM_Connection, new SuppressNavigationTransitionInfo());
+            this.Frame.Navigate(typeof(PageClientes), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarRecursos(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PageRecursos), BM_Connection, new SuppressNavigationTransitionInfo());
+            this.Frame.Navigate(typeof(PageRecursos), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarEmpresa(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PageEmpresa), BM_Connection, new SuppressNavigationTransitionInfo());
+            this.Frame.Navigate(typeof(PageEmpresa), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarPersonal(object sender, RoutedEventArgs e)
         {
-            // this.Frame.Navigate(typeof(PagePersonal), BM_Connection, new SuppressNavigationTransitionInfo());
+            // this.Frame.Navigate(typeof(PagePersonal), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private async void BtnPersonalCargarFoto(object sender, RoutedEventArgs e)
         {
             // Set up the file picker.
-            Windows.Storage.Pickers.FileOpenPicker openPicker = new Windows.Storage.Pickers.FileOpenPicker();
-            openPicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
-            openPicker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
+            Windows.Storage.Pickers.FileOpenPicker openPicker = new Windows.Storage.Pickers.FileOpenPicker
+            {
+                SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary,
+                ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail
+            };
 
             // Filter to include a sample subset of file types.
             openPicker.FileTypeFilter.Clear();

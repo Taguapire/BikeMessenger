@@ -12,21 +12,16 @@ namespace BikeMessenger
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
+
     sealed partial class App : Application
     {
-        public SQLiteFactory BM_DB;
-        public SQLiteConnection BM_Connection;
+        readonly TransferVar LvrTransferVar = new TransferVar();
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
         public App()
         {
-            BM_DB = new SQLiteFactory();
-            // Crear Automaticamente la Base de Datos
-            BM_Connection = (SQLiteConnection) BM_DB.CreateConnection();
-            BM_Connection.ConnectionString = "Data Source=" + Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\BikeMessenger.db; Version = 3";
-            BM_Connection.Open();
             this.InitializeComponent();
             this.Suspending += OnSuspending;
         }
@@ -102,7 +97,7 @@ namespace BikeMessenger
                 // parameter
                 // rootFrame.Navigate(typeof(PageEmpresa), e.Arguments);
                 rootFrame.CacheSize = 0;
-                rootFrame.Navigate(typeof(PageEmpresa), BM_Connection, new SuppressNavigationTransitionInfo());
+                rootFrame.Navigate(typeof(PageEmpresa), LvrTransferVar, new SuppressNavigationTransitionInfo());
             }
             // Ensure the current window is active
             Window.Current.Activate();
