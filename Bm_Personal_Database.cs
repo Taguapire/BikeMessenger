@@ -15,9 +15,12 @@ namespace BikeMessenger
         SQLiteDataReader BK_Reader_Personal;
         SQLiteCommand BK_Cmd_Personal_Pais;
         SQLiteDataReader BK_Reader_Personal_Pais;
+        SQLiteCommand BK_Cmd_Personal_Grid;
+        SQLiteDataReader BK_Reader_Personal_Grid;
         string StrAgregar_Personal;
         string StrModificar_Personal;
         string StrBorrar_Personal;
+        readonly string StrBuscarGrid_Personal = "SELECT RUTID||'-'||DIGVER, APELLIDOS, NOMBRES FROM PERSONAL ORDER BY APELLIDOS ASC";
         readonly string StrBuscar_Personal = "SELECT * FROM PERSONAL";
         readonly String StrBuscar_Personal_Pais = "SELECT * FROM PAIS ORDER BY PAIS ASC";
 
@@ -41,6 +44,10 @@ namespace BikeMessenger
         public string BK_PAIS { get; set; }
         public string BK_OBSERVACIONES { get; set; }
         public string BK_FOTO { get; set; }
+
+        public string BK_GRID_RUT { get; set; }
+        public string BK_GRID_APELLIDOS { get; set; }
+        public string BK_GRID_NOMBRES { get; set; }
 
         // Campos de PAIS
         public Int16 BK_E_CODPAIS { get; set; }
@@ -151,8 +158,45 @@ namespace BikeMessenger
                 return false;
             }
 
-        }    
-        
+        }
+
+        public bool Bm_Personal_Buscar(string pRUTID, string pDIGVER)
+        {
+            BK_Cmd_Personal = new SQLiteCommand(StrBuscar_Personal + " WHERE RUTID = '" + pRUTID + "' AND DIGVER = '" + pDIGVER + "'", BM_Connection);
+            BK_Reader_Personal = BK_Cmd_Personal.ExecuteReader();
+
+            if (BK_Reader_Personal.Read())
+            {
+                // Llenar Valores de Personal
+
+                BK_RUTID = BK_Reader_Personal.GetString(BK_Reader_Personal.GetOrdinal("RUTID"));
+                BK_DIGVER = BK_Reader_Personal.GetString(BK_Reader_Personal.GetOrdinal("DIGVER"));
+                BK_APELLIDOS = BK_Reader_Personal.GetString(BK_Reader_Personal.GetOrdinal("APELLIDOS"));
+                BK_NOMBRES = BK_Reader_Personal.GetString(BK_Reader_Personal.GetOrdinal("NOMBRES"));
+                BK_TELEFONO1 = BK_Reader_Personal.GetString(BK_Reader_Personal.GetOrdinal("TELEFONO1"));
+                BK_TELEFONO2 = BK_Reader_Personal.GetString(BK_Reader_Personal.GetOrdinal("TELEFONO2"));
+                BK_CARGO = BK_Reader_Personal.GetString(BK_Reader_Personal.GetOrdinal("CARGO"));
+                BK_DOMICILIO = BK_Reader_Personal.GetString(BK_Reader_Personal.GetOrdinal("DOMICILIO"));
+                BK_NUMERO = BK_Reader_Personal.GetString(BK_Reader_Personal.GetOrdinal("NUMERO"));
+                BK_PISO = BK_Reader_Personal.GetString(BK_Reader_Personal.GetOrdinal("PISO"));
+                BK_DPTO = BK_Reader_Personal.GetString(BK_Reader_Personal.GetOrdinal("DPTO"));
+                BK_CODIGOPOSTAL = BK_Reader_Personal.GetString(BK_Reader_Personal.GetOrdinal("CODIGOPOSTAL"));
+                BK_CIUDAD = BK_Reader_Personal.GetString(BK_Reader_Personal.GetOrdinal("CIUDAD"));
+                BK_COMUNA = BK_Reader_Personal.GetString(BK_Reader_Personal.GetOrdinal("COMUNA"));
+                BK_REGION = BK_Reader_Personal.GetString(BK_Reader_Personal.GetOrdinal("REGION"));
+                BK_PAIS = BK_Reader_Personal.GetString(BK_Reader_Personal.GetOrdinal("PAIS"));
+                BK_OBSERVACIONES = BK_Reader_Personal.GetString(BK_Reader_Personal.GetOrdinal("OBSERVACIONES"));
+                BK_FOTO = BK_Reader_Personal.GetString(BK_Reader_Personal.GetOrdinal("FOTO"));
+                return true;
+            }
+            else
+            {
+                // No existe la empresa
+                return false;
+            }
+
+        }
+
         // Procedimiento Modificar Empresa
         public bool Bm_Personal_Modificar()
         {
@@ -208,6 +252,30 @@ namespace BikeMessenger
                 // Llenar Valores de la Empresa
                 BK_E_CODPAIS = BK_Reader_Personal_Pais.GetInt16(BK_Reader_Personal_Pais.GetOrdinal("CODPAIS"));
                 BK_E_PAIS = BK_Reader_Personal_Pais.GetString(BK_Reader_Personal_Pais.GetOrdinal("PAIS"));
+                return true;
+            }
+            else
+            {
+                // No existe la empresa
+                return false;
+            }
+        }
+
+        public bool Bm_Personal_BuscarGrid()
+        {
+            BK_Cmd_Personal_Grid = new SQLiteCommand(StrBuscarGrid_Personal, BM_Connection);
+            BK_Reader_Personal_Grid = BK_Cmd_Personal_Grid.ExecuteReader();
+            return true;
+        }
+
+        public bool Bm_Personal_BuscarGridProxima()
+        {
+            if (BK_Reader_Personal_Grid.Read())
+            {
+                // Llenar Valores de la Empresa
+                BK_GRID_RUT = BK_Reader_Personal_Grid.GetString(0);
+                BK_GRID_APELLIDOS = BK_Reader_Personal_Grid.GetString(1);
+                BK_GRID_NOMBRES = BK_Reader_Personal_Grid.GetString(2);
                 return true;
             }
             else

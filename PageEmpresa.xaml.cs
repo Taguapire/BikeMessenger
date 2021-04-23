@@ -27,27 +27,51 @@ namespace BikeMessenger
         {
             // this.BM_Connection = BM_Connection;
             this.InitializeComponent();
-            this.NavigationCacheMode = Windows.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
+            this.NavigationCacheMode = Windows.UI.Xaml.Navigation.NavigationCacheMode.Disabled;
         }
 
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs navigationEvent)
         {
-            base.OnNavigatedFrom(e);
-            if (e.NavigationMode == NavigationMode.Back)
+            // call the original OnNavigatingFrom
+            base.OnNavigatingFrom(navigationEvent);
+
+            // when the dialog is removed from navigation stack 
+            if (navigationEvent.NavigationMode == NavigationMode.Back)
             {
-                NavigationCacheMode = NavigationCacheMode.Disabled;
+                // set the cache mode
+                this.NavigationCacheMode = NavigationCacheMode.Disabled;
+
+                ResetPageCache();
             }
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        private void ResetPageCache()
         {
-            if (e.Parameter is string && !string.IsNullOrWhiteSpace((string)e.Parameter))
+            int cacheSize = ((Frame) Parent).CacheSize;
+
+            ((Frame)Parent).CacheSize = 0;
+            ((Frame)Parent).CacheSize = cacheSize;
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs navigationEvent)
+        {
+            base.OnNavigatedTo(navigationEvent);
+            // when the dialog displays then we create viewmodel and set the cache mode
+
+            if (navigationEvent.NavigationMode == NavigationMode.New)
+            {
+                // set the cache mode
+                NavigationCacheMode = NavigationCacheMode.Required;
+            }
+
+            if (navigationEvent.Parameter is string && !string.IsNullOrWhiteSpace((string)navigationEvent.Parameter))
             {
                 //greeting.Text = $"Hi, {e.Parameter.ToString()}";
             }
             else
             {
-                LvrTransferVar = (TransferVar) e.Parameter;
+                LvrTransferVar = (TransferVar) navigationEvent.Parameter;
+
                 if (BM_Database_Empresa.BM_CreateDatabase(LvrTransferVar.TV_Connection))
                 {
                     if (BM_Database_Empresa.Bm_Empresa_Buscar())
@@ -66,6 +90,10 @@ namespace BikeMessenger
                         appBarBorrar.IsEnabled = true;
                         appBarAceptar.IsEnabled = false;
                         appBarAceptar.IsEnabled = false;
+
+                        textBoxRut.IsReadOnly = true;
+                        textBoxDigitoVerificador.IsReadOnly = true;
+
                     }
                     else
                     {
@@ -81,11 +109,13 @@ namespace BikeMessenger
                         appBarBorrar.IsEnabled = false;
                         appBarAceptar.IsEnabled = false;
                         appBarAceptar.IsEnabled = false;
+
+                        textBoxRut.IsReadOnly = false;
+                        textBoxDigitoVerificador.IsReadOnly = false;
                         AvisoOperacionEmpresaDialog("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
                     }
                 }
             }
-            base.OnNavigatedTo(e);
         }
 
         private void BtnSeleccionarAjustes(object sender, RoutedEventArgs e)
@@ -250,6 +280,9 @@ namespace BikeMessenger
                     appBarAceptar.IsEnabled = false;
                     appBarAceptar.IsEnabled = false;
 
+                    textBoxRut.IsReadOnly = true;
+                    textBoxDigitoVerificador.IsReadOnly = true;
+
                     AvisoOperacionEmpresaDialog("Agregando Empresa", "Operación completada con exito.");
                 }
                 else
@@ -297,6 +330,9 @@ namespace BikeMessenger
                     appBarBorrar.IsEnabled = false;
                     appBarAceptar.IsEnabled = false;
                     appBarAceptar.IsEnabled = false;
+
+                    textBoxRut.IsReadOnly = false;
+                    textBoxDigitoVerificador.IsReadOnly = false;
 
                     BM_Database_Empresa.BK_LOGO = "";
                     BM_Database_Empresa.BK_RUTID = "";
