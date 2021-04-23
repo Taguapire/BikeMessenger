@@ -8,8 +8,9 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
-using System.Data.SQLite;
 using Windows.UI.Xaml.Media.Animation;
+using Microsoft.Toolkit.Uwp.UI.Controls;
+using System.Collections.Generic;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -20,48 +21,88 @@ namespace BikeMessenger
     /// </summary>
     public sealed partial class PageRecursos : Page
     {
-        readonly Bm_Recursos_Database BM_Database_Recursos = new Bm_Recursos_Database();
+        Bm_Recursos_Database BM_Database_Recursos = new Bm_Recursos_Database();
         TransferVar LvrTransferVar;
+        bool BorrarSiNo;
 
         public PageRecursos()
         {
             // this.BM_Connection = BM_Connection;
             this.InitializeComponent();
-            this.NavigationCacheMode = Windows.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
+            comboBoxTipo.Items.Add("BICICLETA");
+            comboBoxTipo.Items.Add("BICIMOTO");
+            comboBoxTipo.Items.Add("MOTOCICLETA");
+            comboBoxTipo.Items.Add("AUTOMOVIL");
+            comboBoxTipo.Items.Add("FURGON");
+            comboBoxTipo.Items.Add("CAMBION");
+            comboBoxTipo.Items.Add("VEHICULO MARITIMO");
+            comboBoxTipo.Items.Add("VEHICULO AEREO");
+            comboBoxTipo.Items.Add("OTROS");
+            this.NavigationCacheMode = Windows.UI.Xaml.Navigation.NavigationCacheMode.Disabled;
         }
 
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs navigationEvent)
         {
-            base.OnNavigatedFrom(e);
-            if (e.NavigationMode == NavigationMode.Back)
+            // call the original OnNavigatingFrom
+            base.OnNavigatingFrom(navigationEvent);
+
+            // when the dialog is removed from navigation stack 
+            if (navigationEvent.NavigationMode == NavigationMode.Back)
             {
-                NavigationCacheMode = NavigationCacheMode.Disabled;
+                // set the cache mode
+                this.NavigationCacheMode = NavigationCacheMode.Disabled;
+
+                ResetPageCache();
             }
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        private void ResetPageCache()
         {
-            if (e.Parameter is string && !string.IsNullOrWhiteSpace((string)e.Parameter))
+            int cacheSize = ((Frame)Parent).CacheSize;
+
+            ((Frame)Parent).CacheSize = 0;
+            ((Frame)Parent).CacheSize = cacheSize;
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs navigationEvent)
+        {
+            base.OnNavigatedTo(navigationEvent);
+            // when the dialog displays then we create viewmodel and set the cache mode
+
+            if (navigationEvent.NavigationMode == NavigationMode.New)
+            {
+                // set the cache mode
+                NavigationCacheMode = NavigationCacheMode.Required;
+            }
+
+            if (navigationEvent.Parameter is string && !string.IsNullOrWhiteSpace((string)navigationEvent.Parameter))
             {
                 //greeting.Text = $"Hi, {e.Parameter.ToString()}";
             }
             else
             {
-                LvrTransferVar = (TransferVar) e.Parameter;
-                if (BM_Database_Recursos.BM_CreateDatabase(LvrTransferVar.TV_Connection))
+                LvrTransferVar = (TransferVar) navigationEvent.Parameter;
+                BM_Database_Recursos.BM_CreateDatabase(LvrTransferVar.TV_Connection);
+
+                if (LvrTransferVar.R_RUTID == "")
                 {
-                    if (BM_Database_Recursos.Bm_Personal_Buscar())
+                    if (BM_Database_Recursos.Bm_Recursos_Buscar())
                     {
                         LlenarPantallaConDb();
-                        // BM_Existe_Empresa = true;
+                        LlenarListaRecursos();
+                        LlenarListaPropietarios();
                     }
-                    else
+                }
+                else
+                {
+                    if (BM_Database_Recursos.Bm_Recursos_Buscar(LvrTransferVar.R_RUTID, LvrTransferVar.R_DIGVER, LvrTransferVar.R_PAT_SER))
                     {
-                        // textBoxNombreEmpresa.Text = "Sin Empresa";
+                        LlenarPantallaConDb();
+                        LlenarListaRecursos();
+                        LlenarListaPropietarios();
                     }
                 }
             }
-            base.OnNavigatedTo(e);
         }
 
         private void BtnSeleccionarAjustes(object sender, RoutedEventArgs e)
@@ -134,10 +175,13 @@ namespace BikeMessenger
         {
             try
             {
+                LvrTransferVar.R_RUTID = BM_Database_Recursos.BK_RUTID;
+                LvrTransferVar.R_DIGVER = BM_Database_Recursos.BK_DIGVER;
+                LvrTransferVar.R_PAT_SER = BM_Database_Recursos.BK_PATENTE;
                 textBoxRut.Text = BM_Database_Recursos.BK_RUTID;
                 textBoxDigitoVerificador.Text = BM_Database_Recursos.BK_DIGVER;
                 textBoxPropietario.Text = BM_Database_Recursos.BK_PROPIETARIO;
-                textBoxDescripcion.Text = BM_Database_Recursos.BK_DESCRIPCION;
+                comboBoxTipo.SelectedValue = BM_Database_Recursos.BK_TIPO;
                 textBoxPatenteCodigo.Text = BM_Database_Recursos.BK_PATENTE;
                 textBoxMarca.Text = BM_Database_Recursos.BK_MARCA;
                 textBoxModelo.Text = BM_Database_Recursos.BK_MODELO;
@@ -174,13 +218,36 @@ namespace BikeMessenger
             }
         }
 
+        private void LimpiarPantalla()
+        {
+            LvrTransferVar.R_RUTID = "";
+            LvrTransferVar.R_DIGVER = "";
+            LvrTransferVar.R_PAT_SER = "";
+            textBoxRut.Text = "";
+            textBoxDigitoVerificador.Text = "";
+            textBoxPropietario.Text = "";
+            comboBoxTipo.Text = "";
+            textBoxPatenteCodigo.Text = "";
+            textBoxMarca.Text = "";
+            textBoxModelo.Text = "";
+            textBoxVariante.Text = "";
+            textBoxAno.Text = "";
+            textBoxColor.Text = "";
+            comboBoxCiudad.Text = "";
+            comboBoxComuna.Text = "";
+            comboBoxEstado.Text = "";
+            comboBoxPais.Text = "";
+            textBoxObservaciones.Text = "";
+            imageFotoRecurso.Source = Base64StringToBitmap("");
+        }
+
         private async System.Threading.Tasks.Task LlenarDbConPantallaAsync()
         {
             BM_Database_Recursos.BK_FOTO = await ConvertirImageABase64Async();
             BM_Database_Recursos.BK_RUTID = textBoxRut.Text;
             BM_Database_Recursos.BK_DIGVER = textBoxDigitoVerificador.Text;
             BM_Database_Recursos.BK_PROPIETARIO = textBoxPropietario.Text;
-            BM_Database_Recursos.BK_DESCRIPCION = textBoxDescripcion.Text;
+            BM_Database_Recursos.BK_TIPO = comboBoxTipo.Text;
             BM_Database_Recursos.BK_PATENTE = textBoxPatenteCodigo.Text;
             BM_Database_Recursos.BK_MARCA = textBoxMarca.Text;
             BM_Database_Recursos.BK_MODELO = textBoxModelo.Text;
@@ -194,16 +261,41 @@ namespace BikeMessenger
             BM_Database_Recursos.BK_OBSERVACIONES = textBoxObservaciones.Text;
         }
 
-        private async void BtnModificarRecursos(object sender, RoutedEventArgs e)
-        {
-            await LlenarDbConPantallaAsync();
-            BM_Database_Recursos.Bm_Recursos_Modificar();
-        }
-
         private async void BtnAgregarRecursos(object sender, RoutedEventArgs e)
         {
             await LlenarDbConPantallaAsync();
-            BM_Database_Recursos.Bm_Recursos_Agregar();
+
+            if (BM_Database_Recursos.Bm_Recursos_Agregar())
+            {
+                LlenarListaRecursos();
+                LlenarListaPropietarios();
+                LvrTransferVar.R_RUTID = BM_Database_Recursos.BK_RUTID;
+                LvrTransferVar.R_DIGVER = BM_Database_Recursos.BK_DIGVER;
+                LvrTransferVar.R_PAT_SER = BM_Database_Recursos.BK_PATENTE;
+                AvisoOperacionRecursosDialog("Agregar Personal", "Operación completada con exito.");
+            }
+            else
+            {
+                AvisoOperacionRecursosDialog("Agregando Recursos", "Se a producido un error al intentar agregar recurso.");
+            }
+        }
+
+        private async void BtnModificarRecursos(object sender, RoutedEventArgs e)
+        {
+            await LlenarDbConPantallaAsync();
+            if (BM_Database_Recursos.Bm_Recursos_Modificar(BM_Database_Recursos.BK_PATENTE))
+            {
+                LlenarListaRecursos();
+                LlenarListaPropietarios();
+                LvrTransferVar.R_RUTID = BM_Database_Recursos.BK_RUTID;
+                LvrTransferVar.R_DIGVER = BM_Database_Recursos.BK_DIGVER;
+                LvrTransferVar.R_PAT_SER = BM_Database_Recursos.BK_PATENTE;
+                AvisoOperacionRecursosDialog("Modificar Recursos", "Operación completada con exito.");
+            }
+            else
+            {
+                AvisoOperacionRecursosDialog("Modificando Recursos", "Se a producido un error al intentar modificar recurso.");
+            }
         }
 
         private async System.Threading.Tasks.Task<string> ConvertirImageABase64Async()
@@ -257,5 +349,128 @@ namespace BikeMessenger
 
             ContentDialogResult result = await noErrorRecuperacionDialog.ShowAsync();
         }
+
+        private void dataGridSeleccion_Propietario(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                DataGrid CeldaSeleccionada = sender as DataGrid;
+                GridPropietarioIndividual Fila = (GridPropietarioIndividual)CeldaSeleccionada.SelectedItems[0];
+                string[] CadenaDividida = Fila.RUTID.Split("-", 2, StringSplitOptions.None);
+
+                textBoxRut.Text = CadenaDividida[0];
+                textBoxDigitoVerificador.Text = CadenaDividida[1];
+                textBoxPropietario.Text = Fila.APELLIDO + ", " + Fila.NOMBRE;
+            }
+            catch (System.ArgumentOutOfRangeException)
+            {
+                ;
+            }
+        }
+
+        private void BtnSalirRecursos(object sender, RoutedEventArgs e)
+        {
+            LvrTransferVar.TV_Connection.Close();
+            Application.Current.Exit();
+        }
+
+        private void LlenarListaPropietarios()
+        {
+            List<GridPropietarioIndividual> GridPropietariosLista = new List<GridPropietarioIndividual>();
+            if (BM_Database_Recursos.Bm_Personal_BuscarGrid())
+            {
+                while (BM_Database_Recursos.Bm_Personal_BuscarGridProxima())
+                {
+                    GridPropietariosLista.Add(
+                        new GridPropietarioIndividual
+                        {
+                            RUTID = BM_Database_Recursos.BK_GRID_RUT,
+                            APELLIDO = BM_Database_Recursos.BK_GRID_APELLIDOS,
+                            NOMBRE = BM_Database_Recursos.BK_GRID_NOMBRES
+                        });
+                }
+            }
+            dataGridListadoPropietarios.IsReadOnly = true;
+            dataGridListadoPropietarios.ItemsSource = GridPropietariosLista;
+        }
+
+        private void dataGridRecursos_Seleccion(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                DataGrid CeldaSeleccionada = sender as DataGrid;
+                GridRecursoIndividual Fila = (GridRecursoIndividual)CeldaSeleccionada.SelectedItems[0];
+                if (BM_Database_Recursos.Bm_Recursos_Buscar(Fila.PATENTE))
+                {
+                    // LimpiarPantalla();
+                    LlenarPantallaConDb();
+                    // LlenarListaPersonal();
+                }
+                else
+                {
+                    // textBoxNombreEmpresa.Text = "Sin Empresa";
+                }
+            }
+            catch (System.ArgumentOutOfRangeException)
+            {
+                ;
+            }
+        }
+
+        private void LlenarListaRecursos()
+        {
+            List<GridRecursoIndividual> GridRecursoLista = new List<GridRecursoIndividual>();
+            if (BM_Database_Recursos.Bm_Recursos_BuscarGrid())
+            {
+                while (BM_Database_Recursos.Bm_Recursos_BuscarGridProxima())
+                {
+                    GridRecursoLista.Add(
+                        new GridRecursoIndividual
+                        {
+                            PATENTE = BM_Database_Recursos.BK_RGRID_PATENTE,
+                            TIPO = BM_Database_Recursos.BK_RGRID_TIPO,
+                            MARCA = BM_Database_Recursos.BK_RGRID_MARCA,
+                            MODELO = BM_Database_Recursos.BK_RGRID_MODELO,
+                            CIUDAD = BM_Database_Recursos.BK_RGRID_CIUDAD
+                        });
+                }
+            }
+            dataGridListadoRecursos.IsReadOnly = true;
+            dataGridListadoRecursos.ItemsSource = GridRecursoLista;
+        }
+
+        private async void AvisoOperacionRecursosDialog(string xTitulo, string xDescripcion)
+        {
+            try
+            {
+                ContentDialog AvisoOperacionRecursosDialog = new ContentDialog
+                {
+                    Title = xTitulo,
+                    Content = xDescripcion,
+                    CloseButtonText = "Continuar"
+                };
+                ContentDialogResult result = await AvisoOperacionRecursosDialog.ShowAsync();
+            }
+            catch (System.Exception)
+            {
+                ;
+            }
+        }
+    }
+
+    public class GridPropietarioIndividual
+    {
+        public string RUTID { get; set; }
+        public string APELLIDO { get; set; }
+        public string NOMBRE { get; set; }
+    }
+
+    public class GridRecursoIndividual
+    {
+        public string PATENTE { get; set; }
+        public string TIPO { get; set; }
+        public string MARCA { get; set; }
+        public string MODELO { get; set; }
+        public string CIUDAD { get; set; }
     }
 }

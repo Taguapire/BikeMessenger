@@ -8,10 +8,8 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
-using System.Data.SQLite;
 using Windows.UI.Xaml.Media.Animation;
 using System.Collections.Generic;
-using Windows.Foundation;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
@@ -25,11 +23,16 @@ namespace BikeMessenger
     {
         Bm_Personal_Database BM_Database_Personal = new Bm_Personal_Database();
         TransferVar LvrTransferVar;
+        bool BorrarSiNo;
 
         public PagePersonal()
         {
-            // this.BM_Connection = BM_Connection;
             this.InitializeComponent();
+            comboBoxAutorizacion.Items.Add("ADMINISTRADOR");
+            comboBoxAutorizacion.Items.Add("OPERADOR");
+            comboBoxAutorizacion.Items.Add("COLABORADOR");
+            comboBoxAutorizacion.Items.Add("INTERMEDIARIO");
+            comboBoxAutorizacion.Items.Add("CLIENTE");
             this.NavigationCacheMode = Windows.UI.Xaml.Navigation.NavigationCacheMode.Disabled;
         }
 
@@ -74,17 +77,21 @@ namespace BikeMessenger
             else
             {
                 LvrTransferVar = (TransferVar) navigationEvent.Parameter;
+                BM_Database_Personal.BM_CreateDatabase(LvrTransferVar.TV_Connection);
 
-                if (BM_Database_Personal.BM_CreateDatabase(LvrTransferVar.TV_Connection))
-                {
+                if (LvrTransferVar.P_RUTID == "") {
                     if (BM_Database_Personal.Bm_Personal_Buscar())
                     {
                         LlenarPantallaConDb();
                         LlenarListaPersonal();
-                    }
-                    else
+                     }
+                }
+                else
+                {
+                    if (BM_Database_Personal.Bm_Personal_Buscar(LvrTransferVar.P_RUTID,LvrTransferVar.P_DIGVER))
                     {
-                    // textBoxNombreEmpresa.Text = "Sin Empresa"
+                        LlenarPantallaConDb();
+                        LlenarListaPersonal();
                     }
                 }
             }
@@ -160,12 +167,16 @@ namespace BikeMessenger
         {
             try
             {
+                LvrTransferVar.P_RUTID = BM_Database_Personal.BK_RUTID;
+                LvrTransferVar.P_DIGVER = BM_Database_Personal.BK_DIGVER;
                 textBoxRut.Text = BM_Database_Personal.BK_RUTID;
                 textBoxDigitoVerificador.Text = BM_Database_Personal.BK_DIGVER;
                 textBoxNombres.Text = BM_Database_Personal.BK_NOMBRES;
                 textBoxApellidos.Text = BM_Database_Personal.BK_APELLIDOS;
                 textBoxTelefono1.Text = BM_Database_Personal.BK_TELEFONO1;
                 textBoxTelefono2.Text = BM_Database_Personal.BK_TELEFONO2;
+                textBoxCorreoElectronico.Text = BM_Database_Personal.BK_EMAIL;
+                comboBoxAutorizacion.SelectedValue = BM_Database_Personal.BK_AUTORIZACION;
                 textBoxCargo.Text = BM_Database_Personal.BK_CARGO;
                 textBoxDomicilio.Text = BM_Database_Personal.BK_DOMICILIO;
                 textBoxNumero.Text = BM_Database_Personal.BK_NUMERO;
@@ -202,6 +213,31 @@ namespace BikeMessenger
             }
         }
 
+        private void LimpiarPantalla()
+        {
+            LvrTransferVar.P_RUTID = "";
+            LvrTransferVar.P_DIGVER = "";
+            textBoxRut.Text = "";
+            textBoxDigitoVerificador.Text = "";
+            textBoxNombres.Text = "";
+            textBoxApellidos.Text = "";
+            textBoxTelefono1.Text = "";
+            textBoxTelefono2.Text = "";
+            textBoxCorreoElectronico.Text = "";
+            comboBoxAutorizacion.Text = "";
+            textBoxCargo.Text = "";
+            textBoxDomicilio.Text = "";
+            textBoxNumero.Text = "";
+            textBoxPiso.Text = "";
+            textBoxDepartamento.Text = "";
+            textBoxCodigoPostal.Text = "";
+            comboBoxPais.Text = "";
+            comboBoxRegion.Text = "";
+            comboBoxComuna.Text = "";
+            comboBoxCiudad.Text = "";
+            textBoxObservaciones.Text = "";
+            imageFotoPersonal.Source = Base64StringToBitmap("");
+        }
 
         private async System.Threading.Tasks.Task LlenarDbConPantallaAsync()
         {
@@ -212,6 +248,8 @@ namespace BikeMessenger
             BM_Database_Personal.BK_NOMBRES = textBoxNombres.Text;
             BM_Database_Personal.BK_TELEFONO1 = textBoxTelefono1.Text;
             BM_Database_Personal.BK_TELEFONO2 = textBoxTelefono2.Text;
+            BM_Database_Personal.BK_EMAIL = textBoxCorreoElectronico.Text;
+            BM_Database_Personal.BK_AUTORIZACION = comboBoxAutorizacion.Text;
             BM_Database_Personal.BK_CARGO = textBoxCargo.Text;
             BM_Database_Personal.BK_DOMICILIO = textBoxDomicilio.Text;
             BM_Database_Personal.BK_NUMERO = textBoxNumero.Text;
@@ -225,18 +263,88 @@ namespace BikeMessenger
             BM_Database_Personal.BK_OBSERVACIONES = comboBoxComuna.Text;
         }
 
-        private async void BtnModificarPersonal(object sender, RoutedEventArgs e)
-        {
-            await LlenarDbConPantallaAsync();
-            BM_Database_Personal.Bm_Personal_Modificar();
-            LlenarListaPersonal();
-        }
-
         private async void BtnAgregarPersonal(object sender, RoutedEventArgs e)
         {
             await LlenarDbConPantallaAsync();
-            BM_Database_Personal.Bm_Personal_Agregar();
-            LlenarListaPersonal();
+            if (BM_Database_Personal.Bm_Personal_Agregar())
+            {
+                LlenarListaPersonal();
+                LvrTransferVar.P_RUTID = BM_Database_Personal.BK_RUTID;
+                LvrTransferVar.P_DIGVER = BM_Database_Personal.BK_DIGVER;
+                AvisoOperacionPersonalDialog("Agregar Personal", "Operación completada con exito.");
+            }
+            else
+            {
+                AvisoOperacionPersonalDialog("Agregando Personal", "Se a producido un error al intentar agregar personal.");
+            }
+        }
+
+        private async void BtnModificarPersonal(object sender, RoutedEventArgs e)
+        {
+            await LlenarDbConPantallaAsync();
+            if (BM_Database_Personal.Bm_Personal_Modificar(BM_Database_Personal.BK_RUTID, BM_Database_Personal.BK_DIGVER))
+            {
+                LlenarListaPersonal();
+                LvrTransferVar.P_RUTID = BM_Database_Personal.BK_RUTID;
+                LvrTransferVar.P_DIGVER = BM_Database_Personal.BK_DIGVER;
+                AvisoOperacionPersonalDialog("Modificar Personal", "Operación completada con exito.");
+            }
+            else
+            {
+                AvisoOperacionPersonalDialog("Modificando Personal", "Se a producido un error al intentar modificar personal.");
+            }
+        }
+
+        private void BtnBorrarPersonal(object sender, RoutedEventArgs e)
+        {
+            BorrarSiNo = false;
+
+            AvisoBorrarPersonalDialog();
+
+            if (BorrarSiNo)
+                return;
+
+            try
+            {
+                if (BM_Database_Personal.Bm_Personal_Borrar(BM_Database_Personal.BK_RUTID, BM_Database_Personal.BK_DIGVER))
+                {
+
+                    textBoxRut.IsReadOnly = false;
+                    textBoxDigitoVerificador.IsReadOnly = false;
+
+                    if (BM_Database_Personal.Bm_Personal_Buscar())
+                    {
+                        LlenarPantallaConDb();
+                        LlenarListaPersonal();
+                        LvrTransferVar.P_RUTID = BM_Database_Personal.BK_RUTID;
+                        LvrTransferVar.P_DIGVER = BM_Database_Personal.BK_DIGVER;
+                    }
+                    else
+                    {
+                        LvrTransferVar.P_RUTID = "";
+                        LvrTransferVar.P_DIGVER = "";
+                    }
+
+                    AvisoOperacionPersonalDialog("Borrando Personal", "Operación completada con exito.");
+
+                    LlenarPantallaConDb();
+                }
+                else
+                {
+                    AvisoOperacionPersonalDialog("Borrando Personal", "Se a producido un error al intentar borrar personal.");
+                }
+            }
+            catch (System.ArgumentException)
+            {
+                AvisoOperacionPersonalDialog("Acceso a Base de Datos", "Debe llenar los datos del personal.");
+            }
+            BorrarSiNo = false;
+        }
+
+        private void BtnSalirPersonal(object sender, RoutedEventArgs e)
+        {
+            LvrTransferVar.TV_Connection.Close();
+            Application.Current.Exit();
         }
 
         private async System.Threading.Tasks.Task<string> ConvertirImageABase64Async()
@@ -293,14 +401,37 @@ namespace BikeMessenger
 
         private async void AvisoOperacionPersonalDialog(string xTitulo, string xDescripcion)
         {
-            ContentDialog AvisoOperacionEmpresaDialog = new ContentDialog
+            try
             {
-                Title = xTitulo,
-                Content = xDescripcion,
-                CloseButtonText = "Continuar"
+                ContentDialog AvisoOperacionEmpresaDialog = new ContentDialog
+                {
+                    Title = xTitulo,
+                    Content = xDescripcion,
+                    CloseButtonText = "Continuar"
+                };
+                ContentDialogResult result = await AvisoOperacionEmpresaDialog.ShowAsync();
+            } catch (System.Exception)
+            {
+                ;
+            }
+        }
+
+        private async void AvisoBorrarPersonalDialog()
+        {
+            ContentDialog AvisoConfirmacionPersonalDialog = new ContentDialog
+            {
+                Title = "Borrar Persona",
+                Content = "Confirme borrado del registro actual!",
+                PrimaryButtonText = "Borrar",
+                CloseButtonText = "Cancelar"
             };
 
-            ContentDialogResult result = await AvisoOperacionEmpresaDialog.ShowAsync();
+            ContentDialogResult result = await AvisoConfirmacionPersonalDialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary)
+                BorrarSiNo = true;
+            else
+                BorrarSiNo = false;
         }
 
         private void LlenarListaPersonal()
@@ -327,13 +458,14 @@ namespace BikeMessenger
             try
             {
                 DataGrid CeldaSeleccionada = sender as DataGrid;
-                GridPersonalIndividual Fila = (GridPersonalIndividual)CeldaSeleccionada.SelectedItems[0];
+                GridPersonalIndividual Fila = (GridPersonalIndividual) CeldaSeleccionada.SelectedItems[0];
                 string[] CadenaDividida = Fila.RUTID.Split("-", 2, StringSplitOptions.None);
 
                 if (BM_Database_Personal.Bm_Personal_Buscar(CadenaDividida[0], CadenaDividida[1]))
                 {
+                    LimpiarPantalla();
                     LlenarPantallaConDb();
-                    LlenarListaPersonal();
+                    // LlenarListaPersonal();
                 }
                 else
                 {

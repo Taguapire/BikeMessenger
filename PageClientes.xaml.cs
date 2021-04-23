@@ -274,5 +274,16 @@ namespace BikeMessenger
 
             ContentDialogResult result = await noErrorRecuperacionDialog.ShowAsync();
         }
+
+        private void BtnSalirClientes(object sender, RoutedEventArgs e)
+        {
+            LvrTransferVar.TV_Connection.Close();
+            Application.Current.Exit();
+        }
+
+        private void dataGridSeleccion_Clientes(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }

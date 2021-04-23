@@ -96,6 +96,11 @@ namespace BikeMessenger
                 // configuring the new page by passing required information as a navigation
                 // parameter
                 // rootFrame.Navigate(typeof(PageEmpresa), e.Arguments);
+                LvrTransferVar.P_RUTID = "";
+                LvrTransferVar.P_DIGVER = "";
+                LvrTransferVar.R_RUTID = "";
+                LvrTransferVar.R_DIGVER = "";
+                LvrTransferVar.R_PAT_SER = "";
                 rootFrame.CacheSize = 0;
                 rootFrame.Navigate(typeof(PageEmpresa), LvrTransferVar, new SuppressNavigationTransitionInfo());
             }

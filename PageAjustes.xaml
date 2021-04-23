@@ -30,8 +30,8 @@
             <AppBarButton x:Name="appBarAgregar" Icon="Add" Label="Agregar"/>
             <AppBarButton x:Name="appBarModificar" Icon="Edit" Label="Modificar"/>
             <AppBarButton x:Name="appBarBorrar" Icon="Delete" Label="Borrar"/>
-            <AppBarButton x:Name="appBarAceptar" Icon="Save" Label="Aceptar"/>
-            <AppBarButton x:Name="appBarCancelar" Icon="Cancel" Label="Cancelar"/>
+            <AppBarButton x:Name="appBarImprimir" Icon="Print" Label="Imprimir"/>
+            <AppBarButton x:Name="appBarSalir" Icon="Go" Label="Salir" Click="BtnSalirAjustes"/>
         </CommandBar>
     </Page.BottomAppBar>
     <Grid x:Name="GridAjustes" AutomationProperties.AccessibilityView="Content" RequestedTheme="Default" MinWidth="1280" MinHeight="720" MaxWidth="1280" MaxHeight="720" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">

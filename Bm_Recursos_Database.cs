@@ -13,19 +13,28 @@ namespace BikeMessenger
         public SQLiteConnection BM_Connection;
         SQLiteCommand BK_Cmd_Recursos;
         SQLiteDataReader BK_Reader_Recursos;
+        
         SQLiteCommand BK_Cmd_Recursos_Pais;
         SQLiteDataReader BK_Reader_Recursos_Pais;
+
+        SQLiteCommand BK_Cmd_Personal_Grid;
+        SQLiteDataReader BK_Reader_Personal_Grid;
+
+        SQLiteCommand BK_Cmd_Recursos_Grid;
+        SQLiteDataReader BK_Reader_Recursos_Grid;
+
         string StrAgregar_Recursos;
         string StrModificar_Recursos;
         string StrBorrar_Recursos;
-        readonly string StrBuscar_Recursos = "SELECT * FROM RECURSOS";
+        String StrBuscar_Recursos;
         readonly String StrBuscar_Recursos_Pais = "SELECT * FROM PAIS ORDER BY PAIS ASC";
-
+        readonly string StrBuscarGrid_Personal = "SELECT RUTID||'-'||DIGVER, APELLIDOS, NOMBRES FROM PERSONAL ORDER BY APELLIDOS ASC";
+        readonly string StrBuscarGrid_Recursos = "SELECT PATENTE, TIPO, MARCA, MODELO, CIUDAD FROM RECURSOS ORDER BY PATENTE ASC";
         // Campos Recursos
         public string BK_RUTID { get; set; }
         public string BK_DIGVER { get; set; }
         public string BK_PROPIETARIO { get; set; }
-        public string BK_DESCRIPCION { get; set; }
+        public string BK_TIPO { get; set; }
         public string BK_PATENTE { get; set; }
         public string BK_MARCA { get; set; }
         public string BK_MODELO { get; set; }
@@ -43,30 +52,22 @@ namespace BikeMessenger
         public Int16 BK_E_CODPAIS { get; set; }
         public string BK_E_PAIS { get; set; }
 
+        // Campos Grilla Propietarios
+        public string BK_GRID_RUT { get; set; }
+        public string BK_GRID_APELLIDOS { get; set; }
+        public string BK_GRID_NOMBRES { get; set; }
+
+        // Campos Grilla Recursos
+        public string BK_RGRID_PATENTE { get; set; }
+        public string BK_RGRID_TIPO { get; set; }
+        public string BK_RGRID_MARCA { get; set; }
+        public string BK_RGRID_MODELO { get; set; }
+        public string BK_RGRID_CIUDAD { get; set; }
+
         public Boolean BM_CreateDatabase(SQLiteConnection BM_Connection)
         {
             this.BM_Connection = BM_Connection;
-            try
-            {
-                //  BM_DB = new SQLiteFactory();
-                // Crear Automaticamente la Base de Datos
-                // BM_Connection = (SQLiteConnection)BM_DB.CreateConnection();
-
-                // BM_Connection.ConnectionString = "Data Source=" + Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\BikeMessenger.db; PRAGMA journal_mode = WAL; Version = 3; New = True; Compress = True; Connection Timeout=0";
-
-                // BM_Connection.Open();
-
-                // Verificar que Base es nueva o ya esta creada con objetos
-                // Db_Empresa = new Bm_Empresa_Database(BM_Connection);
-
-                // Si es nueva deben crearse los objetos
-
-                return true;
-            }
-            catch (System.Data.SQLite.SQLiteException)
-            {
-                return false;
-            }
+            return true;
         }
 
         public bool Bm_Recursos_Agregar()
@@ -75,7 +76,7 @@ namespace BikeMessenger
             StrAgregar_Recursos += "RUTID,";
             StrAgregar_Recursos += "DIGVER,";
             StrAgregar_Recursos += "PROPIETARIO,";
-            StrAgregar_Recursos += "DESCRIPCION,";
+            StrAgregar_Recursos += "TIPO,";
             StrAgregar_Recursos += "PATENTE,";
             StrAgregar_Recursos += "MARCA,";
             StrAgregar_Recursos += "MODELO,";
@@ -91,7 +92,7 @@ namespace BikeMessenger
             StrAgregar_Recursos += "'" + BK_RUTID + "',";
             StrAgregar_Recursos += "'" + BK_DIGVER + "',";
             StrAgregar_Recursos += "'" + BK_PROPIETARIO + "',";
-            StrAgregar_Recursos += "'" + BK_DESCRIPCION + "',";
+            StrAgregar_Recursos += "'" + BK_TIPO + "',";
             StrAgregar_Recursos += "'" + BK_PATENTE + "',";
             StrAgregar_Recursos += "'" + BK_MARCA + "',";
             StrAgregar_Recursos += "'" + BK_MODELO + "',";
@@ -109,8 +110,9 @@ namespace BikeMessenger
             return true;
         }
 
-        public bool Bm_Personal_Buscar()
+        public bool Bm_Recursos_Buscar()
         {
+            StrBuscar_Recursos = "SELECT * FROM RECURSOS";
             BK_Cmd_Recursos = new SQLiteCommand(StrBuscar_Recursos, BM_Connection);
             BK_Reader_Recursos = BK_Cmd_Recursos.ExecuteReader();
 
@@ -121,7 +123,7 @@ namespace BikeMessenger
                 BK_RUTID = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("RUTID"));
                 BK_DIGVER = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("DIGVER"));
                 BK_PROPIETARIO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("PROPIETARIO"));
-                BK_DESCRIPCION = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("DESCRIPCION"));
+                BK_TIPO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("TIPO"));
                 BK_PATENTE = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("PATENTE"));
                 BK_MARCA = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("MARCA"));
                 BK_MODELO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("MODELO"));
@@ -141,15 +143,89 @@ namespace BikeMessenger
                 // No existe Recursos
                 return false;
             }
+        }
 
+        public bool Bm_Recursos_Buscar(string pPATENTE)
+        {
+            StrBuscar_Recursos = "SELECT * FROM RECURSOS";
+            StrBuscar_Recursos += " WHERE PATENTE = '" + pPATENTE + "'";
+
+            BK_Cmd_Recursos = new SQLiteCommand(StrBuscar_Recursos, BM_Connection);
+            BK_Reader_Recursos = BK_Cmd_Recursos.ExecuteReader();
+
+            if (BK_Reader_Recursos.Read())
+            {
+                // Llenar Valores de Recursos
+                BK_RUTID = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("RUTID"));
+                BK_DIGVER = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("DIGVER"));
+                BK_PROPIETARIO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("PROPIETARIO"));
+                BK_TIPO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("TIPO"));
+                BK_PATENTE = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("PATENTE"));
+                BK_MARCA = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("MARCA"));
+                BK_MODELO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("MODELO"));
+                BK_VARIANTE = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("VARIANTE"));
+                BK_ANO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("ANO"));
+                BK_COLOR = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("COLOR"));
+                BK_CIUDAD = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("CIUDAD"));
+                BK_COMUNA = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("COMUNA"));
+                BK_REGION = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("REGION"));
+                BK_PAIS = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("PAIS"));
+                BK_OBSERVACIONES = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("OBSERVACIONES"));
+                BK_FOTO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("FOTO"));
+                return true;
+            }
+            else
+            {
+                // No existe Recursos
+                return false;
+            }
+        }
+
+        public bool Bm_Recursos_Buscar(string pRUTID, string pDIGVER, string pPATENTE)
+        {
+            StrBuscar_Recursos = "SELECT * FROM RECURSOS";
+            StrBuscar_Recursos += " WHERE ";
+            StrBuscar_Recursos += " RUTID = '" + pRUTID + "' AND ";
+            StrBuscar_Recursos += " DIGVER = '" + pDIGVER  + "' AND ";
+            StrBuscar_Recursos += " PATENTE = '" + pPATENTE + "'";
+
+            BK_Cmd_Recursos = new SQLiteCommand(StrBuscar_Recursos, BM_Connection);
+            BK_Reader_Recursos = BK_Cmd_Recursos.ExecuteReader();
+
+            if (BK_Reader_Recursos.Read())
+            {
+                // Llenar Valores de Recursos
+                BK_RUTID = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("RUTID"));
+                BK_DIGVER = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("DIGVER"));
+                BK_PROPIETARIO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("PROPIETARIO"));
+                BK_TIPO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("TIPO"));
+                BK_PATENTE = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("PATENTE"));
+                BK_MARCA = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("MARCA"));
+                BK_MODELO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("MODELO"));
+                BK_VARIANTE = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("VARIANTE"));
+                BK_ANO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("ANO"));
+                BK_COLOR = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("COLOR"));
+                BK_CIUDAD = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("CIUDAD"));
+                BK_COMUNA = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("COMUNA"));
+                BK_REGION = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("REGION"));
+                BK_PAIS = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("PAIS"));
+                BK_OBSERVACIONES = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("OBSERVACIONES"));
+                BK_FOTO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("FOTO"));
+                return true;
+            }
+            else
+            {
+                // No existe Recursos
+                return false;
+            }
         }
 
         // Procedimiento Modificar Recursos
-        public bool Bm_Recursos_Modificar()
+        public bool Bm_Recursos_Modificar(string pPATENTE)
         {
             StrModificar_Recursos = "UPDATE RECURSOS SET ";
             StrModificar_Recursos += "PROPIETARIO = '" + BK_PROPIETARIO + "',";
-            StrModificar_Recursos += "DESCRIPCION = '" + BK_DESCRIPCION + "',";
+            StrModificar_Recursos += "TIPO = '" + BK_TIPO + "',";
             StrModificar_Recursos += "MARCA = '" + BK_MARCA + "',";
             StrModificar_Recursos += "MODELO = '" + BK_MODELO + "',";
             StrModificar_Recursos += "VARIANTE = '" + BK_VARIANTE + "',";
@@ -162,9 +238,7 @@ namespace BikeMessenger
             StrModificar_Recursos += "OBSERVACIONES = '" + BK_OBSERVACIONES + "',";
             StrModificar_Recursos += "FOTO = '" + BK_FOTO + "' ";
             StrModificar_Recursos += "WHERE ";
-            StrModificar_Recursos += "RUTID = '" + BK_RUTID + "' AND ";
-            StrModificar_Recursos += "DIGVER = '" + BK_DIGVER + "' AND " ;
-            StrModificar_Recursos += "PATENTE = '" + BK_PATENTE + "'";
+            StrModificar_Recursos += "PATENTE = '" + pPATENTE + "'";
             BK_Cmd_Recursos = new SQLiteCommand(StrModificar_Recursos, BM_Connection);
             BK_Cmd_Recursos.ExecuteNonQuery();
             return true;
@@ -204,6 +278,56 @@ namespace BikeMessenger
             else
             {
                 // No existe Recursos
+                return false;
+            }
+        }
+
+        public bool Bm_Personal_BuscarGrid()
+        {
+            BK_Cmd_Personal_Grid = new SQLiteCommand(StrBuscarGrid_Personal, BM_Connection);
+            BK_Reader_Personal_Grid = BK_Cmd_Personal_Grid.ExecuteReader();
+            return true;
+        }
+
+        public bool Bm_Personal_BuscarGridProxima()
+        {
+            if (BK_Reader_Personal_Grid.Read())
+            {
+                // Llenar Valores de la Empresa
+                BK_GRID_RUT = BK_Reader_Personal_Grid.GetString(0);
+                BK_GRID_APELLIDOS = BK_Reader_Personal_Grid.GetString(1);
+                BK_GRID_NOMBRES = BK_Reader_Personal_Grid.GetString(2);
+                return true;
+            }
+            else
+            {
+                // No existe la empresa
+                return false;
+            }
+        }
+
+        public bool Bm_Recursos_BuscarGrid()
+        {
+            BK_Cmd_Recursos_Grid = new SQLiteCommand(StrBuscarGrid_Recursos, BM_Connection);
+            BK_Reader_Recursos_Grid = BK_Cmd_Recursos_Grid.ExecuteReader();
+            return true;
+        }
+
+        public bool Bm_Recursos_BuscarGridProxima()
+        {
+            if (BK_Reader_Recursos_Grid.Read())
+            {
+                // Llenar Valores de la Empresa
+                BK_RGRID_PATENTE = BK_Reader_Recursos_Grid.GetString(0);
+                BK_RGRID_TIPO = BK_Reader_Recursos_Grid.GetString(1);
+                BK_RGRID_MARCA = BK_Reader_Recursos_Grid.GetString(2);
+                BK_RGRID_MODELO = BK_Reader_Recursos_Grid.GetString(3);
+                BK_RGRID_CIUDAD = BK_Reader_Recursos_Grid.GetString(4);
+                return true;
+            }
+            else
+            {
+                // No existe la empresa
                 return false;
             }
         }
