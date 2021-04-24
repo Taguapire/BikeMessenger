@@ -262,21 +262,29 @@ namespace BikeMessenger
 
         private async void BtnAgregarRecursos(object sender, RoutedEventArgs e)
         {
-            await LlenarDbConPantallaAsync();
+            try
+            {
+                await LlenarDbConPantallaAsync();
 
-            if (BM_Database_Recursos.Bm_Recursos_Agregar())
-            {
-                LlenarListaRecursos();
-                LlenarListaPropietarios();
-                LvrTransferVar.R_RUTID = BM_Database_Recursos.BK_RUTID;
-                LvrTransferVar.R_DIGVER = BM_Database_Recursos.BK_DIGVER;
-                LvrTransferVar.R_PAT_SER = BM_Database_Recursos.BK_PATENTE;
-                await AvisoOperacionRecursosDialogAsync("Agregar Personal", "Operación completada con exito.");
+                if (BM_Database_Recursos.Bm_Recursos_Agregar())
+                {
+                    LlenarListaRecursos();
+                    LlenarListaPropietarios();
+                    LvrTransferVar.R_RUTID = BM_Database_Recursos.BK_RUTID;
+                    LvrTransferVar.R_DIGVER = BM_Database_Recursos.BK_DIGVER;
+                    LvrTransferVar.R_PAT_SER = BM_Database_Recursos.BK_PATENTE;
+                    await AvisoOperacionRecursosDialogAsync("Agregar Personal", "Operación completada con exito.");
+                }
+                else
+                {
+                    await AvisoOperacionRecursosDialogAsync("Agregando Recursos", "Se a producido un error al intentar agregar recurso.");
+                }
             }
-            else
+            catch (System.ArgumentException)
             {
-                await AvisoOperacionRecursosDialogAsync("Agregando Recursos", "Se a producido un error al intentar agregar recurso.");
+                await AvisoOperacionRecursosDialogAsync("Agregando Recursos", "Aun faltan datos por completar.");
             }
+
         }
 
         private async void BtnModificarRecursos(object sender, RoutedEventArgs e)

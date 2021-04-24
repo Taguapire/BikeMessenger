@@ -53,27 +53,7 @@ namespace BikeMessenger
         public Boolean BM_CreateDatabase(SQLiteConnection BM_Connection)
         {
             this.BM_Connection = BM_Connection;
-            try
-            {
-                //  BM_DB = new SQLiteFactory();
-                // Crear Automaticamente la Base de Datos
-                // BM_Connection = (SQLiteConnection)BM_DB.CreateConnection();
-
-                // BM_Connection.ConnectionString = "Data Source=" + Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\BikeMessenger.db; PRAGMA journal_mode = WAL; Version = 3; New = True; Compress = True; Connection Timeout=0";
-
-                // BM_Connection.Open();
-
-                // Verificar que Base es nueva o ya esta creada con objetos
-                // Db_Empresa = new Bm_Empresa_Database(BM_Connection);
-
-                // Si es nueva deben crearse los objetos
-
-                return true;
-            }
-            catch (System.Data.SQLite.SQLiteException)
-            {
-                return false;
-            }
+            return true;
         }
 
         // Procedimiento Buscar Empresa

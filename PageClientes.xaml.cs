@@ -266,17 +266,24 @@ namespace BikeMessenger
 
         private async void BtnAgregarClientes(object sender, RoutedEventArgs e)
         {
-            await LlenarDbConPantallaAsync();
-            if (BM_Database_Clientes.Bm_Clientes_Agregar())
+            try
             {
-                LlenarListaClientes();
-                LvrTransferVar.C_RUTID = BM_Database_Clientes.BK_RUTID;
-                LvrTransferVar.C_DIGVER = BM_Database_Clientes.BK_DIGVER;
-                await AvisoOperacionClientesDialogAsync("Agregar Clientes", "Operación completada con exito.");
+                await LlenarDbConPantallaAsync();
+                if (BM_Database_Clientes.Bm_Clientes_Agregar())
+                {
+                    LlenarListaClientes();
+                    LvrTransferVar.C_RUTID = BM_Database_Clientes.BK_RUTID;
+                    LvrTransferVar.C_DIGVER = BM_Database_Clientes.BK_DIGVER;
+                    await AvisoOperacionClientesDialogAsync("Agregar Clientes", "Operación completada con exito.");
+                }
+                else
+                {
+                    await AvisoOperacionClientesDialogAsync("Agregando Clientes", "Se a producido un error al intentar agregar clientes.");
+                }
             }
-            else
+            catch (System.ArgumentException)
             {
-                await AvisoOperacionClientesDialogAsync("Agregando Clientes", "Se a producido un error al intentar agregar clientes.");
+                await AvisoOperacionClientesDialogAsync("Agregando Clientes", "Aun faltan datos por completar.");
             }
         }
 

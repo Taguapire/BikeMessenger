@@ -4,6 +4,7 @@ using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Storage;
 
 namespace BikeMessenger
 {
@@ -33,13 +34,52 @@ namespace BikeMessenger
         // Valores de SERVICIOS
         public string S_NROENVIO;
 
+        public string Directorio { get; set; }
+
         public TransferVar()
         {
             TV_Factory = new SQLiteFactory();
             // Crear Automaticamente la Base de Datos
+
+            if (!VerificarDirectorio())
+                CrearDirectorio(Windows.Storage.ApplicationData.Current.LocalFolder.Path);
+            
+            LeerDirectorio();
+
             TV_Connection = (SQLiteConnection)TV_Factory.CreateConnection();
-            TV_Connection.ConnectionString = "Data Source=" + Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\BikeMessenger.db; Version = 3";
+            TV_Connection.ConnectionString = "Data Source=" + Directorio + "\\BikeMessenger.db; Version = 3";
             TV_Connection.Open();
+
+            Console.WriteLine(Directorio);
+        }
+
+        public bool VerificarDirectorio()
+        {
+            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+            Directorio = (string) localSettings.Values["PENTALPHA"];
+            
+            if (Directorio == null || Directorio == "")
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public void CrearDirectorio(string pDirectorio)
+        {
+            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+            localSettings.Values["PENTALPHA"] = pDirectorio;
+            return;
+        }
+
+        public void LeerDirectorio()
+        {
+            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+            Directorio = (string) localSettings.Values["PENTALPHA"];
+            return;
         }
     }
 }

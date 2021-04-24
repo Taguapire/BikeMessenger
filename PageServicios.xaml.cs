@@ -10,6 +10,12 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using System.Data.SQLite;
 using Windows.UI.Xaml.Media.Animation;
+using Windows.Devices.Geolocation;
+using Windows.UI.Xaml.Controls.Maps;
+using System.Collections.Generic;
+using Windows.Foundation;
+using Windows.Services.Maps;
+using Windows.UI;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -26,6 +32,8 @@ namespace BikeMessenger
         {
             this.InitializeComponent();
             this.NavigationCacheMode = Windows.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
+            mapControlBikeMessenger.MapServiceToken = "kObotinnsvzUnI3k9Smn~hOr - MYZEy_DGqfvj5V0QHQ~AlzXtL5PnD05eblszjnq7bMEEwk4TSFF3szRn_yyu2GaEo9JehDSttrmHwgRFSzi";
+            appBarBuscarRuta.IsEnabled = false;
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -98,6 +106,76 @@ namespace BikeMessenger
             BM_Database_Servicios.Bm_Servicios_Agregar();
         }
 
+        private async void BtnMapaBuscarRutaServicios(object sender, RoutedEventArgs e)
+        {
+            double lvrlatOrigen = 0;
+            double lvrlonOrigen = 0;
+            double lvrlatDestino = 0;
+            double lvrlonDestino = 0;
+
+            string addressInicio = textBoxOrigenDomicilio1.Text + " " + textBoxOrigenNumero.Text + "," + comboBoxOrigenComuna.Text + "," + comboBoxOrigenCiudad.Text + "," + comboBoxOrigenPais.Text;
+            string addressFinal = textBoxDestinoDomicilio1.Text + " " + textBoxDestinoNumero.Text + "," + comboBoxDestinoComuna.Text + "," + comboBoxDestinoCiudad.Text + "," + comboBoxDestinoPais.Text;
+
+            var resultsOrigen = await MapLocationFinder.FindLocationsAsync(addressInicio, null);
+
+            if (resultsOrigen.Status == MapLocationFinderStatus.Success)
+            {
+                lvrlatOrigen = resultsOrigen.Locations[0].Point.Position.Latitude;
+                lvrlonOrigen = resultsOrigen.Locations[0].Point.Position.Longitude;
+            }
+
+            var resultsDestino = await MapLocationFinder.FindLocationsAsync(addressFinal, null);
+
+            if (resultsDestino.Status == MapLocationFinderStatus.Success)
+            {
+                lvrlatDestino = resultsDestino.Locations[0].Point.Position.Latitude;
+                lvrlonDestino = resultsDestino.Locations[0].Point.Position.Longitude;
+            }
+
+            BasicGeoposition startLocation = new BasicGeoposition() { Latitude = lvrlatOrigen, Longitude = lvrlonOrigen };
+            BasicGeoposition endLocation = new BasicGeoposition() { Latitude = lvrlatDestino, Longitude = lvrlonDestino };
+
+            MapRouteFinderResult routeResult =
+                await MapRouteFinder.GetDrivingRouteAsync(
+                new Geopoint(startLocation),
+                new Geopoint(endLocation),
+                MapRouteOptimization.Time,
+                MapRouteRestrictions.None);
+
+            if (routeResult.Status == MapRouteFinderStatus.Success)
+            {
+                // Use the route to initialize a MapRouteView.
+                MapRouteView viewOfRoute = new MapRouteView(routeResult.Route);
+                viewOfRoute.RouteColor = Colors.Yellow;
+                viewOfRoute.OutlineColor = Colors.Black;
+
+                // Add the new MapRouteView to the Routes collection
+                // of the MapControl.
+                mapControlBikeMessenger.Routes.Add(viewOfRoute);
+
+                // Fit the MapControl to the route.
+                await mapControlBikeMessenger.TrySetViewBoundsAsync(
+                      routeResult.Route.BoundingBox,
+                      null,
+                      Windows.UI.Xaml.Controls.Maps.MapAnimationKind.None);
+            }
+        }
+
+        private void BtnMapaServicios(object sender, RoutedEventArgs e)
+        {
+            mapControlBikeMessenger.Style = MapStyle.Road;
+            if (mapControlBikeMessenger.Visibility == Visibility.Visible)
+            {
+                mapControlBikeMessenger.Visibility = Visibility.Collapsed;
+                appBarBuscarRuta.IsEnabled = false;
+            } 
+            else
+            {
+                //mapControlBikeMessenger;
+                mapControlBikeMessenger.Visibility = Visibility.Visible;
+                appBarBuscarRuta.IsEnabled = true;
+            }
+        }
         private void LlenarPantallaConDb()
         {
             try

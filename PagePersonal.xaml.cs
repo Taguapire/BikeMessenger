@@ -266,17 +266,24 @@ namespace BikeMessenger
 
         private async void BtnAgregarPersonal(object sender, RoutedEventArgs e)
         {
-            await LlenarDbConPantallaAsync();
-            if (BM_Database_Personal.Bm_Personal_Agregar())
+            try
             {
-                LlenarListaPersonal();
-                LvrTransferVar.P_RUTID = BM_Database_Personal.BK_RUTID;
-                LvrTransferVar.P_DIGVER = BM_Database_Personal.BK_DIGVER;
-                await AvisoOperacionPersonalDialogAsync("Agregar Personal", "Operación completada con exito.");
+                await LlenarDbConPantallaAsync();
+                if (BM_Database_Personal.Bm_Personal_Agregar())
+                {
+                    LlenarListaPersonal();
+                    LvrTransferVar.P_RUTID = BM_Database_Personal.BK_RUTID;
+                    LvrTransferVar.P_DIGVER = BM_Database_Personal.BK_DIGVER;
+                    await AvisoOperacionPersonalDialogAsync("Agregar Personal", "Operación completada con exito.");
+                }
+                else
+                {
+                    await AvisoOperacionPersonalDialogAsync("Agregando Personal", "Se a producido un error al intentar agregar personal.");
+                }
             }
-            else
+            catch (System.ArgumentException)
             {
-                await AvisoOperacionPersonalDialogAsync("Agregando Personal", "Se a producido un error al intentar agregar personal.");
+                await AvisoOperacionPersonalDialogAsync("Agregando Personal", "Aun faltan datos por completar.");
             }
         }
 

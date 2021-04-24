@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -25,6 +26,7 @@ namespace BikeMessenger
     public sealed partial class PageAjustes : Page
     {
         TransferVar LvrTransferVar;
+        bool CambiarDirectorioSiNo;
 
         public PageAjustes()
         {
@@ -49,6 +51,8 @@ namespace BikeMessenger
             else
             {
                 LvrTransferVar = (TransferVar) e.Parameter;
+                textBoxDirectorioActual.Text = LvrTransferVar.Directorio;
+                textBoxDirectorioNuevo.Text = LvrTransferVar.Directorio;
             }
             base.OnNavigatedTo(e);
         }
@@ -99,6 +103,119 @@ namespace BikeMessenger
         {
             LvrTransferVar.TV_Connection.Close();
             Application.Current.Exit();
+        }
+
+        private async void BtnEventoBuscarNuevoDirectorio(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+
+                var b = (Control)sender;
+                b.IsEnabled = false;
+
+                var folderPicker = new Windows.Storage.Pickers.FolderPicker();
+                folderPicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.ComputerFolder;
+                folderPicker.FileTypeFilter.Add("*");
+                //folderPicker.FileTypeFilter.Add("*.db3");
+
+                Windows.Storage.StorageFolder folder = await folderPicker.PickSingleFolderAsync();
+
+                if (folder == null) {
+                    btnBuscarNuevoDirectorio.IsEnabled = true;
+                    return;
+                }
+                
+                textBoxDirectorioNuevo.Text = folder.Path;
+            }
+            catch (System.NullReferenceException)
+            {
+                ;// textBoxDirectorioNuevo.Text
+            }
+            catch (System.Runtime.InteropServices.COMException)
+            {
+                ;
+            }
+
+            //StorageFile file = await folder.CreateFileAsync("sample.csv", CreationCollisionOption.ReplaceExisting);
+            //var stream = await file.OpenStreamForWriteAsync();
+            //var buf = Encoding.UTF8.GetBytes("Hello, World");
+            //await stream.WriteAsync(buf, 0, buf.Length);
+            //stream.Dispose();
+            btnBuscarNuevoDirectorio.IsEnabled = true;
+            return;
+        }
+
+        private async void BtnEventoCambiarANuevoDirectorio(object sender, RoutedEventArgs e)
+        {
+
+            CambiarDirectorioSiNo = false;
+
+            await AvisoCambiarDirectorioDialogAsync();
+
+            if (!CambiarDirectorioSiNo)
+                return;
+            try
+            {
+                await CopiarBaseDeDatosAsync((string)textBoxDirectorioActual.Text, (string)textBoxDirectorioNuevo.Text);
+            }
+            catch (System.ArgumentException)
+            {
+                await AvisoDirectorioDialogAsync("Cambiar Directorio", "No a sido posible cambiar la base de datos a nuevo directorio.");
+            }
+            catch (System.InvalidCastException)
+            {
+                await AvisoDirectorioDialogAsync("Cambiar Directorio", "No a sido posible cambiar la base de datos a nuevo directorio.");
+            }
+            catch (System.UnauthorizedAccessException)
+            {
+                await AvisoDirectorioDialogAsync("Cambiar Directorio", "Acceso no autorizado a este directorio.");
+            }
+            catch (System.Exception)
+            {
+                await AvisoDirectorioDialogAsync("Cambiar Directorio", "No puede crearse la Base en Destino.");
+            }
+            CambiarDirectorioSiNo = false;
+        }
+
+        private async System.Threading.Tasks.Task AvisoCambiarDirectorioDialogAsync()
+        {
+            ContentDialog AvisoCambiarDirectorioDialog = new ContentDialog
+            {
+                Title = "Cambiar Directorio",
+                Content = "Confirme el cambio de la Base de Datos al nuevo directorio!",
+                PrimaryButtonText = "Confirmar",
+                CloseButtonText = "Cancelar"
+            };
+
+            ContentDialogResult result = await AvisoCambiarDirectorioDialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary)
+                CambiarDirectorioSiNo = true;
+            else
+                CambiarDirectorioSiNo = false;
+        }
+
+        private async System.Threading.Tasks.Task AvisoDirectorioDialogAsync(string pTitle, string pContent)
+        {
+            ContentDialog AvisoCambiarDirectorioDialog = new ContentDialog
+            {
+                Title = pTitle,
+                Content = pContent,
+                CloseButtonText = "Continuar"
+            };
+
+            ContentDialogResult result = await AvisoCambiarDirectorioDialog.ShowAsync();
+        }
+
+        private async System.Threading.Tasks.Task CopiarBaseDeDatosAsync(string DirectorioOrigen, string DirectorioDestino)
+        {
+            StorageFolder FolderOrigen = await StorageFolder.GetFolderFromPathAsync(DirectorioOrigen);
+            StorageFile BaseDatosOrigen = await FolderOrigen.GetFileAsync("BikeMessenger.db");
+
+            StorageFolder FolderDestino = await StorageFolder.GetFolderFromPathAsync(DirectorioDestino);
+            //StorageFile BaseDatosDestino = await FolderDestino.GetFileAsync("BikeMessenger.db");
+
+            StorageFile copiedFile = await BaseDatosOrigen.CopyAsync(FolderDestino, "BikeMessenger.db",NameCollisionOption.GenerateUniqueName);
         }
     }
 }
