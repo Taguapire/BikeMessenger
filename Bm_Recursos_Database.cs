@@ -72,150 +72,179 @@ namespace BikeMessenger
 
         public bool Bm_Recursos_Agregar()
         {
-            StrAgregar_Recursos = "INSERT INTO RECURSOS (";
-            StrAgregar_Recursos += "RUTID,";
-            StrAgregar_Recursos += "DIGVER,";
-            StrAgregar_Recursos += "PROPIETARIO,";
-            StrAgregar_Recursos += "TIPO,";
-            StrAgregar_Recursos += "PATENTE,";
-            StrAgregar_Recursos += "MARCA,";
-            StrAgregar_Recursos += "MODELO,";
-            StrAgregar_Recursos += "VARIANTE,";
-            StrAgregar_Recursos += "ANO,";
-            StrAgregar_Recursos += "COLOR,";
-            StrAgregar_Recursos += "CIUDAD,";
-            StrAgregar_Recursos += "COMUNA,";
-            StrAgregar_Recursos += "REGION,";
-            StrAgregar_Recursos += "PAIS,";
-            StrAgregar_Recursos += "OBSERVACIONES,";
-            StrAgregar_Recursos += "FOTO) VALUES (";
-            StrAgregar_Recursos += "'" + BK_RUTID + "',";
-            StrAgregar_Recursos += "'" + BK_DIGVER + "',";
-            StrAgregar_Recursos += "'" + BK_PROPIETARIO + "',";
-            StrAgregar_Recursos += "'" + BK_TIPO + "',";
-            StrAgregar_Recursos += "'" + BK_PATENTE + "',";
-            StrAgregar_Recursos += "'" + BK_MARCA + "',";
-            StrAgregar_Recursos += "'" + BK_MODELO + "',";
-            StrAgregar_Recursos += "'" + BK_VARIANTE + "',";
-            StrAgregar_Recursos += "'" + BK_ANO + "',";
-            StrAgregar_Recursos += "'" + BK_COLOR + "',";
-            StrAgregar_Recursos += "'" + BK_CIUDAD + "',";
-            StrAgregar_Recursos += "'" + BK_COMUNA + "',";
-            StrAgregar_Recursos += "'" + BK_REGION + "',";
-            StrAgregar_Recursos += "'" + BK_PAIS + "',";
-            StrAgregar_Recursos += "'" + BK_OBSERVACIONES + "',";
-            StrAgregar_Recursos += "'" + BK_FOTO + "')";
-            BK_Cmd_Recursos = new SQLiteCommand(StrAgregar_Recursos, BM_Connection);
-            BK_Cmd_Recursos.ExecuteNonQuery();
-            return true;
+            try
+            {
+                StrAgregar_Recursos = "INSERT INTO RECURSOS (";
+                StrAgregar_Recursos += "RUTID,";
+                StrAgregar_Recursos += "DIGVER,";
+                StrAgregar_Recursos += "PROPIETARIO,";
+                StrAgregar_Recursos += "TIPO,";
+                StrAgregar_Recursos += "PATENTE,";
+                StrAgregar_Recursos += "MARCA,";
+                StrAgregar_Recursos += "MODELO,";
+                StrAgregar_Recursos += "VARIANTE,";
+                StrAgregar_Recursos += "ANO,";
+                StrAgregar_Recursos += "COLOR,";
+                StrAgregar_Recursos += "CIUDAD,";
+                StrAgregar_Recursos += "COMUNA,";
+                StrAgregar_Recursos += "REGION,";
+                StrAgregar_Recursos += "PAIS,";
+                StrAgregar_Recursos += "OBSERVACIONES,";
+                StrAgregar_Recursos += "FOTO) VALUES (";
+                StrAgregar_Recursos += "'" + BK_RUTID + "',";
+                StrAgregar_Recursos += "'" + BK_DIGVER + "',";
+                StrAgregar_Recursos += "'" + BK_PROPIETARIO + "',";
+                StrAgregar_Recursos += "'" + BK_TIPO + "',";
+                StrAgregar_Recursos += "'" + BK_PATENTE + "',";
+                StrAgregar_Recursos += "'" + BK_MARCA + "',";
+                StrAgregar_Recursos += "'" + BK_MODELO + "',";
+                StrAgregar_Recursos += "'" + BK_VARIANTE + "',";
+                StrAgregar_Recursos += "'" + BK_ANO + "',";
+                StrAgregar_Recursos += "'" + BK_COLOR + "',";
+                StrAgregar_Recursos += "'" + BK_CIUDAD + "',";
+                StrAgregar_Recursos += "'" + BK_COMUNA + "',";
+                StrAgregar_Recursos += "'" + BK_REGION + "',";
+                StrAgregar_Recursos += "'" + BK_PAIS + "',";
+                StrAgregar_Recursos += "'" + BK_OBSERVACIONES + "',";
+                StrAgregar_Recursos += "'" + BK_FOTO + "')";
+                BK_Cmd_Recursos = new SQLiteCommand(StrAgregar_Recursos, BM_Connection);
+                BK_Cmd_Recursos.ExecuteNonQuery();
+                return true;
+            }
+            catch (System.Data.SQLite.SQLiteException)
+            {
+                return false;
+            }
         }
 
         public bool Bm_Recursos_Buscar()
         {
-            StrBuscar_Recursos = "SELECT * FROM RECURSOS";
-            BK_Cmd_Recursos = new SQLiteCommand(StrBuscar_Recursos, BM_Connection);
-            BK_Reader_Recursos = BK_Cmd_Recursos.ExecuteReader();
-
-            if (BK_Reader_Recursos.Read())
+            try
             {
-                // Llenar Valores de Recursos
+                StrBuscar_Recursos = "SELECT * FROM RECURSOS";
+                BK_Cmd_Recursos = new SQLiteCommand(StrBuscar_Recursos, BM_Connection);
+                BK_Reader_Recursos = BK_Cmd_Recursos.ExecuteReader();
 
-                BK_RUTID = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("RUTID"));
-                BK_DIGVER = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("DIGVER"));
-                BK_PROPIETARIO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("PROPIETARIO"));
-                BK_TIPO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("TIPO"));
-                BK_PATENTE = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("PATENTE"));
-                BK_MARCA = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("MARCA"));
-                BK_MODELO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("MODELO"));
-                BK_VARIANTE = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("VARIANTE"));
-                BK_ANO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("ANO"));
-                BK_COLOR = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("COLOR"));
-                BK_CIUDAD = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("CIUDAD"));
-                BK_COMUNA = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("COMUNA"));
-                BK_REGION = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("REGION"));
-                BK_PAIS = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("PAIS"));
-                BK_OBSERVACIONES = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("OBSERVACIONES"));
-                BK_FOTO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("FOTO"));
-                return true;
+                if (BK_Reader_Recursos.Read())
+                {
+                    // Llenar Valores de Recursos
+
+                    BK_RUTID = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("RUTID"));
+                    BK_DIGVER = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("DIGVER"));
+                    BK_PROPIETARIO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("PROPIETARIO"));
+                    BK_TIPO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("TIPO"));
+                    BK_PATENTE = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("PATENTE"));
+                    BK_MARCA = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("MARCA"));
+                    BK_MODELO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("MODELO"));
+                    BK_VARIANTE = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("VARIANTE"));
+                    BK_ANO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("ANO"));
+                    BK_COLOR = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("COLOR"));
+                    BK_CIUDAD = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("CIUDAD"));
+                    BK_COMUNA = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("COMUNA"));
+                    BK_REGION = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("REGION"));
+                    BK_PAIS = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("PAIS"));
+                    BK_OBSERVACIONES = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("OBSERVACIONES"));
+                    BK_FOTO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("FOTO"));
+                    return true;
+                }
+                else
+                {
+                    LimpiarVariables();
+                    return false;
+                }
             }
-            else
+            catch (System.Data.SQLite.SQLiteException)
             {
-                // No existe Recursos
                 return false;
             }
         }
 
         public bool Bm_Recursos_Buscar(string pPATENTE)
         {
-            StrBuscar_Recursos = "SELECT * FROM RECURSOS";
-            StrBuscar_Recursos += " WHERE PATENTE = '" + pPATENTE + "'";
-
-            BK_Cmd_Recursos = new SQLiteCommand(StrBuscar_Recursos, BM_Connection);
-            BK_Reader_Recursos = BK_Cmd_Recursos.ExecuteReader();
-
-            if (BK_Reader_Recursos.Read())
+            try
             {
-                // Llenar Valores de Recursos
-                BK_RUTID = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("RUTID"));
-                BK_DIGVER = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("DIGVER"));
-                BK_PROPIETARIO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("PROPIETARIO"));
-                BK_TIPO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("TIPO"));
-                BK_PATENTE = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("PATENTE"));
-                BK_MARCA = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("MARCA"));
-                BK_MODELO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("MODELO"));
-                BK_VARIANTE = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("VARIANTE"));
-                BK_ANO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("ANO"));
-                BK_COLOR = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("COLOR"));
-                BK_CIUDAD = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("CIUDAD"));
-                BK_COMUNA = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("COMUNA"));
-                BK_REGION = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("REGION"));
-                BK_PAIS = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("PAIS"));
-                BK_OBSERVACIONES = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("OBSERVACIONES"));
-                BK_FOTO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("FOTO"));
-                return true;
+                StrBuscar_Recursos = "SELECT * FROM RECURSOS";
+                StrBuscar_Recursos += " WHERE PATENTE = '" + pPATENTE + "'";
+
+                BK_Cmd_Recursos = new SQLiteCommand(StrBuscar_Recursos, BM_Connection);
+                BK_Reader_Recursos = BK_Cmd_Recursos.ExecuteReader();
+
+                if (BK_Reader_Recursos.Read())
+                {
+                    // Llenar Valores de Recursos
+                    BK_RUTID = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("RUTID"));
+                    BK_DIGVER = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("DIGVER"));
+                    BK_PROPIETARIO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("PROPIETARIO"));
+                    BK_TIPO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("TIPO"));
+                    BK_PATENTE = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("PATENTE"));
+                    BK_MARCA = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("MARCA"));
+                    BK_MODELO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("MODELO"));
+                    BK_VARIANTE = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("VARIANTE"));
+                    BK_ANO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("ANO"));
+                    BK_COLOR = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("COLOR"));
+                    BK_CIUDAD = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("CIUDAD"));
+                    BK_COMUNA = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("COMUNA"));
+                    BK_REGION = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("REGION"));
+                    BK_PAIS = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("PAIS"));
+                    BK_OBSERVACIONES = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("OBSERVACIONES"));
+                    BK_FOTO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("FOTO"));
+                    return true;
+                }
+                else
+                {
+                    LimpiarVariables();
+                    return false;
+                }
             }
-            else
+            catch (System.Data.SQLite.SQLiteException)
             {
-                // No existe Recursos
                 return false;
             }
+
         }
 
         public bool Bm_Recursos_Buscar(string pRUTID, string pDIGVER, string pPATENTE)
         {
-            StrBuscar_Recursos = "SELECT * FROM RECURSOS";
-            StrBuscar_Recursos += " WHERE ";
-            StrBuscar_Recursos += " RUTID = '" + pRUTID + "' AND ";
-            StrBuscar_Recursos += " DIGVER = '" + pDIGVER  + "' AND ";
-            StrBuscar_Recursos += " PATENTE = '" + pPATENTE + "'";
-
-            BK_Cmd_Recursos = new SQLiteCommand(StrBuscar_Recursos, BM_Connection);
-            BK_Reader_Recursos = BK_Cmd_Recursos.ExecuteReader();
-
-            if (BK_Reader_Recursos.Read())
+            try
             {
-                // Llenar Valores de Recursos
-                BK_RUTID = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("RUTID"));
-                BK_DIGVER = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("DIGVER"));
-                BK_PROPIETARIO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("PROPIETARIO"));
-                BK_TIPO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("TIPO"));
-                BK_PATENTE = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("PATENTE"));
-                BK_MARCA = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("MARCA"));
-                BK_MODELO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("MODELO"));
-                BK_VARIANTE = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("VARIANTE"));
-                BK_ANO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("ANO"));
-                BK_COLOR = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("COLOR"));
-                BK_CIUDAD = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("CIUDAD"));
-                BK_COMUNA = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("COMUNA"));
-                BK_REGION = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("REGION"));
-                BK_PAIS = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("PAIS"));
-                BK_OBSERVACIONES = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("OBSERVACIONES"));
-                BK_FOTO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("FOTO"));
-                return true;
+                StrBuscar_Recursos = "SELECT * FROM RECURSOS";
+                StrBuscar_Recursos += " WHERE ";
+                StrBuscar_Recursos += " RUTID = '" + pRUTID + "' AND ";
+                StrBuscar_Recursos += " DIGVER = '" + pDIGVER + "' AND ";
+                StrBuscar_Recursos += " PATENTE = '" + pPATENTE + "'";
+
+                BK_Cmd_Recursos = new SQLiteCommand(StrBuscar_Recursos, BM_Connection);
+                BK_Reader_Recursos = BK_Cmd_Recursos.ExecuteReader();
+
+                if (BK_Reader_Recursos.Read())
+                {
+                    // Llenar Valores de Recursos
+                    BK_RUTID = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("RUTID"));
+                    BK_DIGVER = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("DIGVER"));
+                    BK_PROPIETARIO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("PROPIETARIO"));
+                    BK_TIPO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("TIPO"));
+                    BK_PATENTE = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("PATENTE"));
+                    BK_MARCA = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("MARCA"));
+                    BK_MODELO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("MODELO"));
+                    BK_VARIANTE = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("VARIANTE"));
+                    BK_ANO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("ANO"));
+                    BK_COLOR = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("COLOR"));
+                    BK_CIUDAD = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("CIUDAD"));
+                    BK_COMUNA = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("COMUNA"));
+                    BK_REGION = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("REGION"));
+                    BK_PAIS = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("PAIS"));
+                    BK_OBSERVACIONES = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("OBSERVACIONES"));
+                    BK_FOTO = BK_Reader_Recursos.GetString(BK_Reader_Recursos.GetOrdinal("FOTO"));
+                    return true;
+                }
+                else
+                {
+                    LimpiarVariables();
+                    return false;
+                }
             }
-            else
+            catch (System.Data.SQLite.SQLiteException)
             {
-                // No existe Recursos
                 return false;
             }
         }
@@ -223,113 +252,187 @@ namespace BikeMessenger
         // Procedimiento Modificar Recursos
         public bool Bm_Recursos_Modificar(string pPATENTE)
         {
-            StrModificar_Recursos = "UPDATE RECURSOS SET ";
-            StrModificar_Recursos += "PROPIETARIO = '" + BK_PROPIETARIO + "',";
-            StrModificar_Recursos += "TIPO = '" + BK_TIPO + "',";
-            StrModificar_Recursos += "MARCA = '" + BK_MARCA + "',";
-            StrModificar_Recursos += "MODELO = '" + BK_MODELO + "',";
-            StrModificar_Recursos += "VARIANTE = '" + BK_VARIANTE + "',";
-            StrModificar_Recursos += "ANO = '" + BK_ANO + "',";
-            StrModificar_Recursos += "COLOR = '" + BK_COLOR + "',";
-            StrModificar_Recursos += "CIUDAD = '" + BK_CIUDAD + "',";
-            StrModificar_Recursos += "COMUNA = '" + BK_COMUNA + "',";
-            StrModificar_Recursos += "REGION = '" + BK_REGION + "',";
-            StrModificar_Recursos += "PAIS = '" + BK_PAIS + "',";
-            StrModificar_Recursos += "OBSERVACIONES = '" + BK_OBSERVACIONES + "',";
-            StrModificar_Recursos += "FOTO = '" + BK_FOTO + "' ";
-            StrModificar_Recursos += "WHERE ";
-            StrModificar_Recursos += "PATENTE = '" + pPATENTE + "'";
-            BK_Cmd_Recursos = new SQLiteCommand(StrModificar_Recursos, BM_Connection);
-            BK_Cmd_Recursos.ExecuteNonQuery();
-            return true;
+            try
+            {
+                StrModificar_Recursos = "UPDATE RECURSOS SET ";
+                StrModificar_Recursos += "PROPIETARIO = '" + BK_PROPIETARIO + "',";
+                StrModificar_Recursos += "TIPO = '" + BK_TIPO + "',";
+                StrModificar_Recursos += "MARCA = '" + BK_MARCA + "',";
+                StrModificar_Recursos += "MODELO = '" + BK_MODELO + "',";
+                StrModificar_Recursos += "VARIANTE = '" + BK_VARIANTE + "',";
+                StrModificar_Recursos += "ANO = '" + BK_ANO + "',";
+                StrModificar_Recursos += "COLOR = '" + BK_COLOR + "',";
+                StrModificar_Recursos += "CIUDAD = '" + BK_CIUDAD + "',";
+                StrModificar_Recursos += "COMUNA = '" + BK_COMUNA + "',";
+                StrModificar_Recursos += "REGION = '" + BK_REGION + "',";
+                StrModificar_Recursos += "PAIS = '" + BK_PAIS + "',";
+                StrModificar_Recursos += "OBSERVACIONES = '" + BK_OBSERVACIONES + "',";
+                StrModificar_Recursos += "FOTO = '" + BK_FOTO + "' ";
+                StrModificar_Recursos += "WHERE ";
+                StrModificar_Recursos += "PATENTE = '" + pPATENTE + "'";
+                BK_Cmd_Recursos = new SQLiteCommand(StrModificar_Recursos, BM_Connection);
+                BK_Cmd_Recursos.ExecuteNonQuery();
+                return true;
+            }
+            catch (System.Data.SQLite.SQLiteException)
+            {
+                return false;
+            }
         }
 
         // Procedimiento Borrar Recursos
-        public bool Bm_Recursos_Borrar()
+        public bool Bm_Recursos_Borrar(string pPATENTE)
         {
-            StrBorrar_Recursos = "DELETE FROM RECURSOS ";
-            StrBorrar_Recursos += "WHERE ";
-            StrBorrar_Recursos += "WHERE ";
-            StrBorrar_Recursos += "RUTID = '" + BK_RUTID + "' AND ";
-            StrBorrar_Recursos += "DIGVER = '" + BK_DIGVER + "' AND ";
-            StrBorrar_Recursos += "PATENTE = '" + BK_PATENTE + "'";
-            BK_Cmd_Recursos = new SQLiteCommand(StrBorrar_Recursos, BM_Connection);
-            BK_Cmd_Recursos.ExecuteNonQuery();
-            return true;
+            try
+            {
+                StrBorrar_Recursos = "DELETE FROM RECURSOS ";
+                StrBorrar_Recursos += "WHERE ";
+                StrBorrar_Recursos += "PATENTE = '" + pPATENTE + "'";
+                BK_Cmd_Recursos = new SQLiteCommand(StrBorrar_Recursos, BM_Connection);
+                BK_Cmd_Recursos.ExecuteNonQuery();
+                LimpiarVariables();
+                return true;
+            }
+            catch (System.Data.SQLite.SQLiteException)
+            {
+                 return false;
+            }
         }
 
         // Procedimiento Buscar Pais
         public bool Bm_E_Pais_EjecutarSelect()
         {
-            BK_Cmd_Recursos_Pais = new SQLiteCommand(StrBuscar_Recursos_Pais, BM_Connection);
-            BK_Reader_Recursos_Pais = BK_Cmd_Recursos_Pais.ExecuteReader();
-            return true;
+            try
+            {
+                BK_Cmd_Recursos_Pais = new SQLiteCommand(StrBuscar_Recursos_Pais, BM_Connection);
+                BK_Reader_Recursos_Pais = BK_Cmd_Recursos_Pais.ExecuteReader();
+                return true;
+            }
+            catch (System.Data.SQLite.SQLiteException)
+            {
+                return false;
+            }
         }
 
         public bool Bm_E_Pais_Buscar()
         {
-            if (BK_Reader_Recursos_Pais.Read())
+            try
             {
-                // Llenar Valores de Recursos
-                BK_E_CODPAIS = BK_Reader_Recursos_Pais.GetInt16(BK_Reader_Recursos_Pais.GetOrdinal("CODPAIS"));
-                BK_E_PAIS = BK_Reader_Recursos_Pais.GetString(BK_Reader_Recursos_Pais.GetOrdinal("PAIS"));
-                return true;
+                if (BK_Reader_Recursos_Pais.Read())
+                {
+                    // Llenar Valores de Recursos
+                    BK_E_CODPAIS = BK_Reader_Recursos_Pais.GetInt16(BK_Reader_Recursos_Pais.GetOrdinal("CODPAIS"));
+                    BK_E_PAIS = BK_Reader_Recursos_Pais.GetString(BK_Reader_Recursos_Pais.GetOrdinal("PAIS"));
+                    return true;
+                }
+                else
+                {
+                    // No existe Recursos
+                    return false;
+                }
             }
-            else
+            catch (System.Data.SQLite.SQLiteException)
             {
-                // No existe Recursos
                 return false;
             }
         }
 
         public bool Bm_Personal_BuscarGrid()
         {
-            BK_Cmd_Personal_Grid = new SQLiteCommand(StrBuscarGrid_Personal, BM_Connection);
-            BK_Reader_Personal_Grid = BK_Cmd_Personal_Grid.ExecuteReader();
-            return true;
+            try
+            {
+                BK_Cmd_Personal_Grid = new SQLiteCommand(StrBuscarGrid_Personal, BM_Connection);
+                BK_Reader_Personal_Grid = BK_Cmd_Personal_Grid.ExecuteReader();
+                return true;
+            }
+            catch (System.Data.SQLite.SQLiteException)
+            {
+                return false;
+            }
         }
 
         public bool Bm_Personal_BuscarGridProxima()
         {
-            if (BK_Reader_Personal_Grid.Read())
+            try
             {
-                // Llenar Valores de la Empresa
-                BK_GRID_RUT = BK_Reader_Personal_Grid.GetString(0);
-                BK_GRID_APELLIDOS = BK_Reader_Personal_Grid.GetString(1);
-                BK_GRID_NOMBRES = BK_Reader_Personal_Grid.GetString(2);
-                return true;
+                if (BK_Reader_Personal_Grid.Read())
+                {
+                    // Llenar Valores de la Empresa
+                    BK_GRID_RUT = BK_Reader_Personal_Grid.GetString(0);
+                    BK_GRID_APELLIDOS = BK_Reader_Personal_Grid.GetString(1);
+                    BK_GRID_NOMBRES = BK_Reader_Personal_Grid.GetString(2);
+                    return true;
+                }
+                else
+                {
+                    // No existe la empresa
+                    return false;
+                }
             }
-            else
+            catch (System.Data.SQLite.SQLiteException)
             {
-                // No existe la empresa
                 return false;
             }
         }
 
         public bool Bm_Recursos_BuscarGrid()
         {
-            BK_Cmd_Recursos_Grid = new SQLiteCommand(StrBuscarGrid_Recursos, BM_Connection);
-            BK_Reader_Recursos_Grid = BK_Cmd_Recursos_Grid.ExecuteReader();
-            return true;
+            try
+            {
+                BK_Cmd_Recursos_Grid = new SQLiteCommand(StrBuscarGrid_Recursos, BM_Connection);
+                BK_Reader_Recursos_Grid = BK_Cmd_Recursos_Grid.ExecuteReader();
+                return true;
+            }
+            catch (System.Data.SQLite.SQLiteException)
+            {
+                return false;
+            }
         }
 
         public bool Bm_Recursos_BuscarGridProxima()
         {
-            if (BK_Reader_Recursos_Grid.Read())
+            try
             {
-                // Llenar Valores de la Empresa
-                BK_RGRID_PATENTE = BK_Reader_Recursos_Grid.GetString(0);
-                BK_RGRID_TIPO = BK_Reader_Recursos_Grid.GetString(1);
-                BK_RGRID_MARCA = BK_Reader_Recursos_Grid.GetString(2);
-                BK_RGRID_MODELO = BK_Reader_Recursos_Grid.GetString(3);
-                BK_RGRID_CIUDAD = BK_Reader_Recursos_Grid.GetString(4);
-                return true;
+                if (BK_Reader_Recursos_Grid.Read())
+                {
+                    // Llenar Valores de la Empresa
+                    BK_RGRID_PATENTE = BK_Reader_Recursos_Grid.GetString(0);
+                    BK_RGRID_TIPO = BK_Reader_Recursos_Grid.GetString(1);
+                    BK_RGRID_MARCA = BK_Reader_Recursos_Grid.GetString(2);
+                    BK_RGRID_MODELO = BK_Reader_Recursos_Grid.GetString(3);
+                    BK_RGRID_CIUDAD = BK_Reader_Recursos_Grid.GetString(4);
+                    return true;
+                }
+                else
+                {
+                    // No existe la empresa
+                    return false;
+                }
             }
-            else
+            catch (System.Data.SQLite.SQLiteException)
             {
-                // No existe la empresa
                 return false;
             }
+        }
+
+        public void LimpiarVariables()
+        {
+            BK_RUTID = "";
+            BK_DIGVER = "";
+            BK_PROPIETARIO = "";
+            BK_TIPO = "";
+            BK_PATENTE = "";
+            BK_MARCA = "";
+            BK_MODELO = "";
+            BK_VARIANTE = "";
+            BK_ANO = "";
+            BK_COLOR = "";
+            BK_CIUDAD = "";
+            BK_COMUNA = "";
+            BK_REGION = "";
+            BK_PAIS = "";
+            BK_OBSERVACIONES = "";
+            BK_FOTO = "";
         }
     }
 }

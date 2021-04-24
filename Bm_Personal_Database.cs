@@ -19,6 +19,7 @@ namespace BikeMessenger
      
         SQLiteCommand BK_Cmd_Personal_Grid;
         SQLiteDataReader BK_Reader_Personal_Grid;
+
         string StrAgregar_Personal;
         string StrModificar_Personal;
         string StrBorrar_Personal;
@@ -150,7 +151,7 @@ namespace BikeMessenger
                 }
                 else
                 {
-                    // No existe la Personal
+                    LimpiarVariables();
                     return false;
                 }
             }
@@ -199,7 +200,7 @@ namespace BikeMessenger
                 }
                 else
                 {
-                    // No existe la persona
+                    LimpiarVariables();
                     return false;
                 }
             }
@@ -251,61 +252,118 @@ namespace BikeMessenger
         // Procedimiento Borrar Personal
         public bool Bm_Personal_Borrar(string pRUTID, string pDIGVER)
         {
-            StrBorrar_Personal = "DELETE FROM PERSONAL ";
-            StrBorrar_Personal += "WHERE ";
-            StrBorrar_Personal += "RUTID = '" + pRUTID + "' AND ";
-            StrBorrar_Personal += "DIGVER = '" + pDIGVER + "'";
-            BK_Cmd_Personal = new SQLiteCommand(StrBorrar_Personal, BM_Connection);
-            BK_Cmd_Personal.ExecuteNonQuery();
-            return true;
+            try
+            {
+                StrBorrar_Personal = "DELETE FROM PERSONAL ";
+                StrBorrar_Personal += "WHERE ";
+                StrBorrar_Personal += "RUTID = '" + pRUTID + "' AND ";
+                StrBorrar_Personal += "DIGVER = '" + pDIGVER + "'";
+                BK_Cmd_Personal = new SQLiteCommand(StrBorrar_Personal, BM_Connection);
+                BK_Cmd_Personal.ExecuteNonQuery();
+                LimpiarVariables();
+                return true;
+            }
+            catch (System.Data.SQLite.SQLiteException)
+            {
+                return false;
+            }
         }
 
         // Procedimiento Buscar Pais
         public bool Bm_E_Pais_EjecutarSelect()
         {
-            BK_Cmd_Personal_Pais = new SQLiteCommand(StrBuscar_Personal_Pais, BM_Connection);
-            BK_Reader_Personal_Pais = BK_Cmd_Personal_Pais.ExecuteReader();
-            return true;
+            try
+            {
+                BK_Cmd_Personal_Pais = new SQLiteCommand(StrBuscar_Personal_Pais, BM_Connection);
+                BK_Reader_Personal_Pais = BK_Cmd_Personal_Pais.ExecuteReader();
+                return true;
+            }
+            catch (System.Data.SQLite.SQLiteException)
+            {
+                return false;
+            }
         }
 
         public bool Bm_E_Pais_Buscar()
         {
-            if (BK_Reader_Personal_Pais.Read())
-            {
-                // Llenar Valores de la Empresa
-                BK_E_CODPAIS = BK_Reader_Personal_Pais.GetInt16(BK_Reader_Personal_Pais.GetOrdinal("CODPAIS"));
-                BK_E_PAIS = BK_Reader_Personal_Pais.GetString(BK_Reader_Personal_Pais.GetOrdinal("PAIS"));
-                return true;
+            try {
+                if (BK_Reader_Personal_Pais.Read())
+                {
+                    BK_E_CODPAIS = BK_Reader_Personal_Pais.GetInt16(BK_Reader_Personal_Pais.GetOrdinal("CODPAIS"));
+                    BK_E_PAIS = BK_Reader_Personal_Pais.GetString(BK_Reader_Personal_Pais.GetOrdinal("PAIS"));
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
-            else
+            catch (System.Data.SQLite.SQLiteException)
             {
-                // No existe la empresa
                 return false;
             }
         }
 
         public bool Bm_Personal_BuscarGrid()
         {
-            BK_Cmd_Personal_Grid = new SQLiteCommand(StrBuscarGrid_Personal, BM_Connection);
-            BK_Reader_Personal_Grid = BK_Cmd_Personal_Grid.ExecuteReader();
-            return true;
+            try
+            {
+                BK_Cmd_Personal_Grid = new SQLiteCommand(StrBuscarGrid_Personal, BM_Connection);
+                BK_Reader_Personal_Grid = BK_Cmd_Personal_Grid.ExecuteReader();
+                return true;
+            }
+            catch (System.Data.SQLite.SQLiteException)
+            {
+                return false;
+            }
         }
 
         public bool Bm_Personal_BuscarGridProxima()
         {
-            if (BK_Reader_Personal_Grid.Read())
+            try
             {
-                // Llenar Valores de la Empresa
-                BK_GRID_RUT = BK_Reader_Personal_Grid.GetString(0);
-                BK_GRID_APELLIDOS = BK_Reader_Personal_Grid.GetString(1);
-                BK_GRID_NOMBRES = BK_Reader_Personal_Grid.GetString(2);
-                return true;
+                if (BK_Reader_Personal_Grid.Read())
+                {
+                    // Llenar Valores de la Empresa
+                    BK_GRID_RUT = BK_Reader_Personal_Grid.GetString(0);
+                    BK_GRID_APELLIDOS = BK_Reader_Personal_Grid.GetString(1);
+                    BK_GRID_NOMBRES = BK_Reader_Personal_Grid.GetString(2);
+                    return true;
+                }
+                else
+                {
+                    // No existe la empresa
+                    return false;
+                }
             }
-            else
+            catch (System.Data.SQLite.SQLiteException)
             {
-                // No existe la empresa
                 return false;
             }
+        }
+
+        public void LimpiarVariables()
+        {
+            BK_RUTID = "";
+            BK_DIGVER = "";
+            BK_APELLIDOS = "";
+            BK_NOMBRES = "";
+            BK_TELEFONO1 = "";
+            BK_TELEFONO2 = "";
+            BK_EMAIL = "";
+            BK_AUTORIZACION = "";
+            BK_CARGO = "";
+            BK_DOMICILIO = "";
+            BK_NUMERO = "";
+            BK_PISO = "";
+            BK_DPTO = "";
+            BK_CODIGOPOSTAL = "";
+            BK_CIUDAD = "";
+            BK_COMUNA = "";
+            BK_REGION = "";
+            BK_PAIS = "";
+            BK_OBSERVACIONES = "";
+            BK_FOTO = "";
         }
     }
 }

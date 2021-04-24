@@ -13,11 +13,18 @@ namespace BikeMessenger
         public SQLiteConnection BM_Connection;
         SQLiteCommand BK_Cmd_Clientes;
         SQLiteDataReader BK_Reader_Clientes;
+
         SQLiteCommand BK_Cmd_Clientes_Pais;
         SQLiteDataReader BK_Reader_Clientes_Pais;
+
+        SQLiteCommand BK_Cmd_Clientes_Grid;
+        SQLiteDataReader BK_Reader_Clientes_Grid;
+
         string StrAgregar_Clientes;
         string StrModificar_Clientes;
         string StrBorrar_Clientes;
+
+        readonly string StrBuscarGrid_Clientes = "SELECT RUTID||'-'||DIGVER, NOMBRE FROM CLIENTES ORDER BY NOMBRE ASC";
         readonly string StrBuscar_Clientes = "SELECT * FROM CLIENTES";
         readonly String StrBuscar_Clientes_Pais = "SELECT * FROM PAIS ORDER BY PAIS ASC";
 
@@ -47,6 +54,10 @@ namespace BikeMessenger
         // Campos de PAIS
         public Int16 BK_E_CODPAIS { get; set; }
         public string BK_E_PAIS { get; set; }
+
+        // LISTADO CLIENTES
+        public string BK_GRID_RUT { get; set; }
+        public string BK_GRID_NOMBRES { get; set; }
 
         public Boolean BM_CreateDatabase(SQLiteConnection BM_Connection)
         {
@@ -121,53 +132,112 @@ namespace BikeMessenger
             StrAgregar_Clientes += "'" + BK_PAIS + "',";
             StrAgregar_Clientes += "'" + BK_OBSERVACIONES + "',";
             StrAgregar_Clientes += "'" + BK_FOTO + "')";
-            BK_Cmd_Clientes = new SQLiteCommand(StrAgregar_Clientes, BM_Connection);
-            BK_Cmd_Clientes.ExecuteNonQuery();
-            return true;
+            try
+            {
+                BK_Cmd_Clientes = new SQLiteCommand(StrAgregar_Clientes, BM_Connection);
+                BK_Cmd_Clientes.ExecuteNonQuery();
+                return true;
+            }
+            catch (System.Data.SQLite.SQLiteException)
+            {
+                return false;
+            }
         }
 
         public bool Bm_Clientes_Buscar()
         {
-            BK_Cmd_Clientes = new SQLiteCommand(StrBuscar_Clientes, BM_Connection);
-            BK_Reader_Clientes = BK_Cmd_Clientes.ExecuteReader();
+            try
+            {
+                BK_Cmd_Clientes = new SQLiteCommand(StrBuscar_Clientes, BM_Connection);
+                BK_Reader_Clientes = BK_Cmd_Clientes.ExecuteReader();
 
-            if (BK_Reader_Clientes.Read())
-            {
-                // Llenar Valores de Cliente
-                BK_RUTID = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("RUTID"));
-                BK_DIGVER = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("DIGVER"));
-                BK_NOMBRE = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("NOMBRE"));
-                BK_ACTIVIDAD1 = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("ACTIVIDAD1"));
-                BK_ACTIVIDAD2 = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("ACTIVIDAD2"));
-                BK_REPRESENTANTE1 = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("REPRESENTANTE1"));
-                BK_REPRESENTANTE2 = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("REPRESENTANTE2"));
-                BK_REPRESENTANTE3 = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("REPRESENTANTE3"));
-                BK_TELEFONO1 = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("TELEFONO1"));
-                BK_TELEFONO2 = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("TELEFONO2"));
-                BK_DOMICILIO1 = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("DOMICILIO1"));
-                BK_DOMICILIO2 = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("DOMICILIO2"));
-                BK_NUMERO = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("NUMERO"));
-                BK_PISO = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("PISO"));
-                BK_OFICINA = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("OFICINA"));
-                BK_CODIGOPOSTAL = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("CODIGOPOSTAL"));
-                BK_CIUDAD = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("CIUDAD"));
-                BK_COMUNA = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("COMUNA"));
-                BK_REGION = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("REGION"));
-                BK_PAIS = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("PAIS"));
-                BK_OBSERVACIONES = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("OBSERVACIONES"));
-                BK_FOTO = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("FOTO"));
-                return true;
+                if (BK_Reader_Clientes.Read())
+                {
+                    // Llenar Valores de Cliente
+                    BK_RUTID = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("RUTID"));
+                    BK_DIGVER = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("DIGVER"));
+                    BK_NOMBRE = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("NOMBRE"));
+                    BK_ACTIVIDAD1 = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("ACTIVIDAD1"));
+                    BK_ACTIVIDAD2 = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("ACTIVIDAD2"));
+                    BK_REPRESENTANTE1 = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("REPRESENTANTE1"));
+                    BK_REPRESENTANTE2 = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("REPRESENTANTE2"));
+                    BK_REPRESENTANTE3 = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("REPRESENTANTE3"));
+                    BK_TELEFONO1 = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("TELEFONO1"));
+                    BK_TELEFONO2 = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("TELEFONO2"));
+                    BK_DOMICILIO1 = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("DOMICILIO1"));
+                    BK_DOMICILIO2 = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("DOMICILIO2"));
+                    BK_NUMERO = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("NUMERO"));
+                    BK_PISO = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("PISO"));
+                    BK_OFICINA = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("OFICINA"));
+                    BK_CODIGOPOSTAL = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("CODIGOPOSTAL"));
+                    BK_CIUDAD = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("CIUDAD"));
+                    BK_COMUNA = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("COMUNA"));
+                    BK_REGION = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("REGION"));
+                    BK_PAIS = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("PAIS"));
+                    BK_OBSERVACIONES = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("OBSERVACIONES"));
+                    BK_FOTO = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("FOTO"));
+                    return true;
+                }
+                else
+                {
+                    LimpiarVariables();
+                    return false;
+                }
             }
-            else
+            catch (System.Data.SQLite.SQLiteException)
             {
-                // No existe la empresa
                 return false;
             }
-
         }
 
-        // Procedimiento Modificar Empresa
-        public bool Bm_Clientes_Modificar()
+
+        public bool Bm_Clientes_Buscar(string pRUTID, string pDIGVER)
+        {
+            try {
+                BK_Cmd_Clientes = new SQLiteCommand(StrBuscar_Clientes + " WHERE RUTID = '" + pRUTID + "' AND DIGVER = '" + pDIGVER + "'", BM_Connection);
+                BK_Reader_Clientes = BK_Cmd_Clientes.ExecuteReader();
+
+                if (BK_Reader_Clientes.Read())
+                {
+                    // Llenar Valores de Cliente
+                    BK_RUTID = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("RUTID"));
+                    BK_DIGVER = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("DIGVER"));
+                    BK_NOMBRE = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("NOMBRE"));
+                    BK_ACTIVIDAD1 = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("ACTIVIDAD1"));
+                    BK_ACTIVIDAD2 = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("ACTIVIDAD2"));
+                    BK_REPRESENTANTE1 = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("REPRESENTANTE1"));
+                    BK_REPRESENTANTE2 = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("REPRESENTANTE2"));
+                    BK_REPRESENTANTE3 = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("REPRESENTANTE3"));
+                    BK_TELEFONO1 = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("TELEFONO1"));
+                    BK_TELEFONO2 = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("TELEFONO2"));
+                    BK_DOMICILIO1 = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("DOMICILIO1"));
+                    BK_DOMICILIO2 = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("DOMICILIO2"));
+                    BK_NUMERO = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("NUMERO"));
+                    BK_PISO = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("PISO"));
+                    BK_OFICINA = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("OFICINA"));
+                    BK_CODIGOPOSTAL = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("CODIGOPOSTAL"));
+                    BK_CIUDAD = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("CIUDAD"));
+                    BK_COMUNA = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("COMUNA"));
+                    BK_REGION = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("REGION"));
+                    BK_PAIS = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("PAIS"));
+                    BK_OBSERVACIONES = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("OBSERVACIONES"));
+                    BK_FOTO = BK_Reader_Clientes.GetString(BK_Reader_Clientes.GetOrdinal("FOTO"));
+                    return true;
+                }
+                else
+                {
+                    LimpiarVariables();
+                    return false;
+                }
+            }
+            catch (System.Data.SQLite.SQLiteException)
+            {
+                return false;
+            }
+        }
+
+        // Procedimiento Modificar Clientes
+        public bool Bm_Clientes_Modificar(string pRUTID, string pDIGVER)
         {
             StrModificar_Clientes = "UPDATE CLIENTES SET ";
             StrModificar_Clientes += "NOMBRE = '" + BK_NOMBRE + "',";
@@ -191,47 +261,135 @@ namespace BikeMessenger
             StrModificar_Clientes += "OBSERVACIONES = '" + BK_OBSERVACIONES + "',";
             StrModificar_Clientes += "FOTO = '" + BK_FOTO + "'";
             StrModificar_Clientes += "WHERE ";
-            StrModificar_Clientes += "RUTID = '" + BK_RUTID + "' AND ";
-            StrModificar_Clientes += "DIGVER = '" + BK_DIGVER + "'";
-            BK_Cmd_Clientes = new SQLiteCommand(StrModificar_Clientes, BM_Connection);
-            BK_Cmd_Clientes.ExecuteNonQuery();
-            return true;
+            StrModificar_Clientes += "RUTID = '" + pRUTID + "' AND ";
+            StrModificar_Clientes += "DIGVER = '" + pDIGVER + "'";
+            try
+            {
+                BK_Cmd_Clientes = new SQLiteCommand(StrModificar_Clientes, BM_Connection);
+                BK_Cmd_Clientes.ExecuteNonQuery();
+                return true;
+            }
+            catch (System.Data.SQLite.SQLiteException)
+            {
+                return false;
+            }
         }
 
         // Procedimiento Borrar Clientes
-        public bool Bm_Clientes_Borrar()
+        public bool Bm_Clientes_Borrar(string pRUTID, string pDIGVER)
         {
-            StrBorrar_Clientes = "DELETE FROM CLIENTES ";
-            StrBorrar_Clientes += "WHERE ";
-            StrBorrar_Clientes += "RUTID = '" + BK_RUTID + "' AND ";
-            StrBorrar_Clientes += "DIGVER = '" + BK_DIGVER + "'";
-            BK_Cmd_Clientes = new SQLiteCommand(StrBorrar_Clientes, BM_Connection);
-            BK_Cmd_Clientes.ExecuteNonQuery();
-            return true;
+            try {
+                StrBorrar_Clientes = "DELETE FROM CLIENTES ";
+                StrBorrar_Clientes += "WHERE ";
+                StrBorrar_Clientes += "RUTID = '" + pRUTID + "' AND ";
+                StrBorrar_Clientes += "DIGVER = '" + pDIGVER + "'";
+                BK_Cmd_Clientes = new SQLiteCommand(StrBorrar_Clientes, BM_Connection);
+                BK_Cmd_Clientes.ExecuteNonQuery();
+                return true;
+            }
+            catch (System.Data.SQLite.SQLiteException)
+            {
+                return false;
+            }
         }
 
         // Procedimiento Buscar Pais
         public bool Bm_E_Pais_EjecutarSelect()
         {
-            BK_Cmd_Clientes_Pais = new SQLiteCommand(StrBuscar_Clientes_Pais, BM_Connection);
-            BK_Reader_Clientes_Pais = BK_Cmd_Clientes_Pais.ExecuteReader();
-            return true;
-        }
+            try
+            {
+                BK_Cmd_Clientes_Pais = new SQLiteCommand(StrBuscar_Clientes_Pais, BM_Connection);
+                BK_Reader_Clientes_Pais = BK_Cmd_Clientes_Pais.ExecuteReader();
+                return true;
+            }
+            catch (System.Data.SQLite.SQLiteException)
+            {
+                return false;
+            }
+        }   
 
         public bool Bm_E_Pais_Buscar()
         {
-            if (BK_Reader_Clientes_Pais.Read())
-            {
-                // Llenar Valores de la Empresa
-                BK_E_CODPAIS = BK_Reader_Clientes_Pais.GetInt16(BK_Reader_Clientes_Pais.GetOrdinal("CODPAIS"));
-                BK_E_PAIS = BK_Reader_Clientes_Pais.GetString(BK_Reader_Clientes_Pais.GetOrdinal("PAIS"));
-                return true;
+            try {
+                if (BK_Reader_Clientes_Pais.Read())
+                {
+                    // Llenar Valores de la Empresa
+                    BK_E_CODPAIS = BK_Reader_Clientes_Pais.GetInt16(BK_Reader_Clientes_Pais.GetOrdinal("CODPAIS"));
+                    BK_E_PAIS = BK_Reader_Clientes_Pais.GetString(BK_Reader_Clientes_Pais.GetOrdinal("PAIS"));
+                    return true;
+                }
+                else
+                {
+                    // No existe la empresa
+                    return false;
+                }
             }
-            else
+            catch (System.Data.SQLite.SQLiteException)
             {
-                // No existe la empresa
                 return false;
             }
+        }
+
+        public bool Bm_Clientes_BuscarGrid()
+        {
+            try
+            {
+                BK_Cmd_Clientes_Grid = new SQLiteCommand(StrBuscarGrid_Clientes, BM_Connection);
+                BK_Reader_Clientes_Grid = BK_Cmd_Clientes_Grid.ExecuteReader();
+                return true;
+            }
+            catch (System.Data.SQLite.SQLiteException)
+            {
+                return false;
+            }
+        }
+
+        public bool Bm_Clientes_BuscarGridProxima()
+        {
+            try {
+                if (BK_Reader_Clientes_Grid.Read())
+                {
+                    // Llenar Valores de la Empresa
+                    BK_GRID_RUT = BK_Reader_Clientes_Grid.GetString(0);
+                    BK_GRID_NOMBRES = BK_Reader_Clientes_Grid.GetString(1);
+                    return true;
+                }
+                else
+                {
+                    // No existe la empresa
+                    return false;
+                }
+            }
+            catch (System.Data.SQLite.SQLiteException)
+            {
+                return false;
+            }
+        }
+
+        public void LimpiarVariables()
+        {
+            BK_RUTID = "";
+            BK_DIGVER = "";
+            BK_NOMBRE = "";
+            BK_ACTIVIDAD1 = "";
+            BK_ACTIVIDAD2 = "";
+            BK_REPRESENTANTE1 = "";
+            BK_REPRESENTANTE2 = "";
+            BK_REPRESENTANTE3 = "";
+            BK_TELEFONO1 = "";
+            BK_TELEFONO2 = "";
+            BK_DOMICILIO1 = "";
+            BK_DOMICILIO2 = "";
+            BK_NUMERO = "";
+            BK_PISO = "";
+            BK_OFICINA = "";
+            BK_CODIGOPOSTAL = "";
+            BK_CIUDAD = "";
+            BK_COMUNA = "";
+            BK_REGION = "";
+            BK_PAIS = "";
+            BK_OBSERVACIONES = "";
+            BK_FOTO = "";
         }
     }
 }

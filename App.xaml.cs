@@ -96,11 +96,23 @@ namespace BikeMessenger
                 // configuring the new page by passing required information as a navigation
                 // parameter
                 // rootFrame.Navigate(typeof(PageEmpresa), e.Arguments);
+
+                // Empresa
+                LvrTransferVar.E_RUTID = "";
+                LvrTransferVar.E_DIGVER = "";
+                // Personal
                 LvrTransferVar.P_RUTID = "";
                 LvrTransferVar.P_DIGVER = "";
+                // Recursos
                 LvrTransferVar.R_RUTID = "";
                 LvrTransferVar.R_DIGVER = "";
                 LvrTransferVar.R_PAT_SER = "";
+                // Clientes
+                LvrTransferVar.C_RUTID = "";
+                LvrTransferVar.C_DIGVER = "";
+                // Servicios
+                LvrTransferVar.S_NROENVIO = "";
+
                 rootFrame.CacheSize = 0;
                 rootFrame.Navigate(typeof(PageEmpresa), LvrTransferVar, new SuppressNavigationTransitionInfo());
             }

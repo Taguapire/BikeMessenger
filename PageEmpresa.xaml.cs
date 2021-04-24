@@ -53,7 +53,7 @@ namespace BikeMessenger
             ((Frame)Parent).CacheSize = cacheSize;
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs navigationEvent)
+        protected override async void OnNavigatedTo(NavigationEventArgs navigationEvent)
         {
             base.OnNavigatedTo(navigationEvent);
             // when the dialog displays then we create viewmodel and set the cache mode
@@ -112,7 +112,7 @@ namespace BikeMessenger
 
                         textBoxRut.IsReadOnly = false;
                         textBoxDigitoVerificador.IsReadOnly = false;
-                        AvisoOperacionEmpresaDialog("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
+                        await AvisoOperacionEmpresaDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
                     }
                 }
             }
@@ -188,7 +188,7 @@ namespace BikeMessenger
                 }
             }
         }
-        private void LlenarPantallaConDb()
+        private async void LlenarPantallaConDb()
         {
             try
             {
@@ -231,8 +231,8 @@ namespace BikeMessenger
                 imageLogoEmpresa.Source = Base64StringToBitmap(BM_Database_Empresa.BK_LOGO);
             }
             catch (System.ArgumentNullException e)
-            {   
-                AvisoOperacionEmpresaDialog("Acceso a Base de Datos", e.Message);
+            {
+                await AvisoOperacionEmpresaDialogAsync("Acceso a Base de Datos", e.Message);
             }
         }
 
@@ -283,16 +283,16 @@ namespace BikeMessenger
                     textBoxRut.IsReadOnly = true;
                     textBoxDigitoVerificador.IsReadOnly = true;
 
-                    AvisoOperacionEmpresaDialog("Agregando Empresa", "Operación completada con exito.");
+                    await AvisoOperacionEmpresaDialogAsync("Agregando Empresa", "Operación completada con exito.");
                 }
                 else
                 {
-                    AvisoOperacionEmpresaDialog("Agregando Empresa", "Se a producido un error al intentar agregar la empresa.");
+                    await AvisoOperacionEmpresaDialogAsync("Agregando Empresa", "Se a producido un error al intentar agregar la empresa.");
                 }
             }
             catch (System.ArgumentException)
             {
-                AvisoOperacionEmpresaDialog("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
+                await AvisoOperacionEmpresaDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
             }
         }
 
@@ -302,17 +302,17 @@ namespace BikeMessenger
             {
                 await LlenarDbConPantallaAsync();
                 if (BM_Database_Empresa.Bm_Empresa_Modificar())
-                    AvisoOperacionEmpresaDialog("Modificando Empresa", "Operación completada con exito.");
+                    await AvisoOperacionEmpresaDialogAsync("Modificando Empresa", "Operación completada con exito.");
                 else
-                    AvisoOperacionEmpresaDialog("Modificando Empresa", "Se a producido un error al intentar agregar la empresa.");
+                    await AvisoOperacionEmpresaDialogAsync("Modificando Empresa", "Se a producido un error al intentar agregar la empresa.");
             }
             catch (System.ArgumentException)
             {
-                AvisoOperacionEmpresaDialog("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
+                await AvisoOperacionEmpresaDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
             }
         }
 
-        private void BtnBorrarEmpresa(object sender, RoutedEventArgs e)
+        private async void BtnBorrarEmpresa(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -354,17 +354,17 @@ namespace BikeMessenger
                     BM_Database_Empresa.BK_COMUNA = "";
                     BM_Database_Empresa.BK_CIUDAD = "";
                     BM_Database_Empresa.BK_OBSERVACIONES = "";
-                    AvisoOperacionEmpresaDialog("Borrando Empresa", "Operación completada con exito.");
+                    await AvisoOperacionEmpresaDialogAsync("Borrando Empresa", "Operación completada con exito.");
                     LlenarPantallaConDb();
                 }
                 else
                 {
-                    AvisoOperacionEmpresaDialog("Borrando Empresa", "Se a producido un error al intentar borrar la empresa.");
+                    await AvisoOperacionEmpresaDialogAsync("Borrando Empresa", "Se a producido un error al intentar borrar la empresa.");
                 }
             }
             catch (System.ArgumentException)
             {
-                AvisoOperacionEmpresaDialog("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
+                await AvisoOperacionEmpresaDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
             }
         }
 
@@ -413,7 +413,7 @@ namespace BikeMessenger
             return img;
         }
 
-        private async void AvisoOperacionEmpresaDialog(string xTitulo, string xDescripcion)
+        private async System.Threading.Tasks.Task AvisoOperacionEmpresaDialogAsync(string xTitulo, string xDescripcion)
         {
             ContentDialog AvisoOperacionEmpresaDialog = new ContentDialog
             {

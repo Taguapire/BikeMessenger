@@ -83,17 +83,16 @@ namespace BikeMessenger
                     if (BM_Database_Personal.Bm_Personal_Buscar())
                     {
                         LlenarPantallaConDb();
-                        LlenarListaPersonal();
-                     }
+                    }
                 }
                 else
                 {
                     if (BM_Database_Personal.Bm_Personal_Buscar(LvrTransferVar.P_RUTID,LvrTransferVar.P_DIGVER))
                     {
                         LlenarPantallaConDb();
-                        LlenarListaPersonal();
                     }
                 }
+                LlenarListaPersonal();
             }
         }
 
@@ -163,7 +162,7 @@ namespace BikeMessenger
             }
         }
 
-        private void LlenarPantallaConDb()
+        private async void LlenarPantallaConDb()
         {
             try
             {
@@ -176,7 +175,10 @@ namespace BikeMessenger
                 textBoxTelefono1.Text = BM_Database_Personal.BK_TELEFONO1;
                 textBoxTelefono2.Text = BM_Database_Personal.BK_TELEFONO2;
                 textBoxCorreoElectronico.Text = BM_Database_Personal.BK_EMAIL;
+
+                comboBoxAutorizacion.Items.Add(BM_Database_Personal.BK_AUTORIZACION);
                 comboBoxAutorizacion.SelectedValue = BM_Database_Personal.BK_AUTORIZACION;
+
                 textBoxCargo.Text = BM_Database_Personal.BK_CARGO;
                 textBoxDomicilio.Text = BM_Database_Personal.BK_DOMICILIO;
                 textBoxNumero.Text = BM_Database_Personal.BK_NUMERO;
@@ -191,7 +193,6 @@ namespace BikeMessenger
                         comboBoxPais.Items.Add(BM_Database_Personal.BK_E_PAIS);
                     }
                 }
-                comboBoxRegion.Items.Add(BM_Database_Personal.BK_PAIS);
                 comboBoxPais.SelectedValue = BM_Database_Personal.BK_PAIS;
 
                 comboBoxRegion.Items.Add(BM_Database_Personal.BK_REGION);
@@ -209,7 +210,7 @@ namespace BikeMessenger
             }
             catch (System.ArgumentNullException)
             {
-                ErrorDeRecuperacionDialog();
+                await ErrorDeRecuperacionDialogAsync();
             }
         }
 
@@ -271,11 +272,11 @@ namespace BikeMessenger
                 LlenarListaPersonal();
                 LvrTransferVar.P_RUTID = BM_Database_Personal.BK_RUTID;
                 LvrTransferVar.P_DIGVER = BM_Database_Personal.BK_DIGVER;
-                AvisoOperacionPersonalDialog("Agregar Personal", "Operación completada con exito.");
+                await AvisoOperacionPersonalDialogAsync("Agregar Personal", "Operación completada con exito.");
             }
             else
             {
-                AvisoOperacionPersonalDialog("Agregando Personal", "Se a producido un error al intentar agregar personal.");
+                await AvisoOperacionPersonalDialogAsync("Agregando Personal", "Se a producido un error al intentar agregar personal.");
             }
         }
 
@@ -287,35 +288,34 @@ namespace BikeMessenger
                 LlenarListaPersonal();
                 LvrTransferVar.P_RUTID = BM_Database_Personal.BK_RUTID;
                 LvrTransferVar.P_DIGVER = BM_Database_Personal.BK_DIGVER;
-                AvisoOperacionPersonalDialog("Modificar Personal", "Operación completada con exito.");
+                await AvisoOperacionPersonalDialogAsync("Modificar Personal", "Operación completada con exito.");
             }
             else
             {
-                AvisoOperacionPersonalDialog("Modificando Personal", "Se a producido un error al intentar modificar personal.");
+                await AvisoOperacionPersonalDialogAsync("Modificando Personal", "Se a producido un error al intentar modificar personal.");
             }
         }
 
-        private void BtnBorrarPersonal(object sender, RoutedEventArgs e)
+        private async void BtnBorrarPersonal(object sender, RoutedEventArgs e)
         {
             BorrarSiNo = false;
 
-            AvisoBorrarPersonalDialog();
+            await AvisoBorrarPersonalDialogAsync();
 
-            if (BorrarSiNo)
+            if (!BorrarSiNo)
                 return;
 
             try
             {
                 if (BM_Database_Personal.Bm_Personal_Borrar(BM_Database_Personal.BK_RUTID, BM_Database_Personal.BK_DIGVER))
                 {
+                    await AvisoOperacionPersonalDialogAsync("Borrando Personal", "Operación completada con exito.");
 
                     textBoxRut.IsReadOnly = false;
                     textBoxDigitoVerificador.IsReadOnly = false;
 
                     if (BM_Database_Personal.Bm_Personal_Buscar())
                     {
-                        LlenarPantallaConDb();
-                        LlenarListaPersonal();
                         LvrTransferVar.P_RUTID = BM_Database_Personal.BK_RUTID;
                         LvrTransferVar.P_DIGVER = BM_Database_Personal.BK_DIGVER;
                     }
@@ -324,19 +324,17 @@ namespace BikeMessenger
                         LvrTransferVar.P_RUTID = "";
                         LvrTransferVar.P_DIGVER = "";
                     }
-
-                    AvisoOperacionPersonalDialog("Borrando Personal", "Operación completada con exito.");
-
+                    LlenarListaPersonal();
                     LlenarPantallaConDb();
                 }
                 else
                 {
-                    AvisoOperacionPersonalDialog("Borrando Personal", "Se a producido un error al intentar borrar personal.");
+                    await AvisoOperacionPersonalDialogAsync("Borrando Personal", "Se a producido un error al intentar borrar personal.");
                 }
             }
             catch (System.ArgumentException)
             {
-                AvisoOperacionPersonalDialog("Acceso a Base de Datos", "Debe llenar los datos del personal.");
+                await AvisoOperacionPersonalDialogAsync("Acceso a Base de Datos", "Debe llenar los datos del personal.");
             }
             BorrarSiNo = false;
         }
@@ -387,7 +385,7 @@ namespace BikeMessenger
             return img;
         }
 
-        private async void ErrorDeRecuperacionDialog()
+        private async System.Threading.Tasks.Task ErrorDeRecuperacionDialogAsync()
         {
             ContentDialog noErrorRecuperacionDialog = new ContentDialog
             {
@@ -399,24 +397,24 @@ namespace BikeMessenger
             ContentDialogResult result = await noErrorRecuperacionDialog.ShowAsync();
         }
 
-        private async void AvisoOperacionPersonalDialog(string xTitulo, string xDescripcion)
+        private async System.Threading.Tasks.Task AvisoOperacionPersonalDialogAsync(string xTitulo, string xDescripcion)
         {
             try
             {
-                ContentDialog AvisoOperacionEmpresaDialog = new ContentDialog
+                ContentDialog AvisoOperacionPersonalDialog = new ContentDialog
                 {
                     Title = xTitulo,
                     Content = xDescripcion,
                     CloseButtonText = "Continuar"
                 };
-                ContentDialogResult result = await AvisoOperacionEmpresaDialog.ShowAsync();
+                ContentDialogResult result = await AvisoOperacionPersonalDialog.ShowAsync();
             } catch (System.Exception)
             {
                 ;
             }
         }
 
-        private async void AvisoBorrarPersonalDialog()
+        private async System.Threading.Tasks.Task AvisoBorrarPersonalDialogAsync()
         {
             ContentDialog AvisoConfirmacionPersonalDialog = new ContentDialog
             {
@@ -443,7 +441,7 @@ namespace BikeMessenger
                 {
                     GridPersonalLista.Add(
                         new GridPersonalIndividual { 
-                            RUTID = BM_Database_Personal.BK_GRID_RUT, 
+                            RUT = BM_Database_Personal.BK_GRID_RUT, 
                             APELLIDO = BM_Database_Personal.BK_GRID_APELLIDOS,
                             NOMBRE = BM_Database_Personal.BK_GRID_NOMBRES
                         });
@@ -459,7 +457,7 @@ namespace BikeMessenger
             {
                 DataGrid CeldaSeleccionada = sender as DataGrid;
                 GridPersonalIndividual Fila = (GridPersonalIndividual) CeldaSeleccionada.SelectedItems[0];
-                string[] CadenaDividida = Fila.RUTID.Split("-", 2, StringSplitOptions.None);
+                string[] CadenaDividida = Fila.RUT.Split("-", 2, StringSplitOptions.None);
 
                 if (BM_Database_Personal.Bm_Personal_Buscar(CadenaDividida[0], CadenaDividida[1]))
                 {
@@ -481,7 +479,7 @@ namespace BikeMessenger
 
     public class GridPersonalIndividual
     {
-        public string RUTID { get; set; }
+        public string RUT { get; set; }
         public string APELLIDO { get; set; }
         public string NOMBRE { get; set; }
     }

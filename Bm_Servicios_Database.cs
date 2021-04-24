@@ -62,30 +62,10 @@ namespace BikeMessenger
 		public Int16 BK_E_CODPAIS { get; set; }
 		public string BK_E_PAIS { get; set; }
 
-		public Boolean BM_CreateDatabase(SQLiteConnection BM_Connection)
+		public bool BM_CreateDatabase(SQLiteConnection BM_Connection)
 		{
 			this.BM_Connection = BM_Connection;
-			try
-			{
-				//  BM_DB = new SQLiteFactory();
-				// Crear Automaticamente la Base de Datos
-				// BM_Connection = (SQLiteConnection)BM_DB.CreateConnection();
-
-				// BM_Connection.ConnectionString = "Data Source=" + Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\BikeMessenger.db; PRAGMA journal_mode = WAL; Version = 3; New = True; Compress = True; Connection Timeout=0";
-
-				// BM_Connection.Open();
-
-				// Verificar que Base es nueva o ya esta creada con objetos
-				// Db_Empresa = new Bm_Empresa_Database(BM_Connection);
-
-				// Si es nueva deben crearse los objetos
-
-				return true;
-			}
-			catch (System.Data.SQLite.SQLiteException)
-			{
-				return false;
-			}
+			return true;
 		}
 
 		public bool Bm_Servicios_Agregar()
@@ -161,86 +141,207 @@ namespace BikeMessenger
 			StrAgregar_Servicios += "'" + BK_HORAENTREGA + "',";
 			StrAgregar_Servicios += "'" + BK_DISTANCIA + "',";
 			StrAgregar_Servicios += "'" + BK_PROGRAMADO + "')";
-			BK_Cmd_Servicios = new SQLiteCommand(StrAgregar_Servicios, BM_Connection);
-			BK_Cmd_Servicios.ExecuteNonQuery();
-			return true;
+			try {
+				BK_Cmd_Servicios = new SQLiteCommand(StrAgregar_Servicios, BM_Connection);
+				BK_Cmd_Servicios.ExecuteNonQuery();
+				return true;
+			}
+			catch (System.Data.SQLite.SQLiteException)
+			{
+				return false;
+			}
 		}
 
 		public bool Bm_Servicios_Buscar()
 		{
-			BK_Cmd_Servicios = new SQLiteCommand(StrBuscar_Servicios, BM_Connection);
-			BK_Reader_Servicios = BK_Cmd_Servicios.ExecuteReader();
+			try {
+				BK_Cmd_Servicios = new SQLiteCommand(StrBuscar_Servicios, BM_Connection);
+				BK_Reader_Servicios = BK_Cmd_Servicios.ExecuteReader();
 
-			if (BK_Reader_Servicios.Read())
-			{
-				// Llenar Valores de Servicios
-				BK_NROENVIO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("NROENVIO"));
-				BK_GUIADESPACHO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("GUIADESPACHO"));
-				BK_FECHA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("FECHA"));
-				BK_HORA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("HORA"));
-				BK_CLIENTERUT = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("CLIENTERUT"));
-				BK_CLIENTEDIGVER = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("CLIENTEDIGVER"));
-				BK_ODOMICILIO1 = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("ODOMICILIO1"));
-				BK_ODOMICILIO2 = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("ODOMICILIO2"));
-				BK_ONUMERO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("ONUMERO"));
-				BK_OPISO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OPISO"));
-				BK_OOFICINA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OOFICINA"));
-				BK_OCIUDAD = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OCIUDAD"));
-				BK_OCOMUNA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OCOMUNA"));
-				BK_OESTADO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OESTADO"));
-				BK_OPAIS = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OPAIS"));
-				BK_OCOORDENADAS = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OCOORDENADAS"));
-				BK_DDOMICILIO1 = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DDOMICILIO1"));
-				BK_DDOMICILIO2 = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DDOMICILIO2"));
-				BK_DNUMERO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DNUMERO"));
-				BK_DPISO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OPISO"));
-				BK_DOFICINA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DOFICINA"));
-				BK_DCIUDAD = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DCIUDAD"));
-				BK_DCOMUNA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DCOMUNA"));
-				BK_DESTADO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DESTADO"));
-				BK_DPAIS = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DPAIS"));
-				BK_DCOORDENADAS = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DCOORDENADAS"));
-				BK_DESCRIPCION = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DESCRIPCION"));
-				BK_OBSERVACIONES = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OBSERVACIONES"));
-				BK_ENTREGA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("ENTREGA"));
-				BK_RECEPCION = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("RECEPCION"));
-				BK_TESPERA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("TESPERA"));
-				BK_FECHAENTREGA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("FECHAENTREGA"));
-				BK_HORAENTREGA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("HORAENTREGA"));
-				BK_DISTANCIA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DISTANCIA"));
-				BK_PROGRAMADO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("PROGRAMADO"));
-				return true;
+				if (BK_Reader_Servicios.Read())
+				{
+					// Llenar Valores de Servicios
+					BK_NROENVIO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("NROENVIO"));
+					BK_GUIADESPACHO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("GUIADESPACHO"));
+					BK_FECHA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("FECHA"));
+					BK_HORA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("HORA"));
+					BK_CLIENTERUT = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("CLIENTERUT"));
+					BK_CLIENTEDIGVER = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("CLIENTEDIGVER"));
+					BK_ODOMICILIO1 = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("ODOMICILIO1"));
+					BK_ODOMICILIO2 = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("ODOMICILIO2"));
+					BK_ONUMERO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("ONUMERO"));
+					BK_OPISO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OPISO"));
+					BK_OOFICINA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OOFICINA"));
+					BK_OCIUDAD = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OCIUDAD"));
+					BK_OCOMUNA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OCOMUNA"));
+					BK_OESTADO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OESTADO"));
+					BK_OPAIS = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OPAIS"));
+					BK_OCOORDENADAS = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OCOORDENADAS"));
+					BK_DDOMICILIO1 = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DDOMICILIO1"));
+					BK_DDOMICILIO2 = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DDOMICILIO2"));
+					BK_DNUMERO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DNUMERO"));
+					BK_DPISO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OPISO"));
+					BK_DOFICINA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DOFICINA"));
+					BK_DCIUDAD = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DCIUDAD"));
+					BK_DCOMUNA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DCOMUNA"));
+					BK_DESTADO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DESTADO"));
+					BK_DPAIS = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DPAIS"));
+					BK_DCOORDENADAS = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DCOORDENADAS"));
+					BK_DESCRIPCION = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DESCRIPCION"));
+					BK_OBSERVACIONES = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OBSERVACIONES"));
+					BK_ENTREGA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("ENTREGA"));
+					BK_RECEPCION = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("RECEPCION"));
+					BK_TESPERA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("TESPERA"));
+					BK_FECHAENTREGA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("FECHAENTREGA"));
+					BK_HORAENTREGA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("HORAENTREGA"));
+					BK_DISTANCIA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DISTANCIA"));
+					BK_PROGRAMADO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("PROGRAMADO"));
+					return true;
+				}
+				else
+				{
+					LimpiarVariables();
+					return false;
+				}
 			}
-			else
+			catch (System.Data.SQLite.SQLiteException)
 			{
-				// No existe Recursos
 				return false;
 			}
+		}
 
+		public bool Bm_Servicios_Buscar(string pNROENVIO)
+		{
+			try
+			{
+				BK_Cmd_Servicios = new SQLiteCommand(StrBuscar_Servicios + " WHERE NROENVIO = '" + pNROENVIO + "'", BM_Connection);
+				BK_Reader_Servicios = BK_Cmd_Servicios.ExecuteReader();
+
+				if (BK_Reader_Servicios.Read())
+				{
+					// Llenar Valores de Servicios
+					BK_NROENVIO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("NROENVIO"));
+					BK_GUIADESPACHO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("GUIADESPACHO"));
+					BK_FECHA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("FECHA"));
+					BK_HORA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("HORA"));
+					BK_CLIENTERUT = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("CLIENTERUT"));
+					BK_CLIENTEDIGVER = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("CLIENTEDIGVER"));
+					BK_ODOMICILIO1 = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("ODOMICILIO1"));
+					BK_ODOMICILIO2 = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("ODOMICILIO2"));
+					BK_ONUMERO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("ONUMERO"));
+					BK_OPISO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OPISO"));
+					BK_OOFICINA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OOFICINA"));
+					BK_OCIUDAD = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OCIUDAD"));
+					BK_OCOMUNA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OCOMUNA"));
+					BK_OESTADO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OESTADO"));
+					BK_OPAIS = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OPAIS"));
+					BK_OCOORDENADAS = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OCOORDENADAS"));
+					BK_DDOMICILIO1 = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DDOMICILIO1"));
+					BK_DDOMICILIO2 = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DDOMICILIO2"));
+					BK_DNUMERO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DNUMERO"));
+					BK_DPISO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OPISO"));
+					BK_DOFICINA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DOFICINA"));
+					BK_DCIUDAD = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DCIUDAD"));
+					BK_DCOMUNA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DCOMUNA"));
+					BK_DESTADO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DESTADO"));
+					BK_DPAIS = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DPAIS"));
+					BK_DCOORDENADAS = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DCOORDENADAS"));
+					BK_DESCRIPCION = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DESCRIPCION"));
+					BK_OBSERVACIONES = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OBSERVACIONES"));
+					BK_ENTREGA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("ENTREGA"));
+					BK_RECEPCION = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("RECEPCION"));
+					BK_TESPERA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("TESPERA"));
+					BK_FECHAENTREGA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("FECHAENTREGA"));
+					BK_HORAENTREGA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("HORAENTREGA"));
+					BK_DISTANCIA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DISTANCIA"));
+					BK_PROGRAMADO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("PROGRAMADO"));
+					return true;
+				}
+				else
+				{
+					LimpiarVariables();
+					return false;
+				}
+			}
+			catch (System.Data.SQLite.SQLiteException)
+			{
+				return false;
+			}
 		}
 
 		// Procedimiento Buscar Pais
 		public bool Bm_E_Pais_EjecutarSelect()
 		{
-			BK_Cmd_Servicios_Pais = new SQLiteCommand(StrBuscar_Servicios_Pais, BM_Connection);
-			BK_Reader_Servicios_Pais = BK_Cmd_Servicios_Pais.ExecuteReader();
-			return true;
+			try {
+				BK_Cmd_Servicios_Pais = new SQLiteCommand(StrBuscar_Servicios_Pais, BM_Connection);
+				BK_Reader_Servicios_Pais = BK_Cmd_Servicios_Pais.ExecuteReader();
+				return true;
+			}
+			catch (System.Data.SQLite.SQLiteException)
+			{
+				return false;
+			}
 		}
 
 		public bool Bm_E_Pais_Buscar()
 		{
-			if (BK_Reader_Servicios_Pais.Read())
-			{
-				// Llenar Valores de Recursos
-				BK_E_CODPAIS = BK_Reader_Servicios_Pais.GetInt16(BK_Reader_Servicios_Pais.GetOrdinal("CODPAIS"));
-				BK_E_PAIS = BK_Reader_Servicios_Pais.GetString(BK_Reader_Servicios_Pais.GetOrdinal("PAIS"));
-				return true;
+			try {
+				if (BK_Reader_Servicios_Pais.Read())
+				{
+					// Llenar Valores de Recursos
+					BK_E_CODPAIS = BK_Reader_Servicios_Pais.GetInt16(BK_Reader_Servicios_Pais.GetOrdinal("CODPAIS"));
+					BK_E_PAIS = BK_Reader_Servicios_Pais.GetString(BK_Reader_Servicios_Pais.GetOrdinal("PAIS"));
+					return true;
+				}
+				else
+				{
+					// No existe Recursos
+					return false;
+				}
 			}
-			else
+			catch (System.Data.SQLite.SQLiteException)
 			{
-				// No existe Recursos
 				return false;
 			}
+		}
+
+		public void LimpiarVariables()
+        {
+			BK_NROENVIO = "";
+			BK_GUIADESPACHO = "";
+			BK_FECHA = "";
+			BK_HORA = "";
+			BK_CLIENTERUT = "";
+			BK_CLIENTEDIGVER = "";
+			BK_ODOMICILIO1 = "";
+			BK_ODOMICILIO2 = "";
+			BK_ONUMERO = "";
+			BK_OPISO = "";
+			BK_OOFICINA = "";
+			BK_OCIUDAD = "";
+			BK_OCOMUNA = "";
+			BK_OESTADO = "";
+			BK_OPAIS = "";
+			BK_OCOORDENADAS = "";
+			BK_DDOMICILIO1 = "";
+			BK_DDOMICILIO2 = "";
+			BK_DNUMERO = "";
+			BK_DPISO = "";
+			BK_DOFICINA = "";
+			BK_DCIUDAD = "";
+			BK_DCOMUNA = "";
+			BK_DESTADO = "";
+			BK_DPAIS = "";
+			BK_DCOORDENADAS = "";
+			BK_DESCRIPCION = "";
+			BK_OBSERVACIONES = "";
+			BK_ENTREGA = "";
+			BK_RECEPCION = "";
+			BK_TESPERA = "";
+			BK_FECHAENTREGA = "";
+			BK_HORAENTREGA = "";
+			BK_DISTANCIA = "";
+			BK_PROGRAMADO = "";
 		}
 	}
 }

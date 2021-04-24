@@ -31,7 +31,7 @@
             <AppBarButton x:Name="appBarBuscar" Icon="Find" Label="Buscar"/>
             <AppBarButton x:Name="appBarAgregar" Icon="Add" Label="Agregar" Click="BtnAgregarRecursos"/>
             <AppBarButton x:Name="appBarModificar" Icon="Edit" Label="Modificar" Click="BtnModificarRecursos"/>
-            <AppBarButton x:Name="appBarBorrar" Icon="Delete" Label="Borrar"/>
+            <AppBarButton x:Name="appBarBorrar" Icon="Delete" Label="Borrar" Click="BtnBorrarRecursos"/>
             <AppBarButton x:Name="appBarImprimir" Icon="Print" Label="Imprimir"/>
             <AppBarButton x:Name="appBarSalir" Icon="Go" Label="Salir" Click="BtnSalirRecursos"/>
         </CommandBar>
