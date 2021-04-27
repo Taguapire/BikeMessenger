@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data.SQLite;
 
 namespace BikeMessenger
@@ -104,7 +100,8 @@ namespace BikeMessenger
         // Procedimiento Buscar Pais
         public bool Bm_E_Pais_EjecutarSelect()
         {
-            try {
+            try
+            {
                 BK_Cmd_Empresa_Pais = new SQLiteCommand(StrBuscar_Empresa_Pais, BM_Connection);
                 BK_Reader_Empresa_Pais = BK_Cmd_Empresa_Pais.ExecuteReader();
                 return true;
@@ -117,7 +114,8 @@ namespace BikeMessenger
 
         public bool Bm_E_Pais_Buscar()
         {
-            try {
+            try
+            {
                 if (BK_Reader_Empresa_Pais.Read())
                 {
                     // Llenar Valores de la Empresa
@@ -182,7 +180,7 @@ namespace BikeMessenger
             StrAgregar_Empresa += "'" + BK_PAIS + "',";
             StrAgregar_Empresa += "'" + BK_OBSERVACIONES + "',";
             StrAgregar_Empresa += "'" + BK_LOGO + "')";
-            
+
             try
             {
                 BK_Cmd_Empresa = new SQLiteCommand(StrAgregar_Empresa, BM_Connection);
@@ -219,7 +217,7 @@ namespace BikeMessenger
             StrModificar_Empresa += "PAIS = '" + BK_PAIS + "',";
             StrModificar_Empresa += "OBSERVACIONES = '" + BK_OBSERVACIONES + "',";
             StrModificar_Empresa += "LOGO = '" + BK_LOGO + "'";
- 
+
             try
             {
                 BK_Cmd_Empresa = new SQLiteCommand(StrModificar_Empresa, BM_Connection);
@@ -232,7 +230,7 @@ namespace BikeMessenger
             }
         }
         // Procedimiento Eliminar Empresa
-        
+
         public bool Bm_Empresa_Borrar()
         {
             StrBorrar_Empresa = "DELETE FROM EMPRESA";

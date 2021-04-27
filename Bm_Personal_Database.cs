@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data.SQLite;
 
 namespace BikeMessenger
@@ -13,10 +9,10 @@ namespace BikeMessenger
         public SQLiteConnection BM_Connection;
         SQLiteCommand BK_Cmd_Personal;
         SQLiteDataReader BK_Reader_Personal;
-    
+
         SQLiteCommand BK_Cmd_Personal_Pais;
         SQLiteDataReader BK_Reader_Personal_Pais;
-     
+
         SQLiteCommand BK_Cmd_Personal_Grid;
         SQLiteDataReader BK_Reader_Personal_Grid;
 
@@ -204,7 +200,8 @@ namespace BikeMessenger
                     return false;
                 }
             }
-            catch (System.Data.SQLite.SQLiteException) {
+            catch (System.Data.SQLite.SQLiteException)
+            {
                 return false;
             }
             catch (System.InvalidCastException)
@@ -244,7 +241,8 @@ namespace BikeMessenger
                 BK_Cmd_Personal.ExecuteNonQuery();
                 return true;
             }
-            catch (System.Data.SQLite.SQLiteException) {
+            catch (System.Data.SQLite.SQLiteException)
+            {
                 return false;
             }
         }
@@ -286,7 +284,8 @@ namespace BikeMessenger
 
         public bool Bm_E_Pais_Buscar()
         {
-            try {
+            try
+            {
                 if (BK_Reader_Personal_Pais.Read())
                 {
                     BK_E_CODPAIS = BK_Reader_Personal_Pais.GetInt16(BK_Reader_Personal_Pais.GetOrdinal("CODPAIS"));

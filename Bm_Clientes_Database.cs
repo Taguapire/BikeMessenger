@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data.SQLite;
 
 namespace BikeMessenger
@@ -193,7 +189,8 @@ namespace BikeMessenger
 
         public bool Bm_Clientes_Buscar(string pRUTID, string pDIGVER)
         {
-            try {
+            try
+            {
                 BK_Cmd_Clientes = new SQLiteCommand(StrBuscar_Clientes + " WHERE RUTID = '" + pRUTID + "' AND DIGVER = '" + pDIGVER + "'", BM_Connection);
                 BK_Reader_Clientes = BK_Cmd_Clientes.ExecuteReader();
 
@@ -278,7 +275,8 @@ namespace BikeMessenger
         // Procedimiento Borrar Clientes
         public bool Bm_Clientes_Borrar(string pRUTID, string pDIGVER)
         {
-            try {
+            try
+            {
                 StrBorrar_Clientes = "DELETE FROM CLIENTES ";
                 StrBorrar_Clientes += "WHERE ";
                 StrBorrar_Clientes += "RUTID = '" + pRUTID + "' AND ";
@@ -306,11 +304,12 @@ namespace BikeMessenger
             {
                 return false;
             }
-        }   
+        }
 
         public bool Bm_E_Pais_Buscar()
         {
-            try {
+            try
+            {
                 if (BK_Reader_Clientes_Pais.Read())
                 {
                     // Llenar Valores de la Empresa
@@ -346,7 +345,8 @@ namespace BikeMessenger
 
         public bool Bm_Clientes_BuscarGridProxima()
         {
-            try {
+            try
+            {
                 if (BK_Reader_Clientes_Grid.Read())
                 {
                     // Llenar Valores de la Empresa

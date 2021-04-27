@@ -6,10 +6,9 @@ using Windows.Graphics.Imaging;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
-using System.Data.SQLite;
-using Windows.UI.Xaml.Media.Animation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -47,7 +46,7 @@ namespace BikeMessenger
 
         private void ResetPageCache()
         {
-            int cacheSize = ((Frame) Parent).CacheSize;
+            int cacheSize = ((Frame)Parent).CacheSize;
 
             ((Frame)Parent).CacheSize = 0;
             ((Frame)Parent).CacheSize = cacheSize;
@@ -70,7 +69,7 @@ namespace BikeMessenger
             }
             else
             {
-                LvrTransferVar = (TransferVar) navigationEvent.Parameter;
+                LvrTransferVar = (TransferVar)navigationEvent.Parameter;
 
                 if (BM_Database_Empresa.BM_CreateDatabase(LvrTransferVar.TV_Connection))
                 {

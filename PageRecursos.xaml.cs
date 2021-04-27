@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Toolkit.Uwp.UI.Controls;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -6,11 +8,9 @@ using Windows.Graphics.Imaging;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
-using Windows.UI.Xaml.Media.Animation;
-using Microsoft.Toolkit.Uwp.UI.Controls;
-using System.Collections.Generic;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -80,7 +80,7 @@ namespace BikeMessenger
             }
             else
             {
-                LvrTransferVar = (TransferVar) navigationEvent.Parameter;
+                LvrTransferVar = (TransferVar)navigationEvent.Parameter;
                 BM_Database_Recursos.BM_CreateDatabase(LvrTransferVar.TV_Connection);
 
                 if (LvrTransferVar.R_PAT_SER == "")
@@ -180,7 +180,7 @@ namespace BikeMessenger
                 textBoxPropietario.Text = BM_Database_Recursos.BK_PROPIETARIO;
 
                 comboBoxTipo.SelectedValue = BM_Database_Recursos.BK_TIPO;
-                
+
                 textBoxPatenteCodigo.Text = BM_Database_Recursos.BK_PATENTE;
                 textBoxMarca.Text = BM_Database_Recursos.BK_MARCA;
                 textBoxModelo.Text = BM_Database_Recursos.BK_MODELO;
@@ -273,7 +273,7 @@ namespace BikeMessenger
                     LvrTransferVar.R_RUTID = BM_Database_Recursos.BK_RUTID;
                     LvrTransferVar.R_DIGVER = BM_Database_Recursos.BK_DIGVER;
                     LvrTransferVar.R_PAT_SER = BM_Database_Recursos.BK_PATENTE;
-                    await AvisoOperacionRecursosDialogAsync("Agregar Personal", "Operación completada con exito.");
+                    await AvisoOperacionRecursosDialogAsync("Agregar Recursos", "Operación completada con exito.");
                 }
                 else
                 {
@@ -284,7 +284,6 @@ namespace BikeMessenger
             {
                 await AvisoOperacionRecursosDialogAsync("Agregando Recursos", "Aun faltan datos por completar.");
             }
-
         }
 
         private async void BtnModificarRecursos(object sender, RoutedEventArgs e)
@@ -325,8 +324,8 @@ namespace BikeMessenger
 
                     if (BM_Database_Recursos.Bm_Recursos_Buscar())
                     {
-                        LvrTransferVar.P_RUTID = BM_Database_Recursos.BK_RUTID;
-                        LvrTransferVar.P_DIGVER = BM_Database_Recursos.BK_DIGVER;
+                        LvrTransferVar.R_RUTID = BM_Database_Recursos.BK_RUTID;
+                        LvrTransferVar.R_DIGVER = BM_Database_Recursos.BK_DIGVER;
                         LvrTransferVar.R_PAT_SER = BM_Database_Recursos.BK_PATENTE;
                     }
                     else
@@ -341,7 +340,7 @@ namespace BikeMessenger
                 }
                 else
                 {
-                    await AvisoOperacionRecursosDialogAsync("Borrando Personal", "Se a producido un error al intentar borrar personal.");
+                    await AvisoOperacionRecursosDialogAsync("Borrando Recursos", "Se a producido un error al intentar borrar personal.");
                 }
             }
             catch (System.ArgumentException)

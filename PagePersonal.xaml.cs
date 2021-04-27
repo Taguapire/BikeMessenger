@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Toolkit.Uwp.UI.Controls;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -6,11 +8,9 @@ using Windows.Graphics.Imaging;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
-using Windows.UI.Xaml.Media.Animation;
-using System.Collections.Generic;
-using Microsoft.Toolkit.Uwp.UI.Controls;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -76,10 +76,11 @@ namespace BikeMessenger
             }
             else
             {
-                LvrTransferVar = (TransferVar) navigationEvent.Parameter;
+                LvrTransferVar = (TransferVar)navigationEvent.Parameter;
                 BM_Database_Personal.BM_CreateDatabase(LvrTransferVar.TV_Connection);
 
-                if (LvrTransferVar.P_RUTID == "") {
+                if (LvrTransferVar.P_RUTID == "")
+                {
                     if (BM_Database_Personal.Bm_Personal_Buscar())
                     {
                         LlenarPantallaConDb();
@@ -87,7 +88,7 @@ namespace BikeMessenger
                 }
                 else
                 {
-                    if (BM_Database_Personal.Bm_Personal_Buscar(LvrTransferVar.P_RUTID,LvrTransferVar.P_DIGVER))
+                    if (BM_Database_Personal.Bm_Personal_Buscar(LvrTransferVar.P_RUTID, LvrTransferVar.P_DIGVER))
                     {
                         LlenarPantallaConDb();
                     }
@@ -415,7 +416,8 @@ namespace BikeMessenger
                     CloseButtonText = "Continuar"
                 };
                 ContentDialogResult result = await AvisoOperacionPersonalDialog.ShowAsync();
-            } catch (System.Exception)
+            }
+            catch (System.Exception)
             {
                 ;
             }
@@ -447,8 +449,9 @@ namespace BikeMessenger
                 while (BM_Database_Personal.Bm_Personal_BuscarGridProxima())
                 {
                     GridPersonalLista.Add(
-                        new GridPersonalIndividual { 
-                            RUT = BM_Database_Personal.BK_GRID_RUT, 
+                        new GridPersonalIndividual
+                        {
+                            RUT = BM_Database_Personal.BK_GRID_RUT,
                             APELLIDO = BM_Database_Personal.BK_GRID_APELLIDOS,
                             NOMBRE = BM_Database_Personal.BK_GRID_NOMBRES
                         });
@@ -463,7 +466,7 @@ namespace BikeMessenger
             try
             {
                 DataGrid CeldaSeleccionada = sender as DataGrid;
-                GridPersonalIndividual Fila = (GridPersonalIndividual) CeldaSeleccionada.SelectedItems[0];
+                GridPersonalIndividual Fila = (GridPersonalIndividual)CeldaSeleccionada.SelectedItems[0];
                 string[] CadenaDividida = Fila.RUT.Split("-", 2, StringSplitOptions.None);
 
                 if (BM_Database_Personal.Bm_Personal_Buscar(CadenaDividida[0], CadenaDividida[1]))

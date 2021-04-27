@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data.SQLite;
 
 namespace BikeMessenger
@@ -13,7 +9,7 @@ namespace BikeMessenger
         public SQLiteConnection BM_Connection;
         SQLiteCommand BK_Cmd_Recursos;
         SQLiteDataReader BK_Reader_Recursos;
-        
+
         SQLiteCommand BK_Cmd_Recursos_Pais;
         SQLiteDataReader BK_Reader_Recursos_Pais;
 
@@ -295,7 +291,7 @@ namespace BikeMessenger
             }
             catch (System.Data.SQLite.SQLiteException)
             {
-                 return false;
+                return false;
             }
         }
 

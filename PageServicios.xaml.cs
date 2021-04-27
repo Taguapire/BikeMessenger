@@ -1,21 +1,14 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Graphics.Imaging;
-using Windows.Storage.Streams;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
-using System.Data.SQLite;
-using Windows.UI.Xaml.Media.Animation;
-using Windows.Devices.Geolocation;
-using Windows.UI.Xaml.Controls.Maps;
+﻿using Microsoft.Toolkit.Uwp.UI.Controls;
+using System;
 using System.Collections.Generic;
-using Windows.Foundation;
+using Windows.Devices.Geolocation;
 using Windows.Services.Maps;
 using Windows.UI;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Maps;
+using Windows.UI.Xaml.Media.Animation;
+using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -28,6 +21,7 @@ namespace BikeMessenger
     {
         TransferVar LvrTransferVar;
         readonly Bm_Servicios_Database BM_Database_Servicios = new Bm_Servicios_Database();
+        bool BorrarSiNo;
         public PageServicios()
         {
             this.InitializeComponent();
@@ -53,7 +47,7 @@ namespace BikeMessenger
             }
             else
             {
-                LvrTransferVar = (TransferVar) e.Parameter;
+                LvrTransferVar = (TransferVar)e.Parameter;
                 if (BM_Database_Servicios.BM_CreateDatabase(LvrTransferVar.TV_Connection))
                 {
                     if (BM_Database_Servicios.Bm_Servicios_Buscar())
@@ -100,10 +94,79 @@ namespace BikeMessenger
             this.Frame.Navigate(typeof(PagePersonal), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
-        private void BtnAgregarServicios(object sender, RoutedEventArgs e)
+        private async void BtnAgregarServicios(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                LlenarDbConPantalla();
+
+                if (BM_Database_Servicios.Bm_Servicios_Agregar())
+                {
+                    LvrTransferVar.S_NROENVIO = BM_Database_Servicios.BK_NROENVIO;
+                    await AvisoOperacionServiciosDialogAsync("Agregar Servicios", "Operación completada con exito.");
+                }
+                else
+                {
+                    await AvisoOperacionServiciosDialogAsync("Agregando Servicios", "Se a producido un error al intentar agregar recurso.");
+                }
+            }
+            catch (System.ArgumentException)
+            {
+                await AvisoOperacionServiciosDialogAsync("Agregando Recursos", "Aun faltan datos por completar.");
+            }
+        }
+
+        private async void BtnModificarServicios(object sender, RoutedEventArgs e)
         {
             LlenarDbConPantalla();
-            BM_Database_Servicios.Bm_Servicios_Agregar();
+            if (BM_Database_Servicios.Bm_Recursos_Modificar(BM_Database_Servicios.BK_NROENVIO))
+            {
+                LvrTransferVar.S_NROENVIO = BM_Database_Servicios.BK_NROENVIO;
+                await AvisoOperacionServiciosDialogAsync("Modificar Servicios", "Operación completada con exito.");
+            }
+            else
+            {
+                await AvisoOperacionServiciosDialogAsync("Modificando Servicios", "Se a producido un error al intentar modificar recurso.");
+            }
+        }
+
+        private async void BtnBorrarServicios(object sender, RoutedEventArgs e)
+        {
+            BorrarSiNo = false;
+
+            await AvisoBorrarServicioDialogAsync();
+
+            if (!BorrarSiNo)
+                return;
+
+            try
+            {
+                if (BM_Database_Servicios.Bm_Servicios_Borrar(BM_Database_Servicios.BK_NROENVIO))
+                {
+                    await AvisoOperacionServiciosDialogAsync("Borrando Servicios", "Operación completada con exito.");
+
+                    textBoxNroDeEnvio.IsReadOnly = false;
+
+                    if (BM_Database_Servicios.Bm_Servicios_Buscar())
+                    {
+                        LvrTransferVar.S_NROENVIO = BM_Database_Servicios.BK_NROENVIO;
+                    }
+                    else
+                    {
+                        LvrTransferVar.S_NROENVIO = "";
+                    }
+                    LlenarPantallaConDb();
+                }
+                else
+                {
+                    await AvisoOperacionServiciosDialogAsync("Borrando Servicios", "Se a producido un error al intentar borrar personal.");
+                }
+            }
+            catch (System.ArgumentException)
+            {
+                await AvisoOperacionServiciosDialogAsync("Acceso a Base de Datos", "Debe llenar los datos del personal.");
+            }
+            BorrarSiNo = false;
         }
 
         private async void BtnMapaBuscarRutaServicios(object sender, RoutedEventArgs e)
@@ -168,7 +231,7 @@ namespace BikeMessenger
             {
                 mapControlBikeMessenger.Visibility = Visibility.Collapsed;
                 appBarBuscarRuta.IsEnabled = false;
-            } 
+            }
             else
             {
                 //mapControlBikeMessenger;
@@ -182,16 +245,23 @@ namespace BikeMessenger
             {
                 textBoxNroDeEnvio.Text = BM_Database_Servicios.BK_NROENVIO;
                 textBoxGuiaDeDespacho.Text = BM_Database_Servicios.BK_GUIADESPACHO;
+                controlFecha.SelectedDate = DateTimeOffset.Parse(BM_Database_Servicios.BK_FECHA);
+                controlHora.SelectedTime = TimeSpan.Parse(BM_Database_Servicios.BK_HORA);
                 textBoxRutID.Text = BM_Database_Servicios.BK_CLIENTERUT;
                 textBoxDigitoVerificador.Text = BM_Database_Servicios.BK_CLIENTEDIGVER;
+                textBoxCliente.Text = BM_Database_Servicios.BK_CLIENTE;
+                textBoxIdMensajero.Text = BM_Database_Servicios.BK_MENSAJERORUT + "-" + BM_Database_Servicios.BK_MENSAJERODIGVER;
+                textBoxNombreMensajero.Text = BM_Database_Servicios.BK_MENSAJERO;
+                textBoxIdRecurso.Text = BM_Database_Servicios.BK_RECURSOID;
+                textBoxNombreRecurso.Text = BM_Database_Servicios.BK_RECURSO;
                 textBoxOrigenDomicilio1.Text = BM_Database_Servicios.BK_ODOMICILIO1;
-                textBoxOrigenDomicilio2.Text = BM_Database_Servicios.BK_ODOMICILIO2;
+                //textBoxOrigenDomicilio2.Text = BM_Database_Servicios.BK_ODOMICILIO2;
                 textBoxOrigenNumero.Text = BM_Database_Servicios.BK_ONUMERO;
                 textBoxOrigenPiso.Text = BM_Database_Servicios.BK_OPISO;
                 textBoxOrigenOficina.Text = BM_Database_Servicios.BK_OOFICINA;
                 // BM_Database_Servicios.BK_OCOORDENADAS = "*";
                 textBoxDestinoDomicilio1.Text = BM_Database_Servicios.BK_DDOMICILIO1;
-                textBoxDestinoDomicilio2.Text = BM_Database_Servicios.BK_DDOMICILIO2;
+                // textBoxDestinoDomicilio2.Text = BM_Database_Servicios.BK_DDOMICILIO2;
                 textBoxDestinoNumero.Text = BM_Database_Servicios.BK_DNUMERO;
                 textBoxDestinoPiso.Text = BM_Database_Servicios.BK_DPISO;
                 textBoxDestinoOficina.Text = BM_Database_Servicios.BK_DOFICINA;
@@ -205,7 +275,7 @@ namespace BikeMessenger
                 // BM_Database_Servicios.BK_HORAENTREGA = "*";
                 // BM_Database_Servicios.BK_DISTANCIA = "*";
                 // BM_Database_Servicios.BK_PROGRAMADO = "*";
-                
+
                 // Asignaciones que deben revisarse
                 // BM_Database_Servicios.BK_FECHA = controlFecha.Date.ToString();
                 // BM_Database_Servicios.BK_HORA = controlHora.Time.ToString();
@@ -261,12 +331,22 @@ namespace BikeMessenger
         {
             BM_Database_Servicios.BK_NROENVIO = textBoxNroDeEnvio.Text;
             BM_Database_Servicios.BK_GUIADESPACHO = textBoxGuiaDeDespacho.Text;
-            BM_Database_Servicios.BK_FECHA = controlFecha.Date.ToString();
+            BM_Database_Servicios.BK_FECHA = controlFecha.Date.Date.ToShortDateString().ToString();
             BM_Database_Servicios.BK_HORA = controlHora.Time.ToString();
             BM_Database_Servicios.BK_CLIENTERUT = textBoxRutID.Text;
             BM_Database_Servicios.BK_CLIENTEDIGVER = textBoxDigitoVerificador.Text;
+            BM_Database_Servicios.BK_CLIENTE = textBoxCliente.Text;
+            // Desglosar RUT Mensajero
+            string xyRutCompleto = textBoxIdMensajero.Text; ;
+            string[] CadenaDividida = xyRutCompleto.Split("-", 2, StringSplitOptions.None);
+            BM_Database_Servicios.BK_MENSAJERORUT = CadenaDividida[0];
+            BM_Database_Servicios.BK_MENSAJERODIGVER = CadenaDividida[1];
+            BM_Database_Servicios.BK_MENSAJERO = textBoxNombreMensajero.Text;
+            BM_Database_Servicios.BK_RECURSOID = textBoxIdRecurso.Text;
+            BM_Database_Servicios.BK_RECURSO = textBoxNombreRecurso.Text;
+            BM_Database_Servicios.BK_MENSAJERO = textBoxNombreMensajero.Text;
             BM_Database_Servicios.BK_ODOMICILIO1 = textBoxOrigenDomicilio1.Text;
-            BM_Database_Servicios.BK_ODOMICILIO2 = textBoxOrigenDomicilio2.Text;
+            // BM_Database_Servicios.BK_ODOMICILIO2 = textBoxOrigenDomicilio2.Text;
             BM_Database_Servicios.BK_ONUMERO = textBoxOrigenNumero.Text;
             BM_Database_Servicios.BK_OPISO = textBoxOrigenPiso.Text;
             BM_Database_Servicios.BK_OOFICINA = textBoxOrigenOficina.Text;
@@ -276,7 +356,7 @@ namespace BikeMessenger
             BM_Database_Servicios.BK_OPAIS = comboBoxOrigenPais.Text;
             BM_Database_Servicios.BK_OCOORDENADAS = "*";
             BM_Database_Servicios.BK_DDOMICILIO1 = textBoxDestinoDomicilio1.Text;
-            BM_Database_Servicios.BK_DDOMICILIO2 = textBoxDestinoDomicilio2.Text;
+            // BM_Database_Servicios.BK_DDOMICILIO2 = textBoxDestinoDomicilio2.Text;
             BM_Database_Servicios.BK_DNUMERO = textBoxDestinoNumero.Text;
             BM_Database_Servicios.BK_DPISO = textBoxDestinoPiso.Text;
             BM_Database_Servicios.BK_DOFICINA = textBoxDestinoOficina.Text;
@@ -313,5 +393,308 @@ namespace BikeMessenger
             LvrTransferVar.TV_Connection.Close();
             Application.Current.Exit();
         }
+
+        private async System.Threading.Tasks.Task AvisoBorrarServicioDialogAsync()
+        {
+            ContentDialog AvisoConfirmacionServicioDialog = new ContentDialog
+            {
+                Title = "Borrar Servicio",
+                Content = "Confirme borrado del registro actual!",
+                PrimaryButtonText = "Borrar",
+                CloseButtonText = "Cancelar"
+            };
+
+            ContentDialogResult result = await AvisoConfirmacionServicioDialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary)
+                BorrarSiNo = true;
+            else
+                BorrarSiNo = false;
+        }
+
+        private async System.Threading.Tasks.Task AvisoOperacionServiciosDialogAsync(string xTitulo, string xDescripcion)
+        {
+            try
+            {
+                ContentDialog AvisoOperacionServiciosDialog = new ContentDialog
+                {
+                    Title = xTitulo,
+                    Content = xDescripcion,
+                    CloseButtonText = "Continuar"
+                };
+                ContentDialogResult result = await AvisoOperacionServiciosDialog.ShowAsync();
+            }
+            catch (System.Exception)
+            {
+                ;
+            }
+        }
+
+        // ******************************************************************
+        // Proceso Seleccion Nro de Envio
+        // ******************************************************************
+
+        private void BtnEventoListarEnvios(object sender, RoutedEventArgs e)
+        {
+            FrameworkElement element = sender as FrameworkElement;
+            if (element != null)
+            {
+                LlenarListaEnvios();
+                BtnFlyoutNroEnvios.ShowAt(element);
+            }
+        }
+
+        private void LlenarListaEnvios()
+        {
+            List<GridEnvioIndividualServicios> GridEnviosLista = new List<GridEnvioIndividualServicios>();
+
+            if (BM_Database_Servicios.Bm_Envios_BuscarGrid())
+            {
+                while (BM_Database_Servicios.Bm_Envios_BuscarGridProxima())
+                {
+                    GridEnviosLista.Add(
+                        new GridEnvioIndividualServicios
+                        {
+                            ENVIO = BM_Database_Servicios.BK_GRID_ENVIO_NRO,
+                            FECHA = BM_Database_Servicios.BK_GRID_ENVIO_FECHA,
+                            CLIENTE = BM_Database_Servicios.BK_GRID_ENVIO_CLIENTE,
+                            ENTREGA = BM_Database_Servicios.BK_GRID_ENVIO_ENTREGA
+
+                        });
+                }
+            }
+            dataGridListadoNroEnvios.IsReadOnly = true;
+            dataGridListadoNroEnvios.ItemsSource = GridEnviosLista;
+        }
+
+
+        private void dataGridSeleccion_NroDeEnvios(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                DataGrid CeldaSeleccionada = sender as DataGrid;
+                GridEnvioIndividualServicios Envio = (GridEnvioIndividualServicios)CeldaSeleccionada.SelectedItems[0];
+
+                //if (BM_Database_Servicios.Bm_Servicio_BuscarEnvio(CadenaDividida[0], CadenaDividida[1]))
+                //{
+                //    // LimpiarPantalla();
+                //    LlenarPantallaConDb();
+                //    // LlenarListaPersonal();
+                //}
+                //else
+                //{
+                //    // textBoxNombreEmpresa.Text = "Sin Empresa";
+                //}
+            }
+            catch (System.ArgumentOutOfRangeException)
+            {
+                ; // No hacer nada, es un control vacio de error
+            }
+        }
+
+        // ******************************************************************
+        // Proceso seleccion Cliente
+        // ******************************************************************
+
+        private void BtnEventoListarClientes(object sender, RoutedEventArgs e)
+        {
+            FrameworkElement element = sender as FrameworkElement;
+            if (element != null)
+            {
+                LlenarListaClientes();
+                BtnFlyoutIdCliente.ShowAt(element);
+            }
+        }
+
+        private void LlenarListaClientes()
+        {
+            List<GridClienteIndividualServicios> GridClientesLista = new List<GridClienteIndividualServicios>();
+
+            if (BM_Database_Servicios.Bm_Clientes_BuscarGrid())
+            {
+                while (BM_Database_Servicios.Bm_Clientes_BuscarGridProxima())
+                {
+                    GridClientesLista.Add(
+                        new GridClienteIndividualServicios
+                        {
+                            RUTID = BM_Database_Servicios.BK_GRID_CLIENTE_RUTID,
+                            CLIENTE = BM_Database_Servicios.BK_GRID_CLIENTE_NOMBRE
+                        });
+                }
+            }
+            dataGridListadoClientes.IsReadOnly = true;
+            dataGridListadoClientes.ItemsSource = GridClientesLista;
+        }
+
+
+        private void dataGridSeleccion_IdCliente(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                DataGrid CeldaSeleccionada = sender as DataGrid;
+                GridClienteIndividualServicios Cliente = (GridClienteIndividualServicios)CeldaSeleccionada.SelectedItems[0];
+
+                //if (BM_Database_Servicios.Bm_Servicio_BuscarEnvio(CadenaDividida[0], CadenaDividida[1]))
+                //{
+                //    // LimpiarPantalla();
+                //    LlenarPantallaConDb();
+                //    // LlenarListaPersonal();
+                //}
+                //else
+                //{
+                //    // textBoxNombreEmpresa.Text = "Sin Empresa";
+                //}
+            }
+            catch (System.ArgumentOutOfRangeException)
+            {
+                ; // No hacer nada, es un control vacio de error
+            }
+        }
+
+        // ******************************************************************
+        // Proceso seleccion Mensajeros
+        // ******************************************************************
+        private void BtnEventoListarMensajeros(object sender, RoutedEventArgs e)
+        {
+            FrameworkElement element = sender as FrameworkElement;
+            if (element != null)
+            {
+                LlenarListaMensajeros();
+                BtnFlyoutMensajeros.ShowAt(element);
+            }
+        }
+
+        private void dataGridSeleccion_Mensajeros(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                DataGrid CeldaSeleccionada = sender as DataGrid;
+                GridMensajeroIndividualServicios Mensajero = (GridMensajeroIndividualServicios)CeldaSeleccionada.SelectedItems[0];
+
+                //if (BM_Database_Servicios.Bm_Servicio_BuscarEnvio(CadenaDividida[0], CadenaDividida[1]))
+                //{
+                //    // LimpiarPantalla();
+                //    LlenarPantallaConDb();
+                //    // LlenarListaPersonal();
+                //}
+                //else
+                //{
+                //    // textBoxNombreEmpresa.Text = "Sin Empresa";
+                //}
+            }
+            catch (System.ArgumentOutOfRangeException)
+            {
+                ; // No hacer nada, es un control vacio de error
+            }
+        }
+
+        private void LlenarListaMensajeros()
+        {
+            List<GridMensajeroIndividualServicios> GridMensajerosLista = new List<GridMensajeroIndividualServicios>();
+
+            if (BM_Database_Servicios.Bm_Mensajeros_BuscarGrid())
+            {
+                while (BM_Database_Servicios.Bm_Mensajeros_BuscarGridProxima())
+                {
+                    GridMensajerosLista.Add(
+                        new GridMensajeroIndividualServicios
+                        {
+                            RUTID = BM_Database_Servicios.BK_GRID_MENSAJERO_RUTID,
+                            MENSAJERO = BM_Database_Servicios.BK_GRID_MENSAJERO_NOMBRE
+                        });
+                }
+            }
+            dataGridListadoMensajeros.IsReadOnly = true;
+            dataGridListadoMensajeros.ItemsSource = GridMensajerosLista;
+        }
+
+        // ******************************************************************
+        // Proceso seleccion Recursos
+        // ******************************************************************
+        private void BtnEventoListarRecursos(object sender, RoutedEventArgs e)
+        {
+            FrameworkElement element = sender as FrameworkElement;
+            if (element != null)
+            {
+                LlenarListaRecursos();
+                BtnFlyoutMensajeros.ShowAt(element);
+            }
+        }
+
+        private void dataGridSeleccion_Recursos(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                DataGrid CeldaSeleccionada = sender as DataGrid;
+                GridRecursoIndividualServicios Recurso = (GridRecursoIndividualServicios)CeldaSeleccionada.SelectedItems[0];
+
+                //if (BM_Database_Servicios.Bm_Servicio_BuscarEnvio(CadenaDividida[0], CadenaDividida[1]))
+                //{
+                //    // LimpiarPantalla();
+                //    LlenarPantallaConDb();
+                //    // LlenarListaPersonal();
+                //}
+                //else
+                //{
+                //    // textBoxNombreEmpresa.Text = "Sin Empresa";
+                //}
+            }
+            catch (System.ArgumentOutOfRangeException)
+            {
+                ; // No hacer nada, es un control vacio de error
+            }
+        }
+
+        private void LlenarListaRecursos()
+        {
+            List<GridRecursoIndividualServicios> GridRecursosLista = new List<GridRecursoIndividualServicios>();
+
+            if (BM_Database_Servicios.Bm_Recursos_BuscarGrid())
+            {
+                while (BM_Database_Servicios.Bm_Recursos_BuscarGridProxima())
+                {
+                    GridRecursosLista.Add(
+                        new GridRecursoIndividualServicios
+                        {
+                            PATENTE = BM_Database_Servicios.BK_GRID_RECURSO_PATENTE,
+                            TIPO = BM_Database_Servicios.BK_GRID_RECURSO_TIPO,
+                            MARCA = BM_Database_Servicios.BK_GRID_RECURSO_MARCA,
+                            MODELO = BM_Database_Servicios.BK_GRID_RECURSO_MODELO,
+                            PROPIETARIO = BM_Database_Servicios.BK_GRID_RECURSO_PROPIETARIO
+                        });
+                }
+            }
+            dataGridListadoRecursos.IsReadOnly = true;
+            dataGridListadoRecursos.ItemsSource = GridRecursosLista;
+        }
+    }
+
+    public class GridEnvioIndividualServicios
+    {
+        public string ENVIO { get; set; }
+        public string FECHA { get; set; }
+        public string CLIENTE { get; set; }
+        public string ENTREGA { get; set; }
+    }
+
+    public class GridClienteIndividualServicios
+    {
+        public string RUTID { get; set; }
+        public string CLIENTE { get; set; }
+    }
+
+    public class GridMensajeroIndividualServicios
+    {
+        public string RUTID { get; set; }
+        public string MENSAJERO { get; set; }
+    }
+
+    public class GridRecursoIndividualServicios
+    {
+        public string PATENTE { get; set; }
+        public string TIPO { get; set; }
+        public string MARCA { get; set; }
+        public string MODELO { get; set; }
+        public string PROPIETARIO { get; set; }
     }
 }

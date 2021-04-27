@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Toolkit.Uwp.UI.Controls;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -6,11 +8,9 @@ using Windows.Graphics.Imaging;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
-using Windows.UI.Xaml.Media.Animation;
-using System.Collections.Generic;
-using Microsoft.Toolkit.Uwp.UI.Controls;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -242,7 +242,7 @@ namespace BikeMessenger
         {
             BM_Database_Clientes.BK_FOTO = await ConvertirImageABase64Async();
             BM_Database_Clientes.BK_RUTID = textBoxRut.Text;
-            BM_Database_Clientes.BK_DIGVER =  textBoxDigitoVerificador.Text;
+            BM_Database_Clientes.BK_DIGVER = textBoxDigitoVerificador.Text;
             BM_Database_Clientes.BK_NOMBRE = textBoxNombreCliente.Text;
             BM_Database_Clientes.BK_ACTIVIDAD1 = textBoxActividad1.Text;
             BM_Database_Clientes.BK_ACTIVIDAD2 = textBoxActividad2.Text;

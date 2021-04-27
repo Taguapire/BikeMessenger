@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SQLite;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.Storage;
 
 namespace BikeMessenger
@@ -43,7 +39,7 @@ namespace BikeMessenger
 
             if (!VerificarDirectorio())
                 CrearDirectorio(Windows.Storage.ApplicationData.Current.LocalFolder.Path);
-            
+
             LeerDirectorio();
 
             TV_Connection = (SQLiteConnection)TV_Factory.CreateConnection();
@@ -56,8 +52,8 @@ namespace BikeMessenger
         public bool VerificarDirectorio()
         {
             ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
-            Directorio = (string) localSettings.Values["PENTALPHA"];
-            
+            Directorio = (string)localSettings.Values["PENTALPHA"];
+
             if (Directorio == null || Directorio == "")
             {
                 return false;
@@ -78,7 +74,7 @@ namespace BikeMessenger
         public void LeerDirectorio()
         {
             ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
-            Directorio = (string) localSettings.Values["PENTALPHA"];
+            Directorio = (string)localSettings.Values["PENTALPHA"];
             return;
         }
     }

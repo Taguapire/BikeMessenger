@@ -1,18 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data.SQLite;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
@@ -50,7 +39,7 @@ namespace BikeMessenger
             }
             else
             {
-                LvrTransferVar = (TransferVar) e.Parameter;
+                LvrTransferVar = (TransferVar)e.Parameter;
                 textBoxDirectorioActual.Text = LvrTransferVar.Directorio;
                 textBoxDirectorioNuevo.Text = LvrTransferVar.Directorio;
             }
@@ -120,11 +109,12 @@ namespace BikeMessenger
 
                 Windows.Storage.StorageFolder folder = await folderPicker.PickSingleFolderAsync();
 
-                if (folder == null) {
+                if (folder == null)
+                {
                     btnBuscarNuevoDirectorio.IsEnabled = true;
                     return;
                 }
-                
+
                 textBoxDirectorioNuevo.Text = folder.Path;
             }
             catch (System.NullReferenceException)
@@ -215,7 +205,7 @@ namespace BikeMessenger
             StorageFolder FolderDestino = await StorageFolder.GetFolderFromPathAsync(DirectorioDestino);
             //StorageFile BaseDatosDestino = await FolderDestino.GetFileAsync("BikeMessenger.db");
 
-            StorageFile copiedFile = await BaseDatosOrigen.CopyAsync(FolderDestino, "BikeMessenger.db",NameCollisionOption.GenerateUniqueName);
+            StorageFile copiedFile = await BaseDatosOrigen.CopyAsync(FolderDestino, "BikeMessenger.db", NameCollisionOption.GenerateUniqueName);
         }
     }
 }
