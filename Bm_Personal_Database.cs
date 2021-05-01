@@ -1,20 +1,20 @@
 ﻿using System;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 
 namespace BikeMessenger
 {
     class Bm_Personal_Database
     {
         // public SQLiteFactory BM_DB;
-        public SQLiteConnection BM_Connection;
-        SQLiteCommand BK_Cmd_Personal;
-        SQLiteDataReader BK_Reader_Personal;
+        public SqliteConnection BM_Connection;
+        SqliteCommand BK_Cmd_Personal;
+        SqliteDataReader BK_Reader_Personal;
 
-        SQLiteCommand BK_Cmd_Personal_Pais;
-        SQLiteDataReader BK_Reader_Personal_Pais;
+        SqliteCommand BK_Cmd_Personal_Pais;
+        SqliteDataReader BK_Reader_Personal_Pais;
 
-        SQLiteCommand BK_Cmd_Personal_Grid;
-        SQLiteDataReader BK_Reader_Personal_Grid;
+        SqliteCommand BK_Cmd_Personal_Grid;
+        SqliteDataReader BK_Reader_Personal_Grid;
 
         string StrAgregar_Personal;
         string StrModificar_Personal;
@@ -54,7 +54,7 @@ namespace BikeMessenger
         public Int16 BK_E_CODPAIS { get; set; }
         public string BK_E_PAIS { get; set; }
 
-        public void BM_CreateDatabase(SQLiteConnection BM_Connection)
+        public void BM_CreateDatabase(SqliteConnection BM_Connection)
         {
             this.BM_Connection = BM_Connection;
         }
@@ -104,11 +104,11 @@ namespace BikeMessenger
                 StrAgregar_Personal += "'" + BK_PAIS + "',";
                 StrAgregar_Personal += "'" + BK_OBSERVACIONES + "',";
                 StrAgregar_Personal += "'" + BK_FOTO + "')";
-                BK_Cmd_Personal = new SQLiteCommand(StrAgregar_Personal, BM_Connection);
+                BK_Cmd_Personal = new SqliteCommand(StrAgregar_Personal, BM_Connection);
                 BK_Cmd_Personal.ExecuteNonQuery();
                 return true;
             }
-            catch (System.Data.SQLite.SQLiteException)
+            catch (Microsoft.Data.Sqlite.SqliteException)
             {
                 return false;
             }
@@ -118,7 +118,7 @@ namespace BikeMessenger
         {
             try
             {
-                BK_Cmd_Personal = new SQLiteCommand(StrBuscar_Personal, BM_Connection);
+                BK_Cmd_Personal = new SqliteCommand(StrBuscar_Personal, BM_Connection);
                 BK_Reader_Personal = BK_Cmd_Personal.ExecuteReader();
                 if (BK_Reader_Personal.Read())
                 {
@@ -151,7 +151,7 @@ namespace BikeMessenger
                     return false;
                 }
             }
-            catch (System.Data.SQLite.SQLiteException)
+            catch (Microsoft.Data.Sqlite.SqliteException)
             {
                 return false;
             }
@@ -165,7 +165,7 @@ namespace BikeMessenger
         {
             try
             {
-                BK_Cmd_Personal = new SQLiteCommand(StrBuscar_Personal + " WHERE RUTID = '" + pRUTID + "' AND DIGVER = '" + pDIGVER + "'", BM_Connection);
+                BK_Cmd_Personal = new SqliteCommand(StrBuscar_Personal + " WHERE RUTID = '" + pRUTID + "' AND DIGVER = '" + pDIGVER + "'", BM_Connection);
                 BK_Reader_Personal = BK_Cmd_Personal.ExecuteReader();
 
                 if (BK_Reader_Personal.Read())
@@ -200,7 +200,7 @@ namespace BikeMessenger
                     return false;
                 }
             }
-            catch (System.Data.SQLite.SQLiteException)
+            catch (Microsoft.Data.Sqlite.SqliteException)
             {
                 return false;
             }
@@ -237,11 +237,11 @@ namespace BikeMessenger
                 StrModificar_Personal += "WHERE ";
                 StrModificar_Personal += "RUTID = '" + pRUTID + "' AND ";
                 StrModificar_Personal += "DIGVER = '" + pDIGVER + "'";
-                BK_Cmd_Personal = new SQLiteCommand(StrModificar_Personal, BM_Connection);
+                BK_Cmd_Personal = new SqliteCommand(StrModificar_Personal, BM_Connection);
                 BK_Cmd_Personal.ExecuteNonQuery();
                 return true;
             }
-            catch (System.Data.SQLite.SQLiteException)
+            catch (Microsoft.Data.Sqlite.SqliteException)
             {
                 return false;
             }
@@ -256,12 +256,12 @@ namespace BikeMessenger
                 StrBorrar_Personal += "WHERE ";
                 StrBorrar_Personal += "RUTID = '" + pRUTID + "' AND ";
                 StrBorrar_Personal += "DIGVER = '" + pDIGVER + "'";
-                BK_Cmd_Personal = new SQLiteCommand(StrBorrar_Personal, BM_Connection);
+                BK_Cmd_Personal = new SqliteCommand(StrBorrar_Personal, BM_Connection);
                 BK_Cmd_Personal.ExecuteNonQuery();
                 LimpiarVariables();
                 return true;
             }
-            catch (System.Data.SQLite.SQLiteException)
+            catch (Microsoft.Data.Sqlite.SqliteException)
             {
                 return false;
             }
@@ -272,11 +272,11 @@ namespace BikeMessenger
         {
             try
             {
-                BK_Cmd_Personal_Pais = new SQLiteCommand(StrBuscar_Personal_Pais, BM_Connection);
+                BK_Cmd_Personal_Pais = new SqliteCommand(StrBuscar_Personal_Pais, BM_Connection);
                 BK_Reader_Personal_Pais = BK_Cmd_Personal_Pais.ExecuteReader();
                 return true;
             }
-            catch (System.Data.SQLite.SQLiteException)
+            catch (Microsoft.Data.Sqlite.SqliteException)
             {
                 return false;
             }
@@ -297,7 +297,7 @@ namespace BikeMessenger
                     return false;
                 }
             }
-            catch (System.Data.SQLite.SQLiteException)
+            catch (Microsoft.Data.Sqlite.SqliteException)
             {
                 return false;
             }
@@ -307,11 +307,11 @@ namespace BikeMessenger
         {
             try
             {
-                BK_Cmd_Personal_Grid = new SQLiteCommand(StrBuscarGrid_Personal, BM_Connection);
+                BK_Cmd_Personal_Grid = new SqliteCommand(StrBuscarGrid_Personal, BM_Connection);
                 BK_Reader_Personal_Grid = BK_Cmd_Personal_Grid.ExecuteReader();
                 return true;
             }
-            catch (System.Data.SQLite.SQLiteException)
+            catch (Microsoft.Data.Sqlite.SqliteException)
             {
                 return false;
             }
@@ -335,7 +335,7 @@ namespace BikeMessenger
                     return false;
                 }
             }
-            catch (System.Data.SQLite.SQLiteException)
+            catch (Microsoft.Data.Sqlite.SqliteException)
             {
                 return false;
             }

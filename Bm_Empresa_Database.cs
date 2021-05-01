@@ -1,16 +1,16 @@
 ﻿using System;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 
 namespace BikeMessenger
 {
     class Bm_Empresa_Database
     {
         // public SQLiteFactory BM_DB;
-        public SQLiteConnection BM_Connection;
-        SQLiteCommand BK_Cmd_Empresa;
-        SQLiteCommand BK_Cmd_Empresa_Pais;
-        SQLiteDataReader BK_Reader_Empresa;
-        SQLiteDataReader BK_Reader_Empresa_Pais;
+        public SqliteConnection BM_Connection;
+        SqliteCommand BK_Cmd_Empresa;
+        SqliteCommand BK_Cmd_Empresa_Pais;
+        SqliteDataReader BK_Reader_Empresa;
+        SqliteDataReader BK_Reader_Empresa_Pais;
         readonly String StrBuscar_Empresa = "SELECT * FROM EMPRESA";
         readonly String StrBuscar_Empresa_Pais = "SELECT * FROM PAIS ORDER BY PAIS ASC";
 
@@ -46,7 +46,7 @@ namespace BikeMessenger
 
         // Comandos de acceso por Area
 
-        public Boolean BM_CreateDatabase(SQLiteConnection BM_Connection)
+        public Boolean BM_CreateDatabase(SqliteConnection BM_Connection)
         {
             this.BM_Connection = BM_Connection;
             return true;
@@ -57,7 +57,7 @@ namespace BikeMessenger
         {
             try
             {
-                BK_Cmd_Empresa = new SQLiteCommand(StrBuscar_Empresa, BM_Connection);
+                BK_Cmd_Empresa = new SqliteCommand(StrBuscar_Empresa, BM_Connection);
                 BK_Reader_Empresa = BK_Cmd_Empresa.ExecuteReader();
 
                 if (BK_Reader_Empresa.Read())
@@ -91,7 +91,7 @@ namespace BikeMessenger
                     return false;
                 }
             }
-            catch (System.Data.SQLite.SQLiteException)
+            catch (Microsoft.Data.Sqlite.SqliteException)
             {
                 return false;
             }
@@ -102,11 +102,11 @@ namespace BikeMessenger
         {
             try
             {
-                BK_Cmd_Empresa_Pais = new SQLiteCommand(StrBuscar_Empresa_Pais, BM_Connection);
+                BK_Cmd_Empresa_Pais = new SqliteCommand(StrBuscar_Empresa_Pais, BM_Connection);
                 BK_Reader_Empresa_Pais = BK_Cmd_Empresa_Pais.ExecuteReader();
                 return true;
             }
-            catch (System.Data.SQLite.SQLiteException)
+            catch (Microsoft.Data.Sqlite.SqliteException)
             {
                 return false;
             }
@@ -129,7 +129,7 @@ namespace BikeMessenger
                     return false;
                 }
             }
-            catch (System.Data.SQLite.SQLiteException)
+            catch (Microsoft.Data.Sqlite.SqliteException)
             {
                 return false;
             }
@@ -183,11 +183,11 @@ namespace BikeMessenger
 
             try
             {
-                BK_Cmd_Empresa = new SQLiteCommand(StrAgregar_Empresa, BM_Connection);
+                BK_Cmd_Empresa = new SqliteCommand(StrAgregar_Empresa, BM_Connection);
                 BK_Cmd_Empresa.ExecuteNonQuery();
                 return true;
             }
-            catch (SQLiteException)
+            catch (Microsoft.Data.Sqlite.SqliteException)
             {
                 return false;
             }
@@ -220,11 +220,11 @@ namespace BikeMessenger
 
             try
             {
-                BK_Cmd_Empresa = new SQLiteCommand(StrModificar_Empresa, BM_Connection);
+                BK_Cmd_Empresa = new SqliteCommand(StrModificar_Empresa, BM_Connection);
                 BK_Cmd_Empresa.ExecuteNonQuery();
                 return true;
             }
-            catch (SQLiteException)
+            catch (Microsoft.Data.Sqlite.SqliteException)
             {
                 return false;
             }
@@ -236,11 +236,11 @@ namespace BikeMessenger
             StrBorrar_Empresa = "DELETE FROM EMPRESA";
             try
             {
-                BK_Cmd_Empresa = new SQLiteCommand(StrBorrar_Empresa, BM_Connection);
+                BK_Cmd_Empresa = new SqliteCommand(StrBorrar_Empresa, BM_Connection);
                 BK_Cmd_Empresa.ExecuteNonQuery();
                 return true;
             }
-            catch (SQLiteException)
+            catch (Microsoft.Data.Sqlite.SqliteException)
             {
                 return false;
             }

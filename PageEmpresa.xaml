@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Custom="using:Microsoft.UI.Xaml.Controls"
     x:Name="PantallaEmpresa"
     x:Class="BikeMessenger.PageEmpresa"
     mc:Ignorable="d" Width="1280" Height="720" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
@@ -38,8 +39,6 @@
         <Grid.Background>
             <AcrylicBrush TintColor="#CCABDAF5"/>
         </Grid.Background>
-        <Grid.ColumnDefinitions>
-        </Grid.ColumnDefinitions>
         <TextBox x:Name="labelRut" HorizontalAlignment="Left" Margin="15,20,0,0" Text="RUT" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.92,-0.053" Height="32" Width="140" HorizontalTextAlignment="Left" BorderThickness="1,1,1,1" AllowFocusOnInteraction="True" IsDoubleTapEnabled="False" IsHoldingEnabled="False" IsRightTapEnabled="False" IsTapEnabled="False" ManipulationMode="None" FocusVisualPrimaryThickness="1,1,1,1" HighContrastAdjustment="None" IsReadOnly="True" IsTabStop="False" IsTextPredictionEnabled="False"/>
         <TextBox x:Name="textBoxDigitoVerificador" HorizontalAlignment="Left" Margin="319,20,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Background="#6626C7F7" TabIndex="2"/>
         <TextBox x:Name="labelNombreEmpresa" HorizontalAlignment="Left" Margin="15,52,0,0" Text="Nombre Empresa" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="140" BorderThickness="1,1,1,1" AllowFocusOnInteraction="False" IsDoubleTapEnabled="False" IsHoldingEnabled="False" IsRightTapEnabled="False" IsTapEnabled="False" ManipulationMode="None" FocusVisualPrimaryThickness="1,1,1,1" HighContrastAdjustment="None" IsReadOnly="True" IsTabStop="False" IsTextPredictionEnabled="False"/>
@@ -58,11 +57,7 @@
         <TextBox x:Name="textBoxNumero" HorizontalAlignment="Left" Margin="160,308,0,0" TextWrapping="Wrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Background="#6626C7F7" TabIndex="11"/>
         <TextBox x:Name="textBoxPiso" HorizontalAlignment="Left" Margin="278,308,0,0" TextWrapping="Wrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Background="#6626C7F7" TabIndex="12"/>
         <ComboBox x:Name="comboBoxCiudad" Margin="160,436,0,0" Width="480" BorderThickness="1,1,1,1" Background="#6626C7F7" IsEditable="True" TabIndex="18"/>
-        <Image x:Name="imageLogoEmpresa" HorizontalAlignment="Left" Height="256" Margin="665,20,0,0" VerticalAlignment="Top" Width="270" Stretch="Fill" RequestedTheme="Default" IsTapEnabled="False" IsDoubleTapEnabled="False" IsHoldingEnabled="False" IsRightTapEnabled="False" AllowFocusOnInteraction="False">
-            <Image.FocusVisualSecondaryBrush>
-                <SolidColorBrush/>
-            </Image.FocusVisualSecondaryBrush>
-        </Image>
+        <Image x:Name="imageLogoEmpresa" HorizontalAlignment="Left" Height="256" Margin="665,20,0,0" VerticalAlignment="Top" Width="270" Stretch="Fill" RequestedTheme="Default" IsTapEnabled="False" IsDoubleTapEnabled="False" IsHoldingEnabled="False" IsRightTapEnabled="False" AllowFocusOnInteraction="False" FocusVisualSecondaryBrush="#00000000"/>
         <TextBox x:Name="labelCiudad" HorizontalAlignment="Left" Margin="15,436,0,0" Text="Ciudad" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="140" BorderThickness="1,1,1,1" AllowFocusOnInteraction="False" IsDoubleTapEnabled="False" IsHoldingEnabled="False" IsRightTapEnabled="False" IsTapEnabled="False" ManipulationMode="None" FocusVisualPrimaryThickness="1,1,1,1" HighContrastAdjustment="None" IsTabStop="False" IsTextPredictionEnabled="False" IsReadOnly="True"/>
         <TextBox x:Name="labelEstado" HorizontalAlignment="Left" Margin="15,372,0,0" Text="Estado/Region" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="140" BorderThickness="1,1,1,1" AllowFocusOnInteraction="False" IsDoubleTapEnabled="False" IsHoldingEnabled="False" IsRightTapEnabled="False" IsTapEnabled="False" ManipulationMode="None" FocusVisualPrimaryThickness="1,1,1,1" HighContrastAdjustment="None" IsReadOnly="True" IsTabStop="False" IsTextPredictionEnabled="False"/>
         <TextBox x:Name="labelPais" HorizontalAlignment="Left" Margin="15,340,0,0" Text="Pais" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="140" BorderThickness="1,1,1,1" AllowFocusOnInteraction="False" IsDoubleTapEnabled="False" IsHoldingEnabled="False" IsRightTapEnabled="False" IsTapEnabled="False" ManipulationMode="None" FocusVisualPrimaryThickness="1,1,1,1" HighContrastAdjustment="None" IsTabStop="False" IsTextPredictionEnabled="False" IsReadOnly="True"/>

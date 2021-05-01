@@ -237,7 +237,6 @@ namespace BikeMessenger
 
         private async System.Threading.Tasks.Task LlenarDbConPantallaAsync()
         {
-            BM_Database_Empresa.BK_LOGO = await ConvertirImageABase64Async();
             BM_Database_Empresa.BK_RUTID = textBoxRut.Text;
             BM_Database_Empresa.BK_DIGVER = textBoxDigitoVerificador.Text;
             BM_Database_Empresa.BK_NOMBRE = textBoxNombreEmpresa.Text;
@@ -257,6 +256,7 @@ namespace BikeMessenger
             BM_Database_Empresa.BK_COMUNA = comboBoxComuna.Text;
             BM_Database_Empresa.BK_CIUDAD = comboBoxCiudad.Text;
             BM_Database_Empresa.BK_OBSERVACIONES = textBoxObservaciones.Text;
+            BM_Database_Empresa.BK_LOGO = await ConvertirImageABase64Async();
         }
 
         private async void BtnAgregarEmpresa(object sender, RoutedEventArgs e)

@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
+using System.Collections.Generic;
 using Windows.Storage;
 
 namespace BikeMessenger
@@ -7,8 +8,8 @@ namespace BikeMessenger
     class TransferVar
     {
         // Valores de Base de Datos
-        public SQLiteFactory TV_Factory;
-        public SQLiteConnection TV_Connection;
+        public SqliteFactory TV_Factory;
+        public SqliteConnection TV_Connection;
 
         // Valores de Empresa
         public string E_RUTID;
@@ -34,7 +35,7 @@ namespace BikeMessenger
 
         public TransferVar()
         {
-            TV_Factory = new SQLiteFactory();
+            //TV_Factory = new SqliteFactory;
             // Crear Automaticamente la Base de Datos
 
             if (!VerificarDirectorio())
@@ -42,8 +43,9 @@ namespace BikeMessenger
 
             LeerDirectorio();
 
-            TV_Connection = (SQLiteConnection)TV_Factory.CreateConnection();
-            TV_Connection.ConnectionString = "Data Source=" + Directorio + "\\BikeMessenger.db; Version = 3";
+            //TV_Connection = (SqliteConnection)TV_Factory.CreateConnection();
+            TV_Connection = (SqliteConnection) SqliteFactory.Instance.CreateConnection();
+            TV_Connection.ConnectionString = "Data Source=" + Directorio + "\\BikeMessenger.db";
             TV_Connection.Open();
 
             Console.WriteLine(Directorio);
