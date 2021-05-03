@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Microsoft.Data.Sqlite;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 
 namespace BikeMessenger
 {
@@ -18,6 +20,10 @@ namespace BikeMessenger
         string TabRECURSOS;
         string TabSERVICIOS;
         string IndRECURSOS_IDX1;
+
+        SqliteFactory IDB_Factory;
+        SqliteConnection IDB_Connection;
+        SqliteCommand IDB_Command;
 
         void AsignarValores()
         {
@@ -192,6 +198,56 @@ namespace BikeMessenger
             IndRECURSOS_IDX1 += "DIGVER,";
             IndRECURSOS_IDX1 += "PATENTE";
             IndRECURSOS_IDX1 += ")";
+        }
+
+        bool ProcTabPAIS() 
+        { 
+            return true; 
+        }
+
+        bool ProcTabESTADOREGION()
+        {
+            return true;
+        }
+
+        bool ProcTabCOMUNA()
+        {
+            return true;
+        }
+
+        bool ProcTabCIUDAD()
+        {
+            return true;
+        }
+
+        bool ProcTabEMPRESA()
+        {
+            return true;
+        }
+
+        bool ProcTabCLIENTES()
+        {
+            return true;
+        }
+
+        bool ProcTabPERSONAL()
+        {
+            return true;
+        }
+
+        bool ProcTabRECURSOS()
+        {
+            return true;
+        }
+
+        bool ProcTabSERVICIOS()
+        {
+            return true;
+        }
+
+        bool ProcTabINDICES()
+        {
+            return true;
         }
     }
 }
