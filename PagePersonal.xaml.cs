@@ -78,6 +78,7 @@ namespace BikeMessenger
             {
                 LvrTransferVar = (TransferVar)navigationEvent.Parameter;
                 BM_Database_Personal.BM_CreateDatabase(LvrTransferVar.TV_Connection);
+                RellenarCombos();
 
                 if (LvrTransferVar.P_RUTID == "")
                 {
@@ -176,35 +177,17 @@ namespace BikeMessenger
                 textBoxTelefono1.Text = BM_Database_Personal.BK_TELEFONO1;
                 textBoxTelefono2.Text = BM_Database_Personal.BK_TELEFONO2;
                 textBoxCorreoElectronico.Text = BM_Database_Personal.BK_EMAIL;
-
-                comboBoxAutorizacion.Items.Add(BM_Database_Personal.BK_AUTORIZACION);
                 comboBoxAutorizacion.SelectedValue = BM_Database_Personal.BK_AUTORIZACION;
-
                 textBoxCargo.Text = BM_Database_Personal.BK_CARGO;
                 textBoxDomicilio.Text = BM_Database_Personal.BK_DOMICILIO;
                 textBoxNumero.Text = BM_Database_Personal.BK_NUMERO;
                 textBoxPiso.Text = BM_Database_Personal.BK_PISO;
                 textBoxDepartamento.Text = BM_Database_Personal.BK_DPTO;
                 textBoxCodigoPostal.Text = BM_Database_Personal.BK_CODIGOPOSTAL;
-
-                if (BM_Database_Personal.Bm_E_Pais_EjecutarSelect())
-                {
-                    while (BM_Database_Personal.Bm_E_Pais_Buscar())
-                    {
-                        comboBoxPais.Items.Add(BM_Database_Personal.BK_E_PAIS);
-                    }
-                }
                 comboBoxPais.SelectedValue = BM_Database_Personal.BK_PAIS;
-
-                comboBoxRegion.Items.Add(BM_Database_Personal.BK_REGION);
                 comboBoxRegion.SelectedValue = BM_Database_Personal.BK_REGION;
-
-                comboBoxComuna.Items.Add(BM_Database_Personal.BK_COMUNA);
                 comboBoxComuna.SelectedValue = BM_Database_Personal.BK_COMUNA;
-
-                comboBoxCiudad.Items.Add(BM_Database_Personal.BK_CIUDAD);
                 comboBoxCiudad.SelectedValue = BM_Database_Personal.BK_CIUDAD;
-
                 textBoxObservaciones.Text = BM_Database_Personal.BK_OBSERVACIONES;
 
                 imageFotoPersonal.Source = Base64StringToBitmap(BM_Database_Personal.BK_FOTO);
@@ -212,6 +195,45 @@ namespace BikeMessenger
             catch (System.ArgumentNullException)
             {
                 await ErrorDeRecuperacionDialogAsync();
+            }
+        }
+
+        private void RellenarCombos()
+        {
+            // Llenar Combo Pais
+            if (BM_Database_Personal.Bm_E_Pais_EjecutarSelect())
+            {
+                while (BM_Database_Personal.Bm_E_Pais_Buscar())
+                {
+                    comboBoxPais.Items.Add(BM_Database_Personal.BK_E_PAIS);
+                }
+            }
+
+            // Llenar Combo Region
+            if (BM_Database_Personal.Bm_E_Region_EjecutarSelect())
+            {
+                while (BM_Database_Personal.Bm_E_Region_Buscar())
+                {
+                    comboBoxRegion.Items.Add(BM_Database_Personal.BK_E_REGION);
+                }
+            }
+
+            // Llenar Combo Comuna
+            if (BM_Database_Personal.Bm_E_Comuna_EjecutarSelect())
+            {
+                while (BM_Database_Personal.Bm_E_Comuna_Buscar())
+                {
+                    comboBoxComuna.Items.Add(BM_Database_Personal.BK_E_COMUNA);
+                }
+            }
+
+            // Llenar Combo Ciudad
+            if (BM_Database_Personal.Bm_E_Ciudad_EjecutarSelect())
+            {
+                while (BM_Database_Personal.Bm_E_Ciudad_Buscar())
+                {
+                    comboBoxCiudad.Items.Add(BM_Database_Personal.BK_E_CIUDAD);
+                }
             }
         }
 
@@ -243,7 +265,6 @@ namespace BikeMessenger
 
         private async System.Threading.Tasks.Task LlenarDbConPantallaAsync()
         {
-            BM_Database_Personal.BK_FOTO = await ConvertirImageABase64Async();
             BM_Database_Personal.BK_RUTID = textBoxRut.Text;
             BM_Database_Personal.BK_DIGVER = textBoxDigitoVerificador.Text;
             BM_Database_Personal.BK_APELLIDOS = textBoxApellidos.Text;
@@ -262,7 +283,8 @@ namespace BikeMessenger
             BM_Database_Personal.BK_COMUNA = comboBoxComuna.Text;
             BM_Database_Personal.BK_REGION = comboBoxRegion.Text;
             BM_Database_Personal.BK_PAIS = comboBoxPais.Text;
-            BM_Database_Personal.BK_OBSERVACIONES = comboBoxComuna.Text;
+            BM_Database_Personal.BK_OBSERVACIONES = textBoxObservaciones.Text;
+            BM_Database_Personal.BK_FOTO = await ConvertirImageABase64Async();
         }
 
         private async void BtnAgregarPersonal(object sender, RoutedEventArgs e)

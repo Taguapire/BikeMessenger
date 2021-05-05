@@ -14,7 +14,7 @@ namespace BikeMessenger
 
     sealed partial class App : Application
     {
-        readonly TransferVar LvrTransferVar = new TransferVar();
+        static readonly TransferVar LvrTransferVar = new TransferVar();
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -95,7 +95,8 @@ namespace BikeMessenger
                 // configuring the new page by passing required information as a navigation
                 // parameter
                 // rootFrame.Navigate(typeof(PageEmpresa), e.Arguments);
-
+                IniciarBaseDeDatos LvrIniciarBaseDeDatos = new IniciarBaseDeDatos(LvrTransferVar.TV_Connection);
+                LvrIniciarBaseDeDatos = null;
                 // Empresa
                 LvrTransferVar.E_RUTID = "";
                 LvrTransferVar.E_DIGVER = "";

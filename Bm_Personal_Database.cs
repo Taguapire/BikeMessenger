@@ -13,6 +13,15 @@ namespace BikeMessenger
         SqliteCommand BK_Cmd_Personal_Pais;
         SqliteDataReader BK_Reader_Personal_Pais;
 
+        SqliteCommand BK_Cmd_Personal_Region;
+        SqliteDataReader BK_Reader_Personal_Region;
+
+        SqliteCommand BK_Cmd_Personal_Comuna;
+        SqliteDataReader BK_Reader_Personal_Comuna;
+
+        SqliteCommand BK_Cmd_Personal_Ciudad;
+        SqliteDataReader BK_Reader_Personal_Ciudad;
+
         SqliteCommand BK_Cmd_Personal_Grid;
         SqliteDataReader BK_Reader_Personal_Grid;
 
@@ -22,6 +31,9 @@ namespace BikeMessenger
         readonly string StrBuscarGrid_Personal = "SELECT RUTID||'-'||DIGVER, APELLIDOS, NOMBRES FROM PERSONAL ORDER BY APELLIDOS ASC";
         readonly string StrBuscar_Personal = "SELECT * FROM PERSONAL";
         readonly String StrBuscar_Personal_Pais = "SELECT * FROM PAIS ORDER BY PAIS ASC";
+        readonly String StrBuscar_Personal_Region = "SELECT * FROM ESTADOREGION ORDER BY REGION ASC";
+        readonly String StrBuscar_Personal_Comuna = "SELECT * FROM COMUNA ORDER BY COMUNA ASC";
+        readonly String StrBuscar_Personal_Ciudad = "SELECT * FROM CIUDAD ORDER BY CIUDAD ASC";
 
         // Campos Personal
         // Campos de Empresa
@@ -53,6 +65,18 @@ namespace BikeMessenger
         // Campos de PAIS
         public Int16 BK_E_CODPAIS { get; set; }
         public string BK_E_PAIS { get; set; }
+
+        // Campos de REGION
+        public Int16 BK_E_CODREGION { get; set; }
+        public string BK_E_REGION { get; set; }
+
+        // Campos de COMUNA
+        public Int16 BK_E_CODCOMUNA { get; set; }
+        public string BK_E_COMUNA { get; set; }
+
+        // Campos de CIUDAD
+        public Int16 BK_E_CODCIUDAD { get; set; }
+        public string BK_E_CIUDAD { get; set; }
 
         public void BM_CreateDatabase(SqliteConnection BM_Connection)
         {
@@ -241,8 +265,9 @@ namespace BikeMessenger
                 BK_Cmd_Personal.ExecuteNonQuery();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (Microsoft.Data.Sqlite.SqliteException e)
             {
+                Console.WriteLine(e.Message);
                 return false;
             }
         }
@@ -290,6 +315,115 @@ namespace BikeMessenger
                 {
                     BK_E_CODPAIS = BK_Reader_Personal_Pais.GetInt16(BK_Reader_Personal_Pais.GetOrdinal("CODPAIS"));
                     BK_E_PAIS = BK_Reader_Personal_Pais.GetString(BK_Reader_Personal_Pais.GetOrdinal("PAIS"));
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Microsoft.Data.Sqlite.SqliteException)
+            {
+                return false;
+            }
+        }
+
+        // Procedimiento Buscar Region
+        public bool Bm_E_Region_EjecutarSelect()
+        {
+            try
+            {
+                BK_Cmd_Personal_Region = new SqliteCommand(StrBuscar_Personal_Region, BM_Connection);
+                BK_Reader_Personal_Region = BK_Cmd_Personal_Region.ExecuteReader();
+                return true;
+            }
+            catch (Microsoft.Data.Sqlite.SqliteException)
+            {
+                return false;
+            }
+        }
+
+        public bool Bm_E_Region_Buscar()
+        {
+            try
+            {
+                if (BK_Reader_Personal_Region.Read())
+                {
+                    BK_E_CODREGION = BK_Reader_Personal_Region.GetInt16(BK_Reader_Personal_Region.GetOrdinal("CODREGION"));
+                    BK_E_REGION = BK_Reader_Personal_Region.GetString(BK_Reader_Personal_Region.GetOrdinal("REGION"));
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Microsoft.Data.Sqlite.SqliteException)
+            {
+                return false;
+            }
+        }
+
+
+        // Procedimiento Buscar Comuna
+        public bool Bm_E_Comuna_EjecutarSelect()
+        {
+            try
+            {
+                BK_Cmd_Personal_Comuna = new SqliteCommand(StrBuscar_Personal_Comuna, BM_Connection);
+                BK_Reader_Personal_Comuna = BK_Cmd_Personal_Comuna.ExecuteReader();
+                return true;
+            }
+            catch (Microsoft.Data.Sqlite.SqliteException)
+            {
+                return false;
+            }
+        }
+
+        public bool Bm_E_Comuna_Buscar()
+        {
+            try
+            {
+                if (BK_Reader_Personal_Comuna.Read())
+                {
+                    BK_E_CODCOMUNA = BK_Reader_Personal_Comuna.GetInt16(BK_Reader_Personal_Comuna.GetOrdinal("CODCOMU"));
+                    BK_E_COMUNA = BK_Reader_Personal_Comuna.GetString(BK_Reader_Personal_Comuna.GetOrdinal("COMUNA"));
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Microsoft.Data.Sqlite.SqliteException)
+            {
+                return false;
+            }
+        }
+
+        // Procedimiento Buscar Ciudad
+        public bool Bm_E_Ciudad_EjecutarSelect()
+        {
+            try
+            {
+                BK_Cmd_Personal_Ciudad = new SqliteCommand(StrBuscar_Personal_Ciudad, BM_Connection);
+                BK_Reader_Personal_Ciudad = BK_Cmd_Personal_Ciudad.ExecuteReader();
+                return true;
+            }
+            catch (Microsoft.Data.Sqlite.SqliteException)
+            {
+                return false;
+            }
+        }
+
+        public bool Bm_E_Ciudad_Buscar()
+        {
+            try
+            {
+                if (BK_Reader_Personal_Ciudad.Read())
+                {
+                    BK_E_CODCIUDAD = BK_Reader_Personal_Ciudad.GetInt16(BK_Reader_Personal_Ciudad.GetOrdinal("CODCIUDAD"));
+                    BK_E_CIUDAD = BK_Reader_Personal_Ciudad.GetString(BK_Reader_Personal_Ciudad.GetOrdinal("CIUDAD"));
                     return true;
                 }
                 else

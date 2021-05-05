@@ -48,7 +48,7 @@ namespace BikeMessenger
             TV_Connection.ConnectionString = "Data Source=" + Directorio + "\\BikeMessenger.db";
             TV_Connection.Open();
 
-            Console.WriteLine(Directorio);
+            // Console.WriteLine(Directorio);
         }
 
         public bool VerificarDirectorio()

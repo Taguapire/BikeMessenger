@@ -70,9 +70,9 @@ namespace BikeMessenger
             else
             {
                 LvrTransferVar = (TransferVar)navigationEvent.Parameter;
-
                 if (BM_Database_Empresa.BM_CreateDatabase(LvrTransferVar.TV_Connection))
                 {
+                    RellenarCombos();
                     if (BM_Database_Empresa.Bm_Empresa_Buscar())
                     {
                         LlenarPantallaConDb();
@@ -101,7 +101,7 @@ namespace BikeMessenger
                         appBarButtonRecursos.IsEnabled = false;
                         appBarButtonClientes.IsEnabled = false;
                         appBarButtonServicios.IsEnabled = false;
-                        appBarButtonAjustes.IsEnabled = false;
+                        appBarButtonAjustes.IsEnabled = true;
 
                         appBarAgregar.IsEnabled = true;
                         appBarModificar.IsEnabled = false;
@@ -207,22 +207,9 @@ namespace BikeMessenger
                 textBoxOficina.Text = BM_Database_Empresa.BK_OFICINA;
                 textBoxCodigoPostal.Text = BM_Database_Empresa.BK_CODIGOPOSTAL;
 
-                if (BM_Database_Empresa.Bm_E_Pais_EjecutarSelect())
-                {
-                    while (BM_Database_Empresa.Bm_E_Pais_Buscar())
-                    {
-                        comboBoxPais.Items.Add(BM_Database_Empresa.BK_E_PAIS);
-                    }
-                }
                 comboBoxPais.SelectedValue = BM_Database_Empresa.BK_PAIS;
-
-                comboBoxEstado.Items.Add(BM_Database_Empresa.BK_ESTADOREGION);
                 comboBoxEstado.SelectedValue = BM_Database_Empresa.BK_ESTADOREGION;
-
-                comboBoxComuna.Items.Add(BM_Database_Empresa.BK_COMUNA);
                 comboBoxComuna.SelectedValue = BM_Database_Empresa.BK_COMUNA;
-
-                comboBoxCiudad.Items.Add(BM_Database_Empresa.BK_CIUDAD);
                 comboBoxCiudad.SelectedValue = BM_Database_Empresa.BK_CIUDAD;
 
                 textBoxObservaciones.Text = BM_Database_Empresa.BK_OBSERVACIONES;
@@ -232,6 +219,46 @@ namespace BikeMessenger
             catch (System.ArgumentNullException e)
             {
                 await AvisoOperacionEmpresaDialogAsync("Acceso a Base de Datos", e.Message);
+            }
+        }
+
+
+        private void RellenarCombos()
+        {
+            // Llenar Combo Pais
+            if (BM_Database_Empresa.Bm_E_Pais_EjecutarSelect())
+            {
+                while (BM_Database_Empresa.Bm_E_Pais_Buscar())
+                {
+                    comboBoxPais.Items.Add(BM_Database_Empresa.BK_E_PAIS);
+                }
+            }
+
+            // Llenar Combo Region
+            if (BM_Database_Empresa.Bm_E_Region_EjecutarSelect())
+            {
+                while (BM_Database_Empresa.Bm_E_Region_Buscar())
+                {
+                    comboBoxEstado.Items.Add(BM_Database_Empresa.BK_E_REGION);
+                }
+            }
+
+            // Llenar Combo Comuna
+            if (BM_Database_Empresa.Bm_E_Comuna_EjecutarSelect())
+            {
+                while (BM_Database_Empresa.Bm_E_Comuna_Buscar())
+                {
+                    comboBoxComuna.Items.Add(BM_Database_Empresa.BK_E_COMUNA);
+                }
+            }
+
+            // Llenar Combo Ciudad
+            if (BM_Database_Empresa.Bm_E_Ciudad_EjecutarSelect())
+            {
+                while (BM_Database_Empresa.Bm_E_Ciudad_Buscar())
+                {
+                    comboBoxCiudad.Items.Add(BM_Database_Empresa.BK_E_CIUDAD);
+                }
             }
         }
 

@@ -182,22 +182,9 @@ namespace BikeMessenger
                 textBoxCodigoPostal.Text = BM_Database_Clientes.BK_CODIGOPOSTAL;
                 textBoxObservaciones.Text = BM_Database_Clientes.BK_OBSERVACIONES;
 
-                if (BM_Database_Clientes.Bm_E_Pais_EjecutarSelect())
-                {
-                    while (BM_Database_Clientes.Bm_E_Pais_Buscar())
-                    {
-                        comboBoxPais.Items.Add(BM_Database_Clientes.BK_E_PAIS);
-                    }
-                }
                 comboBoxPais.SelectedValue = BM_Database_Clientes.BK_PAIS;
-
-                comboBoxEstado.Items.Add(BM_Database_Clientes.BK_REGION);
                 comboBoxEstado.SelectedValue = BM_Database_Clientes.BK_REGION;
-
-                comboBoxComuna.Items.Add(BM_Database_Clientes.BK_COMUNA);
                 comboBoxComuna.SelectedValue = BM_Database_Clientes.BK_COMUNA;
-
-                comboBoxCiudad.Items.Add(BM_Database_Clientes.BK_CIUDAD);
                 comboBoxCiudad.SelectedValue = BM_Database_Clientes.BK_CIUDAD;
 
                 textBoxObservaciones.Text = BM_Database_Clientes.BK_OBSERVACIONES;

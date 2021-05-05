@@ -82,6 +82,7 @@ namespace BikeMessenger
             {
                 LvrTransferVar = (TransferVar)navigationEvent.Parameter;
                 BM_Database_Recursos.BM_CreateDatabase(LvrTransferVar.TV_Connection);
+                RellenarCombos();
 
                 if (LvrTransferVar.R_PAT_SER == "")
                 {
@@ -168,6 +169,45 @@ namespace BikeMessenger
             }
         }
 
+        private void RellenarCombos()
+        {
+            // Llenar Combo Pais
+            if (BM_Database_Recursos.Bm_E_Pais_EjecutarSelect())
+            {
+                while (BM_Database_Recursos.Bm_E_Pais_Buscar())
+                {
+                    comboBoxPais.Items.Add(BM_Database_Recursos.BK_E_PAIS);
+                }
+            }
+
+            // Llenar Combo Region
+            if (BM_Database_Recursos.Bm_E_Region_EjecutarSelect())
+            {
+                while (BM_Database_Recursos.Bm_E_Region_Buscar())
+                {
+                    comboBoxEstado.Items.Add(BM_Database_Recursos.BK_E_REGION);
+                }
+            }
+
+            // Llenar Combo Comuna
+            if (BM_Database_Recursos.Bm_E_Comuna_EjecutarSelect())
+            {
+                while (BM_Database_Recursos.Bm_E_Comuna_Buscar())
+                {
+                    comboBoxComuna.Items.Add(BM_Database_Recursos.BK_E_COMUNA);
+                }
+            }
+
+            // Llenar Combo Ciudad
+            if (BM_Database_Recursos.Bm_E_Ciudad_EjecutarSelect())
+            {
+                while (BM_Database_Recursos.Bm_E_Ciudad_Buscar())
+                {
+                    comboBoxCiudad.Items.Add(BM_Database_Recursos.BK_E_CIUDAD);
+                }
+            }
+        }
+
         private async void LlenarPantallaConDb()
         {
             try
@@ -178,37 +218,18 @@ namespace BikeMessenger
                 textBoxRut.Text = BM_Database_Recursos.BK_RUTID;
                 textBoxDigitoVerificador.Text = BM_Database_Recursos.BK_DIGVER;
                 textBoxPropietario.Text = BM_Database_Recursos.BK_PROPIETARIO;
-
                 comboBoxTipo.SelectedValue = BM_Database_Recursos.BK_TIPO;
-
                 textBoxPatenteCodigo.Text = BM_Database_Recursos.BK_PATENTE;
                 textBoxMarca.Text = BM_Database_Recursos.BK_MARCA;
                 textBoxModelo.Text = BM_Database_Recursos.BK_MODELO;
                 textBoxVariante.Text = BM_Database_Recursos.BK_VARIANTE;
                 textBoxAno.Text = BM_Database_Recursos.BK_ANO;
                 textBoxColor.Text = BM_Database_Recursos.BK_COLOR;
-
-                if (BM_Database_Recursos.Bm_E_Pais_EjecutarSelect())
-                {
-                    while (BM_Database_Recursos.Bm_E_Pais_Buscar())
-                    {
-                        comboBoxPais.Items.Add(BM_Database_Recursos.BK_E_PAIS);
-                    }
-                }
-                comboBoxPais.Items.Add(BM_Database_Recursos.BK_PAIS);
                 comboBoxPais.SelectedValue = BM_Database_Recursos.BK_PAIS;
-
-                comboBoxEstado.Items.Add(BM_Database_Recursos.BK_REGION);
                 comboBoxEstado.SelectedValue = BM_Database_Recursos.BK_REGION;
-
-                comboBoxComuna.Items.Add(BM_Database_Recursos.BK_COMUNA);
                 comboBoxComuna.SelectedValue = BM_Database_Recursos.BK_COMUNA;
-
-                comboBoxCiudad.Items.Add(BM_Database_Recursos.BK_CIUDAD);
                 comboBoxCiudad.SelectedValue = BM_Database_Recursos.BK_CIUDAD;
-
                 textBoxObservaciones.Text = BM_Database_Recursos.BK_OBSERVACIONES;
-
                 imageFotoRecurso.Source = Base64StringToBitmap(BM_Database_Recursos.BK_FOTO);
             }
             catch (System.ArgumentNullException)
@@ -222,11 +243,11 @@ namespace BikeMessenger
             LvrTransferVar.R_RUTID = "";
             LvrTransferVar.R_DIGVER = "";
             LvrTransferVar.R_PAT_SER = "";
+            textBoxPatenteCodigo.Text = "";
             textBoxRut.Text = "";
             textBoxDigitoVerificador.Text = "";
             textBoxPropietario.Text = "";
             comboBoxTipo.Text = "";
-            textBoxPatenteCodigo.Text = "";
             textBoxMarca.Text = "";
             textBoxModelo.Text = "";
             textBoxVariante.Text = "";
@@ -242,12 +263,11 @@ namespace BikeMessenger
 
         private async System.Threading.Tasks.Task LlenarDbConPantallaAsync()
         {
-            BM_Database_Recursos.BK_FOTO = await ConvertirImageABase64Async();
+            BM_Database_Recursos.BK_PATENTE = textBoxPatenteCodigo.Text;
             BM_Database_Recursos.BK_RUTID = textBoxRut.Text;
             BM_Database_Recursos.BK_DIGVER = textBoxDigitoVerificador.Text;
             BM_Database_Recursos.BK_PROPIETARIO = textBoxPropietario.Text;
             BM_Database_Recursos.BK_TIPO = comboBoxTipo.Text;
-            BM_Database_Recursos.BK_PATENTE = textBoxPatenteCodigo.Text;
             BM_Database_Recursos.BK_MARCA = textBoxMarca.Text;
             BM_Database_Recursos.BK_MODELO = textBoxModelo.Text;
             BM_Database_Recursos.BK_VARIANTE = textBoxVariante.Text;
@@ -258,6 +278,7 @@ namespace BikeMessenger
             BM_Database_Recursos.BK_REGION = comboBoxEstado.Text;
             BM_Database_Recursos.BK_PAIS = comboBoxPais.Text;
             BM_Database_Recursos.BK_OBSERVACIONES = textBoxObservaciones.Text;
+            BM_Database_Recursos.BK_FOTO = await ConvertirImageABase64Async();
         }
 
         private async void BtnAgregarRecursos(object sender, RoutedEventArgs e)
@@ -270,9 +291,9 @@ namespace BikeMessenger
                 {
                     LlenarListaRecursos();
                     LlenarListaPropietarios();
+                    LvrTransferVar.R_PAT_SER = BM_Database_Recursos.BK_PATENTE;
                     LvrTransferVar.R_RUTID = BM_Database_Recursos.BK_RUTID;
                     LvrTransferVar.R_DIGVER = BM_Database_Recursos.BK_DIGVER;
-                    LvrTransferVar.R_PAT_SER = BM_Database_Recursos.BK_PATENTE;
                     await AvisoOperacionRecursosDialogAsync("Agregar Recursos", "Operación completada con exito.");
                 }
                 else
@@ -293,9 +314,9 @@ namespace BikeMessenger
             {
                 LlenarListaRecursos();
                 LlenarListaPropietarios();
+                LvrTransferVar.R_PAT_SER = BM_Database_Recursos.BK_PATENTE;
                 LvrTransferVar.R_RUTID = BM_Database_Recursos.BK_RUTID;
                 LvrTransferVar.R_DIGVER = BM_Database_Recursos.BK_DIGVER;
-                LvrTransferVar.R_PAT_SER = BM_Database_Recursos.BK_PATENTE;
                 await AvisoOperacionRecursosDialogAsync("Modificar Recursos", "Operación completada con exito.");
             }
             else
@@ -324,9 +345,9 @@ namespace BikeMessenger
 
                     if (BM_Database_Recursos.Bm_Recursos_Buscar())
                     {
+                        LvrTransferVar.R_PAT_SER = BM_Database_Recursos.BK_PATENTE;
                         LvrTransferVar.R_RUTID = BM_Database_Recursos.BK_RUTID;
                         LvrTransferVar.R_DIGVER = BM_Database_Recursos.BK_DIGVER;
-                        LvrTransferVar.R_PAT_SER = BM_Database_Recursos.BK_PATENTE;
                     }
                     else
                     {

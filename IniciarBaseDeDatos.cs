@@ -21,40 +21,78 @@ namespace BikeMessenger
         string TabSERVICIOS;
         string IndRECURSOS_IDX1;
 
-        SqliteFactory IDB_Factory;
-        SqliteConnection IDB_Connection;
-        SqliteCommand IDB_Command;
+        string EmpresaTriggerPaisInsert;
+        string EmpresaTriggerPaisUpdate;
+        string EmpresaTriggerRegionInsert;
+        string EmpresaTriggerRegionUpdate;
+        string EmpresaTriggerComunaInsert;
+        string EmpresaTriggerComunaUpdate;
+        string EmpresaTriggerCiudadInsert;
+        string EmpresaTriggerCiudadUpdate;
+
+        string PersonalTriggerPaisInsert;
+        string PersonalTriggerPaisUpdate;
+        string PersonalTriggerRegionInsert;
+        string PersonalTriggerRegionUpdate;
+        string PersonalTriggerComunaInsert;
+        string PersonalTriggerComunaUpdate;
+        string PersonalTriggerCiudadInsert;
+        string PersonalTriggerCiudadUpdate;
+
+        string RecursosTriggerPaisInsert;
+        string RecursosTriggerPaisUpdate;
+        string RecursosTriggerRegionInsert;
+        string RecursosTriggerRegionUpdate;
+        string RecursosTriggerComunaInsert;
+        string RecursosTriggerComunaUpdate;
+        string RecursosTriggerCiudadInsert;
+        string RecursosTriggerCiudadUpdate;
+
+        readonly SqliteConnection IDB_Connection;
+
+        public IniciarBaseDeDatos(SqliteConnection pIDB_Connection)
+        {
+            IDB_Connection = pIDB_Connection;
+            AsignarValores();
+            ProcTabPAIS();
+            ProcTabESTADOREGION();
+            ProcTabCOMUNA();
+            ProcTabCIUDAD();
+            ProcTabEMPRESA();
+            ProcTabCLIENTES();
+            ProcTabPERSONAL();
+            ProcTabRECURSOS();
+            ProcTabSERVICIOS();
+            ProcIndINDICES();
+            ProcTRIGGERSEmpresa();
+            ProcTRIGGERSPersonal();
+            ProcTRIGGERSRecursos();
+        }
 
         void AsignarValores()
         {
             TabESTADOREGION = "CREATE TABLE IF NOT EXISTS ESTADOREGION (";
-            TabESTADOREGION += "CODPAIS	INTEGER NOT NULL,";
-            TabESTADOREGION += "CODREGION	INTEGER NOT NULL,";
+            TabESTADOREGION += "CODREGION INTEGER NOT NULL,";
             TabESTADOREGION += "REGION	TEXT NOT NULL,";
-            TabESTADOREGION += "PRIMARY KEY(CODPAIS,CODREGION)";
+            TabESTADOREGION += "PRIMARY KEY(CODREGION AUTOINCREMENT)";
             TabESTADOREGION += ")";
 
             TabCOMUNA = "CREATE TABLE IF NOT EXISTS COMUNA (";
-            TabCOMUNA += "CODPAIS	INTEGER NOT NULL,";
-            TabCOMUNA += "CODREGION	INTEGER NOT NULL,";
             TabCOMUNA += "CODCOMU	INTEGER NOT NULL,";
             TabCOMUNA += "COMUNA	TEXT NOT NULL,";
-            TabCOMUNA += "PRIMARY KEY(CODPAIS,CODREGION,CODCOMU)";
+            TabCOMUNA += "PRIMARY KEY(CODCOMU AUTOINCREMENT)";
             TabCOMUNA += ")";
 
             TabCIUDAD = "CREATE TABLE IF NOT EXISTS CIUDAD (";
-            TabCIUDAD += "PAIS	INTEGER NOT NULL,";
-            TabCIUDAD += "REGION	INTEGER NOT NULL,";
-            TabCIUDAD += "COMUNA	INTEGER NOT NULL,";
             TabCIUDAD += "CODCIUDAD	INTEGER NOT NULL,";
             TabCIUDAD += "CIUDAD	TEXT NOT NULL,";
-            TabCIUDAD += "PRIMARY KEY(PAIS,REGION,COMUNA,CODCIUDAD)";
+            TabCIUDAD += "PRIMARY KEY(CODCIUDAD AUTOINCREMENT)";
             TabCIUDAD += ")";
 
             TabPAIS = "CREATE TABLE IF NOT EXISTS PAIS (";
             TabPAIS += "CODPAIS	INTEGER NOT NULL,";
             TabPAIS += "PAIS	TEXT NOT NULL,";
-            TabPAIS += "PRIMARY KEY(CODPAIS)";
+            TabPAIS += "PRIMARY KEY(CODPAIS AUTOINCREMENT)";
             TabPAIS += ")";
 
             TabEMPRESA = "CREATE TABLE IF NOT EXISTS EMPRESA (";
@@ -198,56 +236,456 @@ namespace BikeMessenger
             IndRECURSOS_IDX1 += "DIGVER,";
             IndRECURSOS_IDX1 += "PATENTE";
             IndRECURSOS_IDX1 += ")";
+
+            // ********************************************************
+            // Operaciones con Triggers Empresas
+            // ********************************************************
+            EmpresaTriggerPaisInsert = "CREATE TRIGGER IF NOT EXISTS EMP_INS_PAIS ";
+            EmpresaTriggerPaisInsert += "AFTER INSERT ";
+            EmpresaTriggerPaisInsert += "ON EMPRESA ";
+            EmpresaTriggerPaisInsert += "WHEN NOT EXISTS(SELECT PAIS FROM PAIS WHERE PAIS = NEW.PAIS) AND NEW.PAIS <> '' ";
+            EmpresaTriggerPaisInsert += "BEGIN ";
+            EmpresaTriggerPaisInsert += "INSERT INTO PAIS(PAIS) VALUES(NEW.PAIS); ";
+            EmpresaTriggerPaisInsert += "END ";
+
+            EmpresaTriggerPaisUpdate = "CREATE TRIGGER IF NOT EXISTS EMP_UPD_PAIS ";
+            EmpresaTriggerPaisUpdate += "AFTER UPDATE ";
+            EmpresaTriggerPaisUpdate += "ON EMPRESA ";
+            EmpresaTriggerPaisUpdate += "WHEN NOT EXISTS(SELECT PAIS FROM PAIS WHERE PAIS = NEW.PAIS) AND NEW.PAIS <> '' ";
+            EmpresaTriggerPaisUpdate += "BEGIN ";
+            EmpresaTriggerPaisUpdate += "INSERT INTO PAIS(PAIS) VALUES(NEW.PAIS); ";
+            EmpresaTriggerPaisUpdate += "END ";
+
+            EmpresaTriggerRegionInsert = "CREATE TRIGGER IF NOT EXISTS EMP_INS_REGION ";
+            EmpresaTriggerRegionInsert += "AFTER INSERT ";
+            EmpresaTriggerRegionInsert += "ON EMPRESA ";
+            EmpresaTriggerRegionInsert += "WHEN NOT EXISTS(SELECT REGION FROM ESTADOREGION WHERE REGION = NEW.ESTADOREGION) AND NEW.ESTADOREGION <> '' ";
+            EmpresaTriggerRegionInsert += "BEGIN ";
+            EmpresaTriggerRegionInsert += "INSERT INTO ESTADOREGION(REGION) VALUES(NEW.ESTADOREGION); ";
+            EmpresaTriggerRegionInsert += "END ";
+
+            EmpresaTriggerRegionUpdate = "CREATE TRIGGER IF NOT EXISTS EMP_UPD_REGION ";
+            EmpresaTriggerRegionUpdate += "AFTER UPDATE ";
+            EmpresaTriggerRegionUpdate += "ON EMPRESA ";
+            EmpresaTriggerRegionUpdate += "WHEN NOT EXISTS(SELECT REGION FROM ESTADOREGION WHERE REGION = NEW.ESTADOREGION) AND NEW.ESTADOREGION <> '' ";
+            EmpresaTriggerRegionUpdate += "BEGIN ";
+            EmpresaTriggerRegionUpdate += "INSERT INTO ESTADOREGION(REGION) VALUES(NEW.ESTADOREGION); ";
+            EmpresaTriggerRegionUpdate += "END ";
+
+            EmpresaTriggerComunaInsert = "CREATE TRIGGER IF NOT EXISTS EMP_INS_COMUNA ";
+            EmpresaTriggerComunaInsert += "AFTER INSERT ";
+            EmpresaTriggerComunaInsert += "ON EMPRESA ";
+            EmpresaTriggerComunaInsert += "WHEN NOT EXISTS(SELECT COMUNA FROM COMUNA WHERE COMUNA = NEW.COMUNA) AND NEW.COMUNA <> '' ";
+            EmpresaTriggerComunaInsert += "BEGIN ";
+            EmpresaTriggerComunaInsert += "INSERT INTO COMUNA(COMUNA) VALUES(NEW.COMUNA); ";
+            EmpresaTriggerComunaInsert += "END ";
+
+            EmpresaTriggerComunaUpdate = "CREATE TRIGGER IF NOT EXISTS EMP_UPD_COMUNA ";
+            EmpresaTriggerComunaUpdate += "AFTER UPDATE ";
+            EmpresaTriggerComunaUpdate += "ON EMPRESA ";
+            EmpresaTriggerComunaUpdate += "WHEN NOT EXISTS(SELECT COMUNA FROM COMUNA WHERE COMUNA = NEW.COMUNA) AND NEW.COMUNA <> '' ";
+            EmpresaTriggerComunaUpdate += "BEGIN ";
+            EmpresaTriggerComunaUpdate += "INSERT INTO COMUNA(COMUNA) VALUES(NEW.COMUNA); ";
+            EmpresaTriggerComunaUpdate += "END ";
+
+            EmpresaTriggerCiudadInsert = "CREATE TRIGGER IF NOT EXISTS EMP_INS_CIUDAD ";
+            EmpresaTriggerCiudadInsert += "AFTER INSERT ";
+            EmpresaTriggerCiudadInsert += "ON EMPRESA ";
+            EmpresaTriggerCiudadInsert += "WHEN NOT EXISTS(SELECT CIUDAD FROM CIUDAD WHERE CIUDAD = NEW.CIUDAD) AND NEW.CIUDAD <> '' ";
+            EmpresaTriggerCiudadInsert += "BEGIN ";
+            EmpresaTriggerCiudadInsert += "INSERT INTO CIUDAD(CIUDAD) VALUES(NEW.CIUDAD); ";
+            EmpresaTriggerCiudadInsert += "END ";
+
+            EmpresaTriggerCiudadUpdate = "CREATE TRIGGER IF NOT EXISTS EMP_UPD_CIUDAD ";
+            EmpresaTriggerCiudadUpdate += "AFTER UPDATE ";
+            EmpresaTriggerCiudadUpdate += "ON EMPRESA ";
+            EmpresaTriggerCiudadUpdate += "WHEN NOT EXISTS(SELECT CIUDAD FROM CIUDAD WHERE CIUDAD = NEW.CIUDAD) AND NEW.CIUDAD <> '' ";
+            EmpresaTriggerCiudadUpdate += "BEGIN ";
+            EmpresaTriggerCiudadUpdate += "INSERT INTO CIUDAD(CIUDAD) VALUES(NEW.CIUDAD); ";
+            EmpresaTriggerCiudadUpdate += "END ";
+
+            // ********************************************************
+            // Operaciones con Triggers Personal
+            // ********************************************************
+            PersonalTriggerPaisInsert = "CREATE TRIGGER IF NOT EXISTS PER_INS_PAIS ";
+            PersonalTriggerPaisInsert += "AFTER INSERT ";
+            PersonalTriggerPaisInsert += "ON PERSONAL ";
+            PersonalTriggerPaisInsert += "WHEN NOT EXISTS(SELECT PAIS FROM PAIS WHERE PAIS = NEW.PAIS) AND NEW.PAIS <> '' ";
+            PersonalTriggerPaisInsert += "BEGIN ";
+            PersonalTriggerPaisInsert += "INSERT INTO PAIS(PAIS) VALUES(NEW.PAIS); ";
+            PersonalTriggerPaisInsert += "END ";
+
+            PersonalTriggerPaisUpdate = "CREATE TRIGGER IF NOT EXISTS PER_UPD_PAIS ";
+            PersonalTriggerPaisUpdate += "AFTER UPDATE ";
+            PersonalTriggerPaisUpdate += "ON PERSONAL ";
+            PersonalTriggerPaisUpdate += "WHEN NOT EXISTS(SELECT PAIS FROM PAIS WHERE PAIS = NEW.PAIS) AND NEW.PAIS <> '' ";
+            PersonalTriggerPaisUpdate += "BEGIN ";
+            PersonalTriggerPaisUpdate += "INSERT INTO PAIS(PAIS) VALUES(NEW.PAIS); ";
+            PersonalTriggerPaisUpdate += "END ";
+
+            PersonalTriggerRegionInsert = "CREATE TRIGGER IF NOT EXISTS PER_INS_REGION ";
+            PersonalTriggerRegionInsert += "AFTER INSERT ";
+            PersonalTriggerRegionInsert += "ON PERSONAL ";
+            PersonalTriggerRegionInsert += "WHEN NOT EXISTS(SELECT REGION FROM ESTADOREGION WHERE REGION = NEW.REGION) AND NEW.REGION <> '' ";
+            PersonalTriggerRegionInsert += "BEGIN ";
+            PersonalTriggerRegionInsert += "INSERT INTO ESTADOREGION(REGION) VALUES(NEW.REGION); ";
+            PersonalTriggerRegionInsert += "END ";
+
+            PersonalTriggerRegionUpdate = "CREATE TRIGGER IF NOT EXISTS PER_UPD_REGION ";
+            PersonalTriggerRegionUpdate += "AFTER UPDATE ";
+            PersonalTriggerRegionUpdate += "ON PERSONAL ";
+            PersonalTriggerRegionUpdate += "WHEN NOT EXISTS(SELECT REGION FROM ESTADOREGION WHERE REGION = NEW.REGION) AND NEW.REGION <> '' ";
+            PersonalTriggerRegionUpdate += "BEGIN ";
+            PersonalTriggerRegionUpdate += "INSERT INTO ESTADOREGION(REGION) VALUES(NEW.REGION); ";
+            PersonalTriggerRegionUpdate += "END ";
+
+            PersonalTriggerComunaInsert = "CREATE TRIGGER IF NOT EXISTS PER_INS_COMUNA ";
+            PersonalTriggerComunaInsert += "AFTER INSERT ";
+            PersonalTriggerComunaInsert += "ON PERSONAL ";
+            PersonalTriggerComunaInsert += "WHEN NOT EXISTS(SELECT COMUNA FROM COMUNA WHERE COMUNA = NEW.COMUNA) AND NEW.COMUNA <> '' ";
+            PersonalTriggerComunaInsert += "BEGIN ";
+            PersonalTriggerComunaInsert += "INSERT INTO COMUNA(COMUNA) VALUES(NEW.COMUNA); ";
+            PersonalTriggerComunaInsert += "END ";
+
+            PersonalTriggerComunaUpdate = "CREATE TRIGGER IF NOT EXISTS PER_UPD_COMUNA ";
+            PersonalTriggerComunaUpdate += "AFTER UPDATE ";
+            PersonalTriggerComunaUpdate += "ON PERSONAL ";
+            PersonalTriggerComunaUpdate += "WHEN NOT EXISTS(SELECT COMUNA FROM COMUNA WHERE COMUNA = NEW.COMUNA) AND NEW.COMUNA <> '' ";
+            PersonalTriggerComunaUpdate += "BEGIN ";
+            PersonalTriggerComunaUpdate += "INSERT INTO COMUNA(COMUNA) VALUES(NEW.COMUNA); ";
+            PersonalTriggerComunaUpdate += "END ";
+
+            PersonalTriggerCiudadInsert = "CREATE TRIGGER IF NOT EXISTS PER_INS_CIUDAD ";
+            PersonalTriggerCiudadInsert += "AFTER INSERT ";
+            PersonalTriggerCiudadInsert += "ON PERSONAL ";
+            PersonalTriggerCiudadInsert += "WHEN NOT EXISTS(SELECT CIUDAD FROM CIUDAD WHERE CIUDAD = NEW.CIUDAD) AND NEW.CIUDAD <> '' ";
+            PersonalTriggerCiudadInsert += "BEGIN ";
+            PersonalTriggerCiudadInsert += "INSERT INTO CIUDAD(CIUDAD) VALUES(NEW.CIUDAD); ";
+            PersonalTriggerCiudadInsert += "END ";
+
+            PersonalTriggerCiudadUpdate = "CREATE TRIGGER IF NOT EXISTS PER_UPD_CIUDAD ";
+            PersonalTriggerCiudadUpdate += "AFTER UPDATE ";
+            PersonalTriggerCiudadUpdate += "ON PERSONAL ";
+            PersonalTriggerCiudadUpdate += "WHEN NOT EXISTS(SELECT CIUDAD FROM CIUDAD WHERE CIUDAD = NEW.CIUDAD) AND NEW.CIUDAD <> '' ";
+            PersonalTriggerCiudadUpdate += "BEGIN ";
+            PersonalTriggerCiudadUpdate += "INSERT INTO CIUDAD(CIUDAD) VALUES(NEW.CIUDAD); ";
+            PersonalTriggerCiudadUpdate += "END ";
+
+            // ********************************************************
+            // Operaciones con Triggers Recursos
+            // ********************************************************
+            RecursosTriggerPaisInsert = "CREATE TRIGGER IF NOT EXISTS REC_INS_PAIS ";
+            RecursosTriggerPaisInsert += "AFTER INSERT ";
+            RecursosTriggerPaisInsert += "ON RECURSOS ";
+            RecursosTriggerPaisInsert += "WHEN NOT EXISTS(SELECT PAIS FROM PAIS WHERE PAIS = NEW.PAIS) AND NEW.PAIS <> '' ";
+            RecursosTriggerPaisInsert += "BEGIN ";
+            RecursosTriggerPaisInsert += "INSERT INTO PAIS(PAIS) VALUES(NEW.PAIS); ";
+            RecursosTriggerPaisInsert += "END ";
+
+            RecursosTriggerPaisUpdate = "CREATE TRIGGER IF NOT EXISTS REC_UPD_PAIS ";
+            RecursosTriggerPaisUpdate += "AFTER UPDATE ";
+            RecursosTriggerPaisUpdate += "ON RECURSOS ";
+            RecursosTriggerPaisUpdate += "WHEN NOT EXISTS(SELECT PAIS FROM PAIS WHERE PAIS = NEW.PAIS) AND NEW.PAIS <> '' ";
+            RecursosTriggerPaisUpdate += "BEGIN ";
+            RecursosTriggerPaisUpdate += "INSERT INTO PAIS(PAIS) VALUES(NEW.PAIS); ";
+            RecursosTriggerPaisUpdate += "END ";
+
+            RecursosTriggerRegionInsert = "CREATE TRIGGER IF NOT EXISTS REC_INS_REGION ";
+            RecursosTriggerRegionInsert += "AFTER INSERT ";
+            RecursosTriggerRegionInsert += "ON RECURSOS ";
+            RecursosTriggerRegionInsert += "WHEN NOT EXISTS(SELECT REGION FROM ESTADOREGION WHERE REGION = NEW.REGION) AND NEW.REGION <> '' ";
+            RecursosTriggerRegionInsert += "BEGIN ";
+            RecursosTriggerRegionInsert += "INSERT INTO ESTADOREGION(REGION) VALUES(NEW.REGION); ";
+            RecursosTriggerRegionInsert += "END ";
+
+            RecursosTriggerRegionUpdate = "CREATE TRIGGER IF NOT EXISTS REC_UPD_REGION ";
+            RecursosTriggerRegionUpdate += "AFTER UPDATE ";
+            RecursosTriggerRegionUpdate += "ON RECURSOS ";
+            RecursosTriggerRegionUpdate += "WHEN NOT EXISTS(SELECT REGION FROM ESTADOREGION WHERE REGION = NEW.REGION) AND NEW.REGION <> '' ";
+            RecursosTriggerRegionUpdate += "BEGIN ";
+            RecursosTriggerRegionUpdate += "INSERT INTO ESTADOREGION(REGION) VALUES(NEW.REGION); ";
+            RecursosTriggerRegionUpdate += "END ";
+
+            RecursosTriggerComunaInsert = "CREATE TRIGGER IF NOT EXISTS REC_INS_COMUNA ";
+            RecursosTriggerComunaInsert += "AFTER INSERT ";
+            RecursosTriggerComunaInsert += "ON RECURSOS ";
+            RecursosTriggerComunaInsert += "WHEN NOT EXISTS(SELECT COMUNA FROM COMUNA WHERE COMUNA = NEW.COMUNA) AND NEW.COMUNA <> '' ";
+            RecursosTriggerComunaInsert += "BEGIN ";
+            RecursosTriggerComunaInsert += "INSERT INTO COMUNA(COMUNA) VALUES(NEW.COMUNA); ";
+            RecursosTriggerComunaInsert += "END ";
+
+            RecursosTriggerComunaUpdate = "CREATE TRIGGER IF NOT EXISTS REC_UPD_COMUNA ";
+            RecursosTriggerComunaUpdate += "AFTER UPDATE ";
+            RecursosTriggerComunaUpdate += "ON RECURSOS ";
+            RecursosTriggerComunaUpdate += "WHEN NOT EXISTS(SELECT COMUNA FROM COMUNA WHERE COMUNA = NEW.COMUNA) AND NEW.COMUNA <> '' ";
+            RecursosTriggerComunaUpdate += "BEGIN ";
+            RecursosTriggerComunaUpdate += "INSERT INTO COMUNA(COMUNA) VALUES(NEW.COMUNA); ";
+            RecursosTriggerComunaUpdate += "END ";
+
+            RecursosTriggerCiudadInsert = "CREATE TRIGGER IF NOT EXISTS REC_INS_CIUDAD ";
+            RecursosTriggerCiudadInsert += "AFTER INSERT ";
+            RecursosTriggerCiudadInsert += "ON RECURSOS ";
+            RecursosTriggerCiudadInsert += "WHEN NOT EXISTS(SELECT CIUDAD FROM CIUDAD WHERE CIUDAD = NEW.CIUDAD) AND NEW.CIUDAD <> '' ";
+            RecursosTriggerCiudadInsert += "BEGIN ";
+            RecursosTriggerCiudadInsert += "INSERT INTO CIUDAD(CIUDAD) VALUES(NEW.CIUDAD); ";
+            RecursosTriggerCiudadInsert += "END ";
+
+            RecursosTriggerCiudadUpdate = "CREATE TRIGGER IF NOT EXISTS REC_UPD_CIUDAD ";
+            RecursosTriggerCiudadUpdate += "AFTER UPDATE ";
+            RecursosTriggerCiudadUpdate += "ON RECURSOS ";
+            RecursosTriggerCiudadUpdate += "WHEN NOT EXISTS(SELECT CIUDAD FROM CIUDAD WHERE CIUDAD = NEW.CIUDAD) AND NEW.CIUDAD <> '' ";
+            RecursosTriggerCiudadUpdate += "BEGIN ";
+            RecursosTriggerCiudadUpdate += "INSERT INTO CIUDAD(CIUDAD) VALUES(NEW.CIUDAD); ";
+            RecursosTriggerCiudadUpdate += "END ";
         }
 
-        bool ProcTabPAIS() 
-        { 
-            return true; 
+        bool ProcTabPAIS()
+        {
+            SqliteCommand IDB_Command;
+            try
+            {
+                IDB_Command = new SqliteCommand(TabPAIS, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+                return true;
+            }
+            catch (Microsoft.Data.Sqlite.SqliteException)
+            {
+                return false;
+            }
         }
 
         bool ProcTabESTADOREGION()
         {
-            return true;
+            SqliteCommand IDB_Command;
+            try
+            {
+                IDB_Command = new SqliteCommand(TabESTADOREGION, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+                return true;
+            }
+            catch (Microsoft.Data.Sqlite.SqliteException)
+            {
+                return false;
+            }
         }
 
         bool ProcTabCOMUNA()
         {
-            return true;
+            SqliteCommand IDB_Command;
+            try
+            {
+                IDB_Command = new SqliteCommand(TabCOMUNA, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+                return true;
+            }
+            catch (Microsoft.Data.Sqlite.SqliteException)
+            {
+                return false;
+            }
         }
 
         bool ProcTabCIUDAD()
         {
-            return true;
+            SqliteCommand IDB_Command;
+            try
+            {
+                IDB_Command = new SqliteCommand(TabCIUDAD, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+                return true;
+            }
+            catch (Microsoft.Data.Sqlite.SqliteException)
+            {
+                return false;
+            }
         }
 
         bool ProcTabEMPRESA()
         {
-            return true;
+            SqliteCommand IDB_Command;
+            try
+            {
+                IDB_Command = new SqliteCommand(TabEMPRESA, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+                return true;
+            }
+            catch (Microsoft.Data.Sqlite.SqliteException)
+            {
+                return false;
+            }
         }
 
         bool ProcTabCLIENTES()
         {
-            return true;
+            SqliteCommand IDB_Command;
+            try
+            {
+                IDB_Command = new SqliteCommand(TabCLIENTES, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+                return true;
+            }
+            catch (Microsoft.Data.Sqlite.SqliteException)
+            {
+                return false;
+            }
         }
 
         bool ProcTabPERSONAL()
         {
-            return true;
+            SqliteCommand IDB_Command;
+            try
+            {
+                IDB_Command = new SqliteCommand(TabPERSONAL, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+                return true;
+            }
+            catch (Microsoft.Data.Sqlite.SqliteException)
+            {
+                return false;
+            }
         }
 
         bool ProcTabRECURSOS()
         {
-            return true;
+            SqliteCommand IDB_Command;
+            try
+            {
+                IDB_Command = new SqliteCommand(TabRECURSOS, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+                return true;
+            }
+            catch (Microsoft.Data.Sqlite.SqliteException)
+            {
+                return false;
+            }
         }
 
         bool ProcTabSERVICIOS()
         {
-            return true;
+            SqliteCommand IDB_Command;
+            try
+            {
+                IDB_Command = new SqliteCommand(TabSERVICIOS, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+                return true;
+            }
+            catch (Microsoft.Data.Sqlite.SqliteException)
+            {
+                return false;
+            }
         }
 
-        bool ProcTabINDICES()
+        bool ProcIndINDICES()
         {
-            return true;
+            SqliteCommand IDB_Command;
+            try
+            {
+                IDB_Command = new SqliteCommand(IndRECURSOS_IDX1, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+                return true;
+            }
+            catch (Microsoft.Data.Sqlite.SqliteException)
+            {
+                return false;
+            }
+        }
+
+        bool ProcTRIGGERSEmpresa()
+        {
+            SqliteCommand IDB_Command;
+            try
+            {
+                IDB_Command = new SqliteCommand(EmpresaTriggerPaisInsert, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+                IDB_Command = new SqliteCommand(EmpresaTriggerPaisUpdate, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+
+                IDB_Command = new SqliteCommand(EmpresaTriggerRegionInsert, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+                IDB_Command = new SqliteCommand(EmpresaTriggerRegionUpdate, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+
+                IDB_Command = new SqliteCommand(EmpresaTriggerComunaInsert, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+                IDB_Command = new SqliteCommand(EmpresaTriggerComunaUpdate, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+
+                IDB_Command = new SqliteCommand(EmpresaTriggerCiudadInsert, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+                IDB_Command = new SqliteCommand(EmpresaTriggerCiudadUpdate, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+
+                return true;
+            }
+            catch (Microsoft.Data.Sqlite.SqliteException)
+            {
+                return false;
+            }
+        }
+
+        bool ProcTRIGGERSPersonal()
+        {
+            SqliteCommand IDB_Command;
+            try
+            {
+                IDB_Command = new SqliteCommand(PersonalTriggerPaisInsert, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+                IDB_Command = new SqliteCommand(PersonalTriggerPaisUpdate, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+
+                IDB_Command = new SqliteCommand(PersonalTriggerRegionInsert, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+                IDB_Command = new SqliteCommand(PersonalTriggerRegionUpdate, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+
+                IDB_Command = new SqliteCommand(PersonalTriggerComunaInsert, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+                IDB_Command = new SqliteCommand(PersonalTriggerComunaUpdate, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+
+                IDB_Command = new SqliteCommand(PersonalTriggerCiudadInsert, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+                IDB_Command = new SqliteCommand(PersonalTriggerCiudadUpdate, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+
+                return true;
+            }
+            catch (Microsoft.Data.Sqlite.SqliteException)
+            {
+                return false;
+            }
+        }
+
+        bool ProcTRIGGERSRecursos()
+        {
+            SqliteCommand IDB_Command;
+            try
+            {
+                IDB_Command = new SqliteCommand(RecursosTriggerPaisInsert, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+                IDB_Command = new SqliteCommand(RecursosTriggerPaisUpdate, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+
+                IDB_Command = new SqliteCommand(RecursosTriggerRegionInsert, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+                IDB_Command = new SqliteCommand(RecursosTriggerRegionUpdate, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+
+                IDB_Command = new SqliteCommand(RecursosTriggerComunaInsert, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+                IDB_Command = new SqliteCommand(RecursosTriggerComunaUpdate, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+
+                IDB_Command = new SqliteCommand(RecursosTriggerCiudadInsert, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+                IDB_Command = new SqliteCommand(RecursosTriggerCiudadUpdate, IDB_Connection);
+                IDB_Command.ExecuteNonQuery();
+
+                return true;
+            }
+            catch (Microsoft.Data.Sqlite.SqliteException)
+            {
+                return false;
+            }
         }
     }
 }
