@@ -13,6 +13,15 @@ namespace BikeMessenger
         SqliteCommand BK_Cmd_Clientes_Pais;
         SqliteDataReader BK_Reader_Clientes_Pais;
 
+        SqliteCommand BK_Cmd_Clientes_Region;
+        SqliteDataReader BK_Reader_Clientes_Region;
+
+        SqliteCommand BK_Cmd_Clientes_Comuna;
+        SqliteDataReader BK_Reader_Clientes_Comuna;
+
+        SqliteCommand BK_Cmd_Clientes_Ciudad;
+        SqliteDataReader BK_Reader_Clientes_Ciudad;
+
         SqliteCommand BK_Cmd_Clientes_Grid;
         SqliteDataReader BK_Reader_Clientes_Grid;
 
@@ -22,7 +31,12 @@ namespace BikeMessenger
 
         readonly string StrBuscarGrid_Clientes = "SELECT RUTID||'-'||DIGVER, NOMBRE FROM CLIENTES ORDER BY NOMBRE ASC";
         readonly string StrBuscar_Clientes = "SELECT * FROM CLIENTES";
+
         readonly String StrBuscar_Clientes_Pais = "SELECT * FROM PAIS ORDER BY PAIS ASC";
+        readonly String StrBuscar_Clientes_Region = "SELECT * FROM ESTADOREGION ORDER BY REGION ASC";
+        readonly String StrBuscar_Clientes_Comuna = "SELECT * FROM COMUNA ORDER BY COMUNA ASC";
+        readonly String StrBuscar_Clientes_Ciudad = "SELECT * FROM CIUDAD ORDER BY CIUDAD ASC";
+
 
         public string BK_RUTID { get; set; }
         public string BK_DIGVER { get; set; }
@@ -50,6 +64,18 @@ namespace BikeMessenger
         // Campos de PAIS
         public Int16 BK_E_CODPAIS { get; set; }
         public string BK_E_PAIS { get; set; }
+
+        // Campos de REGION
+        public Int16 BK_E_CODREGION { get; set; }
+        public string BK_E_REGION { get; set; }
+
+        // Campos de COMUNA
+        public Int16 BK_E_CODCOMUNA { get; set; }
+        public string BK_E_COMUNA { get; set; }
+
+        // Campos de CIUDAD
+        public Int16 BK_E_CODCIUDAD { get; set; }
+        public string BK_E_CIUDAD { get; set; }
 
         // LISTADO CLIENTES
         public string BK_GRID_RUT { get; set; }
@@ -312,14 +338,12 @@ namespace BikeMessenger
             {
                 if (BK_Reader_Clientes_Pais.Read())
                 {
-                    // Llenar Valores de la Empresa
                     BK_E_CODPAIS = BK_Reader_Clientes_Pais.GetInt16(BK_Reader_Clientes_Pais.GetOrdinal("CODPAIS"));
                     BK_E_PAIS = BK_Reader_Clientes_Pais.GetString(BK_Reader_Clientes_Pais.GetOrdinal("PAIS"));
                     return true;
                 }
                 else
                 {
-                    // No existe la empresa
                     return false;
                 }
             }
@@ -329,6 +353,117 @@ namespace BikeMessenger
             }
         }
 
+        // Procedimiento Buscar Region
+        public bool Bm_E_Region_EjecutarSelect()
+        {
+            try
+            {
+                BK_Cmd_Clientes_Region = new SqliteCommand(StrBuscar_Clientes_Region, BM_Connection);
+                BK_Reader_Clientes_Region = BK_Cmd_Clientes_Region.ExecuteReader();
+                return true;
+            }
+            catch (Microsoft.Data.Sqlite.SqliteException)
+            {
+                return false;
+            }
+        }
+
+        public bool Bm_E_Region_Buscar()
+        {
+            try
+            {
+                if (BK_Reader_Clientes_Region.Read())
+                {
+                    BK_E_CODREGION = BK_Reader_Clientes_Region.GetInt16(BK_Reader_Clientes_Region.GetOrdinal("CODREGION"));
+                    BK_E_REGION = BK_Reader_Clientes_Region.GetString(BK_Reader_Clientes_Region.GetOrdinal("REGION"));
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Microsoft.Data.Sqlite.SqliteException)
+            {
+                return false;
+            }
+        }
+
+
+        // Procedimiento Buscar Comuna
+        public bool Bm_E_Comuna_EjecutarSelect()
+        {
+            try
+            {
+                BK_Cmd_Clientes_Comuna = new SqliteCommand(StrBuscar_Clientes_Comuna, BM_Connection);
+                BK_Reader_Clientes_Comuna = BK_Cmd_Clientes_Comuna.ExecuteReader();
+                return true;
+            }
+            catch (Microsoft.Data.Sqlite.SqliteException)
+            {
+                return false;
+            }
+        }
+
+        public bool Bm_E_Comuna_Buscar()
+        {
+            try
+            {
+                if (BK_Reader_Clientes_Comuna.Read())
+                {
+                    BK_E_CODCOMUNA = BK_Reader_Clientes_Comuna.GetInt16(BK_Reader_Clientes_Comuna.GetOrdinal("CODCOMU"));
+                    BK_E_COMUNA = BK_Reader_Clientes_Comuna.GetString(BK_Reader_Clientes_Comuna.GetOrdinal("COMUNA"));
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Microsoft.Data.Sqlite.SqliteException)
+            {
+                return false;
+            }
+        }
+
+        // Procedimiento Buscar Ciudad
+        public bool Bm_E_Ciudad_EjecutarSelect()
+        {
+            try
+            {
+                BK_Cmd_Clientes_Ciudad = new SqliteCommand(StrBuscar_Clientes_Ciudad, BM_Connection);
+                BK_Reader_Clientes_Ciudad = BK_Cmd_Clientes_Ciudad.ExecuteReader();
+                return true;
+            }
+            catch (Microsoft.Data.Sqlite.SqliteException)
+            {
+                return false;
+            }
+        }
+
+        public bool Bm_E_Ciudad_Buscar()
+        {
+            try
+            {
+                if (BK_Reader_Clientes_Ciudad.Read())
+                {
+                    BK_E_CODCIUDAD = BK_Reader_Clientes_Ciudad.GetInt16(BK_Reader_Clientes_Ciudad.GetOrdinal("CODCIUDAD"));
+                    BK_E_CIUDAD = BK_Reader_Clientes_Ciudad.GetString(BK_Reader_Clientes_Ciudad.GetOrdinal("CIUDAD"));
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Microsoft.Data.Sqlite.SqliteException)
+            {
+                return false;
+            }
+        }
+
+
+        // Buscar Clientes
         public bool Bm_Clientes_BuscarGrid()
         {
             try

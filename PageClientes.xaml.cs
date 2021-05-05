@@ -74,6 +74,7 @@ namespace BikeMessenger
             {
                 LvrTransferVar = (TransferVar)navigationEvent.Parameter;
                 BM_Database_Clientes.BM_CreateDatabase(LvrTransferVar.TV_Connection);
+                RellenarCombos();
 
                 if (LvrTransferVar.C_RUTID == "")
                 {
@@ -197,6 +198,51 @@ namespace BikeMessenger
             }
         }
 
+        private void RellenarCombos()
+        {
+            // Limpiar Combo Box
+            comboBoxPais.Items.Clear();
+            comboBoxEstado.Items.Clear();
+            comboBoxComuna.Items.Clear();
+            comboBoxCiudad.Items.Clear();
+
+            // Llenar Combo Pais
+            if (BM_Database_Clientes.Bm_E_Pais_EjecutarSelect())
+            {
+                while (BM_Database_Clientes.Bm_E_Pais_Buscar())
+                {
+                    comboBoxPais.Items.Add(BM_Database_Clientes.BK_E_PAIS);
+                }
+            }
+
+            // Llenar Combo Region
+            if (BM_Database_Clientes.Bm_E_Region_EjecutarSelect())
+            {
+                while (BM_Database_Clientes.Bm_E_Region_Buscar())
+                {
+                    comboBoxEstado.Items.Add(BM_Database_Clientes.BK_E_REGION);
+                }
+            }
+
+            // Llenar Combo Comuna
+            if (BM_Database_Clientes.Bm_E_Comuna_EjecutarSelect())
+            {
+                while (BM_Database_Clientes.Bm_E_Comuna_Buscar())
+                {
+                    comboBoxComuna.Items.Add(BM_Database_Clientes.BK_E_COMUNA);
+                }
+            }
+
+            // Llenar Combo Ciudad
+            if (BM_Database_Clientes.Bm_E_Ciudad_EjecutarSelect())
+            {
+                while (BM_Database_Clientes.Bm_E_Ciudad_Buscar())
+                {
+                    comboBoxCiudad.Items.Add(BM_Database_Clientes.BK_E_CIUDAD);
+                }
+            }
+        }
+
         private void LimpiarPantalla()
         {
             LvrTransferVar.C_RUTID = "";
@@ -244,10 +290,14 @@ namespace BikeMessenger
             BM_Database_Clientes.BK_PISO = textBoxPiso.Text;
             BM_Database_Clientes.BK_OFICINA = textBoxOficina.Text;
             BM_Database_Clientes.BK_CODIGOPOSTAL = textBoxCodigoPostal.Text;
-            BM_Database_Clientes.BK_PAIS = comboBoxPais.Text;
-            BM_Database_Clientes.BK_REGION = comboBoxEstado.Text;
-            BM_Database_Clientes.BK_COMUNA = comboBoxComuna.Text;
-            BM_Database_Clientes.BK_CIUDAD = comboBoxCiudad.Text;
+            if (comboBoxPais.Text != "")
+                BM_Database_Clientes.BK_PAIS = comboBoxPais.Text;
+            if (comboBoxEstado.Text != "")
+                BM_Database_Clientes.BK_REGION = comboBoxEstado.Text;
+            if (comboBoxComuna.Text != "")
+                BM_Database_Clientes.BK_COMUNA = comboBoxComuna.Text;
+            if (comboBoxCiudad.Text != "")
+                BM_Database_Clientes.BK_CIUDAD = comboBoxCiudad.Text;
             BM_Database_Clientes.BK_OBSERVACIONES = textBoxObservaciones.Text;
         }
 

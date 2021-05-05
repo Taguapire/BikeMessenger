@@ -171,6 +171,12 @@ namespace BikeMessenger
 
         private void RellenarCombos()
         {
+            // Limpiar Combo Box
+            comboBoxPais.Items.Clear();
+            comboBoxEstado.Items.Clear();
+            comboBoxComuna.Items.Clear();
+            comboBoxCiudad.Items.Clear();
+
             // Llenar Combo Pais
             if (BM_Database_Recursos.Bm_E_Pais_EjecutarSelect())
             {
@@ -273,10 +279,14 @@ namespace BikeMessenger
             BM_Database_Recursos.BK_VARIANTE = textBoxVariante.Text;
             BM_Database_Recursos.BK_ANO = textBoxAno.Text;
             BM_Database_Recursos.BK_COLOR = textBoxColor.Text;
-            BM_Database_Recursos.BK_CIUDAD = comboBoxCiudad.Text;
-            BM_Database_Recursos.BK_COMUNA = comboBoxComuna.Text;
-            BM_Database_Recursos.BK_REGION = comboBoxEstado.Text;
-            BM_Database_Recursos.BK_PAIS = comboBoxPais.Text;
+            if (comboBoxCiudad.Text != "")
+                BM_Database_Recursos.BK_CIUDAD = comboBoxCiudad.Text;
+            if (comboBoxComuna.Text != "")
+                BM_Database_Recursos.BK_COMUNA = comboBoxComuna.Text;
+            if (comboBoxEstado.Text != "")
+                BM_Database_Recursos.BK_REGION = comboBoxEstado.Text;
+            if (comboBoxPais.Text != "")
+                BM_Database_Recursos.BK_PAIS = comboBoxPais.Text;
             BM_Database_Recursos.BK_OBSERVACIONES = textBoxObservaciones.Text;
             BM_Database_Recursos.BK_FOTO = await ConvertirImageABase64Async();
         }

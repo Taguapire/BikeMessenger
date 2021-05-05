@@ -200,6 +200,12 @@ namespace BikeMessenger
 
         private void RellenarCombos()
         {
+            // Limpiar comboBox
+            comboBoxPais.Items.Clear();
+            comboBoxRegion.Items.Clear();
+            comboBoxComuna.Items.Clear();
+            comboBoxCiudad.Items.Clear();
+
             // Llenar Combo Pais
             if (BM_Database_Personal.Bm_E_Pais_EjecutarSelect())
             {
@@ -279,9 +285,13 @@ namespace BikeMessenger
             BM_Database_Personal.BK_PISO = textBoxPiso.Text;
             BM_Database_Personal.BK_DPTO = textBoxDepartamento.Text;
             BM_Database_Personal.BK_CODIGOPOSTAL = textBoxCodigoPostal.Text;
-            BM_Database_Personal.BK_CIUDAD = comboBoxCiudad.Text;
-            BM_Database_Personal.BK_COMUNA = comboBoxComuna.Text;
-            BM_Database_Personal.BK_REGION = comboBoxRegion.Text;
+            if (comboBoxCiudad.Text != "")
+                BM_Database_Personal.BK_CIUDAD = comboBoxCiudad.Text;
+            if (comboBoxComuna.Text != "")
+                BM_Database_Personal.BK_COMUNA = comboBoxComuna.Text;
+            if (comboBoxRegion.Text != "")
+                BM_Database_Personal.BK_REGION = comboBoxRegion.Text;
+            if (comboBoxPais.Text != "")
             BM_Database_Personal.BK_PAIS = comboBoxPais.Text;
             BM_Database_Personal.BK_OBSERVACIONES = textBoxObservaciones.Text;
             BM_Database_Personal.BK_FOTO = await ConvertirImageABase64Async();

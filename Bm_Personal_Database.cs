@@ -58,10 +58,6 @@ namespace BikeMessenger
         public string BK_OBSERVACIONES { get; set; }
         public string BK_FOTO { get; set; }
 
-        public string BK_GRID_RUT { get; set; }
-        public string BK_GRID_APELLIDOS { get; set; }
-        public string BK_GRID_NOMBRES { get; set; }
-
         // Campos de PAIS
         public Int16 BK_E_CODPAIS { get; set; }
         public string BK_E_PAIS { get; set; }
@@ -77,6 +73,11 @@ namespace BikeMessenger
         // Campos de CIUDAD
         public Int16 BK_E_CODCIUDAD { get; set; }
         public string BK_E_CIUDAD { get; set; }
+
+        // Listado Personal
+        public string BK_GRID_RUT { get; set; }
+        public string BK_GRID_APELLIDOS { get; set; }
+        public string BK_GRID_NOMBRES { get; set; }
 
         public void BM_CreateDatabase(SqliteConnection BM_Connection)
         {
@@ -437,6 +438,7 @@ namespace BikeMessenger
             }
         }
 
+        // Buscar Personal
         public bool Bm_Personal_BuscarGrid()
         {
             try

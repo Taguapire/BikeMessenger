@@ -102,7 +102,6 @@
         <TextBox x:Name="textBoxTiempoDeEspera" HorizontalAlignment="Left" Margin="655,550,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="385" BorderThickness="1,1,1,1" Background="#6626C7F7"/>
         <TextBox x:Name="labelDescripcion" HorizontalAlignment="Left" Margin="15,410,0,0" Text="Descripción" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" BorderThickness="1,1,1,1" IsReadOnly="True" IsTabStop="False" AllowFocusOnInteraction="False" IsTextPredictionEnabled="False" IsDoubleTapEnabled="False" IsHoldingEnabled="False" IsRightTapEnabled="False" IsTapEnabled="False" ManipulationMode="None" FocusVisualPrimaryThickness="1,1,1,1" HighContrastAdjustment="None"/>
         <TextBox x:Name="textBoxDescripcion" HorizontalAlignment="Left" Margin="140,410,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="900" BorderThickness="1,1,1,1" Background="#6626C7F7" Height="65" AcceptsReturn="True"/>
-        <Custom1:MapControl x:Name="mapControlBikeMessenger" Visibility="Collapsed"/>
         <TextBox x:Name="textBoxIdMensajero" HorizontalAlignment="Left" Margin="140,186,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="130" BorderThickness="1,1,1,1" Background="#6626C7F7"/>
         <TextBox x:Name="textBoxNombreMensajero" HorizontalAlignment="Left" Margin="275,186,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="250" BorderThickness="1,1,1,1" Background="#6626C7F7"/>
         <TextBox x:Name="textBoxIdRecurso" HorizontalAlignment="Left" Margin="655,186,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="130" BorderThickness="1,1,1,1" Background="#6626C7F7"/>
@@ -159,5 +158,6 @@
                 </Flyout>
             </Button.Flyout>
         </Button>
+        <Custom1:MapControl x:Name="mapControlBikeMessenger" Visibility="Collapsed"/>
     </Grid>
 </Page>

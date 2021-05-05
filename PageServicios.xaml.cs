@@ -176,6 +176,18 @@ namespace BikeMessenger
             double lvrlatDestino = 0;
             double lvrlonDestino = 0;
 
+            if (textBoxOrigenDomicilio1.Text == "" || textBoxOrigenDomicilio1.Text == "" || comboBoxOrigenComuna.Text == "" || comboBoxOrigenCiudad.Text == "" || comboBoxOrigenPais.Text == "")
+            {
+                await AvisoOperacionRecursosDialogAsync("Dirección de Origen", "Aun faltan datos por completar.");
+                return;
+            }
+
+            if (textBoxDestinoDomicilio1.Text == "" || textBoxDestinoDomicilio1.Text == "" || comboBoxDestinoComuna.Text == "" || comboBoxDestinoCiudad.Text == "" || comboBoxDestinoPais.Text == "")
+            {
+                await AvisoOperacionRecursosDialogAsync("Dirección de Destino", "Aun faltan datos por completar.");
+                return;
+            }
+
             string addressInicio = textBoxOrigenDomicilio1.Text + " " + textBoxOrigenNumero.Text + "," + comboBoxOrigenComuna.Text + "," + comboBoxOrigenCiudad.Text + "," + comboBoxOrigenPais.Text;
             string addressFinal = textBoxDestinoDomicilio1.Text + " " + textBoxDestinoNumero.Text + "," + comboBoxDestinoComuna.Text + "," + comboBoxDestinoCiudad.Text + "," + comboBoxDestinoPais.Text;
 
@@ -280,45 +292,14 @@ namespace BikeMessenger
                 // BM_Database_Servicios.BK_FECHA = controlFecha.Date.ToString();
                 // BM_Database_Servicios.BK_HORA = controlHora.Time.ToString();
 
-                if (BM_Database_Servicios.Bm_E_Pais_EjecutarSelect())
-                {
-                    while (BM_Database_Servicios.Bm_E_Pais_Buscar())
-                    {
-                        comboBoxOrigenPais.Items.Add(BM_Database_Servicios.BK_E_PAIS);
-                    }
-                }
-
-                comboBoxOrigenPais.Items.Add(BM_Database_Servicios.BK_OPAIS);
                 comboBoxOrigenPais.SelectedValue = BM_Database_Servicios.BK_OPAIS;
-
-                comboBoxOrigenEstado.Items.Add(BM_Database_Servicios.BK_OESTADO);
                 comboBoxOrigenEstado.SelectedValue = BM_Database_Servicios.BK_OESTADO;
-
-                comboBoxOrigenComuna.Items.Add(BM_Database_Servicios.BK_OCOMUNA);
                 comboBoxOrigenComuna.SelectedValue = BM_Database_Servicios.BK_OCOMUNA;
-
-                comboBoxOrigenCiudad.Items.Add(BM_Database_Servicios.BK_OCIUDAD);
                 comboBoxOrigenCiudad.SelectedValue = BM_Database_Servicios.BK_OCIUDAD;
 
-                if (BM_Database_Servicios.Bm_E_Pais_EjecutarSelect())
-                {
-                    while (BM_Database_Servicios.Bm_E_Pais_Buscar())
-                    {
-                        comboBoxDestinoPais.Items.Add(BM_Database_Servicios.BK_E_PAIS);
-                    }
-                }
-
-                comboBoxDestinoPais.Items.Add(BM_Database_Servicios.BK_DPAIS);
                 comboBoxDestinoPais.SelectedValue = BM_Database_Servicios.BK_DPAIS;
-
-
-                comboBoxDestinoEstado.Items.Add(BM_Database_Servicios.BK_DESTADO);
                 comboBoxDestinoEstado.SelectedValue = BM_Database_Servicios.BK_DESTADO;
-
-                comboBoxDestinoComuna.Items.Add(BM_Database_Servicios.BK_DCOMUNA);
                 comboBoxDestinoComuna.SelectedValue = BM_Database_Servicios.BK_DCOMUNA;
-
-                comboBoxDestinoCiudad.Items.Add(BM_Database_Servicios.BK_DCIUDAD);
                 comboBoxDestinoCiudad.SelectedValue = BM_Database_Servicios.BK_DCIUDAD;
             }
             catch (System.ArgumentNullException)
@@ -350,20 +331,28 @@ namespace BikeMessenger
             BM_Database_Servicios.BK_ONUMERO = textBoxOrigenNumero.Text;
             BM_Database_Servicios.BK_OPISO = textBoxOrigenPiso.Text;
             BM_Database_Servicios.BK_OOFICINA = textBoxOrigenOficina.Text;
-            BM_Database_Servicios.BK_OCIUDAD = comboBoxOrigenCiudad.Text;
-            BM_Database_Servicios.BK_OCOMUNA = comboBoxOrigenComuna.Text;
-            BM_Database_Servicios.BK_OESTADO = comboBoxOrigenEstado.Text;
-            BM_Database_Servicios.BK_OPAIS = comboBoxOrigenPais.Text;
+            if (comboBoxOrigenCiudad.Text != "")
+                BM_Database_Servicios.BK_OCIUDAD = comboBoxOrigenCiudad.Text;
+            if (comboBoxOrigenComuna.Text != "")
+                BM_Database_Servicios.BK_OCOMUNA = comboBoxOrigenComuna.Text;
+            if (comboBoxOrigenEstado.Text != "")
+                BM_Database_Servicios.BK_OESTADO = comboBoxOrigenEstado.Text;
+            if (comboBoxOrigenPais.Text != "")
+                BM_Database_Servicios.BK_OPAIS = comboBoxOrigenPais.Text;
             BM_Database_Servicios.BK_OCOORDENADAS = "*";
             BM_Database_Servicios.BK_DDOMICILIO1 = textBoxDestinoDomicilio1.Text;
             // BM_Database_Servicios.BK_DDOMICILIO2 = textBoxDestinoDomicilio2.Text;
             BM_Database_Servicios.BK_DNUMERO = textBoxDestinoNumero.Text;
             BM_Database_Servicios.BK_DPISO = textBoxDestinoPiso.Text;
             BM_Database_Servicios.BK_DOFICINA = textBoxDestinoOficina.Text;
-            BM_Database_Servicios.BK_DCIUDAD = comboBoxDestinoCiudad.Text;
-            BM_Database_Servicios.BK_DCOMUNA = comboBoxDestinoComuna.Text;
-            BM_Database_Servicios.BK_DESTADO = comboBoxDestinoEstado.Text;
-            BM_Database_Servicios.BK_DPAIS = comboBoxDestinoPais.Text;
+            if (comboBoxDestinoCiudad.Text != "")
+                BM_Database_Servicios.BK_DCIUDAD = comboBoxDestinoCiudad.Text;
+            if (comboBoxDestinoComuna.Text != "")
+                BM_Database_Servicios.BK_DCOMUNA = comboBoxDestinoComuna.Text;
+            if (comboBoxDestinoEstado.Text != "")
+                BM_Database_Servicios.BK_DESTADO = comboBoxDestinoEstado.Text;
+            if (comboBoxDestinoPais.Text != "")
+                BM_Database_Servicios.BK_DPAIS = comboBoxDestinoPais.Text;
             BM_Database_Servicios.BK_DCOORDENADAS = "*";
             BM_Database_Servicios.BK_DESCRIPCION = textBoxDescripcion.Text;
             BM_Database_Servicios.BK_OBSERVACIONES = textBoxObservaciones.Text;
@@ -666,6 +655,24 @@ namespace BikeMessenger
             }
             dataGridListadoRecursos.IsReadOnly = true;
             dataGridListadoRecursos.ItemsSource = GridRecursosLista;
+        }
+
+        private async System.Threading.Tasks.Task AvisoOperacionRecursosDialogAsync(string xTitulo, string xDescripcion)
+        {
+            try
+            {
+                ContentDialog AvisoOperacionRecursosDialog = new ContentDialog
+                {
+                    Title = xTitulo,
+                    Content = xDescripcion,
+                    CloseButtonText = "Continuar"
+                };
+                ContentDialogResult result = await AvisoOperacionRecursosDialog.ShowAsync();
+            }
+            catch (System.Exception)
+            {
+                ;
+            }
         }
     }
 
