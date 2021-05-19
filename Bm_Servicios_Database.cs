@@ -76,6 +76,12 @@ namespace BikeMessenger
         public string BK_DPAIS { get; set; }
         public string BK_DCOORDENADAS { get; set; }
         public string BK_DESCRIPCION { get; set; }
+        public int BK_FACTURAS { get; set; }
+        public int BK_BULTOS { get; set; }
+        public int BK_COMPRAS { get; set; }
+        public int BK_CHEQUES { get; set; }
+        public int BK_SOBRES { get; set; }
+        public int BK_OTROS { get; set; }
         public string BK_OBSERVACIONES { get; set; }
         public string BK_ENTREGA { get; set; }
         public string BK_RECEPCION { get; set; }
@@ -149,6 +155,12 @@ namespace BikeMessenger
             StrAgregar_Servicios += "DPAIS,";
             StrAgregar_Servicios += "DCOORDENADAS,";
             StrAgregar_Servicios += "DESCRIPCION,";
+            StrAgregar_Servicios += "FACTURAS,";
+            StrAgregar_Servicios += "BULTOS,";
+            StrAgregar_Servicios += "COMPRAS,";
+            StrAgregar_Servicios += "CHEQUES,";
+            StrAgregar_Servicios += "SOBRES,";
+            StrAgregar_Servicios += "OTROS,";
             StrAgregar_Servicios += "OBSERVACIONES,";
             StrAgregar_Servicios += "ENTREGA,";
             StrAgregar_Servicios += "RECEPCION,";
@@ -187,6 +199,12 @@ namespace BikeMessenger
             StrAgregar_Servicios += "'" + BK_DPAIS + "',";
             StrAgregar_Servicios += "'" + BK_DCOORDENADAS + "',";
             StrAgregar_Servicios += "'" + BK_DESCRIPCION + "',";
+            StrAgregar_Servicios += " " + BK_FACTURAS.ToString() + ",";
+            StrAgregar_Servicios += " " + BK_BULTOS.ToString() + ",";
+            StrAgregar_Servicios += " " + BK_COMPRAS.ToString() + ",";
+            StrAgregar_Servicios += " " + BK_CHEQUES.ToString() + ",";
+            StrAgregar_Servicios += " " + BK_SOBRES.ToString() + ",";
+            StrAgregar_Servicios += " " + BK_OTROS.ToString() + ",";
             StrAgregar_Servicios += "'" + BK_OBSERVACIONES + "',";
             StrAgregar_Servicios += "'" + BK_ENTREGA + "',";
             StrAgregar_Servicios += "'" + BK_RECEPCION + "',";
@@ -250,6 +268,12 @@ namespace BikeMessenger
                     BK_DPAIS = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DPAIS"));
                     BK_DCOORDENADAS = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DCOORDENADAS"));
                     BK_DESCRIPCION = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DESCRIPCION"));
+                    BK_FACTURAS = BK_Reader_Servicios.GetInt32(BK_Reader_Servicios.GetOrdinal("FACTURAS"));
+                    BK_BULTOS = BK_Reader_Servicios.GetInt32(BK_Reader_Servicios.GetOrdinal("BULTOS"));
+                    BK_COMPRAS = BK_Reader_Servicios.GetInt32(BK_Reader_Servicios.GetOrdinal("COMPRAS"));
+                    BK_CHEQUES = BK_Reader_Servicios.GetInt32(BK_Reader_Servicios.GetOrdinal("CHEQUES"));
+                    BK_SOBRES = BK_Reader_Servicios.GetInt32(BK_Reader_Servicios.GetOrdinal("SOBRES"));
+                    BK_OTROS = BK_Reader_Servicios.GetInt32(BK_Reader_Servicios.GetOrdinal("OTROS"));
                     BK_OBSERVACIONES = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OBSERVACIONES"));
                     BK_ENTREGA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("ENTREGA"));
                     BK_RECEPCION = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("RECEPCION"));
@@ -315,6 +339,12 @@ namespace BikeMessenger
                     BK_DPAIS = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DPAIS"));
                     BK_DCOORDENADAS = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DCOORDENADAS"));
                     BK_DESCRIPCION = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DESCRIPCION"));
+                    BK_FACTURAS = BK_Reader_Servicios.GetInt32(BK_Reader_Servicios.GetOrdinal("FACTURAS"));
+                    BK_BULTOS = BK_Reader_Servicios.GetInt32(BK_Reader_Servicios.GetOrdinal("BULTOS"));
+                    BK_COMPRAS = BK_Reader_Servicios.GetInt32(BK_Reader_Servicios.GetOrdinal("COMPRAS"));
+                    BK_CHEQUES = BK_Reader_Servicios.GetInt32(BK_Reader_Servicios.GetOrdinal("CHEQUES"));
+                    BK_SOBRES = BK_Reader_Servicios.GetInt32(BK_Reader_Servicios.GetOrdinal("SOBRES"));
+                    BK_OTROS = BK_Reader_Servicios.GetInt32(BK_Reader_Servicios.GetOrdinal("OTROS"));
                     BK_OBSERVACIONES = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OBSERVACIONES"));
                     BK_ENTREGA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("ENTREGA"));
                     BK_RECEPCION = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("RECEPCION"));
@@ -373,6 +403,12 @@ namespace BikeMessenger
                 StrModificar_Servicios += "DPAIS = '" + BK_DPAIS + "',";
                 StrModificar_Servicios += "DCOORDENADAS = '" + BK_DCOORDENADAS + "',";
                 StrModificar_Servicios += "DESCRIPCION = '" + BK_DESCRIPCION + "',";
+                StrModificar_Servicios += "FACTURAS = " + BK_FACTURAS.ToString() + ",";
+                StrModificar_Servicios += "BULTOS = " + BK_BULTOS.ToString() + ",";
+                StrModificar_Servicios += "COMPRAS = " + BK_COMPRAS.ToString() + ",";
+                StrModificar_Servicios += "CHEQUES = " + BK_CHEQUES.ToString() + ",";
+                StrModificar_Servicios += "SOBRES = " + BK_SOBRES.ToString() + ",";
+                StrModificar_Servicios += "OTROS = " + BK_OTROS.ToString() + ",";
                 StrModificar_Servicios += "OBSERVACIONES = '" + BK_OBSERVACIONES + "',";
                 StrModificar_Servicios += "ENTREGA = '" + BK_ENTREGA + "',";
                 StrModificar_Servicios += "RECEPCION = '" + BK_RECEPCION + "',";
@@ -486,6 +522,12 @@ namespace BikeMessenger
             BK_DPAIS = "";
             BK_DCOORDENADAS = "";
             BK_DESCRIPCION = "";
+            BK_FACTURAS = 0;
+            BK_BULTOS = 0;
+            BK_COMPRAS = 0;
+            BK_CHEQUES = 0;
+            BK_SOBRES = 0;
+            BK_OTROS = 0;
             BK_OBSERVACIONES = "";
             BK_ENTREGA = "";
             BK_RECEPCION = "";

@@ -112,21 +112,36 @@ namespace BikeMessenger
             }
             catch (System.ArgumentException)
             {
-                await AvisoOperacionServiciosDialogAsync("Agregando Recursos", "Aun faltan datos por completar.");
+                await AvisoOperacionServiciosDialogAsync("Agregando Servicios", "Aun faltan datos por completar.");
+            }
+            catch (System.IndexOutOfRangeException)
+            {
+                await AvisoOperacionServiciosDialogAsync("Agregando Servicios", "Datos de ingresos incorrectos o no estan completos.");
             }
         }
 
         private async void BtnModificarServicios(object sender, RoutedEventArgs e)
         {
-            LlenarDbConPantalla();
-            if (BM_Database_Servicios.Bm_Recursos_Modificar(BM_Database_Servicios.BK_NROENVIO))
+            try
             {
-                LvrTransferVar.S_NROENVIO = BM_Database_Servicios.BK_NROENVIO;
-                await AvisoOperacionServiciosDialogAsync("Modificar Servicios", "Operación completada con exito.");
+                LlenarDbConPantalla();
+                if (BM_Database_Servicios.Bm_Recursos_Modificar(BM_Database_Servicios.BK_NROENVIO))
+                {
+                    LvrTransferVar.S_NROENVIO = BM_Database_Servicios.BK_NROENVIO;
+                    await AvisoOperacionServiciosDialogAsync("Modificar Servicios", "Operación completada con exito.");
+                }
+                else
+                {
+                    await AvisoOperacionServiciosDialogAsync("Modificando Servicios", "Se a producido un error al intentar modificar recurso.");
+                }
             }
-            else
+            catch (System.ArgumentException)
             {
-                await AvisoOperacionServiciosDialogAsync("Modificando Servicios", "Se a producido un error al intentar modificar recurso.");
+                await AvisoOperacionServiciosDialogAsync("Modificando Servicios", "Aun faltan datos por completar.");
+            }
+            catch (System.IndexOutOfRangeException)
+            {
+                await AvisoOperacionServiciosDialogAsync("Modificando Servicios", "Datos de ingresos incorrectos o no estan completos.");
             }
         }
 
@@ -279,6 +294,14 @@ namespace BikeMessenger
                 textBoxDestinoOficina.Text = BM_Database_Servicios.BK_DOFICINA;
                 // BM_Database_Servicios.BK_DCOORDENADAS = "*";
                 textBoxDescripcion.Text = BM_Database_Servicios.BK_DESCRIPCION;
+
+                textBoxFacturas.Text = BM_Database_Servicios.BK_FACTURAS.ToString();
+                textBoxBultos.Text = BM_Database_Servicios.BK_BULTOS.ToString();
+                textBoxCompras.Text = BM_Database_Servicios.BK_COMPRAS.ToString();
+                textBoxCheques.Text = BM_Database_Servicios.BK_CHEQUES.ToString();
+                textBoxSobres.Text = BM_Database_Servicios.BK_SOBRES.ToString();
+                textBoxOtros.Text = BM_Database_Servicios.BK_OTROS.ToString();
+
                 textBoxObservaciones.Text = BM_Database_Servicios.BK_OBSERVACIONES;
                 textBoxEntrega.Text = BM_Database_Servicios.BK_ENTREGA;
                 textBoxRecepcion.Text = BM_Database_Servicios.BK_RECEPCION;
@@ -355,6 +378,14 @@ namespace BikeMessenger
                 BM_Database_Servicios.BK_DPAIS = comboBoxDestinoPais.Text;
             BM_Database_Servicios.BK_DCOORDENADAS = "*";
             BM_Database_Servicios.BK_DESCRIPCION = textBoxDescripcion.Text;
+
+            BM_Database_Servicios.BK_FACTURAS = Convert.ToInt32(textBoxFacturas.Text);
+            BM_Database_Servicios.BK_BULTOS = Convert.ToInt32(textBoxBultos.Text);
+            BM_Database_Servicios.BK_COMPRAS = Convert.ToInt32(textBoxCompras.Text);
+            BM_Database_Servicios.BK_CHEQUES = Convert.ToInt32(textBoxCheques.Text);
+            BM_Database_Servicios.BK_SOBRES = Convert.ToInt32(textBoxSobres.Text);
+            BM_Database_Servicios.BK_OTROS = Convert.ToInt32(textBoxOtros.Text);
+
             BM_Database_Servicios.BK_OBSERVACIONES = textBoxObservaciones.Text;
             BM_Database_Servicios.BK_ENTREGA = textBoxEntrega.Text;
             BM_Database_Servicios.BK_RECEPCION = textBoxRecepcion.Text; ;

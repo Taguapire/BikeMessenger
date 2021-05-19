@@ -231,6 +231,12 @@ namespace BikeMessenger
             TabSERVICIOS += "DPAIS	TEXT,";
             TabSERVICIOS += "DCOORDENADAS	TEXT,";
             TabSERVICIOS += "DESCRIPCION	TEXT,";
+            TabSERVICIOS += "FACTURAS  INTEGER,";
+            TabSERVICIOS += "BULTOS    INTEGER,";
+            TabSERVICIOS += "COMPRAS   INTEGER,";
+            TabSERVICIOS += "CHEQUES   INTEGER,";
+            TabSERVICIOS += "SOBRES    INTEGER,";
+            TabSERVICIOS += "OTROS INTEGER,";
             TabSERVICIOS += "OBSERVACIONES	TEXT,";
             TabSERVICIOS += "ENTREGA	TEXT,";
             TabSERVICIOS += "RECEPCION	TEXT,";
