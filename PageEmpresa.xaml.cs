@@ -21,6 +21,7 @@ namespace BikeMessenger
     {
         private Bm_Empresa_Database BM_Database_Empresa = new Bm_Empresa_Database();
         TransferVar LvrTransferVar;
+        PentalphaCripto LvrCrypto = new PentalphaCripto();
 
         public PageEmpresa()
         {
@@ -401,7 +402,7 @@ namespace BikeMessenger
             }
             catch (System.ArgumentException)
             {
-                await AvisoOperacionEmpresaDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
+                await AvisoOperacionEmpresaDialogAsync("Acceso a Base de Datos :", "Debe llenar los datos de la empresa.");
             }
         }
 
@@ -460,6 +461,18 @@ namespace BikeMessenger
             };
 
             ContentDialogResult result = await AvisoOperacionEmpresaDialog.ShowAsync();
+        }
+
+        private void LvrCalculoHashEmpresa(object sender, TextChangedEventArgs e)
+        {
+            string TempTexto = LvrCrypto.LvrRegionGeografica() + textBoxRut.Text + "-" + textBoxDigitoVerificador.Text + LvrCrypto.LvrGenRandomData(5);
+            BM_Database_Empresa.BK_PENTALPHA = LvrCrypto.LvrByteArrayToString(LvrCrypto.LvrCalculoSHA256(TempTexto));
+        }
+
+        private void LvrCalculoHashEmpresaDig(object sender, TextChangedEventArgs e)
+        {
+            string TempTexto = LvrCrypto.LvrRegionGeografica() + textBoxRut.Text + "-" + textBoxDigitoVerificador.Text + LvrCrypto.LvrGenRandomData(5);
+            BM_Database_Empresa.BK_PENTALPHA = LvrCrypto.LvrByteArrayToString(LvrCrypto.LvrCalculoSHA256(TempTexto));
         }
     }
 }

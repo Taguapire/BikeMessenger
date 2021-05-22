@@ -34,6 +34,7 @@ namespace BikeMessenger
         string StrBorrar_Empresa;
 
         // Campos de Empresa
+        public string BK_PENTALPHA { get; set; }
         public string BK_RUTID { get; set; }
         public string BK_DIGVER { get; set; }
         public string BK_NOMBRE { get; set; }
@@ -90,6 +91,7 @@ namespace BikeMessenger
                 if (BK_Reader_Empresa.Read())
                 {
                     // Llenar Valores de la Empresa
+                    BK_PENTALPHA = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("PENTALPHA"));
                     BK_RUTID = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("RUTID"));
                     BK_DIGVER = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("DIGVER"));
                     BK_NOMBRE = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("NOMBRE"));
@@ -274,6 +276,7 @@ namespace BikeMessenger
         public bool Bm_Empresa_Agregar()
         {
             StrAgregar_Empresa = "INSERT INTO EMPRESA (";
+            StrAgregar_Empresa += "PENTALPHA,";
             StrAgregar_Empresa += "RUTID,";
             StrAgregar_Empresa += "DIGVER,";
             StrAgregar_Empresa += "NOMBRE,";
@@ -294,6 +297,7 @@ namespace BikeMessenger
             StrAgregar_Empresa += "PAIS,";
             StrAgregar_Empresa += "OBSERVACIONES,";
             StrAgregar_Empresa += "LOGO) VALUES (";
+            StrAgregar_Empresa += "'" + BK_PENTALPHA + "',";
             StrAgregar_Empresa += "'" + BK_RUTID + "',";
             StrAgregar_Empresa += "'" + BK_DIGVER + "',";
             StrAgregar_Empresa += "'" + BK_NOMBRE + "',";
@@ -331,6 +335,7 @@ namespace BikeMessenger
         public bool Bm_Empresa_Modificar()
         {
             StrModificar_Empresa = "UPDATE EMPRESA SET ";
+            StrModificar_Empresa += "PENTALPHA = '" + BK_PENTALPHA + "',";
             StrModificar_Empresa += "RUTID = '" + BK_RUTID + "',";
             StrModificar_Empresa += "DIGVER = '" + BK_DIGVER + "',";
             StrModificar_Empresa += "NOMBRE = '" + BK_NOMBRE + "',";

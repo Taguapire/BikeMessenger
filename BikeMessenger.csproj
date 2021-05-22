@@ -135,6 +135,7 @@
     <Compile Include="Bm_Recursos_Database.cs" />
     <Compile Include="Bm_Servicios_Database.cs" />
     <Compile Include="IniciarBaseDeDatos.cs" />
+    <Compile Include="JsonEmpresa.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -156,6 +157,7 @@
     <Compile Include="PageServicios.xaml.cs">
       <DependentUpon>PageServicios.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PentalphaCripto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TransferVar.cs" />
   </ItemGroup>
