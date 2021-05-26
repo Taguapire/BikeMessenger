@@ -136,6 +136,8 @@
     <Compile Include="Bm_Servicios_Database.cs" />
     <Compile Include="IniciarBaseDeDatos.cs" />
     <Compile Include="JsonEmpresa.cs" />
+    <Compile Include="LvrInternet.cs" />
+    <Compile Include="LvrProcesoInternet.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
