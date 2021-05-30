@@ -135,9 +135,8 @@
     <Compile Include="Bm_Recursos_Database.cs" />
     <Compile Include="Bm_Servicios_Database.cs" />
     <Compile Include="IniciarBaseDeDatos.cs" />
-    <Compile Include="JsonEmpresa.cs" />
+    <Compile Include="JsonBikeMessengerEmpresa.cs" />
     <Compile Include="LvrInternet.cs" />
-    <Compile Include="LvrProcesoInternet.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -265,13 +264,13 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.Sqlite">
-      <Version>5.0.5</Version>
+      <Version>5.0.6</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.12</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls.DataGrid">
-      <Version>7.0.1</Version>
+      <Version>7.0.2</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.1</Version>

@@ -107,9 +107,12 @@ namespace BikeMessenger
             TabPAIS += ")";
 
             TabEMPRESA = "CREATE TABLE IF NOT EXISTS EMPRESA (";
+            TabEMPRESA += "PENTALPHA	TEXT NOT NULL,";
             TabEMPRESA += "RUTID	TEXT NOT NULL,";
             TabEMPRESA += "DIGVER	TEXT NOT NULL,";
             TabEMPRESA += "NOMBRE	TEXT,";
+            TabEMPRESA += "USUARIO	TEXT,";
+            TabEMPRESA += "CLAVE	TEXT,";
             TabEMPRESA += "ACTIVIDAD1	TEXT,";
             TabEMPRESA += "ACTIVIDAD2	TEXT,";
             TabEMPRESA += "REPRESENTANTE1	TEXT,";
@@ -125,14 +128,18 @@ namespace BikeMessenger
             TabEMPRESA += "ESTADOREGION	TEXT,";
             TabEMPRESA += "CODIGOPOSTAL	TEXT,";
             TabEMPRESA += "PAIS	TEXT,";
+            TabEMPRESA += "TELEFONO1,";
+            TabEMPRESA += "TELEFONO2,";
+            TabEMPRESA += "TELEFONO3,";
             TabEMPRESA += "OBSERVACIONES	TEXT,";
             TabEMPRESA += "LOGO	BLOB,";
-            TabEMPRESA += "PRIMARY KEY(RUTID,DIGVER)";
+            TabEMPRESA += "PRIMARY KEY(PENTALPHA,RUTID,DIGVER)";
             TabEMPRESA += ")";
 
             TabCLIENTES = "CREATE TABLE IF NOT EXISTS CLIENTES (";
-            TabCLIENTES += "RUTID	TEXT,";
-            TabCLIENTES += "DIGVER	TEXT,";
+            TabCLIENTES += "PENTALPHA	TEXT NOT NULL,";
+            TabCLIENTES += "RUTID	TEXT NOT NULL,";
+            TabCLIENTES += "DIGVER	TEXT NOT NULL,";
             TabCLIENTES += "NOMBRE	TEXT,";
             TabCLIENTES += "ACTIVIDAD1	TEXT,";
             TabCLIENTES += "ACTIVIDAD2	TEXT,";
@@ -153,12 +160,13 @@ namespace BikeMessenger
             TabCLIENTES += "PAIS	TEXT,";
             TabCLIENTES += "OBSERVACIONES	TEXT,";
             TabCLIENTES += "FOTO	BLOB,";
-            TabCLIENTES += "PRIMARY KEY(RUTID,DIGVER)";
+            TabCLIENTES += "PRIMARY KEY(PENTALPHA,RUTID,DIGVER)";
             TabCLIENTES += ")";
 
             TabPERSONAL = "CREATE TABLE IF NOT EXISTS PERSONAL (";
-            TabPERSONAL += "RUTID	TEXT,";
-            TabPERSONAL += "DIGVER	TEXT,";
+            TabPERSONAL += "PENTALPHA	TEXT NOT NULL,";
+            TabPERSONAL += "RUTID	TEXT NOT NULL,";
+            TabPERSONAL += "DIGVER	TEXT NOT NULL,";
             TabPERSONAL += "APELLIDOS	TEXT,";
             TabPERSONAL += "NOMBRES	TEXT,";
             TabPERSONAL += "TELEFONO1	TEXT,";
@@ -177,15 +185,16 @@ namespace BikeMessenger
             TabPERSONAL += "PAIS	TEXT,";
             TabPERSONAL += "OBSERVACIONES	TEXT,";
             TabPERSONAL += "FOTO	BLOB,";
-            TabPERSONAL += "PRIMARY KEY(RUTID,DIGVER)";
+            TabPERSONAL += "PRIMARY KEY(PENTALPHA,RUTID,DIGVER)";
             TabPERSONAL += ")";
 
             TabRECURSOS = "CREATE TABLE IF NOT EXISTS RECURSOS (";
-            TabRECURSOS += "RUTID	TEXT,";
-            TabRECURSOS += "DIGVER	TEXT,";
+            TabRECURSOS += "PENTALPHA	TEXT NOT NULL,";
+            TabRECURSOS += "RUTID	TEXT NOT NULL,";
+            TabRECURSOS += "DIGVER	TEXT NOT NULL,";
             TabRECURSOS += "PROPIETARIO	TEXT,";
             TabRECURSOS += "TIPO	TEXT,";
-            TabRECURSOS += "PATENTE	TEXT,";
+            TabRECURSOS += "PATENTE	TEXT NOT NULL,";
             TabRECURSOS += "MARCA	TEXT,";
             TabRECURSOS += "MODELO	TEXT,";
             TabRECURSOS += "VARIANTE	TEXT,";
@@ -197,11 +206,12 @@ namespace BikeMessenger
             TabRECURSOS += "PAIS	TEXT,";
             TabRECURSOS += "OBSERVACIONES	TEXT,";
             TabRECURSOS += "FOTO	BLOB,";
-            TabRECURSOS += "PRIMARY KEY(PATENTE)";
+            TabRECURSOS += "PRIMARY KEY(PENTALPHA,PATENTE)";
             TabRECURSOS += ")";
 
             TabSERVICIOS = "CREATE TABLE IF NOT EXISTS SERVICIOS (";
-            TabSERVICIOS += "NROENVIO	TEXT,";
+            TabSERVICIOS += "PENTALPHA	TEXT NOT NULL,";
+            TabSERVICIOS += "NROENVIO	TEXT NOT NULL,";
             TabSERVICIOS += "GUIADESPACHO	TEXT,";
             TabSERVICIOS += "FECHA	TEXT,";
             TabSERVICIOS += "HORA	TEXT,";
@@ -245,7 +255,7 @@ namespace BikeMessenger
             TabSERVICIOS += "HORAENTREGA	TEXT,";
             TabSERVICIOS += "DISTANCIA	TEXT,";
             TabSERVICIOS += "PROGRAMADO	TEXT,";
-            TabSERVICIOS += "PRIMARY KEY(NROENVIO)";
+            TabSERVICIOS += "PRIMARY KEY(PENTALPHA,NROENVIO)";
             TabSERVICIOS += ")";
 
             IndRECURSOS_IDX1 = "CREATE UNIQUE INDEX IF NOT EXISTS RECURSOS_IDX1 ON RECURSOS (";

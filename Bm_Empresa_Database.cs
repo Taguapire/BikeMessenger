@@ -38,6 +38,8 @@ namespace BikeMessenger
         public string BK_RUTID { get; set; }
         public string BK_DIGVER { get; set; }
         public string BK_NOMBRE { get; set; }
+        public string BK_USUARIO { get; set; }
+        public string BK_CLAVE { get; set; }
         public string BK_ACTIVIDAD1 { get; set; }
         public string BK_ACTIVIDAD2 { get; set; }
         public string BK_REPRESENTANTE1 { get; set; }
@@ -53,6 +55,9 @@ namespace BikeMessenger
         public string BK_ESTADOREGION { get; set; }
         public string BK_CODIGOPOSTAL { get; set; }
         public string BK_PAIS { get; set; }
+        public string BK_TELEFONO1 { get; set; }
+        public string BK_TELEFONO2 { get; set; }
+        public string BK_TELEFONO3 { get; set; }
         public string BK_OBSERVACIONES { get; set; }
         public string BK_LOGO { get; set; }
 
@@ -95,6 +100,8 @@ namespace BikeMessenger
                     BK_RUTID = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("RUTID"));
                     BK_DIGVER = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("DIGVER"));
                     BK_NOMBRE = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("NOMBRE"));
+                    BK_USUARIO = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("USUARIO"));
+                    BK_CLAVE = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("CLAVE"));
                     BK_ACTIVIDAD1 = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("ACTIVIDAD1"));
                     BK_ACTIVIDAD2 = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("ACTIVIDAD2"));
                     BK_REPRESENTANTE1 = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("REPRESENTANTE1"));
@@ -110,6 +117,9 @@ namespace BikeMessenger
                     BK_ESTADOREGION = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("ESTADOREGION"));
                     BK_CODIGOPOSTAL = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("CODIGOPOSTAL"));
                     BK_PAIS = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("PAIS"));
+                    BK_TELEFONO1 = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("TELEFONO1"));
+                    BK_TELEFONO2 = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("TELEFONO2"));
+                    BK_TELEFONO3 = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("TELEFONO3"));
                     BK_OBSERVACIONES = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("OBSERVACIONES"));
                     BK_LOGO = BK_Reader_Empresa.GetString(BK_Reader_Empresa.GetOrdinal("LOGO"));
                     return true;
@@ -280,6 +290,8 @@ namespace BikeMessenger
             StrAgregar_Empresa += "RUTID,";
             StrAgregar_Empresa += "DIGVER,";
             StrAgregar_Empresa += "NOMBRE,";
+            StrAgregar_Empresa += "USUARIO,";
+            StrAgregar_Empresa += "CLAVE,";
             StrAgregar_Empresa += "ACTIVIDAD1,";
             StrAgregar_Empresa += "ACTIVIDAD2,";
             StrAgregar_Empresa += "REPRESENTANTE1,";
@@ -295,12 +307,17 @@ namespace BikeMessenger
             StrAgregar_Empresa += "ESTADOREGION,";
             StrAgregar_Empresa += "CODIGOPOSTAL,";
             StrAgregar_Empresa += "PAIS,";
+            StrAgregar_Empresa += "TELEFONO1,";
+            StrAgregar_Empresa += "TELEFONO2,";
+            StrAgregar_Empresa += "TELEFONO3,";
             StrAgregar_Empresa += "OBSERVACIONES,";
             StrAgregar_Empresa += "LOGO) VALUES (";
             StrAgregar_Empresa += "'" + BK_PENTALPHA + "',";
             StrAgregar_Empresa += "'" + BK_RUTID + "',";
             StrAgregar_Empresa += "'" + BK_DIGVER + "',";
             StrAgregar_Empresa += "'" + BK_NOMBRE + "',";
+            StrAgregar_Empresa += "'" + BK_USUARIO + "',";
+            StrAgregar_Empresa += "'" + BK_CLAVE + "',";
             StrAgregar_Empresa += "'" + BK_ACTIVIDAD1 + "',";
             StrAgregar_Empresa += "'" + BK_ACTIVIDAD2 + "',";
             StrAgregar_Empresa += "'" + BK_REPRESENTANTE1 + "',";
@@ -316,6 +333,9 @@ namespace BikeMessenger
             StrAgregar_Empresa += "'" + BK_ESTADOREGION + "',";
             StrAgregar_Empresa += "'" + BK_CODIGOPOSTAL + "',";
             StrAgregar_Empresa += "'" + BK_PAIS + "',";
+            StrAgregar_Empresa += "'" + BK_TELEFONO1 + "',";
+            StrAgregar_Empresa += "'" + BK_TELEFONO2 + "',";
+            StrAgregar_Empresa += "'" + BK_TELEFONO3 + "',";
             StrAgregar_Empresa += "'" + BK_OBSERVACIONES + "',";
             StrAgregar_Empresa += "'" + BK_LOGO + "')";
 
@@ -339,6 +359,8 @@ namespace BikeMessenger
             StrModificar_Empresa += "RUTID = '" + BK_RUTID + "',";
             StrModificar_Empresa += "DIGVER = '" + BK_DIGVER + "',";
             StrModificar_Empresa += "NOMBRE = '" + BK_NOMBRE + "',";
+            StrModificar_Empresa += "USUARIO = '" + BK_USUARIO + "',";
+            StrModificar_Empresa += "CLAVE = '" + BK_CLAVE + "',";
             StrModificar_Empresa += "ACTIVIDAD1 = '" + BK_ACTIVIDAD1 + "',";
             StrModificar_Empresa += "ACTIVIDAD2 = '" + BK_ACTIVIDAD2 + "',";
             StrModificar_Empresa += "REPRESENTANTE1 = '" + BK_REPRESENTANTE1 + "',";
@@ -354,6 +376,9 @@ namespace BikeMessenger
             StrModificar_Empresa += "ESTADOREGION = '" + BK_ESTADOREGION + "',";
             StrModificar_Empresa += "CODIGOPOSTAL = '" + BK_CODIGOPOSTAL + "',";
             StrModificar_Empresa += "PAIS = '" + BK_PAIS + "',";
+            StrModificar_Empresa += "TELEFONO1 = '" + BK_TELEFONO1 + "',";
+            StrModificar_Empresa += "TELEFONO2 = '" + BK_TELEFONO2 + "',";
+            StrModificar_Empresa += "TELEFONO3 = '" + BK_TELEFONO3 + "',";
             StrModificar_Empresa += "OBSERVACIONES = '" + BK_OBSERVACIONES + "',";
             StrModificar_Empresa += "LOGO = '" + BK_LOGO + "'";
 
