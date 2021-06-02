@@ -4,43 +4,52 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Threading;
 using System.Net.Http;
-
+using System.Net;
+using System.IO;
 
 namespace BikeMessenger
 {
     class LvrInternet
     {
+        // Realiza los llamados a internet
+        // Empresa      = https://finanven.ddns.net/Api/BikeMessengerEmpresa
+        // Cliente      = https://finanven.ddns.net/Api/BikeMessengerCliente
+        // Personal     = https://finanven.ddns.net/Api/BikeMessengerPersonal
+        // Recurso      = https://finanven.ddns.net/Api/BikeMessengerRecurso
+        // Servicio     = https://finanven.ddns.net/Api/BikeMessengerServicio
+        // Ajuste       = https://finanven.ddns.net/Api/BikeMessengerAjuste
+        // Factura      = https://finanven.ddns.net/Api/BikeMessengerFactura
+        // Soporte      = https://finanven.ddns.net/Api/BikeMessengerSoporte
+
         public string LvrResultadoWeb { get; set; }
 
-        /*
-              void LvrGET(string url)
-              {
-                  HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-                  request.ContinueTimeout = 60000;
-                  request.ReadWriteTimeout = 60000;
-                  request.Timeout = 60000;
-                  try
-                  {
-                      LvrResultadoWeb = "";
-                      WebResponse response = request.GetResponse();
-                      Stream responseStream = response.GetResponseStream();
-                      StreamReader reader = new StreamReader(responseStream, System.Text.Encoding.UTF8);
-                      LvrResultadoWeb = reader.ReadToEnd();
-                      reader.Close();
-                      responseStream.Dispose();
-                      response.Close();
-                  }
-                  catch (WebException)
-                  {
-                      // Tratar la excepcion de null
-                      LvrResultadoWeb = "ERROR";
-                  }
+        void LvrInetGET(string purl, string json)
+        {
+            string pParametrosWeb = purl + "?" + json;
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(pParametrosWeb);
+            request.ContinueTimeout = 60000;
+            request.ReadWriteTimeout = 60000;
+            request.Timeout = 60000;
+            try
+            {
+                LvrResultadoWeb = "";
+                WebResponse response = request.GetResponse();
+                Stream responseStream = response.GetResponseStream();
+                StreamReader reader = new StreamReader(responseStream, System.Text.Encoding.UTF8);
+                LvrResultadoWeb = reader.ReadToEnd();
+                reader.Close();
+                responseStream.Dispose();
+                response.Close();
+            }
+            catch (WebException)
+            {
+                // Tratar la excepcion de null
+                LvrResultadoWeb = "ERROR";
+            }
+        }
 
-              }
-        */
         public void LvrInetPOST(string purl, string json)
         {
-
             try
             {
                 // Construct the HttpClient and Uri. This endpoint is for test purposes only.
@@ -66,38 +75,6 @@ namespace BikeMessenger
             {
                 LvrResultadoWeb = "ERROR";
             }
-
-            /*
-            StringContent data = new StringContent(json, Encoding.UTF8, "application/json");
-            data.Headers.ContentType.CharSet = string.Empty;
-
-            string url = purl;
-            var client = new HttpClient();
-            client.DefaultRequestHeaders.Clear();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic");
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            HttpResponseMessage Res = await client.PostAsync(url, data);
-            if (Res.IsSuccessStatusCode)
-            {
-                LvrResultadoWeb = Res.Content.ReadAsStringAsync().Result;
-            }
-            else
-            {
-                LvrResultadoWeb = "ERROR";
-            }
-            */
         }
-
-        /*
-        public void GetInternetServerPrimario(String pParametros)
-        {
-            LvrGET("https://finanven.ddns.net/Api/BikeMessengerEmpresa?" + pParametros);
-        }
-
-        public void GetInternetServerSecundario(String pParametros)
-        {
-            LvrGET("https://finanven.ddns.net/Api/BikeMessengerEmpresa?" + pParametros);
-        }
-        */
     }
 }

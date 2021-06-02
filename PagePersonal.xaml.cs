@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml;
@@ -11,6 +12,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
+using Newtonsoft.Json;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -21,19 +23,21 @@ namespace BikeMessenger
     /// </summary>
     public sealed partial class PagePersonal : Page
     {
-        Bm_Personal_Database BM_Database_Personal = new Bm_Personal_Database();
-        TransferVar LvrTransferVar;
-        bool BorrarSiNo;
+        private readonly JsonBikeMessengerPersonal EnviarJsonPersonal = new JsonBikeMessengerPersonal();
+        private JsonBikeMessengerPersonal RecibirJsonPersonal = new JsonBikeMessengerPersonal();
+        private readonly Bm_Personal_Database BM_Database_Personal = new Bm_Personal_Database();
+        private TransferVar LvrTransferVar;
+        private bool BorrarSiNo;
 
         public PagePersonal()
         {
-            this.InitializeComponent();
+            InitializeComponent();
             comboBoxAutorizacion.Items.Add("ADMINISTRADOR");
             comboBoxAutorizacion.Items.Add("OPERADOR");
             comboBoxAutorizacion.Items.Add("COLABORADOR");
             comboBoxAutorizacion.Items.Add("INTERMEDIARIO");
             comboBoxAutorizacion.Items.Add("CLIENTE");
-            this.NavigationCacheMode = Windows.UI.Xaml.Navigation.NavigationCacheMode.Disabled;
+            NavigationCacheMode = NavigationCacheMode.Disabled;
         }
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs navigationEvent)
@@ -45,7 +49,7 @@ namespace BikeMessenger
             if (navigationEvent.NavigationMode == NavigationMode.Back)
             {
                 // set the cache mode
-                this.NavigationCacheMode = NavigationCacheMode.Disabled;
+                NavigationCacheMode = NavigationCacheMode.Disabled;
 
                 ResetPageCache();
             }
@@ -70,7 +74,7 @@ namespace BikeMessenger
                 NavigationCacheMode = NavigationCacheMode.Required;
             }
 
-            if (navigationEvent.Parameter is string && !string.IsNullOrWhiteSpace((string)navigationEvent.Parameter))
+            if (navigationEvent.Parameter is string @string && !string.IsNullOrWhiteSpace(@string))
             {
                 //greeting.Text = $"Hi, {e.Parameter.ToString()}";
             }
@@ -89,7 +93,7 @@ namespace BikeMessenger
                 }
                 else
                 {
-                    if (BM_Database_Personal.Bm_Personal_Buscar(LvrTransferVar.P_RUTID, LvrTransferVar.P_DIGVER))
+                    if (BM_Database_Personal.Bm_Personal_Buscar(LvrTransferVar.P_PENTALPHA, LvrTransferVar.P_RUTID, LvrTransferVar.P_DIGVER))
                     {
                         LlenarPantallaConDb();
                     }
@@ -100,32 +104,32 @@ namespace BikeMessenger
 
         private void BtnSeleccionarAjustes(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PageAjustes), LvrTransferVar, new SuppressNavigationTransitionInfo());
+            _ = Frame.Navigate(typeof(PageAjustes), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarServicios(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PageServicios), LvrTransferVar, new SuppressNavigationTransitionInfo());
+            _ = Frame.Navigate(typeof(PageServicios), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarClientes(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PageClientes), LvrTransferVar, new SuppressNavigationTransitionInfo());
+            _ = Frame.Navigate(typeof(PageClientes), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarRecursos(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PageRecursos), LvrTransferVar, new SuppressNavigationTransitionInfo());
+            _ = Frame.Navigate(typeof(PageRecursos), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarEmpresa(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PageEmpresa), LvrTransferVar, new SuppressNavigationTransitionInfo());
+            _ = Frame.Navigate(typeof(PageEmpresa), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarPersonal(object sender, RoutedEventArgs e)
         {
-            // this.Frame.Navigate(typeof(PagePersonal), LvrTransferVar, new SuppressNavigationTransitionInfo());
+            // _ = Frame.Navigate(typeof(PagePersonal), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private async void BtnPersonalCargarFoto(object sender, RoutedEventArgs e)
@@ -153,7 +157,7 @@ namespace BikeMessenger
                 // Open a stream for the selected file.
                 // The 'using' block ensures the stream is disposed
                 // after the image is loaded.
-                using (Windows.Storage.Streams.IRandomAccessStream fileStream = await file.OpenAsync(Windows.Storage.FileAccessMode.Read))
+                using (IRandomAccessStream fileStream = await file.OpenAsync(Windows.Storage.FileAccessMode.Read))
                 {
                     // Set the image source to the selected bitmap.
                     Windows.UI.Xaml.Media.Imaging.BitmapImage bitmapImage = new Windows.UI.Xaml.Media.Imaging.BitmapImage();
@@ -168,6 +172,7 @@ namespace BikeMessenger
         {
             try
             {
+                // LvrTransferVar.P_PENTALPHA = BM_Database_Personal.BK_PENTALPHA;
                 LvrTransferVar.P_RUTID = BM_Database_Personal.BK_RUTID;
                 LvrTransferVar.P_DIGVER = BM_Database_Personal.BK_DIGVER;
                 textBoxRut.Text = BM_Database_Personal.BK_RUTID;
@@ -192,9 +197,9 @@ namespace BikeMessenger
 
                 imageFotoPersonal.Source = Base64StringToBitmap(BM_Database_Personal.BK_FOTO);
             }
-            catch (System.ArgumentNullException)
+            catch (ArgumentNullException)
             {
-                await ErrorDeRecuperacionDialogAsync();
+                await AvisoOperacionPersonalDialogAsync("Acceso a Base de Datos Personal", "Error de carga de datos desde la Base de Datos.");
             }
         }
 
@@ -245,6 +250,7 @@ namespace BikeMessenger
 
         private void LimpiarPantalla()
         {
+            // LvrTransferVar.P_PENTALPHA = "";
             LvrTransferVar.P_RUTID = "";
             LvrTransferVar.P_DIGVER = "";
             textBoxRut.Text = "";
@@ -269,10 +275,16 @@ namespace BikeMessenger
             imageFotoPersonal.Source = Base64StringToBitmap("");
         }
 
-        private async System.Threading.Tasks.Task LlenarDbConPantallaAsync()
+        private async Task LlenarDbConPantallaAsync()
         {
+            BM_Database_Personal.BK_PENTALPHA = LvrTransferVar.P_PENTALPHA;
             BM_Database_Personal.BK_RUTID = textBoxRut.Text;
             BM_Database_Personal.BK_DIGVER = textBoxDigitoVerificador.Text;
+            // ***********************************************************
+            // Agregando Campos de Parametros
+            LvrTransferVar.P_RUTID = BM_Database_Personal.BK_RUTID;
+            LvrTransferVar.P_DIGVER = BM_Database_Personal.BK_DIGVER;
+            // ***********************************************************
             BM_Database_Personal.BK_APELLIDOS = textBoxApellidos.Text;
             BM_Database_Personal.BK_NOMBRES = textBoxNombres.Text;
             BM_Database_Personal.BK_TELEFONO1 = textBoxTelefono1.Text;
@@ -286,19 +298,35 @@ namespace BikeMessenger
             BM_Database_Personal.BK_DPTO = textBoxDepartamento.Text;
             BM_Database_Personal.BK_CODIGOPOSTAL = textBoxCodigoPostal.Text;
             if (comboBoxCiudad.Text != "")
+            {
                 BM_Database_Personal.BK_CIUDAD = comboBoxCiudad.Text;
+            }
+
             if (comboBoxComuna.Text != "")
+            {
                 BM_Database_Personal.BK_COMUNA = comboBoxComuna.Text;
+            }
+
             if (comboBoxRegion.Text != "")
+            {
                 BM_Database_Personal.BK_REGION = comboBoxRegion.Text;
+            }
+
             if (comboBoxPais.Text != "")
-            BM_Database_Personal.BK_PAIS = comboBoxPais.Text;
+            {
+                BM_Database_Personal.BK_PAIS = comboBoxPais.Text;
+            }
+
             BM_Database_Personal.BK_OBSERVACIONES = textBoxObservaciones.Text;
             BM_Database_Personal.BK_FOTO = await ConvertirImageABase64Async();
         }
 
         private async void BtnAgregarPersonal(object sender, RoutedEventArgs e)
         {
+            // Muestra de espera
+            LvrProgresRing.IsActive = true;
+            await Task.Delay(500); // .5 sec delay
+
             try
             {
                 await LlenarDbConPantallaAsync();
@@ -307,6 +335,12 @@ namespace BikeMessenger
                     LlenarListaPersonal();
                     LvrTransferVar.P_RUTID = BM_Database_Personal.BK_RUTID;
                     LvrTransferVar.P_DIGVER = BM_Database_Personal.BK_DIGVER;
+
+                    // Agregar en Servidor Remoto
+                    ProRegistroPersonal("AGREGAR");
+                    // Verificar Operación
+
+                    // Aviso de OK
                     await AvisoOperacionPersonalDialogAsync("Agregar Personal", "Operación completada con exito.");
                 }
                 else
@@ -314,41 +348,66 @@ namespace BikeMessenger
                     await AvisoOperacionPersonalDialogAsync("Agregando Personal", "Se a producido un error al intentar agregar personal.");
                 }
             }
-            catch (System.ArgumentException)
+            catch (ArgumentException)
             {
                 await AvisoOperacionPersonalDialogAsync("Agregando Personal", "Aun faltan datos por completar.");
             }
+            LvrProgresRing.IsActive = false;
+            await Task.Delay(500); // .5 sec delay
         }
 
         private async void BtnModificarPersonal(object sender, RoutedEventArgs e)
         {
-            await LlenarDbConPantallaAsync();
-            if (BM_Database_Personal.Bm_Personal_Modificar(BM_Database_Personal.BK_RUTID, BM_Database_Personal.BK_DIGVER))
+            // Muestra de espera
+            LvrProgresRing.IsActive = true;
+            await Task.Delay(500); // .5 sec delay
+
+            try
             {
-                LlenarListaPersonal();
-                LvrTransferVar.P_RUTID = BM_Database_Personal.BK_RUTID;
-                LvrTransferVar.P_DIGVER = BM_Database_Personal.BK_DIGVER;
-                await AvisoOperacionPersonalDialogAsync("Modificar Personal", "Operación completada con exito.");
+                await LlenarDbConPantallaAsync();
+                if (BM_Database_Personal.Bm_Personal_Modificar(LvrTransferVar.P_PENTALPHA, BM_Database_Personal.BK_RUTID, BM_Database_Personal.BK_DIGVER))
+                {
+                    ProRegistroPersonal("MODIFICAR");
+                    LlenarListaPersonal();
+                    LvrTransferVar.P_RUTID = BM_Database_Personal.BK_RUTID;
+                    LvrTransferVar.P_DIGVER = BM_Database_Personal.BK_DIGVER;
+                    await AvisoOperacionPersonalDialogAsync("Modificar Personal", "Operación completada con exito.");
+                }
+                else
+                {
+                    await AvisoOperacionPersonalDialogAsync("Modificando Personal", "Se a producido un error al intentar modificar personal.");
+                }
             }
-            else
+            catch (ArgumentException)
             {
-                await AvisoOperacionPersonalDialogAsync("Modificando Personal", "Se a producido un error al intentar modificar personal.");
+                _ = AvisoOperacionPersonalDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de personal.");
             }
+            LvrProgresRing.IsActive = false;
+            await Task.Delay(500); // .5 sec delay
         }
 
         private async void BtnBorrarPersonal(object sender, RoutedEventArgs e)
         {
+
             BorrarSiNo = false;
 
             await AvisoBorrarPersonalDialogAsync();
 
             if (!BorrarSiNo)
+            {
                 return;
+            }
+
+            // Muestra de espera
+            LvrProgresRing.IsActive = true;
+            await Task.Delay(500); // .5 sec delay
 
             try
             {
-                if (BM_Database_Personal.Bm_Personal_Borrar(BM_Database_Personal.BK_RUTID, BM_Database_Personal.BK_DIGVER))
+                await LlenarDbConPantallaAsync();
+                if (BM_Database_Personal.Bm_Personal_Borrar(LvrTransferVar.P_PENTALPHA,  BM_Database_Personal.BK_RUTID, BM_Database_Personal.BK_DIGVER))
                 {
+                    ProRegistroPersonal("BORRAR");
                     await AvisoOperacionPersonalDialogAsync("Borrando Personal", "Operación completada con exito.");
 
                     textBoxRut.IsReadOnly = false;
@@ -372,11 +431,13 @@ namespace BikeMessenger
                     await AvisoOperacionPersonalDialogAsync("Borrando Personal", "Se a producido un error al intentar borrar personal.");
                 }
             }
-            catch (System.ArgumentException)
+            catch (ArgumentException)
             {
                 await AvisoOperacionPersonalDialogAsync("Acceso a Base de Datos", "Debe llenar los datos del personal.");
             }
             BorrarSiNo = false;
+            LvrProgresRing.IsActive = false;
+            await Task.Delay(500); // .5 sec delay
         }
 
         private void BtnSalirPersonal(object sender, RoutedEventArgs e)
@@ -385,81 +446,62 @@ namespace BikeMessenger
             Application.Current.Exit();
         }
 
-        private async System.Threading.Tasks.Task<string> ConvertirImageABase64Async()
+        private async Task<string> ConvertirImageABase64Async()
         {
-            var bitmap = new RenderTargetBitmap();
+            RenderTargetBitmap bitmap = new RenderTargetBitmap();
             await bitmap.RenderAsync(imageFotoPersonal);
 
-            var image = (await bitmap.GetPixelsAsync()).ToArray();
-            var width = (uint)bitmap.PixelWidth;
-            var height = (uint)bitmap.PixelHeight;
+            byte[] image = (await bitmap.GetPixelsAsync()).ToArray();
+            uint width = (uint)bitmap.PixelWidth;
+            uint height = (uint)bitmap.PixelHeight;
 
             double dpiX = 96;
             double dpiY = 96;
 
-            var encoded = new Windows.Storage.Streams.InMemoryRandomAccessStream();
-            var encoder = await Windows.Graphics.Imaging.BitmapEncoder.CreateAsync(Windows.Graphics.Imaging.BitmapEncoder.PngEncoderId, encoded);
+            InMemoryRandomAccessStream encoded = new InMemoryRandomAccessStream();
+            BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, encoded);
 
             encoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Straight, width, height, dpiX, dpiY, image);
             await encoder.FlushAsync();
             encoded.Seek(0);
 
-            var bytes = new byte[encoded.Size];
-            await encoded.AsStream().ReadAsync(bytes, 0, bytes.Length);
+            byte[] bytes = new byte[encoded.Size];
+            _ = await encoded.AsStream().ReadAsync(bytes, 0, bytes.Length);
 
-            var base64String = Convert.ToBase64String(bytes);
+            string base64String = Convert.ToBase64String(bytes);
 
             return base64String;
         }
 
         private BitmapImage Base64StringToBitmap(string source)
         {
-            var ims = new InMemoryRandomAccessStream();
-            var bytes = Convert.FromBase64String(source);
-            var dataWriter = new DataWriter(ims);
+            InMemoryRandomAccessStream ims = new InMemoryRandomAccessStream();
+            byte[] bytes = Convert.FromBase64String(source);
+            DataWriter dataWriter = new DataWriter(ims);
             dataWriter.WriteBytes(bytes);
             _ = dataWriter.StoreAsync();
             ims.Seek(0);
-            var img = new BitmapImage();
+            BitmapImage img = new BitmapImage();
             img.SetSource(ims);
             return img;
         }
 
-        private async System.Threading.Tasks.Task ErrorDeRecuperacionDialogAsync()
+        private async Task AvisoOperacionPersonalDialogAsync(string xTitulo, string xDescripcion)
         {
-            ContentDialog noErrorRecuperacionDialog = new ContentDialog
+            ContentDialog AvisoOperacionPersonalDialog = new ContentDialog
             {
-                Title = "Error",
-                Content = "El registro a recuperar tiene valores nulos.",
-                CloseButtonText = "Ok"
+                Title = xTitulo,
+                Content = xDescripcion,
+                CloseButtonText = "Continuar"
             };
-
-            ContentDialogResult result = await noErrorRecuperacionDialog.ShowAsync();
+            _ = await AvisoOperacionPersonalDialog.ShowAsync();
         }
 
-        private async System.Threading.Tasks.Task AvisoOperacionPersonalDialogAsync(string xTitulo, string xDescripcion)
-        {
-            try
-            {
-                ContentDialog AvisoOperacionPersonalDialog = new ContentDialog
-                {
-                    Title = xTitulo,
-                    Content = xDescripcion,
-                    CloseButtonText = "Continuar"
-                };
-                ContentDialogResult result = await AvisoOperacionPersonalDialog.ShowAsync();
-            }
-            catch (System.Exception)
-            {
-                ;
-            }
-        }
-
-        private async System.Threading.Tasks.Task AvisoBorrarPersonalDialogAsync()
+        private async Task AvisoBorrarPersonalDialogAsync()
         {
             ContentDialog AvisoConfirmacionPersonalDialog = new ContentDialog
             {
-                Title = "Borrar Persona",
+                Title = "Borrar Personal",
                 Content = "Confirme borrado del registro actual!",
                 PrimaryButtonText = "Borrar",
                 CloseButtonText = "Cancelar"
@@ -467,10 +509,7 @@ namespace BikeMessenger
 
             ContentDialogResult result = await AvisoConfirmacionPersonalDialog.ShowAsync();
 
-            if (result == ContentDialogResult.Primary)
-                BorrarSiNo = true;
-            else
-                BorrarSiNo = false;
+            BorrarSiNo = result == ContentDialogResult.Primary;
         }
 
         private void LlenarListaPersonal()
@@ -493,7 +532,7 @@ namespace BikeMessenger
             dataGridPersonal.ItemsSource = GridPersonalLista;
         }
 
-        private void dataGridPersonal_Seleccion(object sender, SelectionChangedEventArgs e)
+        private void DataGridPersonal_Seleccion(object sender, SelectionChangedEventArgs e)
         {
             try
             {
@@ -501,7 +540,7 @@ namespace BikeMessenger
                 GridPersonalIndividual Fila = (GridPersonalIndividual)CeldaSeleccionada.SelectedItems[0];
                 string[] CadenaDividida = Fila.RUT.Split("-", 2, StringSplitOptions.None);
 
-                if (BM_Database_Personal.Bm_Personal_Buscar(CadenaDividida[0], CadenaDividida[1]))
+                if (BM_Database_Personal.Bm_Personal_Buscar(LvrTransferVar.P_PENTALPHA, CadenaDividida[0], CadenaDividida[1]))
                 {
                     LimpiarPantalla();
                     LlenarPantallaConDb();
@@ -512,14 +551,148 @@ namespace BikeMessenger
                     // textBoxNombreEmpresa.Text = "Sin Empresa";
                 }
             }
-            catch (System.ArgumentOutOfRangeException)
+            catch (ArgumentOutOfRangeException)
             {
                 ; // No hacer nada, es un control vacio de error
             }
         }
+
+        //**************************************************
+        // Ejecuta operacion de registro de personal
+        //**************************************************
+        private void ProRegistroPersonal(string pTipoOperacion)
+        {
+            string LvrPRecibirServer;
+            string LvrPData;
+            string LvrStringHttp1 = "https://finanven.ddns.net/Api/BikeMessengerPersonal";
+
+            LvrInternet LvrBKInternet = new LvrInternet();
+            string LvrParametros;
+
+            List<JsonBikeMessengerPersonal> EnviarJsonPersonalArray = new List<JsonBikeMessengerPersonal>();
+            List<JsonBikeMessengerPersonal> RecibirJsonPersonalArray = new List<JsonBikeMessengerPersonal>();
+
+            // Llenar estructura Json
+            CopiarMemoriaEnJson(pTipoOperacion);
+
+            // Proceso Serializar
+
+            EnviarJsonPersonalArray.Add(EnviarJsonPersonal);
+            LvrPData = JsonConvert.SerializeObject(EnviarJsonPersonalArray);
+
+            // Preparar Parametros
+            LvrParametros = LvrPData;
+
+            LvrBKInternet.LvrInetPOST(LvrStringHttp1, LvrParametros);
+            LvrPRecibirServer = LvrBKInternet.LvrResultadoWeb;
+
+            if (LvrPRecibirServer != "ERROR" && LvrPRecibirServer != "" && LvrPRecibirServer != null)
+            {
+                // Procesar primer servidor
+                RecibirJsonPersonalArray = JsonConvert.DeserializeObject<List<JsonBikeMessengerPersonal>>(LvrPRecibirServer); // resp será el string JSON a deserializa
+                RecibirJsonPersonal = RecibirJsonPersonalArray[0];
+
+                if (RecibirJsonPersonal.RESOPERACION == "OK")
+                {
+                    //CopiarJsonEnMemoria(pTipoOperacion);
+                    _ = AvisoOperacionPersonalDialogAsync("Estado Envio", RecibirJsonPersonal.RESMENSAJE);
+                }
+                else
+                {
+                    _ = AvisoOperacionPersonalDialogAsync("Estado Envio", RecibirJsonPersonal.RESMENSAJE);
+                }
+
+                return;
+            }
+            _ = AvisoOperacionPersonalDialogAsync("Registro de Personal", "Problemas durante el registro remoto de Personal. Debe repetir la operación");
+        }
+
+        private void CopiarMemoriaEnJson(string pOPERACION)
+        {
+            // Limpiar Variables
+            EnviarJsonPersonal.OPERACION = "";
+            EnviarJsonPersonal.PENTALPHA = "";
+            EnviarJsonPersonal.RUTID = "";
+            EnviarJsonPersonal.DIGVER = "";
+            EnviarJsonPersonal.APELLIDOS = "";
+            EnviarJsonPersonal.NOMBRES = "";
+            EnviarJsonPersonal.TELEFONO1 = "";
+            EnviarJsonPersonal.TELEFONO2 = "";
+            EnviarJsonPersonal.EMAIL = "";
+            EnviarJsonPersonal.AUTORIZACION = "";
+            EnviarJsonPersonal.CARGO = "";
+            EnviarJsonPersonal.DOMICILIO = "";
+            EnviarJsonPersonal.NUMERO = "";
+            EnviarJsonPersonal.PISO = "";
+            EnviarJsonPersonal.DPTO = "";
+            EnviarJsonPersonal.CODIGOPOSTAL = "";
+            EnviarJsonPersonal.CIUDAD = "";
+            EnviarJsonPersonal.COMUNA = "";
+            EnviarJsonPersonal.REGION = "";
+            EnviarJsonPersonal.PAIS = "";
+            EnviarJsonPersonal.OBSERVACIONES = "";
+            EnviarJsonPersonal.FOTO = "";
+            EnviarJsonPersonal.RESOPERACION = "";
+            EnviarJsonPersonal.RESMENSAJE = "";
+
+            // Llenar Variables
+            EnviarJsonPersonal.OPERACION = pOPERACION;
+            EnviarJsonPersonal.PENTALPHA = BM_Database_Personal.BK_PENTALPHA;
+            EnviarJsonPersonal.RUTID = BM_Database_Personal.BK_RUTID;
+            EnviarJsonPersonal.DIGVER = BM_Database_Personal.BK_DIGVER;
+            EnviarJsonPersonal.APELLIDOS = BM_Database_Personal.BK_APELLIDOS;
+            EnviarJsonPersonal.NOMBRES = BM_Database_Personal.BK_NOMBRES;
+            EnviarJsonPersonal.TELEFONO1 = BM_Database_Personal.BK_TELEFONO1;
+            EnviarJsonPersonal.TELEFONO2 = BM_Database_Personal.BK_TELEFONO2;
+            EnviarJsonPersonal.EMAIL = BM_Database_Personal.BK_EMAIL;
+            EnviarJsonPersonal.AUTORIZACION = BM_Database_Personal.BK_AUTORIZACION;
+            EnviarJsonPersonal.CARGO = BM_Database_Personal.BK_CARGO;
+            EnviarJsonPersonal.DOMICILIO = BM_Database_Personal.BK_DOMICILIO;
+            EnviarJsonPersonal.NUMERO = BM_Database_Personal.BK_NUMERO;
+            EnviarJsonPersonal.PISO = BM_Database_Personal.BK_PISO;
+            EnviarJsonPersonal.DPTO = BM_Database_Personal.BK_DPTO;
+            EnviarJsonPersonal.CODIGOPOSTAL = BM_Database_Personal.BK_CODIGOPOSTAL;
+            EnviarJsonPersonal.CIUDAD = BM_Database_Personal.BK_CIUDAD;
+            EnviarJsonPersonal.COMUNA = BM_Database_Personal.BK_COMUNA;
+            EnviarJsonPersonal.REGION = BM_Database_Personal.BK_REGION;
+            EnviarJsonPersonal.PAIS = BM_Database_Personal.BK_PAIS;
+            EnviarJsonPersonal.OBSERVACIONES = BM_Database_Personal.BK_OBSERVACIONES;
+            EnviarJsonPersonal.FOTO = BM_Database_Personal.BK_FOTO;
+            EnviarJsonPersonal.RESOPERACION = "";
+            EnviarJsonPersonal.RESMENSAJE = "";
+        }
+
+        private void CopiarJsonEnMemoria(string pOPERACION)
+        {
+            // Proceso
+            // EnviarJsonPersonal.OPERACION = pOPERACION;
+            BM_Database_Personal.BK_PENTALPHA = EnviarJsonPersonal.PENTALPHA;
+            BM_Database_Personal.BK_RUTID = EnviarJsonPersonal.RUTID;
+            BM_Database_Personal.BK_DIGVER = EnviarJsonPersonal.DIGVER;
+            BM_Database_Personal.BK_APELLIDOS = EnviarJsonPersonal.APELLIDOS;
+            BM_Database_Personal.BK_NOMBRES = EnviarJsonPersonal.NOMBRES;
+            BM_Database_Personal.BK_TELEFONO1 = EnviarJsonPersonal.TELEFONO1;
+            BM_Database_Personal.BK_TELEFONO2 = EnviarJsonPersonal.TELEFONO2;
+            BM_Database_Personal.BK_EMAIL = EnviarJsonPersonal.EMAIL;
+            BM_Database_Personal.BK_AUTORIZACION = EnviarJsonPersonal.AUTORIZACION;
+            BM_Database_Personal.BK_CARGO = EnviarJsonPersonal.CARGO;
+            BM_Database_Personal.BK_DOMICILIO = EnviarJsonPersonal.DOMICILIO;
+            BM_Database_Personal.BK_NUMERO = EnviarJsonPersonal.NUMERO;
+            BM_Database_Personal.BK_PISO = EnviarJsonPersonal.PISO;
+            BM_Database_Personal.BK_DPTO = EnviarJsonPersonal.DPTO;
+            BM_Database_Personal.BK_CODIGOPOSTAL = EnviarJsonPersonal.CODIGOPOSTAL;
+            BM_Database_Personal.BK_CIUDAD = EnviarJsonPersonal.CIUDAD;
+            BM_Database_Personal.BK_COMUNA = EnviarJsonPersonal.COMUNA;
+            BM_Database_Personal.BK_REGION = EnviarJsonPersonal.REGION;
+            BM_Database_Personal.BK_PAIS = EnviarJsonPersonal.PAIS;
+            BM_Database_Personal.BK_OBSERVACIONES = EnviarJsonPersonal.OBSERVACIONES;
+            BM_Database_Personal.BK_FOTO = EnviarJsonPersonal.FOTO;
+            // BM_Database_Personal.BK_RESOPERACION = EnviarJsonPersonal.RESOPERACION;
+            // BM_Database_Personal.BK_RESMENSAJE = EnviarJsonPersonal.RESMENSAJE;
+        }
     }
 
-    public class GridPersonalIndividual
+    internal class GridPersonalIndividual
     {
         public string RUT { get; set; }
         public string APELLIDO { get; set; }

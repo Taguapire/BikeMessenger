@@ -23,17 +23,18 @@ namespace BikeMessenger
     /// </summary>
     public sealed partial class PageEmpresa : Page
     {
-        private JsonBikeMessengerEmpresa EnviarJsonEmpresa = new JsonBikeMessengerEmpresa();
+        private readonly JsonBikeMessengerEmpresa EnviarJsonEmpresa = new JsonBikeMessengerEmpresa();
         private JsonBikeMessengerEmpresa RecibirJsonEmpresa = new JsonBikeMessengerEmpresa();
-        private Bm_Empresa_Database BM_Database_Empresa = new Bm_Empresa_Database();
+        private readonly Bm_Empresa_Database BM_Database_Empresa = new Bm_Empresa_Database();
         private TransferVar LvrTransferVar;
-        private PentalphaCripto LvrCrypto = new PentalphaCripto();
+        private readonly PentalphaCripto LvrCrypto = new PentalphaCripto();
+        private bool BorrarSiNo;
 
         public PageEmpresa()
         {
             // this.BM_Connection = BM_Connection;
-            this.InitializeComponent();
-            this.NavigationCacheMode = Windows.UI.Xaml.Navigation.NavigationCacheMode.Disabled;
+            InitializeComponent();
+            NavigationCacheMode = NavigationCacheMode.Disabled;
         }
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs navigationEvent)
@@ -45,7 +46,7 @@ namespace BikeMessenger
             if (navigationEvent.NavigationMode == NavigationMode.Back)
             {
                 // set the cache mode
-                this.NavigationCacheMode = NavigationCacheMode.Disabled;
+                NavigationCacheMode = NavigationCacheMode.Disabled;
 
                 ResetPageCache();
             }
@@ -70,7 +71,7 @@ namespace BikeMessenger
                 NavigationCacheMode = NavigationCacheMode.Required;
             }
 
-            if (navigationEvent.Parameter is string && !string.IsNullOrWhiteSpace((string)navigationEvent.Parameter))
+            if (navigationEvent.Parameter is string @string && !string.IsNullOrWhiteSpace(@string))
             {
                 //greeting.Text = $"Hi, {e.Parameter.ToString()}";
             }
@@ -126,22 +127,22 @@ namespace BikeMessenger
 
         private void BtnSeleccionarAjustes(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PageAjustes), LvrTransferVar, new SuppressNavigationTransitionInfo());
+            _ = Frame.Navigate(typeof(PageAjustes), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarServicios(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PageServicios), LvrTransferVar, new SuppressNavigationTransitionInfo());
+            _ = Frame.Navigate(typeof(PageServicios), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarClientes(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PageClientes), LvrTransferVar, new SuppressNavigationTransitionInfo());
+            _ = Frame.Navigate(typeof(PageClientes), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarRecursos(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PageRecursos), LvrTransferVar, new SuppressNavigationTransitionInfo());
+            _ = Frame.Navigate(typeof(PageRecursos), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarEmpresa(object sender, RoutedEventArgs e)
@@ -151,7 +152,7 @@ namespace BikeMessenger
 
         private void BtnSeleccionarPersonal(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PagePersonal), LvrTransferVar, new SuppressNavigationTransitionInfo());
+            _ = Frame.Navigate(typeof(PagePersonal), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         //private void flipView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -187,7 +188,7 @@ namespace BikeMessenger
                 using (IRandomAccessStream fileStream = await file.OpenAsync(Windows.Storage.FileAccessMode.Read))
                 {
                     // Set the image source to the selected bitmap.
-                    Windows.UI.Xaml.Media.Imaging.BitmapImage bitmapImage = new Windows.UI.Xaml.Media.Imaging.BitmapImage();
+                    BitmapImage bitmapImage = new Windows.UI.Xaml.Media.Imaging.BitmapImage();
 
                     bitmapImage.SetSource(fileStream);
                     imageLogoEmpresa.Source = bitmapImage;
@@ -198,6 +199,7 @@ namespace BikeMessenger
         {
             try
             {
+                LlenarBasePentalpha(BM_Database_Empresa.BK_PENTALPHA);
                 textBoxRut.Text = BM_Database_Empresa.BK_RUTID;
                 textBoxDigitoVerificador.Text = BM_Database_Empresa.BK_DIGVER;
                 textBoxNombreEmpresa.Text = BM_Database_Empresa.BK_NOMBRE;
@@ -231,7 +233,7 @@ namespace BikeMessenger
             }
             catch (System.ArgumentNullException)
             {
-                await AvisoOperacionEmpresaDialogAsync("Acceso a Base de Datos", "Error de carga de datos desde la Base de Datos.");
+                await AvisoOperacionEmpresaDialogAsync("Acceso a Base de Datos Empresa", "Error de carga de datos desde la Base de Datos.");
             }
         }
 
@@ -281,7 +283,7 @@ namespace BikeMessenger
             }
         }
 
-        private async System.Threading.Tasks.Task LlenarDbConPantallaAsync()
+        private async Task LlenarDbConPantallaAsync()
         {
             BM_Database_Empresa.BK_RUTID = textBoxRut.Text;
             BM_Database_Empresa.BK_DIGVER = textBoxDigitoVerificador.Text;
@@ -301,13 +303,24 @@ namespace BikeMessenger
             BM_Database_Empresa.BK_CODIGOPOSTAL = textBoxCodigoPostal.Text;
 
             if (comboBoxPais.Text != "")
+            {
                 BM_Database_Empresa.BK_PAIS = comboBoxPais.Text;
+            }
+
             if (comboBoxEstado.Text != "")
+            {
                 BM_Database_Empresa.BK_ESTADOREGION = comboBoxEstado.Text;
+            }
+
             if (comboBoxComuna.Text != "")
+            {
                 BM_Database_Empresa.BK_COMUNA = comboBoxComuna.Text;
+            }
+
             if (comboBoxCiudad.Text != "")
+            {
                 BM_Database_Empresa.BK_CIUDAD = comboBoxCiudad.Text;
+            }
 
             BM_Database_Empresa.BK_TELEFONO1 = textBoxTelefono1.Text;
             BM_Database_Empresa.BK_TELEFONO2 = textBoxTelefono2.Text;
@@ -349,7 +362,6 @@ namespace BikeMessenger
                     appBarAgregar.IsEnabled = false;
                     appBarModificar.IsEnabled = true;
                     appBarBorrar.IsEnabled = true;
-                    appBarAceptar.IsEnabled = false;
                     appBarAceptar.IsEnabled = false;
 
                     textBoxRut.IsReadOnly = true;
@@ -409,23 +421,47 @@ namespace BikeMessenger
                     _ = AvisoOperacionEmpresaDialogAsync("Modificando Empresa", "Se a producido un error al intentar modificar la empresa.");
                 }
             }
-            catch (System.ArgumentException)
+            catch (ArgumentException)
             {
                 _ = AvisoOperacionEmpresaDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
             }
             LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // 1 sec delay
+            await Task.Delay(500); // .5 sec delay
         }
 
         private async void BtnBorrarEmpresa(object sender, RoutedEventArgs e)
         {
 
+            BorrarSiNo = false;
+
+            await AvisoBorrarEmpresaDialogAsync();
+
+            if (!BorrarSiNo)
+            {
+                return;
+            }
+
             // Muestra de espera
             LvrProgresRing.IsActive = true;
-            await Task.Delay(500); // 1 sec delay
+            await Task.Delay(500); // .5 sec delay
 
+            // **********************************************************
+            // Verificación de Claves
+            // **********************************************************
+            if (textBoxUsuario.Text == "" || passwordClave.Password == "")
+            {
+                LvrProgresRing.IsActive = false;
+                await Task.Delay(500); // .5 sec delay
+                _ = AvisoOperacionEmpresaDialogAsync("Identificación de Usuario", "Debe completar su usuario y clave para el envio de la Orden de Servicio.");
+                return;
+            }
+
+            // **********************************************************
+            // Verificación de Valores de Pantalla
+            // **********************************************************
             try
             {
+                await LlenarDbConPantallaAsync();
                 if (BM_Database_Empresa.Bm_Empresa_Borrar())
                 {
                     appBarButtonEmpresa.IsEnabled = true;
@@ -433,7 +469,7 @@ namespace BikeMessenger
                     appBarButtonRecursos.IsEnabled = false;
                     appBarButtonClientes.IsEnabled = false;
                     appBarButtonServicios.IsEnabled = false;
-                    appBarButtonAjustes.IsEnabled = false;
+                    appBarButtonAjustes.IsEnabled = true;
 
                     appBarAgregar.IsEnabled = true;
                     appBarModificar.IsEnabled = false;
@@ -443,46 +479,20 @@ namespace BikeMessenger
                     textBoxRut.IsReadOnly = false;
                     textBoxDigitoVerificador.IsReadOnly = false;
 
-                    BM_Database_Empresa.BK_LOGO = "";
-                    BM_Database_Empresa.BK_RUTID = "";
-                    BM_Database_Empresa.BK_DIGVER = "";
-                    BM_Database_Empresa.BK_NOMBRE = "";
-                    BM_Database_Empresa.BK_USUARIO = "";
-                    BM_Database_Empresa.BK_CLAVE = "";
-                    BM_Database_Empresa.BK_ACTIVIDAD1 = "";
-                    BM_Database_Empresa.BK_ACTIVIDAD2 = "";
-                    BM_Database_Empresa.BK_REPRESENTANTE1 = "";
-                    BM_Database_Empresa.BK_REPRESENTANTE2 = "";
-                    BM_Database_Empresa.BK_REPRESENTANTE3 = "";
-                    BM_Database_Empresa.BK_DOMICILIO1 = "";
-                    BM_Database_Empresa.BK_DOMICILIO2 = "";
-                    BM_Database_Empresa.BK_NUMERO = "";
-                    BM_Database_Empresa.BK_PISO = "";
-                    BM_Database_Empresa.BK_OFICINA = "";
-                    BM_Database_Empresa.BK_CODIGOPOSTAL = "";
-                    BM_Database_Empresa.BK_PAIS = "";
-                    BM_Database_Empresa.BK_ESTADOREGION = "";
-                    BM_Database_Empresa.BK_COMUNA = "";
-                    BM_Database_Empresa.BK_CIUDAD = "";
-                    BM_Database_Empresa.BK_TELEFONO1 = "";
-                    BM_Database_Empresa.BK_TELEFONO2 = "";
-                    BM_Database_Empresa.BK_TELEFONO3 = "";
-                    BM_Database_Empresa.BK_OBSERVACIONES = "";
                     ProRegistroEmpresa("BORRAR");
-                    await AvisoOperacionEmpresaDialogAsync("Borrando Empresa", "Operación completada con exito.");
-                    LlenarPantallaConDb();
+                    _ = AvisoOperacionEmpresaDialogAsync("Borrando Empresa", "Operación completada con exito.");
                 }
                 else
                 {
-                    await AvisoOperacionEmpresaDialogAsync("Borrando Empresa", "Se a producido un error al intentar borrar la empresa.");
+                    _ = AvisoOperacionEmpresaDialogAsync("Borrando Empresa", "Se a producido un error al intentar modificar la empresa.");
                 }
             }
-            catch (System.ArgumentException)
+            catch (ArgumentException)
             {
-                await AvisoOperacionEmpresaDialogAsync("Acceso a Base de Datos :", "Debe llenar los datos de la empresa.");
+                _ = AvisoOperacionEmpresaDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
             }
             LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // 1 sec delay
+            await Task.Delay(500); // .5 sec delay
         }
 
         private void BtnSalirEmpresa(object sender, RoutedEventArgs e)
@@ -490,47 +500,47 @@ namespace BikeMessenger
             LvrTransferVar.TV_Connection.Close();
             Application.Current.Exit();
         }
-        private async System.Threading.Tasks.Task<string> ConvertirImageABase64Async()
+        private async Task<string> ConvertirImageABase64Async()
         {
-            var bitmap = new RenderTargetBitmap();
+            RenderTargetBitmap bitmap = new RenderTargetBitmap();
             await bitmap.RenderAsync(imageLogoEmpresa);
 
-            var image = (await bitmap.GetPixelsAsync()).ToArray();
-            var width = (uint)bitmap.PixelWidth;
-            var height = (uint)bitmap.PixelHeight;
+            byte[] image = (await bitmap.GetPixelsAsync()).ToArray();
+            uint width = (uint)bitmap.PixelWidth;
+            uint height = (uint)bitmap.PixelHeight;
 
             double dpiX = 96;
             double dpiY = 96;
 
-            var encoded = new Windows.Storage.Streams.InMemoryRandomAccessStream();
-            var encoder = await Windows.Graphics.Imaging.BitmapEncoder.CreateAsync(Windows.Graphics.Imaging.BitmapEncoder.PngEncoderId, encoded);
+            InMemoryRandomAccessStream encoded = new InMemoryRandomAccessStream();
+            BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, encoded);
 
             encoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Straight, width, height, dpiX, dpiY, image);
             await encoder.FlushAsync();
             encoded.Seek(0);
 
-            var bytes = new byte[encoded.Size];
-            await encoded.AsStream().ReadAsync(bytes, 0, bytes.Length);
+            byte[] bytes = new byte[encoded.Size];
+            _ = await encoded.AsStream().ReadAsync(bytes, 0, bytes.Length);
 
-            var base64String = Convert.ToBase64String(bytes);
+            string base64String = Convert.ToBase64String(bytes);
 
             return base64String;
         }
 
         private BitmapImage Base64StringToBitmap(string source)
         {
-            var ims = new InMemoryRandomAccessStream();
-            var bytes = Convert.FromBase64String(source);
-            var dataWriter = new DataWriter(ims);
+            InMemoryRandomAccessStream ims = new InMemoryRandomAccessStream();
+            byte[] bytes = Convert.FromBase64String(source);
+            DataWriter dataWriter = new DataWriter(ims);
             dataWriter.WriteBytes(bytes);
             _ = dataWriter.StoreAsync();
             ims.Seek(0);
-            var img = new BitmapImage();
+            BitmapImage img = new BitmapImage();
             img.SetSource(ims);
             return img;
         }
 
-        private async System.Threading.Tasks.Task AvisoOperacionEmpresaDialogAsync(string xTitulo, string xDescripcion)
+        private async Task AvisoOperacionEmpresaDialogAsync(string xTitulo, string xDescripcion)
         {
             ContentDialog AvisoOperacionEmpresaDialog = new ContentDialog
             {
@@ -538,8 +548,22 @@ namespace BikeMessenger
                 Content = xDescripcion,
                 CloseButtonText = "Continuar"
             };
+            _ = await AvisoOperacionEmpresaDialog.ShowAsync();
+        }
 
-            ContentDialogResult result = await AvisoOperacionEmpresaDialog.ShowAsync();
+        private async Task AvisoBorrarEmpresaDialogAsync()
+        {
+            ContentDialog AvisoConfirmacionPersonalDialog = new ContentDialog
+            {
+                Title = "Borrar Empresa",
+                Content = "Confirme borrado de la Empresa!",
+                PrimaryButtonText = "Borrar",
+                CloseButtonText = "Cancelar"
+            };
+
+            ContentDialogResult result = await AvisoConfirmacionPersonalDialog.ShowAsync();
+
+            BorrarSiNo = result == ContentDialogResult.Primary;
         }
 
         private void LvrCalculoHashEmpresa(object sender, TextChangedEventArgs e)
@@ -603,7 +627,7 @@ namespace BikeMessenger
             _ = AvisoOperacionEmpresaDialogAsync("Registro de Empresa", "Problemas durante el registro remoto de la empresa. Debe repetir la operación");
         }
 
-        void CopiarMemoriaEnJson(string pOPERACION)
+        private void CopiarMemoriaEnJson(string pOPERACION)
         {
             // Limpiar Variables
             EnviarJsonEmpresa.OPERACION = "";
@@ -637,22 +661,22 @@ namespace BikeMessenger
             EnviarJsonEmpresa.OPERACION = pOPERACION;
             EnviarJsonEmpresa.PENTALPHA = BM_Database_Empresa.BK_PENTALPHA;
             EnviarJsonEmpresa.RUTID = BM_Database_Empresa.BK_RUTID;
-            EnviarJsonEmpresa.DIGVER = BM_Database_Empresa.BK_DIGVER; 
-            EnviarJsonEmpresa.NOMBRE = BM_Database_Empresa.BK_NOMBRE; 
-            EnviarJsonEmpresa.USUARIO = BM_Database_Empresa.BK_USUARIO; 
-            EnviarJsonEmpresa.CLAVE = BM_Database_Empresa.BK_CLAVE; 
-            EnviarJsonEmpresa.ACTIVIDAD1 = BM_Database_Empresa.BK_ACTIVIDAD1; 
-            EnviarJsonEmpresa.ACTIVIDAD2 = BM_Database_Empresa.BK_ACTIVIDAD2; 
-            EnviarJsonEmpresa.REPRESENTANTE1 = BM_Database_Empresa.BK_REPRESENTANTE1; 
-            EnviarJsonEmpresa.REPRESENTANTE2 = BM_Database_Empresa.BK_REPRESENTANTE2; 
-            EnviarJsonEmpresa.REPRESENTANTE3 = BM_Database_Empresa.BK_REPRESENTANTE3; 
-            EnviarJsonEmpresa.DOMICILIO1 = BM_Database_Empresa.BK_DOMICILIO1; 
-            EnviarJsonEmpresa.DOMICILIO2 = BM_Database_Empresa.BK_DOMICILIO2; 
-            EnviarJsonEmpresa.NUMERO = BM_Database_Empresa.BK_NUMERO; 
-            EnviarJsonEmpresa.PISO = BM_Database_Empresa.BK_PISO; 
-            EnviarJsonEmpresa.OFICINA = BM_Database_Empresa.BK_OFICINA; 
-            EnviarJsonEmpresa.CIUDAD = BM_Database_Empresa.BK_CIUDAD; 
-            EnviarJsonEmpresa.COMUNA = BM_Database_Empresa.BK_COMUNA; 
+            EnviarJsonEmpresa.DIGVER = BM_Database_Empresa.BK_DIGVER;
+            EnviarJsonEmpresa.NOMBRE = BM_Database_Empresa.BK_NOMBRE;
+            EnviarJsonEmpresa.USUARIO = BM_Database_Empresa.BK_USUARIO;
+            EnviarJsonEmpresa.CLAVE = BM_Database_Empresa.BK_CLAVE;
+            EnviarJsonEmpresa.ACTIVIDAD1 = BM_Database_Empresa.BK_ACTIVIDAD1;
+            EnviarJsonEmpresa.ACTIVIDAD2 = BM_Database_Empresa.BK_ACTIVIDAD2;
+            EnviarJsonEmpresa.REPRESENTANTE1 = BM_Database_Empresa.BK_REPRESENTANTE1;
+            EnviarJsonEmpresa.REPRESENTANTE2 = BM_Database_Empresa.BK_REPRESENTANTE2;
+            EnviarJsonEmpresa.REPRESENTANTE3 = BM_Database_Empresa.BK_REPRESENTANTE3;
+            EnviarJsonEmpresa.DOMICILIO1 = BM_Database_Empresa.BK_DOMICILIO1;
+            EnviarJsonEmpresa.DOMICILIO2 = BM_Database_Empresa.BK_DOMICILIO2;
+            EnviarJsonEmpresa.NUMERO = BM_Database_Empresa.BK_NUMERO;
+            EnviarJsonEmpresa.PISO = BM_Database_Empresa.BK_PISO;
+            EnviarJsonEmpresa.OFICINA = BM_Database_Empresa.BK_OFICINA;
+            EnviarJsonEmpresa.CIUDAD = BM_Database_Empresa.BK_CIUDAD;
+            EnviarJsonEmpresa.COMUNA = BM_Database_Empresa.BK_COMUNA;
             EnviarJsonEmpresa.ESTADOREGION = BM_Database_Empresa.BK_ESTADOREGION;
             EnviarJsonEmpresa.CODIGOPOSTAL = BM_Database_Empresa.BK_CODIGOPOSTAL;
             EnviarJsonEmpresa.PAIS = BM_Database_Empresa.BK_PAIS;
@@ -662,7 +686,7 @@ namespace BikeMessenger
             EnviarJsonEmpresa.RESMENSAJE = "";
         }
 
-        void CopiarJsonEnMemoria(string pOPERACION)
+        private void CopiarJsonEnMemoria(string pOPERACION)
         {
             // Proceso
             // RecibirJsonEmpresa.Json_OPERACION = pOPERACION;
@@ -691,6 +715,20 @@ namespace BikeMessenger
             BM_Database_Empresa.BK_LOGO = RecibirJsonEmpresa.LOGO;
             // BM_Database_Empresa = RecibirJsonEmpresa.Json_Resultado;
             // BM_Database_Empresa = RecibirJsonEmpresa.Json_ResultadoMsg;
+        }
+
+        private void LlenarBasePentalpha(string pPentalpha)
+        {
+            // Valores de Empresa
+            LvrTransferVar.E_PENTALPHA = pPentalpha;
+            // Valores de Personal
+            LvrTransferVar.P_PENTALPHA = pPentalpha;
+            // Valores de Recursos
+            LvrTransferVar.R_PENTALPHA = pPentalpha;
+            // Valores de Clientes
+            LvrTransferVar.C_PENTALPHA = pPentalpha;
+            // Valores de SERVICIOS
+            LvrTransferVar.X_PENTALPHA = pPentalpha;
         }
     }
 }

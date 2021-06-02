@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml;
@@ -11,6 +12,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
+using Newtonsoft.Json;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -21,15 +23,16 @@ namespace BikeMessenger
     /// </summary>
     public sealed partial class PageClientes : Page
     {
-        Bm_Clientes_Database BM_Database_Clientes = new Bm_Clientes_Database();
-        TransferVar LvrTransferVar;
-        bool BorrarSiNo;
-
+        private readonly JsonBikeMessengerCliente EnviarJsonCliente = new JsonBikeMessengerCliente();
+        private JsonBikeMessengerCliente RecibirJsonCliente = new JsonBikeMessengerCliente();
+        private readonly Bm_Cliente_Database BM_Database_Cliente = new Bm_Cliente_Database();
+        private TransferVar LvrTransferVar;
+        private bool BorrarSiNo;
         public PageClientes()
         {
             // this.BM_Connection = BM_Connection;
-            this.InitializeComponent();
-            this.NavigationCacheMode = Windows.UI.Xaml.Navigation.NavigationCacheMode.Disabled;
+            InitializeComponent();
+            NavigationCacheMode = NavigationCacheMode.Disabled;
         }
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs navigationEvent)
@@ -41,7 +44,7 @@ namespace BikeMessenger
             if (navigationEvent.NavigationMode == NavigationMode.Back)
             {
                 // set the cache mode
-                this.NavigationCacheMode = NavigationCacheMode.Disabled;
+                NavigationCacheMode = NavigationCacheMode.Disabled;
 
                 ResetPageCache();
             }
@@ -66,26 +69,26 @@ namespace BikeMessenger
                 NavigationCacheMode = NavigationCacheMode.Required;
             }
 
-            if (navigationEvent.Parameter is string && !string.IsNullOrWhiteSpace((string)navigationEvent.Parameter))
+            if (navigationEvent.Parameter is string @string && !string.IsNullOrWhiteSpace(@string))
             {
                 //greeting.Text = $"Hi, {e.Parameter.ToString()}";
             }
             else
             {
                 LvrTransferVar = (TransferVar)navigationEvent.Parameter;
-                BM_Database_Clientes.BM_CreateDatabase(LvrTransferVar.TV_Connection);
+                _ = BM_Database_Cliente.BM_CreateDatabase(LvrTransferVar.TV_Connection);
                 RellenarCombos();
 
                 if (LvrTransferVar.C_RUTID == "")
                 {
-                    if (BM_Database_Clientes.Bm_Clientes_Buscar())
+                    if (BM_Database_Cliente.Bm_Clientes_Buscar())
                     {
                         LlenarPantallaConDb();
                     }
                 }
                 else
                 {
-                    if (BM_Database_Clientes.Bm_Clientes_Buscar(LvrTransferVar.C_RUTID, LvrTransferVar.C_DIGVER))
+                    if (BM_Database_Cliente.Bm_Clientes_Buscar(LvrTransferVar.C_PENTALPHA, LvrTransferVar.C_RUTID, LvrTransferVar.C_DIGVER))
                     {
                         LlenarPantallaConDb();
                     }
@@ -97,32 +100,32 @@ namespace BikeMessenger
 
         private void BtnSeleccionarAjustes(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PageAjustes), LvrTransferVar, new SuppressNavigationTransitionInfo());
+            _ = Frame.Navigate(typeof(PageAjustes), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarServicios(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PageServicios), LvrTransferVar, new SuppressNavigationTransitionInfo());
+            _ = Frame.Navigate(typeof(PageServicios), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarClientes(object sender, RoutedEventArgs e)
         {
-            // this.Frame.Navigate(typeof(PageClientes), LvrTransferVar, new SuppressNavigationTransitionInfo());
+            // _ = Frame.Navigate(typeof(PageClientes), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarRecursos(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PageRecursos), LvrTransferVar, new SuppressNavigationTransitionInfo());
+            _ = Frame.Navigate(typeof(PageRecursos), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarEmpresa(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PageEmpresa), LvrTransferVar, new SuppressNavigationTransitionInfo());
+            _ = Frame.Navigate(typeof(PageEmpresa), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarPersonal(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PagePersonal), LvrTransferVar, new SuppressNavigationTransitionInfo());
+            _ = Frame.Navigate(typeof(PagePersonal), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private async void BtnClientesCargarFoto(object sender, RoutedEventArgs e)
@@ -150,10 +153,10 @@ namespace BikeMessenger
                 // Open a stream for the selected file.
                 // The 'using' block ensures the stream is disposed
                 // after the image is loaded.
-                using (Windows.Storage.Streams.IRandomAccessStream fileStream = await file.OpenAsync(Windows.Storage.FileAccessMode.Read))
+                using (IRandomAccessStream fileStream = await file.OpenAsync(Windows.Storage.FileAccessMode.Read))
                 {
                     // Set the image source to the selected bitmap.
-                    Windows.UI.Xaml.Media.Imaging.BitmapImage bitmapImage = new Windows.UI.Xaml.Media.Imaging.BitmapImage();
+                    BitmapImage bitmapImage = new BitmapImage();
 
                     bitmapImage.SetSource(fileStream);
                     imageLogoCliente.Source = bitmapImage;
@@ -165,36 +168,39 @@ namespace BikeMessenger
         {
             try
             {
-                textBoxRut.Text = BM_Database_Clientes.BK_RUTID;
-                textBoxDigitoVerificador.Text = BM_Database_Clientes.BK_DIGVER;
-                textBoxNombreCliente.Text = BM_Database_Clientes.BK_NOMBRE;
-                textBoxActividad1.Text = BM_Database_Clientes.BK_ACTIVIDAD1;
-                textBoxActividad2.Text = BM_Database_Clientes.BK_ACTIVIDAD2;
-                textBoxRepresentantes1.Text = BM_Database_Clientes.BK_REPRESENTANTE1;
-                textBoxRepresentantes2.Text = BM_Database_Clientes.BK_REPRESENTANTE2;
-                textBoxRepresentantes3.Text = BM_Database_Clientes.BK_REPRESENTANTE3;
-                textBoxTelefono1.Text = BM_Database_Clientes.BK_TELEFONO1;
-                textBoxTelefono2.Text = BM_Database_Clientes.BK_TELEFONO2;
-                textBoxDomicilio1.Text = BM_Database_Clientes.BK_DOMICILIO1;
-                textBoxDomicilio2.Text = BM_Database_Clientes.BK_DOMICILIO2;
-                textBoxNumero.Text = BM_Database_Clientes.BK_NUMERO;
-                textBoxPiso.Text = BM_Database_Clientes.BK_PISO;
-                textBoxOficina.Text = BM_Database_Clientes.BK_OFICINA;
-                textBoxCodigoPostal.Text = BM_Database_Clientes.BK_CODIGOPOSTAL;
-                textBoxObservaciones.Text = BM_Database_Clientes.BK_OBSERVACIONES;
+                // LvrTransferVar.R_PENTALPHA = BM_Database_Recurso.BK_PENTALPHA;
+                textBoxRut.Text = BM_Database_Cliente.BK_RUTID;
+                textBoxDigitoVerificador.Text = BM_Database_Cliente.BK_DIGVER;
+                textBoxNombreCliente.Text = BM_Database_Cliente.BK_NOMBRE;
+                textBoxUsuario.Text = BM_Database_Cliente.BK_USUARIO;
+                passwordClave.Password = BM_Database_Cliente.BK_CLAVE;
+                textBoxActividad1.Text = BM_Database_Cliente.BK_ACTIVIDAD1;
+                textBoxActividad2.Text = BM_Database_Cliente.BK_ACTIVIDAD2;
+                textBoxRepresentantes1.Text = BM_Database_Cliente.BK_REPRESENTANTE1;
+                textBoxRepresentantes2.Text = BM_Database_Cliente.BK_REPRESENTANTE2;
+                textBoxRepresentantes3.Text = BM_Database_Cliente.BK_REPRESENTANTE3;
+                textBoxTelefono1.Text = BM_Database_Cliente.BK_TELEFONO1;
+                textBoxTelefono2.Text = BM_Database_Cliente.BK_TELEFONO2;
+                textBoxDomicilio1.Text = BM_Database_Cliente.BK_DOMICILIO1;
+                textBoxDomicilio2.Text = BM_Database_Cliente.BK_DOMICILIO2;
+                textBoxNumero.Text = BM_Database_Cliente.BK_NUMERO;
+                textBoxPiso.Text = BM_Database_Cliente.BK_PISO;
+                textBoxOficina.Text = BM_Database_Cliente.BK_OFICINA;
+                textBoxCodigoPostal.Text = BM_Database_Cliente.BK_CODIGOPOSTAL;
+                textBoxObservaciones.Text = BM_Database_Cliente.BK_OBSERVACIONES;
 
-                comboBoxPais.SelectedValue = BM_Database_Clientes.BK_PAIS;
-                comboBoxEstado.SelectedValue = BM_Database_Clientes.BK_REGION;
-                comboBoxComuna.SelectedValue = BM_Database_Clientes.BK_COMUNA;
-                comboBoxCiudad.SelectedValue = BM_Database_Clientes.BK_CIUDAD;
+                comboBoxPais.SelectedValue = BM_Database_Cliente.BK_PAIS;
+                comboBoxEstado.SelectedValue = BM_Database_Cliente.BK_REGION;
+                comboBoxComuna.SelectedValue = BM_Database_Cliente.BK_COMUNA;
+                comboBoxCiudad.SelectedValue = BM_Database_Cliente.BK_CIUDAD;
 
-                textBoxObservaciones.Text = BM_Database_Clientes.BK_OBSERVACIONES;
+                textBoxObservaciones.Text = BM_Database_Cliente.BK_OBSERVACIONES;
 
-                imageLogoCliente.Source = Base64StringToBitmap(BM_Database_Clientes.BK_FOTO);
+                imageLogoCliente.Source = Base64StringToBitmap(BM_Database_Cliente.BK_FOTO);
             }
-            catch (System.ArgumentNullException)
+            catch (ArgumentNullException)
             {
-                await ErrorDeRecuperacionDialogAsync();
+                await AvisoOperacionClientesDialogAsync("Acceso a Base de Datos Cliente", "Error de carga de datos desde la Base de Datos.");
             }
         }
 
@@ -207,38 +213,38 @@ namespace BikeMessenger
             comboBoxCiudad.Items.Clear();
 
             // Llenar Combo Pais
-            if (BM_Database_Clientes.Bm_E_Pais_EjecutarSelect())
+            if (BM_Database_Cliente.Bm_E_Pais_EjecutarSelect())
             {
-                while (BM_Database_Clientes.Bm_E_Pais_Buscar())
+                while (BM_Database_Cliente.Bm_E_Pais_Buscar())
                 {
-                    comboBoxPais.Items.Add(BM_Database_Clientes.BK_E_PAIS);
+                    comboBoxPais.Items.Add(BM_Database_Cliente.BK_E_PAIS);
                 }
             }
 
             // Llenar Combo Region
-            if (BM_Database_Clientes.Bm_E_Region_EjecutarSelect())
+            if (BM_Database_Cliente.Bm_E_Region_EjecutarSelect())
             {
-                while (BM_Database_Clientes.Bm_E_Region_Buscar())
+                while (BM_Database_Cliente.Bm_E_Region_Buscar())
                 {
-                    comboBoxEstado.Items.Add(BM_Database_Clientes.BK_E_REGION);
+                    comboBoxEstado.Items.Add(BM_Database_Cliente.BK_E_REGION);
                 }
             }
 
             // Llenar Combo Comuna
-            if (BM_Database_Clientes.Bm_E_Comuna_EjecutarSelect())
+            if (BM_Database_Cliente.Bm_E_Comuna_EjecutarSelect())
             {
-                while (BM_Database_Clientes.Bm_E_Comuna_Buscar())
+                while (BM_Database_Cliente.Bm_E_Comuna_Buscar())
                 {
-                    comboBoxComuna.Items.Add(BM_Database_Clientes.BK_E_COMUNA);
+                    comboBoxComuna.Items.Add(BM_Database_Cliente.BK_E_COMUNA);
                 }
             }
 
             // Llenar Combo Ciudad
-            if (BM_Database_Clientes.Bm_E_Ciudad_EjecutarSelect())
+            if (BM_Database_Cliente.Bm_E_Ciudad_EjecutarSelect())
             {
-                while (BM_Database_Clientes.Bm_E_Ciudad_Buscar())
+                while (BM_Database_Cliente.Bm_E_Ciudad_Buscar())
                 {
-                    comboBoxCiudad.Items.Add(BM_Database_Clientes.BK_E_CIUDAD);
+                    comboBoxCiudad.Items.Add(BM_Database_Cliente.BK_E_CIUDAD);
                 }
             }
         }
@@ -250,6 +256,8 @@ namespace BikeMessenger
             textBoxRut.Text = "";
             textBoxDigitoVerificador.Text = "";
             textBoxNombreCliente.Text = "";
+            textBoxUsuario.Text = "";
+            passwordClave.Password = "";
             textBoxActividad1.Text = "";
             textBoxActividad2.Text = "";
             textBoxRepresentantes1.Text = "";
@@ -271,46 +279,70 @@ namespace BikeMessenger
             imageLogoCliente.Source = Base64StringToBitmap("");
         }
 
-        private async System.Threading.Tasks.Task LlenarDbConPantallaAsync()
+        private async Task LlenarDbConPantallaAsync()
         {
-            BM_Database_Clientes.BK_FOTO = await ConvertirImageABase64Async();
-            BM_Database_Clientes.BK_RUTID = textBoxRut.Text;
-            BM_Database_Clientes.BK_DIGVER = textBoxDigitoVerificador.Text;
-            BM_Database_Clientes.BK_NOMBRE = textBoxNombreCliente.Text;
-            BM_Database_Clientes.BK_ACTIVIDAD1 = textBoxActividad1.Text;
-            BM_Database_Clientes.BK_ACTIVIDAD2 = textBoxActividad2.Text;
-            BM_Database_Clientes.BK_REPRESENTANTE1 = textBoxRepresentantes1.Text;
-            BM_Database_Clientes.BK_REPRESENTANTE2 = textBoxRepresentantes2.Text;
-            BM_Database_Clientes.BK_REPRESENTANTE3 = textBoxRepresentantes3.Text;
-            BM_Database_Clientes.BK_TELEFONO1 = textBoxTelefono1.Text;
-            BM_Database_Clientes.BK_TELEFONO2 = textBoxTelefono2.Text;
-            BM_Database_Clientes.BK_DOMICILIO1 = textBoxDomicilio1.Text;
-            BM_Database_Clientes.BK_DOMICILIO2 = textBoxDomicilio2.Text;
-            BM_Database_Clientes.BK_NUMERO = textBoxNumero.Text;
-            BM_Database_Clientes.BK_PISO = textBoxPiso.Text;
-            BM_Database_Clientes.BK_OFICINA = textBoxOficina.Text;
-            BM_Database_Clientes.BK_CODIGOPOSTAL = textBoxCodigoPostal.Text;
+            BM_Database_Cliente.BK_PENTALPHA = LvrTransferVar.C_PENTALPHA;
+            BM_Database_Cliente.BK_RUTID = textBoxRut.Text;
+            BM_Database_Cliente.BK_DIGVER = textBoxDigitoVerificador.Text;
+            BM_Database_Cliente.BK_NOMBRE = textBoxNombreCliente.Text;
+            BM_Database_Cliente.BK_USUARIO = textBoxUsuario.Text;
+            BM_Database_Cliente.BK_CLAVE = passwordClave.Password;
+            BM_Database_Cliente.BK_ACTIVIDAD1 = textBoxActividad1.Text;
+            BM_Database_Cliente.BK_ACTIVIDAD2 = textBoxActividad2.Text;
+            BM_Database_Cliente.BK_REPRESENTANTE1 = textBoxRepresentantes1.Text;
+            BM_Database_Cliente.BK_REPRESENTANTE2 = textBoxRepresentantes2.Text;
+            BM_Database_Cliente.BK_REPRESENTANTE3 = textBoxRepresentantes3.Text;
+            BM_Database_Cliente.BK_TELEFONO1 = textBoxTelefono1.Text;
+            BM_Database_Cliente.BK_TELEFONO2 = textBoxTelefono2.Text;
+            BM_Database_Cliente.BK_DOMICILIO1 = textBoxDomicilio1.Text;
+            BM_Database_Cliente.BK_DOMICILIO2 = textBoxDomicilio2.Text;
+            BM_Database_Cliente.BK_NUMERO = textBoxNumero.Text;
+            BM_Database_Cliente.BK_PISO = textBoxPiso.Text;
+            BM_Database_Cliente.BK_OFICINA = textBoxOficina.Text;
+            BM_Database_Cliente.BK_CODIGOPOSTAL = textBoxCodigoPostal.Text;
             if (comboBoxPais.Text != "")
-                BM_Database_Clientes.BK_PAIS = comboBoxPais.Text;
+            {
+                BM_Database_Cliente.BK_PAIS = comboBoxPais.Text;
+            }
+
             if (comboBoxEstado.Text != "")
-                BM_Database_Clientes.BK_REGION = comboBoxEstado.Text;
+            {
+                BM_Database_Cliente.BK_REGION = comboBoxEstado.Text;
+            }
+
             if (comboBoxComuna.Text != "")
-                BM_Database_Clientes.BK_COMUNA = comboBoxComuna.Text;
+            {
+                BM_Database_Cliente.BK_COMUNA = comboBoxComuna.Text;
+            }
+
             if (comboBoxCiudad.Text != "")
-                BM_Database_Clientes.BK_CIUDAD = comboBoxCiudad.Text;
-            BM_Database_Clientes.BK_OBSERVACIONES = textBoxObservaciones.Text;
+            {
+                BM_Database_Cliente.BK_CIUDAD = comboBoxCiudad.Text;
+            }
+
+            BM_Database_Cliente.BK_OBSERVACIONES = textBoxObservaciones.Text;
+            BM_Database_Cliente.BK_FOTO = await ConvertirImageABase64Async();
         }
 
         private async void BtnAgregarClientes(object sender, RoutedEventArgs e)
         {
+            LvrProgresRing.IsActive = true;
+            await Task.Delay(500); // .5 sec delay
+
             try
             {
                 await LlenarDbConPantallaAsync();
-                if (BM_Database_Clientes.Bm_Clientes_Agregar())
+
+                if (BM_Database_Cliente.Bm_Clientes_Agregar())
                 {
                     LlenarListaClientes();
-                    LvrTransferVar.C_RUTID = BM_Database_Clientes.BK_RUTID;
-                    LvrTransferVar.C_DIGVER = BM_Database_Clientes.BK_DIGVER;
+                    LvrTransferVar.C_RUTID = BM_Database_Cliente.BK_RUTID;
+                    LvrTransferVar.C_DIGVER = BM_Database_Cliente.BK_DIGVER;
+
+                    // Agregar en Servidor Remoto
+                    ProRegistroCliente("AGREGAR");
+                    // Verificar Operación
+
                     await AvisoOperacionClientesDialogAsync("Agregar Clientes", "Operación completada con exito.");
                 }
                 else
@@ -322,22 +354,38 @@ namespace BikeMessenger
             {
                 await AvisoOperacionClientesDialogAsync("Agregando Clientes", "Aun faltan datos por completar.");
             }
+
+            LvrProgresRing.IsActive = false;
+            await Task.Delay(500); // .5 sec delay
         }
 
         private async void BtnModificarClientes(object sender, RoutedEventArgs e)
         {
-            await LlenarDbConPantallaAsync();
-            if (BM_Database_Clientes.Bm_Clientes_Modificar(BM_Database_Clientes.BK_RUTID, BM_Database_Clientes.BK_DIGVER))
+            // Muestra de espera
+            LvrProgresRing.IsActive = true;
+            await Task.Delay(500); // .5 sec delay
+
+            try
             {
-                LlenarListaClientes();
-                LvrTransferVar.C_RUTID = BM_Database_Clientes.BK_RUTID;
-                LvrTransferVar.C_DIGVER = BM_Database_Clientes.BK_DIGVER;
-                await AvisoOperacionClientesDialogAsync("Modificar Clientes", "Operación completada con exito.");
+                await LlenarDbConPantallaAsync();
+                if (BM_Database_Cliente.Bm_Clientes_Modificar(LvrTransferVar.C_PENTALPHA, BM_Database_Cliente.BK_RUTID, BM_Database_Cliente.BK_DIGVER))
+                {
+                    LlenarListaClientes();
+                    LvrTransferVar.C_RUTID = BM_Database_Cliente.BK_RUTID;
+                    LvrTransferVar.C_DIGVER = BM_Database_Cliente.BK_DIGVER;
+                    await AvisoOperacionClientesDialogAsync("Modificar Clientes", "Operación completada con exito.");
+                }
+                else
+                {
+                    await AvisoOperacionClientesDialogAsync("Modificando Clientes", "Se a producido un error al intentar modificar clientes.");
+                }
             }
-            else
+            catch (ArgumentException)
             {
-                await AvisoOperacionClientesDialogAsync("Modificando Clientes", "Se a producido un error al intentar modificar clientes.");
+                _ = AvisoOperacionClientesDialogAsync("Acceso a Base de Datos", "Debe llenar los datos del cliente.");
             }
+            LvrProgresRing.IsActive = false;
+            await Task.Delay(500); // .5 sec delay
         }
 
         private async void BtnBorrarClientes(object sender, RoutedEventArgs e)
@@ -347,21 +395,28 @@ namespace BikeMessenger
             await AvisoBorrarClientesDialogAsync();
 
             if (!BorrarSiNo)
+            {
                 return;
+            }
+
+            // Muestra de espera
+            LvrProgresRing.IsActive = true;
+            await Task.Delay(500); // .5 sec delay
 
             try
             {
-                if (BM_Database_Clientes.Bm_Clientes_Borrar(BM_Database_Clientes.BK_RUTID, BM_Database_Clientes.BK_DIGVER))
+                await LlenarDbConPantallaAsync();
+                if (BM_Database_Cliente.Bm_Clientes_Borrar(LvrTransferVar.C_PENTALPHA, BM_Database_Cliente.BK_RUTID, BM_Database_Cliente.BK_DIGVER))
                 {
                     await AvisoOperacionClientesDialogAsync("Borrando Clientes", "Operación completada con exito.");
 
                     textBoxRut.IsReadOnly = false;
                     textBoxDigitoVerificador.IsReadOnly = false;
 
-                    if (BM_Database_Clientes.Bm_Clientes_Buscar())
+                    if (BM_Database_Cliente.Bm_Clientes_Buscar())
                     {
-                        LvrTransferVar.C_RUTID = BM_Database_Clientes.BK_RUTID;
-                        LvrTransferVar.C_DIGVER = BM_Database_Clientes.BK_DIGVER;
+                        LvrTransferVar.C_RUTID = BM_Database_Cliente.BK_RUTID;
+                        LvrTransferVar.C_DIGVER = BM_Database_Cliente.BK_DIGVER;
                     }
                     else
                     {
@@ -377,11 +432,14 @@ namespace BikeMessenger
                     await AvisoOperacionClientesDialogAsync("Borrando Clientes", "Se a producido un error al intentar borrar cliente.");
                 }
             }
-            catch (System.ArgumentException)
+            catch (ArgumentException)
             {
                 await AvisoOperacionClientesDialogAsync("Acceso a Base de Datos", "Debe llenar los datos del cliente.");
             }
             BorrarSiNo = false;
+            BorrarSiNo = false;
+            LvrProgresRing.IsActive = false;
+            await Task.Delay(500); // .5 sec delay
         }
 
         private void BtnSalirClientes(object sender, RoutedEventArgs e)
@@ -390,78 +448,59 @@ namespace BikeMessenger
             Application.Current.Exit();
         }
 
-        private async System.Threading.Tasks.Task<string> ConvertirImageABase64Async()
+        private async Task<string> ConvertirImageABase64Async()
         {
-            var bitmap = new RenderTargetBitmap();
+            RenderTargetBitmap bitmap = new RenderTargetBitmap();
             await bitmap.RenderAsync(imageLogoCliente);
 
-            var image = (await bitmap.GetPixelsAsync()).ToArray();
-            var width = (uint)bitmap.PixelWidth;
-            var height = (uint)bitmap.PixelHeight;
+            byte[] image = (await bitmap.GetPixelsAsync()).ToArray();
+            uint width = (uint)bitmap.PixelWidth;
+            uint height = (uint)bitmap.PixelHeight;
 
             double dpiX = 96;
             double dpiY = 96;
 
-            var encoded = new Windows.Storage.Streams.InMemoryRandomAccessStream();
-            var encoder = await Windows.Graphics.Imaging.BitmapEncoder.CreateAsync(Windows.Graphics.Imaging.BitmapEncoder.PngEncoderId, encoded);
+            InMemoryRandomAccessStream encoded = new InMemoryRandomAccessStream();
+            BitmapEncoder encoder = await Windows.Graphics.Imaging.BitmapEncoder.CreateAsync(Windows.Graphics.Imaging.BitmapEncoder.PngEncoderId, encoded);
 
             encoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Straight, width, height, dpiX, dpiY, image);
             await encoder.FlushAsync();
             encoded.Seek(0);
 
-            var bytes = new byte[encoded.Size];
-            await encoded.AsStream().ReadAsync(bytes, 0, bytes.Length);
+            byte[] bytes = new byte[encoded.Size];
+            _ = await encoded.AsStream().ReadAsync(bytes, 0, bytes.Length);
 
-            var base64String = Convert.ToBase64String(bytes);
+            string base64String = Convert.ToBase64String(bytes);
 
             return base64String;
         }
 
         private BitmapImage Base64StringToBitmap(string source)
         {
-            var ims = new InMemoryRandomAccessStream();
-            var bytes = Convert.FromBase64String(source);
-            var dataWriter = new DataWriter(ims);
+            InMemoryRandomAccessStream ims = new InMemoryRandomAccessStream();
+            byte[] bytes = Convert.FromBase64String(source);
+            DataWriter dataWriter = new DataWriter(ims);
             dataWriter.WriteBytes(bytes);
             _ = dataWriter.StoreAsync();
             ims.Seek(0);
-            var img = new BitmapImage();
+            BitmapImage img = new BitmapImage();
             img.SetSource(ims);
             return img;
         }
 
 
-        private async System.Threading.Tasks.Task ErrorDeRecuperacionDialogAsync()
+        private async Task AvisoOperacionClientesDialogAsync(string xTitulo, string xDescripcion)
         {
-            ContentDialog noErrorRecuperacionDialog = new ContentDialog
+            ContentDialog AvisoOperacionClientesDialog = new ContentDialog
             {
-                Title = "Error",
-                Content = "El registro a recuperar tiene valores nulos.",
-                CloseButtonText = "Ok"
+                Title = xTitulo,
+                Content = xDescripcion,
+                CloseButtonText = "Continuar"
             };
-
-            ContentDialogResult result = await noErrorRecuperacionDialog.ShowAsync();
+            _ = await AvisoOperacionClientesDialog.ShowAsync();
         }
 
-        private async System.Threading.Tasks.Task AvisoOperacionClientesDialogAsync(string xTitulo, string xDescripcion)
-        {
-            try
-            {
-                ContentDialog AvisoOperacionClientesDialog = new ContentDialog
-                {
-                    Title = xTitulo,
-                    Content = xDescripcion,
-                    CloseButtonText = "Continuar"
-                };
-                ContentDialogResult result = await AvisoOperacionClientesDialog.ShowAsync();
-            }
-            catch (System.Exception)
-            {
-                ;
-            }
-        }
-
-        private async System.Threading.Tasks.Task AvisoBorrarClientesDialogAsync()
+        private async Task AvisoBorrarClientesDialogAsync()
         {
             ContentDialog AvisoConfirmacionClientesDialog = new ContentDialog
             {
@@ -473,31 +512,31 @@ namespace BikeMessenger
 
             ContentDialogResult result = await AvisoConfirmacionClientesDialog.ShowAsync();
 
-            if (result == ContentDialogResult.Primary)
-                BorrarSiNo = true;
-            else
-                BorrarSiNo = false;
+            BorrarSiNo = result == ContentDialogResult.Primary;
         }
 
         private void LlenarListaClientes()
         {
             List<GridClientesIndividual> GridClientesLista = new List<GridClientesIndividual>();
-            if (BM_Database_Clientes.Bm_Clientes_BuscarGrid())
+
+            if (BM_Database_Cliente.Bm_Clientes_BuscarGrid())
             {
-                while (BM_Database_Clientes.Bm_Clientes_BuscarGridProxima())
+                while (BM_Database_Cliente.Bm_Clientes_BuscarGridProxima())
                 {
                     GridClientesLista.Add(
-                        new GridClientesIndividual
-                        {
-                            RUT = BM_Database_Clientes.BK_GRID_RUT,
-                            CLIENTE = BM_Database_Clientes.BK_GRID_NOMBRES
-                        });
+                        new GridClientesIndividual {
+                            RUT = BM_Database_Cliente.BK_GRID_RUT, 
+                            CLIENTE = BM_Database_Cliente.BK_GRID_NOMBRES
+                        }
+                        );
                 }
             }
+
             dataGridListadoClientes.IsReadOnly = true;
             dataGridListadoClientes.ItemsSource = GridClientesLista;
         }
-        private void dataGridSeleccion_Clientes(object sender, SelectionChangedEventArgs e)
+
+        private void DataGridSeleccion_Clientes(object sender, SelectionChangedEventArgs e) 
         {
             try
             {
@@ -505,25 +544,162 @@ namespace BikeMessenger
                 GridClientesIndividual Fila = (GridClientesIndividual)CeldaSeleccionada.SelectedItems[0];
                 string[] CadenaDividida = Fila.RUT.Split("-", 2, StringSplitOptions.None);
 
-                if (BM_Database_Clientes.Bm_Clientes_Buscar(CadenaDividida[0], CadenaDividida[1]))
+                if (BM_Database_Cliente.Bm_Clientes_Buscar(LvrTransferVar.C_PENTALPHA, CadenaDividida[0], CadenaDividida[1]))
                 {
                     LimpiarPantalla();
                     LlenarPantallaConDb();
-                    // LlenarListaPersonal();
+                    // LlenarListaClientes();
+                }
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                // No hacer nada, es un control vacio de error
+            }
+        }
+
+        //**************************************************
+        // Ejecuta operacion de registro de personal
+        //**************************************************
+        private void ProRegistroCliente(string pTipoOperacion)
+        {
+            string LvrPRecibirServer;
+            string LvrPData;
+            string LvrStringHttp1 = "https://finanven.ddns.net/Api/BikeMessengerCliente";
+
+            LvrInternet LvrBKInternet = new LvrInternet();
+            string LvrParametros;
+
+            List<JsonBikeMessengerCliente> EnviarJsonClienteArray = new List<JsonBikeMessengerCliente>();
+            List<JsonBikeMessengerCliente> RecibirJsonClienteArray = new List<JsonBikeMessengerCliente>();
+
+            // Llenar estructura Json
+            CopiarMemoriaEnJson(pTipoOperacion);
+
+            // Proceso Serializar
+
+            EnviarJsonClienteArray.Add(EnviarJsonCliente);
+            LvrPData = JsonConvert.SerializeObject(EnviarJsonClienteArray);
+
+            // Preparar Parametros
+            LvrParametros = LvrPData;
+
+            LvrBKInternet.LvrInetPOST(LvrStringHttp1, LvrParametros);
+            LvrPRecibirServer = LvrBKInternet.LvrResultadoWeb;
+
+            if (LvrPRecibirServer != "ERROR" && LvrPRecibirServer != "" && LvrPRecibirServer != null)
+            {
+                // Procesar primer servidor
+                RecibirJsonClienteArray = JsonConvert.DeserializeObject<List<JsonBikeMessengerCliente>>(LvrPRecibirServer); // resp será el string JSON a deserializa
+                RecibirJsonCliente = RecibirJsonClienteArray[0];
+
+                if (RecibirJsonCliente.RESOPERACION == "OK")
+                {
+                    //CopiarJsonEnMemoria(pTipoOperacion);
+                    _ = AvisoOperacionClientesDialogAsync("Estado Envio", RecibirJsonCliente.RESMENSAJE);
                 }
                 else
                 {
-                    // textBoxNombreEmpresa.Text = "Sin Empresa";
+                    _ = AvisoOperacionClientesDialogAsync("Estado Envio", RecibirJsonCliente.RESMENSAJE);
                 }
+
+                return;
             }
-            catch (System.ArgumentOutOfRangeException)
-            {
-                ; // No hacer nada, es un control vacio de error
-            }
+            _ = AvisoOperacionClientesDialogAsync("Registro de Clientes", "Problemas durante el registro remoto de Cliente. Debe repetir la operación");
+        }
+
+        private void CopiarMemoriaEnJson(string pOPERACION)
+        {
+            // Limpiar Variables
+
+            EnviarJsonCliente.OPERACION = "";
+            EnviarJsonCliente.PENTALPHA = "";
+            EnviarJsonCliente.RUTID = "";
+            EnviarJsonCliente.DIGVER = "";
+            EnviarJsonCliente.NOMBRE = "";
+            EnviarJsonCliente.USUARIO = "";
+            EnviarJsonCliente.CLAVE = "";
+            EnviarJsonCliente.ACTIVIDAD1 = "";
+            EnviarJsonCliente.ACTIVIDAD2 = "";
+            EnviarJsonCliente.REPRESENTANTE1 = "";
+            EnviarJsonCliente.REPRESENTANTE2 = "";
+            EnviarJsonCliente.REPRESENTANTE3 = "";
+            EnviarJsonCliente.DOMICILIO1 = "";
+            EnviarJsonCliente.DOMICILIO2 = "";
+            EnviarJsonCliente.NUMERO = "";
+            EnviarJsonCliente.PISO = "";
+            EnviarJsonCliente.OFICINA = "";
+            EnviarJsonCliente.CIUDAD = "";
+            EnviarJsonCliente.COMUNA = "";
+            EnviarJsonCliente.ESTADOREGION = "";
+            EnviarJsonCliente.CODIGOPOSTAL = "";
+            EnviarJsonCliente.PAIS = "";
+            EnviarJsonCliente.OBSERVACIONES = "";
+            EnviarJsonCliente.LOGO = "";
+            EnviarJsonCliente.RESOPERACION = "";
+            EnviarJsonCliente.RESMENSAJE = "";
+
+            // Llenar Variables
+            EnviarJsonCliente.OPERACION =  pOPERACION;
+            EnviarJsonCliente.PENTALPHA = BM_Database_Cliente.BK_PENTALPHA;
+            EnviarJsonCliente.RUTID = BM_Database_Cliente.BK_RUTID;
+            EnviarJsonCliente.DIGVER = BM_Database_Cliente.BK_DIGVER;
+            EnviarJsonCliente.NOMBRE = BM_Database_Cliente.BK_NOMBRE;
+            EnviarJsonCliente.USUARIO = BM_Database_Cliente.BK_USUARIO;
+            EnviarJsonCliente.CLAVE = BM_Database_Cliente.BK_CLAVE;
+            EnviarJsonCliente.ACTIVIDAD1 = BM_Database_Cliente.BK_ACTIVIDAD1;
+            EnviarJsonCliente.ACTIVIDAD2 = BM_Database_Cliente.BK_ACTIVIDAD2;
+            EnviarJsonCliente.REPRESENTANTE1 = BM_Database_Cliente.BK_REPRESENTANTE1;
+            EnviarJsonCliente.REPRESENTANTE2 = BM_Database_Cliente.BK_REPRESENTANTE2;
+            EnviarJsonCliente.REPRESENTANTE3 = BM_Database_Cliente.BK_REPRESENTANTE3;
+            EnviarJsonCliente.DOMICILIO1 = BM_Database_Cliente.BK_DOMICILIO1;
+            EnviarJsonCliente.DOMICILIO2 = BM_Database_Cliente.BK_DOMICILIO2;
+            EnviarJsonCliente.NUMERO = BM_Database_Cliente.BK_NUMERO;
+            EnviarJsonCliente.PISO = BM_Database_Cliente.BK_PISO;
+            EnviarJsonCliente.OFICINA = BM_Database_Cliente.BK_OFICINA;
+            EnviarJsonCliente.CIUDAD = BM_Database_Cliente.BK_CIUDAD;
+            EnviarJsonCliente.COMUNA = BM_Database_Cliente.BK_COMUNA;
+            EnviarJsonCliente.ESTADOREGION = BM_Database_Cliente.BK_REGION;
+            EnviarJsonCliente.CODIGOPOSTAL = BM_Database_Cliente.BK_CODIGOPOSTAL;
+            EnviarJsonCliente.PAIS = BM_Database_Cliente.BK_PAIS;
+            EnviarJsonCliente.OBSERVACIONES = BM_Database_Cliente.BK_OBSERVACIONES;
+            EnviarJsonCliente.LOGO = BM_Database_Cliente.BK_FOTO;
+            EnviarJsonCliente.RESOPERACION = "";
+            EnviarJsonCliente.RESMENSAJE = "";
+        }
+
+        private void CopiarJsonEnMemoria(string pOPERACION)
+        {
+            // Proceso
+            //EnviarJsonCliente.OPERACION = pOPERACION;
+            BM_Database_Cliente.BK_PENTALPHA = EnviarJsonCliente.PENTALPHA;
+            BM_Database_Cliente.BK_RUTID = EnviarJsonCliente.RUTID;
+            BM_Database_Cliente.BK_DIGVER = EnviarJsonCliente.DIGVER;
+            BM_Database_Cliente.BK_NOMBRE = EnviarJsonCliente.NOMBRE;
+            BM_Database_Cliente.BK_USUARIO = EnviarJsonCliente.USUARIO;
+            BM_Database_Cliente.BK_CLAVE = EnviarJsonCliente.CLAVE;
+            BM_Database_Cliente.BK_ACTIVIDAD1 = EnviarJsonCliente.ACTIVIDAD1;
+            BM_Database_Cliente.BK_ACTIVIDAD2 = EnviarJsonCliente.ACTIVIDAD2;
+            BM_Database_Cliente.BK_REPRESENTANTE1 = EnviarJsonCliente.REPRESENTANTE1;
+            BM_Database_Cliente.BK_REPRESENTANTE2 = EnviarJsonCliente.REPRESENTANTE2;
+            BM_Database_Cliente.BK_REPRESENTANTE3 = EnviarJsonCliente.REPRESENTANTE3;
+            BM_Database_Cliente.BK_DOMICILIO1 = EnviarJsonCliente.DOMICILIO1;
+            BM_Database_Cliente.BK_DOMICILIO2 = EnviarJsonCliente.DOMICILIO2;
+            BM_Database_Cliente.BK_NUMERO = EnviarJsonCliente.NUMERO;
+            BM_Database_Cliente.BK_PISO = EnviarJsonCliente.PISO;
+            BM_Database_Cliente.BK_OFICINA = EnviarJsonCliente.OFICINA;
+            BM_Database_Cliente.BK_CIUDAD = EnviarJsonCliente.CIUDAD;
+            BM_Database_Cliente.BK_COMUNA = EnviarJsonCliente.COMUNA;
+            BM_Database_Cliente.BK_REGION = EnviarJsonCliente.ESTADOREGION;
+            BM_Database_Cliente.BK_CODIGOPOSTAL = EnviarJsonCliente.CODIGOPOSTAL;
+            BM_Database_Cliente.BK_PAIS = EnviarJsonCliente.PAIS;
+            BM_Database_Cliente.BK_OBSERVACIONES = EnviarJsonCliente.OBSERVACIONES;
+            BM_Database_Cliente.BK_FOTO = EnviarJsonCliente.LOGO;
+            // EnviarJsonCliente.RESOPERACION = "";
+            // EnviarJsonCliente.RESMENSAJE = "";
         }
     }
 
-    public class GridClientesIndividual
+    internal class GridClientesIndividual
     {
         public string RUT { get; set; }
         public string CLIENTE { get; set; }

@@ -3,35 +3,35 @@ using Microsoft.Data.Sqlite;
 
 namespace BikeMessenger
 {
-    class Bm_Empresa_Database
+    internal class Bm_Empresa_Database
     {
         // public SQLiteFactory BM_DB;
         public SqliteConnection BM_Connection;
-        SqliteCommand BK_Cmd_Empresa;
+        private SqliteCommand BK_Cmd_Empresa;
 
-        SqliteCommand BK_Cmd_Empresa_Pais;
-        SqliteDataReader BK_Reader_Empresa_Pais;
+        private SqliteCommand BK_Cmd_Empresa_Pais;
+        private SqliteDataReader BK_Reader_Empresa_Pais;
 
-        SqliteCommand BK_Cmd_Empresa_Region;
-        SqliteDataReader BK_Reader_Empresa_Region;
+        private SqliteCommand BK_Cmd_Empresa_Region;
+        private SqliteDataReader BK_Reader_Empresa_Region;
 
-        SqliteCommand BK_Cmd_Empresa_Comuna;
-        SqliteDataReader BK_Reader_Empresa_Comuna;
+        private SqliteCommand BK_Cmd_Empresa_Comuna;
+        private SqliteDataReader BK_Reader_Empresa_Comuna;
 
-        SqliteCommand BK_Cmd_Empresa_Ciudad;
-        SqliteDataReader BK_Reader_Empresa_Ciudad;
+        private SqliteCommand BK_Cmd_Empresa_Ciudad;
+        private SqliteDataReader BK_Reader_Empresa_Ciudad;
 
-        SqliteDataReader BK_Reader_Empresa;
-        readonly String StrBuscar_Empresa = "SELECT * FROM EMPRESA";
+        private SqliteDataReader BK_Reader_Empresa;
+        private readonly string StrBuscar_Empresa = "SELECT * FROM EMPRESA";
 
-        readonly String StrBuscar_Empresa_Pais = "SELECT * FROM PAIS ORDER BY PAIS ASC";
-        readonly String StrBuscar_Empresa_Region = "SELECT * FROM ESTADOREGION ORDER BY REGION ASC";
-        readonly String StrBuscar_Empresa_Comuna = "SELECT * FROM COMUNA ORDER BY COMUNA ASC";
-        readonly String StrBuscar_Empresa_Ciudad = "SELECT * FROM CIUDAD ORDER BY CIUDAD ASC";
+        private readonly string StrBuscar_Empresa_Pais = "SELECT * FROM PAIS ORDER BY PAIS ASC";
+        private readonly string StrBuscar_Empresa_Region = "SELECT * FROM ESTADOREGION ORDER BY REGION ASC";
+        private readonly string StrBuscar_Empresa_Comuna = "SELECT * FROM COMUNA ORDER BY COMUNA ASC";
+        private readonly string StrBuscar_Empresa_Ciudad = "SELECT * FROM CIUDAD ORDER BY CIUDAD ASC";
 
-        string StrAgregar_Empresa;
-        string StrModificar_Empresa;
-        string StrBorrar_Empresa;
+        private string StrAgregar_Empresa;
+        private string StrModificar_Empresa;
+        private string StrBorrar_Empresa;
 
         // Campos de Empresa
         public string BK_PENTALPHA { get; set; }
@@ -62,24 +62,24 @@ namespace BikeMessenger
         public string BK_LOGO { get; set; }
 
         // Campos de PAIS
-        public Int16 BK_E_CODPAIS { get; set; }
+        public short BK_E_CODPAIS { get; set; }
         public string BK_E_PAIS { get; set; }
 
         // Campos de REGION
-        public Int16 BK_E_CODREGION { get; set; }
+        public short BK_E_CODREGION { get; set; }
         public string BK_E_REGION { get; set; }
 
         // Campos de COMUNA
-        public Int16 BK_E_CODCOMUNA { get; set; }
+        public short BK_E_CODCOMUNA { get; set; }
         public string BK_E_COMUNA { get; set; }
 
         // Campos de CIUDAD
-        public Int16 BK_E_CODCIUDAD { get; set; }
+        public short BK_E_CODCIUDAD { get; set; }
         public string BK_E_CIUDAD { get; set; }
 
         // Comandos de acceso por Area
 
-        public Boolean BM_CreateDatabase(SqliteConnection BM_Connection)
+        public bool BM_CreateDatabase(SqliteConnection BM_Connection)
         {
             this.BM_Connection = BM_Connection;
             return true;
@@ -130,7 +130,7 @@ namespace BikeMessenger
                     return false;
                 }
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -145,7 +145,7 @@ namespace BikeMessenger
                 BK_Reader_Empresa_Pais = BK_Cmd_Empresa_Pais.ExecuteReader();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -166,7 +166,7 @@ namespace BikeMessenger
                     return false;
                 }
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -181,7 +181,7 @@ namespace BikeMessenger
                 BK_Reader_Empresa_Region = BK_Cmd_Empresa_Region.ExecuteReader();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -202,7 +202,7 @@ namespace BikeMessenger
                     return false;
                 }
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -218,7 +218,7 @@ namespace BikeMessenger
                 BK_Reader_Empresa_Comuna = BK_Cmd_Empresa_Comuna.ExecuteReader();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -239,7 +239,7 @@ namespace BikeMessenger
                     return false;
                 }
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -254,7 +254,7 @@ namespace BikeMessenger
                 BK_Reader_Empresa_Ciudad = BK_Cmd_Empresa_Ciudad.ExecuteReader();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -275,7 +275,7 @@ namespace BikeMessenger
                     return false;
                 }
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -342,10 +342,10 @@ namespace BikeMessenger
             try
             {
                 BK_Cmd_Empresa = new SqliteCommand(StrAgregar_Empresa, BM_Connection);
-                BK_Cmd_Empresa.ExecuteNonQuery();
+                _ = BK_Cmd_Empresa.ExecuteNonQuery();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -385,10 +385,10 @@ namespace BikeMessenger
             try
             {
                 BK_Cmd_Empresa = new SqliteCommand(StrModificar_Empresa, BM_Connection);
-                BK_Cmd_Empresa.ExecuteNonQuery();
+                _ = BK_Cmd_Empresa.ExecuteNonQuery();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException e)
+            catch (SqliteException e)
             {
                 Console.WriteLine(e.Message);
                 return false;
@@ -402,10 +402,10 @@ namespace BikeMessenger
             try
             {
                 BK_Cmd_Empresa = new SqliteCommand(StrBorrar_Empresa, BM_Connection);
-                BK_Cmd_Empresa.ExecuteNonQuery();
+                _ = BK_Cmd_Empresa.ExecuteNonQuery();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }

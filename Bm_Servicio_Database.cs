@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Globalization;
 using Microsoft.Data.Sqlite;
 
 namespace BikeMessenger
 {
-    class Bm_Servicios_Database
+    class Bm_Servicio_Database
     {
         // public SQLiteFactory BM_DB;
         public SqliteConnection BM_Connection;
@@ -12,37 +13,50 @@ namespace BikeMessenger
         SqliteDataReader BK_Reader_Servicios;
 
         // Envios
-        SqliteCommand BK_Cmd_Envios_Grid;
-        SqliteDataReader BK_Reader_Servicios_Envios;
-        readonly String StrBuscar_Servicios_Envios = "SELECT NROENVIO, FECHA, CLIENTERUT, CLIENTEDIGVER, ENTREGA FROM SERVICIOS ORDER BY NROENVIO ASC";
+        private SqliteCommand BK_Cmd_Envios_Grid;
+        private SqliteDataReader BK_Reader_Servicios_Envios;
+        readonly string StrBuscar_Servicios_Envios = "SELECT NROENVIO, FECHA, CLIENTERUT, CLIENTEDIGVER, ENTREGA FROM SERVICIOS ORDER BY NROENVIO ASC";
 
         // Clientes
-        SqliteCommand BK_Cmd_Clientes_Grid;
-        SqliteDataReader BK_Reader_Servicios_Clientes;
-        readonly String StrBuscar_Servicios_Clientes = "SELECT RUTID||'-'||DIGVER, NOMBRE FROM CLIENTES ORDER BY NOMBRE ASC";
+        private SqliteCommand BK_Cmd_Clientes_Grid;
+        private SqliteDataReader BK_Reader_Servicios_Clientes;
+        readonly string StrBuscar_Servicios_Clientes = "SELECT RUTID||'-'||DIGVER, NOMBRE FROM CLIENTES ORDER BY NOMBRE ASC";
 
         // Mensajeros
-        SqliteCommand BK_Cmd_Mensajeros_Grid;
-        SqliteDataReader BK_Reader_Servicios_Mensajeros;
-        readonly String StrBuscar_Servicios_Mensajeros = "SELECT RUTID||'-'||DIGVER, APELLIDOS||', '||NOMBRES FROM PERSONAL ORDER BY APELLIDOS ASC";
+        private SqliteCommand BK_Cmd_Mensajeros_Grid;
+        private SqliteDataReader BK_Reader_Servicios_Mensajeros;
+        readonly string StrBuscar_Servicios_Mensajeros = "SELECT RUTID||'-'||DIGVER, APELLIDOS||', '||NOMBRES FROM PERSONAL ORDER BY APELLIDOS ASC";
 
         // Mensajeros
-        SqliteCommand BK_Cmd_Recursos_Grid;
-        SqliteDataReader BK_Reader_Servicios_Recursos;
-        readonly String StrBuscar_Servicios_Recursos = "SELECT PATENTE,TIPO,MARCA,MODELO,PROPIETARIO FROM RECURSOS ORDER BY TIPO ASC,MARCA ASC,MODELO ASC";
+        private SqliteCommand BK_Cmd_Recursos_Grid;
+        private SqliteDataReader BK_Reader_Servicios_Recursos;
+        readonly string StrBuscar_Servicios_Recursos = "SELECT PATENTE,TIPO,MARCA,MODELO,PROPIETARIO FROM RECURSOS ORDER BY TIPO ASC,MARCA ASC,MODELO ASC";
 
-        // Pais
-        SqliteCommand BK_Cmd_Servicios_Pais;
-        SqliteDataReader BK_Reader_Servicios_Pais;
+        private SqliteCommand BK_Cmd_Servicios_Pais;
+        private SqliteDataReader BK_Reader_Servicios_Pais;
 
-        string StrAgregar_Servicios;
-        string StrModificar_Servicios;
-        string StrBorrar_Servicios;
+        private SqliteCommand BK_Cmd_Servicios_Region;
+        private SqliteDataReader BK_Reader_Servicios_Region;
 
-        readonly string StrBuscar_Servicios = "SELECT * FROM SERVICIOS";
-        readonly String StrBuscar_Servicios_Pais = "SELECT * FROM PAIS ORDER BY PAIS ASC";
+        private SqliteCommand BK_Cmd_Servicios_Comuna;
+        private SqliteDataReader BK_Reader_Servicios_Comuna;
+
+        private SqliteCommand BK_Cmd_Servicios_Ciudad;
+        private SqliteDataReader BK_Reader_Servicios_Ciudad;
+
+        private string StrAgregar_Servicios;
+        private string StrModificar_Servicios;
+        private string StrBorrar_Servicios;
+
+        private readonly string StrBuscar_Servicios = "SELECT * FROM SERVICIOS";
+
+        private readonly string StrBuscar_Servicios_Pais = "SELECT * FROM PAIS ORDER BY PAIS ASC";
+        private readonly string StrBuscar_Servicios_Region = "SELECT * FROM ESTADOREGION ORDER BY REGION ASC";
+        private readonly string StrBuscar_Servicios_Comuna = "SELECT * FROM COMUNA ORDER BY COMUNA ASC";
+        private readonly string StrBuscar_Servicios_Ciudad = "SELECT * FROM CIUDAD ORDER BY CIUDAD ASC";
 
         // Campos Servicios
+        public string BK_PENTALPHA { get; set; }
         public string BK_NROENVIO { get; set; }
         public string BK_GUIADESPACHO { get; set; }
         public string BK_FECHA { get; set; }
@@ -75,6 +89,7 @@ namespace BikeMessenger
         public string BK_DESTADO { get; set; }
         public string BK_DPAIS { get; set; }
         public string BK_DCOORDENADAS { get; set; }
+        public double BK_DISTANCIA_KM { get; set; }
         public string BK_DESCRIPCION { get; set; }
         public int BK_FACTURAS { get; set; }
         public int BK_BULTOS { get; set; }
@@ -113,8 +128,20 @@ namespace BikeMessenger
         public string BK_GRID_RECURSO_PROPIETARIO { get; set; }
 
         // Campos de PAIS
-        public Int16 BK_E_CODPAIS { get; set; }
+        public short BK_E_CODPAIS { get; set; }
         public string BK_E_PAIS { get; set; }
+
+        // Campos de REGION
+        public short BK_E_CODREGION { get; set; }
+        public string BK_E_REGION { get; set; }
+
+        // Campos de COMUNA
+        public short BK_E_CODCOMUNA { get; set; }
+        public string BK_E_COMUNA { get; set; }
+
+        // Campos de CIUDAD
+        public short BK_E_CODCIUDAD { get; set; }
+        public string BK_E_CIUDAD { get; set; }
 
         public bool BM_CreateDatabase(SqliteConnection BM_Connection)
         {
@@ -125,6 +152,7 @@ namespace BikeMessenger
         public bool Bm_Servicios_Agregar()
         {
             StrAgregar_Servicios = "INSERT INTO SERVICIOS (";
+            StrAgregar_Servicios += "PENTALPHA,";
             StrAgregar_Servicios += "NROENVIO,";
             StrAgregar_Servicios += "GUIADESPACHO,";
             StrAgregar_Servicios += "FECHA,";
@@ -154,6 +182,7 @@ namespace BikeMessenger
             StrAgregar_Servicios += "DESTADO,";
             StrAgregar_Servicios += "DPAIS,";
             StrAgregar_Servicios += "DCOORDENADAS,";
+            StrAgregar_Servicios += "DISTANCIA_KM,";
             StrAgregar_Servicios += "DESCRIPCION,";
             StrAgregar_Servicios += "FACTURAS,";
             StrAgregar_Servicios += "BULTOS,";
@@ -169,6 +198,7 @@ namespace BikeMessenger
             StrAgregar_Servicios += "HORAENTREGA,";
             StrAgregar_Servicios += "DISTANCIA,";
             StrAgregar_Servicios += "PROGRAMADO) VALUES (";
+            StrAgregar_Servicios += "'" + BK_PENTALPHA + "',";
             StrAgregar_Servicios += "'" + BK_NROENVIO + "',";
             StrAgregar_Servicios += "'" + BK_GUIADESPACHO + "',";
             StrAgregar_Servicios += "'" + BK_FECHA + "',";
@@ -198,13 +228,14 @@ namespace BikeMessenger
             StrAgregar_Servicios += "'" + BK_DESTADO + "',";
             StrAgregar_Servicios += "'" + BK_DPAIS + "',";
             StrAgregar_Servicios += "'" + BK_DCOORDENADAS + "',";
+            StrAgregar_Servicios += " " + BK_DISTANCIA_KM.ToString("G", CultureInfo.InvariantCulture) + " ,";
             StrAgregar_Servicios += "'" + BK_DESCRIPCION + "',";
-            StrAgregar_Servicios += " " + BK_FACTURAS.ToString() + ",";
-            StrAgregar_Servicios += " " + BK_BULTOS.ToString() + ",";
-            StrAgregar_Servicios += " " + BK_COMPRAS.ToString() + ",";
-            StrAgregar_Servicios += " " + BK_CHEQUES.ToString() + ",";
-            StrAgregar_Servicios += " " + BK_SOBRES.ToString() + ",";
-            StrAgregar_Servicios += " " + BK_OTROS.ToString() + ",";
+            StrAgregar_Servicios += " " + BK_FACTURAS.ToString() + " ,";
+            StrAgregar_Servicios += " " + BK_BULTOS.ToString() + " ,";
+            StrAgregar_Servicios += " " + BK_COMPRAS.ToString() + " ,";
+            StrAgregar_Servicios += " " + BK_CHEQUES.ToString() + " ,";
+            StrAgregar_Servicios += " " + BK_SOBRES.ToString() + " ,";
+            StrAgregar_Servicios += " " + BK_OTROS.ToString() + " ,";
             StrAgregar_Servicios += "'" + BK_OBSERVACIONES + "',";
             StrAgregar_Servicios += "'" + BK_ENTREGA + "',";
             StrAgregar_Servicios += "'" + BK_RECEPCION + "',";
@@ -216,10 +247,10 @@ namespace BikeMessenger
             try
             {
                 BK_Cmd_Servicios = new SqliteCommand(StrAgregar_Servicios, BM_Connection);
-                BK_Cmd_Servicios.ExecuteNonQuery();
+                _ = BK_Cmd_Servicios.ExecuteNonQuery();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -267,6 +298,7 @@ namespace BikeMessenger
                     BK_DESTADO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DESTADO"));
                     BK_DPAIS = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DPAIS"));
                     BK_DCOORDENADAS = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DCOORDENADAS"));
+                    BK_DISTANCIA_KM = BK_Reader_Servicios.GetDouble(BK_Reader_Servicios.GetOrdinal("DISTANCIA_KM"));
                     BK_DESCRIPCION = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DESCRIPCION"));
                     BK_FACTURAS = BK_Reader_Servicios.GetInt32(BK_Reader_Servicios.GetOrdinal("FACTURAS"));
                     BK_BULTOS = BK_Reader_Servicios.GetInt32(BK_Reader_Servicios.GetOrdinal("BULTOS"));
@@ -290,17 +322,17 @@ namespace BikeMessenger
                     return false;
                 }
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
         }
 
-        public bool Bm_Servicios_Buscar(string pNROENVIO)
+        public bool Bm_Servicios_Buscar(string pPENTALPHA, string pNROENVIO)
         {
             try
             {
-                BK_Cmd_Servicios = new SqliteCommand(StrBuscar_Servicios + " WHERE NROENVIO = '" + pNROENVIO + "'", BM_Connection);
+                BK_Cmd_Servicios = new SqliteCommand(StrBuscar_Servicios + " WHERE PENTALPHA = '" + pPENTALPHA + "' AND NROENVIO = '" + pNROENVIO + "'", BM_Connection);
                 BK_Reader_Servicios = BK_Cmd_Servicios.ExecuteReader();
 
                 if (BK_Reader_Servicios.Read())
@@ -338,6 +370,7 @@ namespace BikeMessenger
                     BK_DESTADO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DESTADO"));
                     BK_DPAIS = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DPAIS"));
                     BK_DCOORDENADAS = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DCOORDENADAS"));
+                    BK_DISTANCIA_KM = BK_Reader_Servicios.GetDouble(BK_Reader_Servicios.GetOrdinal("DISTANCIA_KM"));
                     BK_DESCRIPCION = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DESCRIPCION"));
                     BK_FACTURAS = BK_Reader_Servicios.GetInt32(BK_Reader_Servicios.GetOrdinal("FACTURAS"));
                     BK_BULTOS = BK_Reader_Servicios.GetInt32(BK_Reader_Servicios.GetOrdinal("BULTOS"));
@@ -361,19 +394,19 @@ namespace BikeMessenger
                     return false;
                 }
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
         }
 
         // Procedimiento Modificar Servicio
-        public bool Bm_Recursos_Modificar(string pNROENVIO)
+        public bool Bm_Recursos_Modificar(string pPENTALPHA, string pNROENVIO)
         {
             try
             {
                 StrModificar_Servicios = "UPDATE SERVICIOS SET ";
-                StrModificar_Servicios += "NROENVIO = '" + BK_NROENVIO + "',";
+                // StrModificar_Servicios += "NROENVIO = '" + BK_NROENVIO + "',";
                 StrModificar_Servicios += "GUIADESPACHO = '" + BK_GUIADESPACHO + "',";
                 StrModificar_Servicios += "FECHA = '" + BK_FECHA + "',";
                 StrModificar_Servicios += "HORA = '" + BK_HORA + "',";
@@ -402,13 +435,14 @@ namespace BikeMessenger
                 StrModificar_Servicios += "DESTADO = '" + BK_DESTADO + "',";
                 StrModificar_Servicios += "DPAIS = '" + BK_DPAIS + "',";
                 StrModificar_Servicios += "DCOORDENADAS = '" + BK_DCOORDENADAS + "',";
+                StrModificar_Servicios += "DISTANCIA_KM = " + BK_DISTANCIA_KM.ToString("G", CultureInfo.InvariantCulture) + " ,";
                 StrModificar_Servicios += "DESCRIPCION = '" + BK_DESCRIPCION + "',";
-                StrModificar_Servicios += "FACTURAS = " + BK_FACTURAS.ToString() + ",";
-                StrModificar_Servicios += "BULTOS = " + BK_BULTOS.ToString() + ",";
-                StrModificar_Servicios += "COMPRAS = " + BK_COMPRAS.ToString() + ",";
-                StrModificar_Servicios += "CHEQUES = " + BK_CHEQUES.ToString() + ",";
-                StrModificar_Servicios += "SOBRES = " + BK_SOBRES.ToString() + ",";
-                StrModificar_Servicios += "OTROS = " + BK_OTROS.ToString() + ",";
+                StrModificar_Servicios += "FACTURAS = " + BK_FACTURAS.ToString() + " ,";
+                StrModificar_Servicios += "BULTOS = " + BK_BULTOS.ToString() + " ,";
+                StrModificar_Servicios += "COMPRAS = " + BK_COMPRAS.ToString() + " ,";
+                StrModificar_Servicios += "CHEQUES = " + BK_CHEQUES.ToString() + " ,";
+                StrModificar_Servicios += "SOBRES = " + BK_SOBRES.ToString() + " ,";
+                StrModificar_Servicios += "OTROS = " + BK_OTROS.ToString() + " ,";
                 StrModificar_Servicios += "OBSERVACIONES = '" + BK_OBSERVACIONES + "',";
                 StrModificar_Servicios += "ENTREGA = '" + BK_ENTREGA + "',";
                 StrModificar_Servicios += "RECEPCION = '" + BK_RECEPCION + "',";
@@ -418,12 +452,13 @@ namespace BikeMessenger
                 StrModificar_Servicios += "DISTANCIA = '" + BK_DISTANCIA + "',";
                 StrModificar_Servicios += "PROGRAMADO = '" + BK_PROGRAMADO + "' ";
                 StrModificar_Servicios += "WHERE ";
+                StrModificar_Servicios += "PENTALPHA = '" + pPENTALPHA + "' AND ";
                 StrModificar_Servicios += "NROENVIO = '" + pNROENVIO + "'";
                 BK_Cmd_Servicios = new SqliteCommand(StrModificar_Servicios, BM_Connection);
-                BK_Cmd_Servicios.ExecuteNonQuery();
+                _ = BK_Cmd_Servicios.ExecuteNonQuery();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -431,19 +466,20 @@ namespace BikeMessenger
 
 
         // Procedimiento Borrar Servicios
-        public bool Bm_Servicios_Borrar(string pNROENVIO)
+        public bool Bm_Servicios_Borrar(string pPENTALPHA, string pNROENVIO)
         {
             try
             {
                 StrBorrar_Servicios = "DELETE FROM SERVICIOS ";
                 StrBorrar_Servicios += "WHERE ";
+                StrBorrar_Servicios += "PENTALPHA = '" + pPENTALPHA + "' AND ";
                 StrBorrar_Servicios += "NROENVIO = '" + pNROENVIO + "'";
                 BK_Cmd_Servicios = new SqliteCommand(StrBorrar_Servicios, BM_Connection);
                 BK_Cmd_Servicios.ExecuteNonQuery();
                 LimpiarVariables();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -458,7 +494,7 @@ namespace BikeMessenger
                 BK_Reader_Servicios_Pais = BK_Cmd_Servicios_Pais.ExecuteReader();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -470,18 +506,125 @@ namespace BikeMessenger
             {
                 if (BK_Reader_Servicios_Pais.Read())
                 {
-                    // Llenar Valores de Recursos
                     BK_E_CODPAIS = BK_Reader_Servicios_Pais.GetInt16(BK_Reader_Servicios_Pais.GetOrdinal("CODPAIS"));
                     BK_E_PAIS = BK_Reader_Servicios_Pais.GetString(BK_Reader_Servicios_Pais.GetOrdinal("PAIS"));
                     return true;
                 }
                 else
                 {
-                    // No existe Recursos
                     return false;
                 }
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
+            {
+                return false;
+            }
+        }
+
+        // Procedimiento Buscar Region
+        public bool Bm_E_Region_EjecutarSelect()
+        {
+            try
+            {
+                BK_Cmd_Servicios_Region = new SqliteCommand(StrBuscar_Servicios_Region, BM_Connection);
+                BK_Reader_Servicios_Region = BK_Cmd_Servicios_Region.ExecuteReader();
+                return true;
+            }
+            catch (SqliteException)
+            {
+                return false;
+            }
+        }
+
+        public bool Bm_E_Region_Buscar()
+        {
+            try
+            {
+                if (BK_Reader_Servicios_Region.Read())
+                {
+                    BK_E_CODREGION = BK_Reader_Servicios_Region.GetInt16(BK_Reader_Servicios_Region.GetOrdinal("CODREGION"));
+                    BK_E_REGION = BK_Reader_Servicios_Region.GetString(BK_Reader_Servicios_Region.GetOrdinal("REGION"));
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (SqliteException)
+            {
+                return false;
+            }
+        }
+
+
+        // Procedimiento Buscar Comuna
+        public bool Bm_E_Comuna_EjecutarSelect()
+        {
+            try
+            {
+                BK_Cmd_Servicios_Comuna = new SqliteCommand(StrBuscar_Servicios_Comuna, BM_Connection);
+                BK_Reader_Servicios_Comuna = BK_Cmd_Servicios_Comuna.ExecuteReader();
+                return true;
+            }
+            catch (SqliteException)
+            {
+                return false;
+            }
+        }
+
+        public bool Bm_E_Comuna_Buscar()
+        {
+            try
+            {
+                if (BK_Reader_Servicios_Comuna.Read())
+                {
+                    BK_E_CODCOMUNA = BK_Reader_Servicios_Comuna.GetInt16(BK_Reader_Servicios_Comuna.GetOrdinal("CODCOMU"));
+                    BK_E_COMUNA = BK_Reader_Servicios_Comuna.GetString(BK_Reader_Servicios_Comuna.GetOrdinal("COMUNA"));
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (SqliteException)
+            {
+                return false;
+            }
+        }
+
+        // Procedimiento Buscar Ciudad
+        public bool Bm_E_Ciudad_EjecutarSelect()
+        {
+            try
+            {
+                BK_Cmd_Servicios_Ciudad = new SqliteCommand(StrBuscar_Servicios_Ciudad, BM_Connection);
+                BK_Reader_Servicios_Ciudad = BK_Cmd_Servicios_Ciudad.ExecuteReader();
+                return true;
+            }
+            catch (SqliteException)
+            {
+                return false;
+            }
+        }
+
+        public bool Bm_E_Ciudad_Buscar()
+        {
+            try
+            {
+                if (BK_Reader_Servicios_Ciudad.Read())
+                {
+                    BK_E_CODCIUDAD = BK_Reader_Servicios_Ciudad.GetInt16(BK_Reader_Servicios_Ciudad.GetOrdinal("CODCIUDAD"));
+                    BK_E_CIUDAD = BK_Reader_Servicios_Ciudad.GetString(BK_Reader_Servicios_Ciudad.GetOrdinal("CIUDAD"));
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (SqliteException)
             {
                 return false;
             }
@@ -521,6 +664,7 @@ namespace BikeMessenger
             BK_DESTADO = "";
             BK_DPAIS = "";
             BK_DCOORDENADAS = "";
+            BK_DISTANCIA_KM = 0;
             BK_DESCRIPCION = "";
             BK_FACTURAS = 0;
             BK_BULTOS = 0;
@@ -554,7 +698,7 @@ namespace BikeMessenger
                 BK_Reader_BuscarCliente.Close();
                 BK_Cmd_BuscarCliente.Dispose();
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 lRetorno = "CLIENTE NO REGISTRADO";
             }
@@ -577,7 +721,7 @@ namespace BikeMessenger
                 BK_Reader_BuscarMensajero.Close();
                 BK_Cmd_BuscarMensajero.Dispose();
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 lRetorno = "MENSAJERO NO REGISTRADO";
             }
@@ -600,13 +744,12 @@ namespace BikeMessenger
                 BK_Reader_BuscarRecurso.Close();
                 BK_Cmd_BuscarRecurso.Dispose();
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 lRetorno = "RECURSO NO REGISTRADO";
             }
             return lRetorno;
         }
-
 
         // ****************************************************
         // Procedimientos de Envios
@@ -619,7 +762,7 @@ namespace BikeMessenger
                 BK_Reader_Servicios_Envios = BK_Cmd_Envios_Grid.ExecuteReader();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -644,7 +787,7 @@ namespace BikeMessenger
                     return false;
                 }
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -661,7 +804,7 @@ namespace BikeMessenger
                 BK_Reader_Servicios_Clientes = BK_Cmd_Clientes_Grid.ExecuteReader();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -684,7 +827,7 @@ namespace BikeMessenger
                     return false;
                 }
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -724,7 +867,7 @@ namespace BikeMessenger
                     return false;
                 }
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -741,7 +884,7 @@ namespace BikeMessenger
                 BK_Reader_Servicios_Recursos = BK_Cmd_Recursos_Grid.ExecuteReader();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -768,7 +911,7 @@ namespace BikeMessenger
                     return false;
                 }
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }

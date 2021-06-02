@@ -1,8 +1,8 @@
 ﻿namespace BikeMessenger
 {
-    internal class JsonBikeMessengerEmpresa
+    internal class JsonBikeMessengerCliente
     {
-        // Campos de Empresa Json
+        // Campos de Cliente Json
         public string OPERACION { get; set; }
         public string PENTALPHA { get; set; }
         public string RUTID { get; set; }
@@ -30,7 +30,7 @@
         public string RESOPERACION { get; set; }
         public string RESMENSAJE { get; set; }
 
-        public JsonBikeMessengerEmpresa()
+        public JsonBikeMessengerCliente()
         {
             OPERACION = "";
             PENTALPHA = "";

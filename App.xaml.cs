@@ -12,7 +12,7 @@ namespace BikeMessenger
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
 
-    sealed partial class App : Application
+    public sealed partial class App : Application
     {
         static readonly TransferVar LvrTransferVar = new TransferVar();
         /// <summary>
@@ -21,8 +21,8 @@ namespace BikeMessenger
         /// </summary>
         public App()
         {
-            this.InitializeComponent();
-            this.Suspending += OnSuspending;
+            InitializeComponent();
+            Suspending += OnSuspending;
         }
 
         /// <summary>
@@ -76,8 +76,10 @@ namespace BikeMessenger
             if (!(Window.Current.Content is Frame rootFrame))
             {
                 // Create a Frame to act as the navigation context and navigate to the first page
-                rootFrame = new Frame();
-                rootFrame.CacheSize = 0;
+                rootFrame = new Frame
+                {
+                    CacheSize = 0
+                };
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
@@ -98,20 +100,25 @@ namespace BikeMessenger
                 IniciarBaseDeDatos LvrIniciarBaseDeDatos = new IniciarBaseDeDatos(LvrTransferVar.TV_Connection);
                 LvrIniciarBaseDeDatos = null;
                 // Empresa
+                LvrTransferVar.E_PENTALPHA = "";
                 LvrTransferVar.E_RUTID = "";
                 LvrTransferVar.E_DIGVER = "";
                 // Personal
+                LvrTransferVar.P_PENTALPHA = "";
                 LvrTransferVar.P_RUTID = "";
                 LvrTransferVar.P_DIGVER = "";
                 // Recursos
+                LvrTransferVar.R_PENTALPHA = "";
                 LvrTransferVar.R_RUTID = "";
                 LvrTransferVar.R_DIGVER = "";
                 LvrTransferVar.R_PAT_SER = "";
                 // Clientes
+                LvrTransferVar.C_PENTALPHA = "";
                 LvrTransferVar.C_RUTID = "";
                 LvrTransferVar.C_DIGVER = "";
                 // Servicios
-                LvrTransferVar.S_NROENVIO = "";
+                LvrTransferVar.X_PENTALPHA = "";
+                LvrTransferVar.X_NROENVIO = "";
 
                 rootFrame.CacheSize = 0;
                 rootFrame.Navigate(typeof(PageEmpresa), LvrTransferVar, new SuppressNavigationTransitionInfo());
@@ -139,7 +146,7 @@ namespace BikeMessenger
         /// <param name="e">Details about the suspend request.</param>
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
-            var deferral = e.SuspendingOperation.GetDeferral();
+            SuspendingDeferral deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
         }

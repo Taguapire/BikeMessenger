@@ -129,13 +129,17 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Bm_Clientes_Database.cs" />
+    <Compile Include="Bm_Cliente_Database.cs" />
     <Compile Include="Bm_Empresa_Database.cs" />
     <Compile Include="Bm_Personal_Database.cs" />
-    <Compile Include="Bm_Recursos_Database.cs" />
-    <Compile Include="Bm_Servicios_Database.cs" />
+    <Compile Include="Bm_Recurso_Database.cs" />
+    <Compile Include="Bm_Servicio_Database.cs" />
     <Compile Include="IniciarBaseDeDatos.cs" />
+    <Compile Include="JsonBikeMessengerCliente.cs" />
     <Compile Include="JsonBikeMessengerEmpresa.cs" />
+    <Compile Include="JsonBikeMessengerPersonal.cs" />
+    <Compile Include="JsonBikeMessengerRecurso.cs" />
+    <Compile Include="JsonBikeMessengerServicio.cs" />
     <Compile Include="LvrInternet.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>

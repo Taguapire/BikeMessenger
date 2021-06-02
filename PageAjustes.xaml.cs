@@ -4,6 +4,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
+using System.Threading.Tasks;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -14,12 +15,12 @@ namespace BikeMessenger
     /// </summary>
     public sealed partial class PageAjustes : Page
     {
-        TransferVar LvrTransferVar;
-        bool CambiarDirectorioSiNo;
+        private TransferVar LvrTransferVar;
+        private bool CambiarDirectorioSiNo;
 
         public PageAjustes()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -33,7 +34,7 @@ namespace BikeMessenger
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is string && !string.IsNullOrWhiteSpace((string)e.Parameter))
+            if (e.Parameter is string @string && !string.IsNullOrWhiteSpace(@string))
             {
                 //greeting.Text = $"Hi, {e.Parameter.ToString()}";
             }
@@ -48,44 +49,32 @@ namespace BikeMessenger
 
         private void BtnSeleccionarAjustes(object sender, RoutedEventArgs e)
         {
-            // this.Frame.Navigate(typeof(PageAjustes), LvrTransferVar, new SuppressNavigationTransitionInfo());
+            // _ = Frame.Navigate(typeof(PageAjustes), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarServicios(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PageServicios), LvrTransferVar, new SuppressNavigationTransitionInfo());
+            _ = Frame.Navigate(typeof(PageServicios), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarClientes(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PageClientes), LvrTransferVar, new SuppressNavigationTransitionInfo());
+            _ = Frame.Navigate(typeof(PageClientes), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarRecursos(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PageRecursos), LvrTransferVar, new SuppressNavigationTransitionInfo());
+            _ = Frame.Navigate(typeof(PageRecursos), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarEmpresa(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PageEmpresa), LvrTransferVar, new SuppressNavigationTransitionInfo());
+            _ = Frame.Navigate(typeof(PageEmpresa), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSeleccionarPersonal(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PagePersonal), LvrTransferVar, new SuppressNavigationTransitionInfo());
-        }
-
-        private async void ErrorDeRecuperacionDialog()
-        {
-            ContentDialog noErrorRecuperacionDialog = new ContentDialog
-            {
-                Title = "Acceso a Base de Datos",
-                Content = "El registro a recuperar tiene valores nulos.",
-                CloseButtonText = "Ok"
-            };
-
-            ContentDialogResult result = await noErrorRecuperacionDialog.ShowAsync();
+            _ = Frame.Navigate(typeof(PagePersonal), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private void BtnSalirAjustes(object sender, RoutedEventArgs e)
@@ -99,15 +88,17 @@ namespace BikeMessenger
             try
             {
 
-                var b = (Control)sender;
+                Control b = (Control)sender;
                 b.IsEnabled = false;
 
-                var folderPicker = new Windows.Storage.Pickers.FolderPicker();
-                folderPicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.ComputerFolder;
+                Windows.Storage.Pickers.FolderPicker folderPicker = new Windows.Storage.Pickers.FolderPicker
+                {
+                    SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.ComputerFolder
+                };
                 folderPicker.FileTypeFilter.Add("*");
                 //folderPicker.FileTypeFilter.Add("*.db3");
 
-                Windows.Storage.StorageFolder folder = await folderPicker.PickSingleFolderAsync();
+                StorageFolder folder = await folderPicker.PickSingleFolderAsync();
 
                 if (folder == null)
                 {
@@ -117,7 +108,7 @@ namespace BikeMessenger
 
                 textBoxDirectorioNuevo.Text = folder.Path;
             }
-            catch (System.NullReferenceException)
+            catch (NullReferenceException)
             {
                 ;// textBoxDirectorioNuevo.Text
             }
@@ -143,31 +134,34 @@ namespace BikeMessenger
             await AvisoCambiarDirectorioDialogAsync();
 
             if (!CambiarDirectorioSiNo)
+            {
                 return;
+            }
+
             try
             {
-                await CopiarBaseDeDatosAsync((string)textBoxDirectorioActual.Text, (string)textBoxDirectorioNuevo.Text);
+                await CopiarBaseDeDatosAsync(textBoxDirectorioActual.Text, textBoxDirectorioNuevo.Text);
             }
-            catch (System.ArgumentException)
+            catch (ArgumentException)
             {
                 await AvisoDirectorioDialogAsync("Cambiar Directorio", "No a sido posible cambiar la base de datos a nuevo directorio.");
             }
-            catch (System.InvalidCastException)
+            catch (InvalidCastException)
             {
                 await AvisoDirectorioDialogAsync("Cambiar Directorio", "No a sido posible cambiar la base de datos a nuevo directorio.");
             }
-            catch (System.UnauthorizedAccessException)
+            catch (UnauthorizedAccessException)
             {
                 await AvisoDirectorioDialogAsync("Cambiar Directorio", "Acceso no autorizado a este directorio.");
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 await AvisoDirectorioDialogAsync("Cambiar Directorio", "No puede crearse la Base en Destino.");
             }
             CambiarDirectorioSiNo = false;
         }
 
-        private async System.Threading.Tasks.Task AvisoCambiarDirectorioDialogAsync()
+        private async Task AvisoCambiarDirectorioDialogAsync()
         {
             ContentDialog AvisoCambiarDirectorioDialog = new ContentDialog
             {
@@ -179,13 +173,10 @@ namespace BikeMessenger
 
             ContentDialogResult result = await AvisoCambiarDirectorioDialog.ShowAsync();
 
-            if (result == ContentDialogResult.Primary)
-                CambiarDirectorioSiNo = true;
-            else
-                CambiarDirectorioSiNo = false;
+            CambiarDirectorioSiNo = result == ContentDialogResult.Primary;
         }
 
-        private async System.Threading.Tasks.Task AvisoDirectorioDialogAsync(string pTitle, string pContent)
+        private async Task AvisoDirectorioDialogAsync(string pTitle, string pContent)
         {
             ContentDialog AvisoCambiarDirectorioDialog = new ContentDialog
             {
@@ -193,11 +184,10 @@ namespace BikeMessenger
                 Content = pContent,
                 CloseButtonText = "Continuar"
             };
-
-            ContentDialogResult result = await AvisoCambiarDirectorioDialog.ShowAsync();
+            _ = await AvisoCambiarDirectorioDialog.ShowAsync();
         }
 
-        private async System.Threading.Tasks.Task CopiarBaseDeDatosAsync(string DirectorioOrigen, string DirectorioDestino)
+        private async Task CopiarBaseDeDatosAsync(string DirectorioOrigen, string DirectorioDestino)
         {
             StorageFolder FolderOrigen = await StorageFolder.GetFolderFromPathAsync(DirectorioOrigen);
             StorageFile BaseDatosOrigen = await FolderOrigen.GetFileAsync("BikeMessenger.db");
@@ -205,7 +195,7 @@ namespace BikeMessenger
             StorageFolder FolderDestino = await StorageFolder.GetFolderFromPathAsync(DirectorioDestino);
             //StorageFile BaseDatosDestino = await FolderDestino.GetFileAsync("BikeMessenger.db");
 
-            StorageFile copiedFile = await BaseDatosOrigen.CopyAsync(FolderDestino, "BikeMessenger.db", NameCollisionOption.GenerateUniqueName);
+            _ = await BaseDatosOrigen.CopyAsync(FolderDestino, "BikeMessenger.db", NameCollisionOption.GenerateUniqueName);
         }
     }
 }

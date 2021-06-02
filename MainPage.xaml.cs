@@ -13,7 +13,7 @@ namespace BikeMessenger
         public MainPage()
         {
 
-            this.InitializeComponent();
+            InitializeComponent();
         }
     }
 }

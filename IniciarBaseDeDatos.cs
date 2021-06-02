@@ -5,59 +5,58 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-
 namespace BikeMessenger
 {
-    class IniciarBaseDeDatos
+    internal class IniciarBaseDeDatos
     {
-        string TabESTADOREGION;
-        string TabCOMUNA;
-        string TabCIUDAD;
-        string TabPAIS;
-        string TabEMPRESA;
-        string TabCLIENTES;
-        string TabPERSONAL;
-        string TabRECURSOS;
-        string TabSERVICIOS;
-        string IndRECURSOS_IDX1;
+        private string TabESTADOREGION { get; set; }
+        private string TabCOMUNA { get; set; }
+        private string TabCIUDAD { get; set; }
+        private string TabPAIS { get; set; }
+        private string TabEMPRESA { get; set; }
+        private string TabCLIENTES { get; set; }
+        private string TabPERSONAL { get; set; }
+        private string TabRECURSOS { get; set; }
+        private string TabSERVICIOS { get; set; }
+        private string IndRECURSOS_IDX1 { get; set; }
 
-        string EmpresaTriggerPaisInsert;
-        string EmpresaTriggerPaisUpdate;
-        string EmpresaTriggerRegionInsert;
-        string EmpresaTriggerRegionUpdate;
-        string EmpresaTriggerComunaInsert;
-        string EmpresaTriggerComunaUpdate;
-        string EmpresaTriggerCiudadInsert;
-        string EmpresaTriggerCiudadUpdate;
+        private string EmpresaTriggerPaisInsert { get; set; }
+        private string EmpresaTriggerPaisUpdate { get; set; }
+        private string EmpresaTriggerRegionInsert { get; set; }
+        private string EmpresaTriggerRegionUpdate { get; set; }
+        private string EmpresaTriggerComunaInsert { get; set; }
+        private string EmpresaTriggerComunaUpdate { get; set; }
+        private string EmpresaTriggerCiudadInsert { get; set; }
+        private string EmpresaTriggerCiudadUpdate { get; set; }
 
-        string PersonalTriggerPaisInsert;
-        string PersonalTriggerPaisUpdate;
-        string PersonalTriggerRegionInsert;
-        string PersonalTriggerRegionUpdate;
-        string PersonalTriggerComunaInsert;
-        string PersonalTriggerComunaUpdate;
-        string PersonalTriggerCiudadInsert;
-        string PersonalTriggerCiudadUpdate;
+        private string PersonalTriggerPaisInsert { get; set; }
+        private string PersonalTriggerPaisUpdate { get; set; }
+        private string PersonalTriggerRegionInsert { get; set; }
+        private string PersonalTriggerRegionUpdate { get; set; }
+        private string PersonalTriggerComunaInsert { get; set; }
+        private string PersonalTriggerComunaUpdate { get; set; }
+        private string PersonalTriggerCiudadInsert { get; set; }
+        private string PersonalTriggerCiudadUpdate { get; set; }
 
-        string RecursosTriggerPaisInsert;
-        string RecursosTriggerPaisUpdate;
-        string RecursosTriggerRegionInsert;
-        string RecursosTriggerRegionUpdate;
-        string RecursosTriggerComunaInsert;
-        string RecursosTriggerComunaUpdate;
-        string RecursosTriggerCiudadInsert;
-        string RecursosTriggerCiudadUpdate;
+        private string RecursosTriggerPaisInsert { get; set; }
+        private string RecursosTriggerPaisUpdate { get; set; }
+        private string RecursosTriggerRegionInsert { get; set; }
+        private string RecursosTriggerRegionUpdate { get; set; }
+        private string RecursosTriggerComunaInsert { get; set; }
+        private string RecursosTriggerComunaUpdate { get; set; }
+        private string RecursosTriggerCiudadInsert { get; set; }
+        private string RecursosTriggerCiudadUpdate { get; set; }
 
-        string ClientesTriggerPaisInsert;
-        string ClientesTriggerPaisUpdate;
-        string ClientesTriggerRegionInsert;
-        string ClientesTriggerRegionUpdate;
-        string ClientesTriggerComunaInsert;
-        string ClientesTriggerComunaUpdate;
-        string ClientesTriggerCiudadInsert;
-        string ClientesTriggerCiudadUpdate;
+        private string ClientesTriggerPaisInsert { get; set; }
+        private string ClientesTriggerPaisUpdate { get; set; }
+        private string ClientesTriggerRegionInsert { get; set; }
+        private string ClientesTriggerRegionUpdate { get; set; }
+        private string ClientesTriggerComunaInsert { get; set; }
+        private string ClientesTriggerComunaUpdate { get; set; }
+        private string ClientesTriggerCiudadInsert { get; set; }
+        private string ClientesTriggerCiudadUpdate { get; set; }
 
-        readonly SqliteConnection IDB_Connection;
+        private readonly SqliteConnection IDB_Connection;
 
         public IniciarBaseDeDatos(SqliteConnection pIDB_Connection)
         {
@@ -80,7 +79,7 @@ namespace BikeMessenger
             // ProcTRIGGERSServicios();
         }
 
-        void AsignarValores()
+        private void AsignarValores()
         {
             TabESTADOREGION = "CREATE TABLE IF NOT EXISTS ESTADOREGION (";
             TabESTADOREGION += "CODREGION INTEGER NOT NULL,";
@@ -533,283 +532,283 @@ namespace BikeMessenger
             ClientesTriggerCiudadUpdate += "END ";
         }
 
-        bool ProcTabPAIS()
+        private bool ProcTabPAIS()
         {
             SqliteCommand IDB_Command;
             try
             {
                 IDB_Command = new SqliteCommand(TabPAIS, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
         }
 
-        bool ProcTabESTADOREGION()
+        private bool ProcTabESTADOREGION()
         {
             SqliteCommand IDB_Command;
             try
             {
                 IDB_Command = new SqliteCommand(TabESTADOREGION, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
         }
 
-        bool ProcTabCOMUNA()
+        private bool ProcTabCOMUNA()
         {
             SqliteCommand IDB_Command;
             try
             {
                 IDB_Command = new SqliteCommand(TabCOMUNA, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
         }
 
-        bool ProcTabCIUDAD()
+        private bool ProcTabCIUDAD()
         {
             SqliteCommand IDB_Command;
             try
             {
                 IDB_Command = new SqliteCommand(TabCIUDAD, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
         }
 
-        bool ProcTabEMPRESA()
+        private bool ProcTabEMPRESA()
         {
             SqliteCommand IDB_Command;
             try
             {
                 IDB_Command = new SqliteCommand(TabEMPRESA, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
         }
 
-        bool ProcTabCLIENTES()
+        private bool ProcTabCLIENTES()
         {
             SqliteCommand IDB_Command;
             try
             {
                 IDB_Command = new SqliteCommand(TabCLIENTES, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
         }
 
-        bool ProcTabPERSONAL()
+        private bool ProcTabPERSONAL()
         {
             SqliteCommand IDB_Command;
             try
             {
                 IDB_Command = new SqliteCommand(TabPERSONAL, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
         }
 
-        bool ProcTabRECURSOS()
+        private bool ProcTabRECURSOS()
         {
             SqliteCommand IDB_Command;
             try
             {
                 IDB_Command = new SqliteCommand(TabRECURSOS, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
         }
 
-        bool ProcTabSERVICIOS()
+        private bool ProcTabSERVICIOS()
         {
             SqliteCommand IDB_Command;
             try
             {
                 IDB_Command = new SqliteCommand(TabSERVICIOS, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
         }
 
-        bool ProcIndINDICES()
+        private bool ProcIndINDICES()
         {
             SqliteCommand IDB_Command;
             try
             {
                 IDB_Command = new SqliteCommand(IndRECURSOS_IDX1, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
         }
 
-        bool ProcTRIGGERSEmpresa()
+        private bool ProcTRIGGERSEmpresa()
         {
             SqliteCommand IDB_Command;
             try
             {
                 IDB_Command = new SqliteCommand(EmpresaTriggerPaisInsert, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
                 IDB_Command = new SqliteCommand(EmpresaTriggerPaisUpdate, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
 
                 IDB_Command = new SqliteCommand(EmpresaTriggerRegionInsert, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
                 IDB_Command = new SqliteCommand(EmpresaTriggerRegionUpdate, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
 
                 IDB_Command = new SqliteCommand(EmpresaTriggerComunaInsert, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
                 IDB_Command = new SqliteCommand(EmpresaTriggerComunaUpdate, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
 
                 IDB_Command = new SqliteCommand(EmpresaTriggerCiudadInsert, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
                 IDB_Command = new SqliteCommand(EmpresaTriggerCiudadUpdate, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
 
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
         }
 
-        bool ProcTRIGGERSPersonal()
+        private bool ProcTRIGGERSPersonal()
         {
             SqliteCommand IDB_Command;
             try
             {
                 IDB_Command = new SqliteCommand(PersonalTriggerPaisInsert, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
                 IDB_Command = new SqliteCommand(PersonalTriggerPaisUpdate, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
 
                 IDB_Command = new SqliteCommand(PersonalTriggerRegionInsert, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
                 IDB_Command = new SqliteCommand(PersonalTriggerRegionUpdate, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
 
                 IDB_Command = new SqliteCommand(PersonalTriggerComunaInsert, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
                 IDB_Command = new SqliteCommand(PersonalTriggerComunaUpdate, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
 
                 IDB_Command = new SqliteCommand(PersonalTriggerCiudadInsert, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
                 IDB_Command = new SqliteCommand(PersonalTriggerCiudadUpdate, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
 
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
         }
 
-        bool ProcTRIGGERSRecursos()
+        private bool ProcTRIGGERSRecursos()
         {
             SqliteCommand IDB_Command;
             try
             {
                 IDB_Command = new SqliteCommand(RecursosTriggerPaisInsert, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
                 IDB_Command = new SqliteCommand(RecursosTriggerPaisUpdate, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
 
                 IDB_Command = new SqliteCommand(RecursosTriggerRegionInsert, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
                 IDB_Command = new SqliteCommand(RecursosTriggerRegionUpdate, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
 
                 IDB_Command = new SqliteCommand(RecursosTriggerComunaInsert, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
                 IDB_Command = new SqliteCommand(RecursosTriggerComunaUpdate, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
 
                 IDB_Command = new SqliteCommand(RecursosTriggerCiudadInsert, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
                 IDB_Command = new SqliteCommand(RecursosTriggerCiudadUpdate, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
 
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
         }
 
-        bool ProcTRIGGERSClientes()
+        private bool ProcTRIGGERSClientes()
         {
             SqliteCommand IDB_Command;
             try
             {
                 IDB_Command = new SqliteCommand(ClientesTriggerPaisInsert, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
                 IDB_Command = new SqliteCommand(ClientesTriggerPaisUpdate, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
 
                 IDB_Command = new SqliteCommand(ClientesTriggerRegionInsert, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
                 IDB_Command = new SqliteCommand(ClientesTriggerRegionUpdate, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
 
                 IDB_Command = new SqliteCommand(ClientesTriggerComunaInsert, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
                 IDB_Command = new SqliteCommand(ClientesTriggerComunaUpdate, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
 
                 IDB_Command = new SqliteCommand(ClientesTriggerCiudadInsert, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
                 IDB_Command = new SqliteCommand(ClientesTriggerCiudadUpdate, IDB_Connection);
-                IDB_Command.ExecuteNonQuery();
+                _ = IDB_Command.ExecuteNonQuery();
 
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }

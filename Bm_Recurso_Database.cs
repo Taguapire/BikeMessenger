@@ -3,46 +3,47 @@ using Microsoft.Data.Sqlite;
 
 namespace BikeMessenger
 {
-    class Bm_Recursos_Database
+    class Bm_Recurso_Database
     {
         // public SQLiteFactory BM_DB;
         public SqliteConnection BM_Connection;
 
-        SqliteCommand BK_Cmd_Recursos;
-        SqliteDataReader BK_Reader_Recursos;
+        private SqliteCommand BK_Cmd_Recursos;
+        private SqliteDataReader BK_Reader_Recursos;
 
-        SqliteCommand BK_Cmd_Recursos_Pais;
-        SqliteDataReader BK_Reader_Recursos_Pais;
+        private SqliteCommand BK_Cmd_Recursos_Pais;
+        private SqliteDataReader BK_Reader_Recursos_Pais;
 
-        SqliteCommand BK_Cmd_Recursos_Region;
-        SqliteDataReader BK_Reader_Recursos_Region;
+        private SqliteCommand BK_Cmd_Recursos_Region;
+        private SqliteDataReader BK_Reader_Recursos_Region;
 
-        SqliteCommand BK_Cmd_Recursos_Comuna;
-        SqliteDataReader BK_Reader_Recursos_Comuna;
+        private SqliteCommand BK_Cmd_Recursos_Comuna;
+        private SqliteDataReader BK_Reader_Recursos_Comuna;
 
-        SqliteCommand BK_Cmd_Recursos_Ciudad;
-        SqliteDataReader BK_Reader_Recursos_Ciudad;
+        private SqliteCommand BK_Cmd_Recursos_Ciudad;
+        private SqliteDataReader BK_Reader_Recursos_Ciudad;
 
-        SqliteCommand BK_Cmd_Personal_Grid;
-        SqliteDataReader BK_Reader_Personal_Grid;
+        private SqliteCommand BK_Cmd_Personal_Grid;
+        private SqliteDataReader BK_Reader_Personal_Grid;
 
-        SqliteCommand BK_Cmd_Recursos_Grid;
-        SqliteDataReader BK_Reader_Recursos_Grid;
+        private SqliteCommand BK_Cmd_Recursos_Grid;
+        private SqliteDataReader BK_Reader_Recursos_Grid;
 
-        string StrAgregar_Recursos;
-        string StrModificar_Recursos;
-        string StrBorrar_Recursos;
-        String StrBuscar_Recursos;
+        private string StrAgregar_Recursos;
+        private string StrModificar_Recursos;
+        private string StrBorrar_Recursos;
+        private string StrBuscar_Recursos;
 
-        readonly string StrBuscarGrid_Personal = "SELECT RUTID||'-'||DIGVER, APELLIDOS, NOMBRES FROM PERSONAL ORDER BY APELLIDOS ASC";
-        readonly string StrBuscarGrid_Recursos = "SELECT PATENTE, TIPO, MARCA, MODELO, CIUDAD FROM RECURSOS ORDER BY PATENTE ASC";
+        private readonly string StrBuscarGrid_Personal = "SELECT RUTID||'-'||DIGVER, APELLIDOS, NOMBRES FROM PERSONAL ORDER BY APELLIDOS ASC";
+        private readonly string StrBuscarGrid_Recursos = "SELECT PATENTE, TIPO, MARCA, MODELO, CIUDAD FROM RECURSOS ORDER BY PATENTE ASC";
 
-        readonly String StrBuscar_Recursos_Pais = "SELECT * FROM PAIS ORDER BY PAIS ASC";
-        readonly String StrBuscar_Recursos_Region = "SELECT * FROM ESTADOREGION ORDER BY REGION ASC";
-        readonly String StrBuscar_Recursos_Comuna = "SELECT * FROM COMUNA ORDER BY COMUNA ASC";
-        readonly String StrBuscar_Recursos_Ciudad = "SELECT * FROM CIUDAD ORDER BY CIUDAD ASC";
+        private readonly string StrBuscar_Recursos_Pais = "SELECT * FROM PAIS ORDER BY PAIS ASC";
+        private readonly string StrBuscar_Recursos_Region = "SELECT * FROM ESTADOREGION ORDER BY REGION ASC";
+        private readonly string StrBuscar_Recursos_Comuna = "SELECT * FROM COMUNA ORDER BY COMUNA ASC";
+        private readonly string StrBuscar_Recursos_Ciudad = "SELECT * FROM CIUDAD ORDER BY CIUDAD ASC";
 
         // Campos Recursos
+        public string BK_PENTALPHA { get; set; }
         public string BK_PATENTE { get; set; }
         public string BK_RUTID { get; set; }
         public string BK_DIGVER { get; set; }
@@ -61,19 +62,19 @@ namespace BikeMessenger
         public string BK_FOTO { get; set; }
 
         // Campos de PAIS
-        public Int16 BK_E_CODPAIS { get; set; }
+        public short BK_E_CODPAIS { get; set; }
         public string BK_E_PAIS { get; set; }
 
         // Campos de REGION
-        public Int16 BK_E_CODREGION { get; set; }
+        public short BK_E_CODREGION { get; set; }
         public string BK_E_REGION { get; set; }
 
         // Campos de COMUNA
-        public Int16 BK_E_CODCOMUNA { get; set; }
+        public short BK_E_CODCOMUNA { get; set; }
         public string BK_E_COMUNA { get; set; }
 
         // Campos de CIUDAD
-        public Int16 BK_E_CODCIUDAD { get; set; }
+        public short BK_E_CODCIUDAD { get; set; }
         public string BK_E_CIUDAD { get; set; }
 
         // Campos Grilla Propietarios
@@ -99,6 +100,7 @@ namespace BikeMessenger
             try
             {
                 StrAgregar_Recursos = "INSERT INTO RECURSOS (";
+                StrAgregar_Recursos += "PENTALPHA,";
                 StrAgregar_Recursos += "PATENTE,";
                 StrAgregar_Recursos += "RUTID,";
                 StrAgregar_Recursos += "DIGVER,";
@@ -115,6 +117,7 @@ namespace BikeMessenger
                 StrAgregar_Recursos += "PAIS,";
                 StrAgregar_Recursos += "OBSERVACIONES,";
                 StrAgregar_Recursos += "FOTO) VALUES (";
+                StrAgregar_Recursos += "'" + BK_PENTALPHA + "',";
                 StrAgregar_Recursos += "'" + BK_PATENTE + "',";
                 StrAgregar_Recursos += "'" + BK_RUTID + "',";
                 StrAgregar_Recursos += "'" + BK_DIGVER + "',";
@@ -132,10 +135,10 @@ namespace BikeMessenger
                 StrAgregar_Recursos += "'" + BK_OBSERVACIONES + "',";
                 StrAgregar_Recursos += "'" + BK_FOTO + "')";
                 BK_Cmd_Recursos = new SqliteCommand(StrAgregar_Recursos, BM_Connection);
-                BK_Cmd_Recursos.ExecuteNonQuery();
+                _ = BK_Cmd_Recursos.ExecuteNonQuery();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -176,18 +179,18 @@ namespace BikeMessenger
                     return false;
                 }
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
         }
 
-        public bool Bm_Recursos_Buscar(string pPATENTE)
+        public bool Bm_Recursos_Buscar(string pPENTALPHA, string pPATENTE)
         {
             try
             {
                 StrBuscar_Recursos = "SELECT * FROM RECURSOS";
-                StrBuscar_Recursos += " WHERE PATENTE = '" + pPATENTE + "'";
+                StrBuscar_Recursos += " WHERE PENTALPHA = '" + BK_PENTALPHA + " AND PATENTE = '" + pPATENTE + "'";
 
                 BK_Cmd_Recursos = new SqliteCommand(StrBuscar_Recursos, BM_Connection);
                 BK_Reader_Recursos = BK_Cmd_Recursos.ExecuteReader();
@@ -219,19 +222,19 @@ namespace BikeMessenger
                     return false;
                 }
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
-
         }
 
-        public bool Bm_Recursos_Buscar(string pRUTID, string pDIGVER, string pPATENTE)
+        public bool Bm_Recursos_Buscar(string pPENTALPHA, string pRUTID, string pDIGVER, string pPATENTE)
         {
             try
             {
                 StrBuscar_Recursos = "SELECT * FROM RECURSOS";
                 StrBuscar_Recursos += " WHERE ";
+                StrBuscar_Recursos += " PENTALPHA = '" + pPENTALPHA + "' AND ";
                 StrBuscar_Recursos += " RUTID = '" + pRUTID + "' AND ";
                 StrBuscar_Recursos += " DIGVER = '" + pDIGVER + "' AND ";
                 StrBuscar_Recursos += " PATENTE = '" + pPATENTE + "'";
@@ -266,14 +269,14 @@ namespace BikeMessenger
                     return false;
                 }
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
         }
 
         // Procedimiento Modificar Recursos
-        public bool Bm_Recursos_Modificar(string pPATENTE)
+        public bool Bm_Recursos_Modificar(string pPENTALPHA, string pPATENTE)
         {
             try
             {
@@ -294,31 +297,33 @@ namespace BikeMessenger
                 StrModificar_Recursos += "OBSERVACIONES = '" + BK_OBSERVACIONES + "',";
                 StrModificar_Recursos += "FOTO = '" + BK_FOTO + "' ";
                 StrModificar_Recursos += "WHERE ";
+                StrModificar_Recursos += "PENTALPHA = '" + pPENTALPHA + "' AND ";
                 StrModificar_Recursos += "PATENTE = '" + pPATENTE + "'";
                 BK_Cmd_Recursos = new SqliteCommand(StrModificar_Recursos, BM_Connection);
-                BK_Cmd_Recursos.ExecuteNonQuery();
+                _ = BK_Cmd_Recursos.ExecuteNonQuery();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
         }
 
         // Procedimiento Borrar Recursos
-        public bool Bm_Recursos_Borrar(string pPATENTE)
+        public bool Bm_Recursos_Borrar(string pPENTALPHA, string pPATENTE)
         {
             try
             {
                 StrBorrar_Recursos = "DELETE FROM RECURSOS ";
                 StrBorrar_Recursos += "WHERE ";
+                StrBorrar_Recursos += "PENTALPHA = '" + pPENTALPHA + "'";
                 StrBorrar_Recursos += "PATENTE = '" + pPATENTE + "'";
                 BK_Cmd_Recursos = new SqliteCommand(StrBorrar_Recursos, BM_Connection);
-                BK_Cmd_Recursos.ExecuteNonQuery();
+                _ = BK_Cmd_Recursos.ExecuteNonQuery();
                 LimpiarVariables();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -333,7 +338,7 @@ namespace BikeMessenger
                 BK_Reader_Recursos_Pais = BK_Cmd_Recursos_Pais.ExecuteReader();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -354,7 +359,7 @@ namespace BikeMessenger
                     return false;
                 }
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -369,7 +374,7 @@ namespace BikeMessenger
                 BK_Reader_Recursos_Region = BK_Cmd_Recursos_Region.ExecuteReader();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -390,7 +395,7 @@ namespace BikeMessenger
                     return false;
                 }
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -406,7 +411,7 @@ namespace BikeMessenger
                 BK_Reader_Recursos_Comuna = BK_Cmd_Recursos_Comuna.ExecuteReader();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -427,7 +432,7 @@ namespace BikeMessenger
                     return false;
                 }
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -442,7 +447,7 @@ namespace BikeMessenger
                 BK_Reader_Recursos_Ciudad = BK_Cmd_Recursos_Ciudad.ExecuteReader();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -463,7 +468,7 @@ namespace BikeMessenger
                     return false;
                 }
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -477,7 +482,7 @@ namespace BikeMessenger
                 BK_Reader_Personal_Grid = BK_Cmd_Personal_Grid.ExecuteReader();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -501,7 +506,7 @@ namespace BikeMessenger
                     return false;
                 }
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -515,7 +520,7 @@ namespace BikeMessenger
                 BK_Reader_Recursos_Grid = BK_Cmd_Recursos_Grid.ExecuteReader();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -541,7 +546,7 @@ namespace BikeMessenger
                     return false;
                 }
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -549,6 +554,7 @@ namespace BikeMessenger
 
         public void LimpiarVariables()
         {
+            BK_PENTALPHA = "";
             BK_RUTID = "";
             BK_DIGVER = "";
             BK_PROPIETARIO = "";

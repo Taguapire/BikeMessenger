@@ -1,37 +1,41 @@
-﻿using System;
-using Microsoft.Data.Sqlite;
-using System.Collections.Generic;
+﻿using Microsoft.Data.Sqlite;
 using Windows.Storage;
 
 namespace BikeMessenger
 {
-    class TransferVar
+    internal class TransferVar
     {
         // Valores de Base de Datos
-        public SqliteFactory TV_Factory;
-        public SqliteConnection TV_Connection;
+
+        public SqliteConnection TV_Connection { get; set; }
 
         // Valores de Empresa
-        public string E_RUTID;
-        public string E_DIGVER;
+        public string E_PENTALPHA { get; set; }
+        public string E_RUTID { get; set; }
+        public string E_DIGVER { get; set; }
 
         // Valores de Personal
-        public string P_RUTID;
-        public string P_DIGVER;
+        public string P_PENTALPHA { get; set; }
+        public string P_RUTID { get; set; }
+        public string P_DIGVER { get; set; }
 
         // Valores de Recursos
-        public string R_RUTID;
-        public string R_DIGVER;
-        public string R_PAT_SER;
+        public string R_PENTALPHA { get; set; }
+        public string R_RUTID { get; set; }
+        public string R_DIGVER { get; set; }
+        public string R_PAT_SER { get; set; }
 
         // Valores de Clientes
-        public string C_RUTID;
-        public string C_DIGVER;
+        public string C_PENTALPHA { get; set; }
+        public string C_RUTID { get; set; }
+        public string C_DIGVER { get; set; }
 
         // Valores de SERVICIOS
-        public string S_NROENVIO;
+        public string X_PENTALPHA { get; set; }
+        public string X_NROENVIO { get; set; }
 
         public string Directorio { get; set; }
+        public string PENTALPHA { get; internal set; }
 
         public TransferVar()
         {
@@ -39,12 +43,12 @@ namespace BikeMessenger
             // Crear Automaticamente la Base de Datos
 
             if (!VerificarDirectorio())
-                CrearDirectorio(Windows.Storage.ApplicationData.Current.LocalFolder.Path);
+                CrearDirectorio(ApplicationData.Current.LocalFolder.Path);
 
             LeerDirectorio();
 
             //TV_Connection = (SqliteConnection)TV_Factory.CreateConnection();
-            TV_Connection = (SqliteConnection) SqliteFactory.Instance.CreateConnection();
+            TV_Connection = (SqliteConnection)SqliteFactory.Instance.CreateConnection();
             TV_Connection.ConnectionString = "Data Source=" + Directorio + "\\BikeMessenger.db";
             TV_Connection.Open();
 
