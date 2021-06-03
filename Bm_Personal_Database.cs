@@ -7,6 +7,7 @@ namespace BikeMessenger
     {
         // public SQLiteFactory BM_DB;
         public SqliteConnection BM_Connection;
+        private SqliteTransaction BK_Transaccion_Personal;
         private SqliteCommand BK_Cmd_Personal;
         private SqliteDataReader BK_Reader_Personal;
 
@@ -295,6 +296,48 @@ namespace BikeMessenger
             }
             catch (SqliteException)
             {
+                return false;
+            }
+        }
+
+        public bool Bm_Iniciar_Transaccion()
+        {
+            try
+            {
+                BK_Transaccion_Personal = BM_Connection.BeginTransaction();
+                return true;
+            }
+            catch (SqliteException)
+            {
+                BK_Transaccion_Personal.Dispose();
+                return false;
+            }
+        }
+
+        public object Bm_Commit_Transaccion()
+        {
+            try
+            {
+                BK_Transaccion_Personal.Commit();
+                return true;
+            }
+            catch (SqliteException)
+            {
+                BK_Transaccion_Personal.Dispose();
+                return false;
+            }
+        }
+
+        public bool Bm_Rollback_Transaccion()
+        {
+            try
+            {
+                BK_Transaccion_Personal.Rollback();
+                return true;
+            }
+            catch (SqliteException)
+            {
+                BK_Transaccion_Personal.Dispose();
                 return false;
             }
         }

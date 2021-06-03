@@ -1,9 +1,4 @@
 ﻿using Microsoft.Data.Sqlite;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BikeMessenger
 {
@@ -239,6 +234,7 @@ namespace BikeMessenger
             TabSERVICIOS += "DESTADO	TEXT,";
             TabSERVICIOS += "DPAIS	TEXT,";
             TabSERVICIOS += "DCOORDENADAS	TEXT,";
+            TabSERVICIOS += "DISTANCIA_KM  REAL,";
             TabSERVICIOS += "DESCRIPCION	TEXT,";
             TabSERVICIOS += "FACTURAS  INTEGER,";
             TabSERVICIOS += "BULTOS    INTEGER,";

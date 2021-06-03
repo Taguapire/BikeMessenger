@@ -330,30 +330,45 @@ namespace BikeMessenger
             try
             {
                 await LlenarDbConPantallaAsync();
-                if (BM_Database_Personal.Bm_Personal_Agregar())
+
+                bool TransaccionOK = false;
+
+                if (BM_Database_Personal.Bm_Iniciar_Transaccion())
                 {
+                    if (BM_Database_Personal.Bm_Personal_Agregar())
+                    {
+                        TransaccionOK = true;
+
+                    }
+                    if (TransaccionOK)
+                    {
+                        if (LvrTransferVar.SincronizarWeb())
+                        {
+                            TransaccionOK = ProRegistroPersonal("AGREGAR");
+                        }
+                    }
+                }
+                if (TransaccionOK)
+                {
+                    _ = BM_Database_Personal.Bm_Commit_Transaccion();
+                    await AvisoOperacionPersonalDialogAsync("Agregar Personal", "Personal agregado exitosamente.");
                     LlenarListaPersonal();
                     LvrTransferVar.P_RUTID = BM_Database_Personal.BK_RUTID;
                     LvrTransferVar.P_DIGVER = BM_Database_Personal.BK_DIGVER;
-
-                    // Agregar en Servidor Remoto
-                    ProRegistroPersonal("AGREGAR");
-                    // Verificar Operación
-
-                    // Aviso de OK
-                    await AvisoOperacionPersonalDialogAsync("Agregar Personal", "Operación completada con exito.");
                 }
                 else
                 {
-                    await AvisoOperacionPersonalDialogAsync("Agregando Personal", "Se a producido un error al intentar agregar personal.");
+                    _ = BM_Database_Personal.Bm_Rollback_Transaccion();
+                    await AvisoOperacionPersonalDialogAsync("Agregar Personal", "Error en ingreso de personal. Reintente o escriba a soporte contacto@pentalpha.net");
                 }
             }
             catch (ArgumentException)
             {
-                await AvisoOperacionPersonalDialogAsync("Agregando Personal", "Aun faltan datos por completar.");
+                await AvisoOperacionPersonalDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de personal.");
             }
+
             LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // .5 sec delay
+            await Task.Delay(500); // 1 sec delay
         }
 
         private async void BtnModificarPersonal(object sender, RoutedEventArgs e)
@@ -365,25 +380,46 @@ namespace BikeMessenger
             try
             {
                 await LlenarDbConPantallaAsync();
-                if (BM_Database_Personal.Bm_Personal_Modificar(LvrTransferVar.P_PENTALPHA, BM_Database_Personal.BK_RUTID, BM_Database_Personal.BK_DIGVER))
+
+                bool TransaccionOK = false;
+
+                if (BM_Database_Personal.Bm_Iniciar_Transaccion())
                 {
-                    ProRegistroPersonal("MODIFICAR");
+                    if (BM_Database_Personal.Bm_Personal_Modificar(LvrTransferVar.P_PENTALPHA, BM_Database_Personal.BK_RUTID, BM_Database_Personal.BK_DIGVER))
+                    {
+                        TransaccionOK = true;
+                    }
+
+                    if (TransaccionOK)
+                    {
+                        if (LvrTransferVar.SincronizarWeb())
+                        {
+                            TransaccionOK = ProRegistroPersonal("MODIFICAR");
+                        }
+                    }
+                }
+
+                if (TransaccionOK)
+                {
+                    _ = BM_Database_Personal.Bm_Commit_Transaccion();
+                    await AvisoOperacionPersonalDialogAsync("Modificar Personal", "Personal modificada exitosamente.");
                     LlenarListaPersonal();
                     LvrTransferVar.P_RUTID = BM_Database_Personal.BK_RUTID;
                     LvrTransferVar.P_DIGVER = BM_Database_Personal.BK_DIGVER;
-                    await AvisoOperacionPersonalDialogAsync("Modificar Personal", "Operación completada con exito.");
                 }
                 else
                 {
-                    await AvisoOperacionPersonalDialogAsync("Modificando Personal", "Se a producido un error al intentar modificar personal.");
+                    _ = BM_Database_Personal.Bm_Rollback_Transaccion();
+                    await AvisoOperacionPersonalDialogAsync("Modificar Personal", "Error en modificación de personal. Reintente o escriba a soporte contacto@pentalpha.net");
                 }
             }
             catch (ArgumentException)
             {
-                _ = AvisoOperacionPersonalDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de personal.");
+                await AvisoOperacionPersonalDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de la personal.");
             }
+
             LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // .5 sec delay
+            await Task.Delay(500); // 1 sec delay
         }
 
         private async void BtnBorrarPersonal(object sender, RoutedEventArgs e)
@@ -405,14 +441,28 @@ namespace BikeMessenger
             try
             {
                 await LlenarDbConPantallaAsync();
-                if (BM_Database_Personal.Bm_Personal_Borrar(LvrTransferVar.P_PENTALPHA,  BM_Database_Personal.BK_RUTID, BM_Database_Personal.BK_DIGVER))
+
+                bool TransaccionOK = false;
+
+                if (BM_Database_Personal.Bm_Iniciar_Transaccion())
                 {
-                    ProRegistroPersonal("BORRAR");
-                    await AvisoOperacionPersonalDialogAsync("Borrando Personal", "Operación completada con exito.");
+                    if (BM_Database_Personal.Bm_Personal_Borrar(LvrTransferVar.P_PENTALPHA, BM_Database_Personal.BK_RUTID, BM_Database_Personal.BK_DIGVER))
+                    {
+                        TransaccionOK = true;
+                    }
 
-                    textBoxRut.IsReadOnly = false;
-                    textBoxDigitoVerificador.IsReadOnly = false;
+                    if (TransaccionOK)
+                    {
+                        if (LvrTransferVar.SincronizarWeb())
+                        {
+                            TransaccionOK = ProRegistroPersonal("BORRAR");
+                        }
+                    }
+                }
 
+                if (TransaccionOK)
+                {
+                    _ = BM_Database_Personal.Bm_Commit_Transaccion();
                     if (BM_Database_Personal.Bm_Personal_Buscar())
                     {
                         LvrTransferVar.P_RUTID = BM_Database_Personal.BK_RUTID;
@@ -423,21 +473,22 @@ namespace BikeMessenger
                         LvrTransferVar.P_RUTID = "";
                         LvrTransferVar.P_DIGVER = "";
                     }
-                    LlenarListaPersonal();
                     LlenarPantallaConDb();
+                    LlenarListaPersonal();
+                    await AvisoOperacionPersonalDialogAsync("Borrar Personal", "Personal borrado exitosamente.");
                 }
                 else
                 {
-                    await AvisoOperacionPersonalDialogAsync("Borrando Personal", "Se a producido un error al intentar borrar personal.");
+                    _ = BM_Database_Personal.Bm_Rollback_Transaccion();
+                    await AvisoOperacionPersonalDialogAsync("Borrar Personal", "Error en borrado de personal. Reintente o escriba a soporte contacto@pentalpha.net");
                 }
             }
             catch (ArgumentException)
             {
-                await AvisoOperacionPersonalDialogAsync("Acceso a Base de Datos", "Debe llenar los datos del personal.");
+                await AvisoOperacionPersonalDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de personal.");
             }
-            BorrarSiNo = false;
             LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // .5 sec delay
+            await Task.Delay(500); // 1 sec delay
         }
 
         private void BtnSalirPersonal(object sender, RoutedEventArgs e)
@@ -548,7 +599,7 @@ namespace BikeMessenger
                 }
                 else
                 {
-                    // textBoxNombreEmpresa.Text = "Sin Empresa";
+                    // textBoxNombrePersonal.Text = "Sin Personal";
                 }
             }
             catch (ArgumentOutOfRangeException)
@@ -560,7 +611,7 @@ namespace BikeMessenger
         //**************************************************
         // Ejecuta operacion de registro de personal
         //**************************************************
-        private void ProRegistroPersonal(string pTipoOperacion)
+        private bool ProRegistroPersonal(string pTipoOperacion)
         {
             string LvrPRecibirServer;
             string LvrPData;
@@ -592,19 +643,9 @@ namespace BikeMessenger
                 RecibirJsonPersonalArray = JsonConvert.DeserializeObject<List<JsonBikeMessengerPersonal>>(LvrPRecibirServer); // resp será el string JSON a deserializa
                 RecibirJsonPersonal = RecibirJsonPersonalArray[0];
 
-                if (RecibirJsonPersonal.RESOPERACION == "OK")
-                {
-                    //CopiarJsonEnMemoria(pTipoOperacion);
-                    _ = AvisoOperacionPersonalDialogAsync("Estado Envio", RecibirJsonPersonal.RESMENSAJE);
-                }
-                else
-                {
-                    _ = AvisoOperacionPersonalDialogAsync("Estado Envio", RecibirJsonPersonal.RESMENSAJE);
-                }
-
-                return;
+                return RecibirJsonPersonal.RESOPERACION == "OK";
             }
-            _ = AvisoOperacionPersonalDialogAsync("Registro de Personal", "Problemas durante el registro remoto de Personal. Debe repetir la operación");
+            return false;
         }
 
         private void CopiarMemoriaEnJson(string pOPERACION)

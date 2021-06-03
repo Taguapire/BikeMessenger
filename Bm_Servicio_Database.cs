@@ -8,9 +8,9 @@ namespace BikeMessenger
     {
         // public SQLiteFactory BM_DB;
         public SqliteConnection BM_Connection;
-
-        SqliteCommand BK_Cmd_Servicios;
-        SqliteDataReader BK_Reader_Servicios;
+        private SqliteTransaction BK_Transaccion_Servicio;
+        private SqliteCommand BK_Cmd_Servicios;
+        private SqliteDataReader BK_Reader_Servicios;
 
         // Envios
         private SqliteCommand BK_Cmd_Envios_Grid;
@@ -484,6 +484,49 @@ namespace BikeMessenger
                 return false;
             }
         }
+
+        public bool Bm_Iniciar_Transaccion()
+        {
+            try
+            {
+                BK_Transaccion_Servicio = BM_Connection.BeginTransaction();
+                return true;
+            }
+            catch (SqliteException)
+            {
+                BK_Transaccion_Servicio.Dispose();
+                return false;
+            }
+        }
+
+        public object Bm_Commit_Transaccion()
+        {
+            try
+            {
+                BK_Transaccion_Servicio.Commit();
+                return true;
+            }
+            catch (SqliteException)
+            {
+                BK_Transaccion_Servicio.Dispose();
+                return false;
+            }
+        }
+
+        public bool Bm_Rollback_Transaccion()
+        {
+            try
+            {
+                BK_Transaccion_Servicio.Rollback();
+                return true;
+            }
+            catch (SqliteException)
+            {
+                BK_Transaccion_Servicio.Dispose();
+                return false;
+            }
+        }
+
 
         // Procedimiento Buscar Pais
         public bool Bm_E_Pais_EjecutarSelect()

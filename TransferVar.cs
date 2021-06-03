@@ -34,8 +34,13 @@ namespace BikeMessenger
         public string X_PENTALPHA { get; set; }
         public string X_NROENVIO { get; set; }
 
+        // Valores Directorio
         public string Directorio { get; set; }
         public string PENTALPHA { get; internal set; }
+
+        public string SincronizarRemoto { get; set; }
+        public string PENTALPHA_REMOTO { get; internal set; }
+
 
         public TransferVar()
         {
@@ -43,9 +48,18 @@ namespace BikeMessenger
             // Crear Automaticamente la Base de Datos
 
             if (!VerificarDirectorio())
+            {
                 CrearDirectorio(ApplicationData.Current.LocalFolder.Path);
+            }
 
             LeerDirectorio();
+
+            if (!VerificarSincronizarRemoto())
+            {
+                CrearSincronizarRemoto("S");
+            }
+
+            LeerSincronizarRemoto();
 
             //TV_Connection = (SqliteConnection)TV_Factory.CreateConnection();
             TV_Connection = (SqliteConnection)SqliteFactory.Instance.CreateConnection();
@@ -60,14 +74,7 @@ namespace BikeMessenger
             ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
             Directorio = (string)localSettings.Values["PENTALPHA"];
 
-            if (Directorio == null || Directorio == "")
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
+            return Directorio != null && Directorio != "";
         }
 
         public void CrearDirectorio(string pDirectorio)
@@ -82,6 +89,36 @@ namespace BikeMessenger
             ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
             Directorio = (string)localSettings.Values["PENTALPHA"];
             return;
+        }
+
+        public bool VerificarSincronizarRemoto()
+        {
+            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+            SincronizarRemoto = (string)localSettings.Values["PENTALPHA_REMOTO"];
+
+            return SincronizarRemoto != null && SincronizarRemoto != "";
+        }
+
+        public void CrearSincronizarRemoto(string pSincronizarRemoto)
+        {
+            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+            localSettings.Values["PENTALPHA_REMOTO"] = pSincronizarRemoto;
+            return;
+        }
+
+        public void LeerSincronizarRemoto()
+        {
+            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+            SincronizarRemoto = (string)localSettings.Values["PENTALPHA_REMOTO"];
+            return;
+        }
+
+        public bool SincronizarWeb()
+        {
+            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+            SincronizarRemoto = (string)localSettings.Values["PENTALPHA_REMOTO"];
+
+            return SincronizarRemoto == "S";
         }
     }
 }

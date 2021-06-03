@@ -335,7 +335,6 @@ namespace BikeMessenger
             // Muestra de espera
             LvrProgresRing.IsActive = true;
             await Task.Delay(500); // 1 sec delay
-
             // **********************************************************
             // Verificación de Claves
             // **********************************************************
@@ -350,36 +349,50 @@ namespace BikeMessenger
             try
             {
                 await LlenarDbConPantallaAsync();
-                if (BM_Database_Empresa.Bm_Empresa_Agregar())
+
+                bool TransaccionOK = false;
+                if (BM_Database_Empresa.Bm_Iniciar_Transaccion())
                 {
-                    appBarButtonEmpresa.IsEnabled = true;
-                    appBarButtonPersonal.IsEnabled = true;
-                    appBarButtonRecursos.IsEnabled = true;
-                    appBarButtonClientes.IsEnabled = true;
-                    appBarButtonServicios.IsEnabled = true;
-                    appBarButtonAjustes.IsEnabled = true;
+                    if (BM_Database_Empresa.Bm_Empresa_Agregar())
+                    {
+                        appBarButtonEmpresa.IsEnabled = true;
+                        appBarButtonPersonal.IsEnabled = true;
+                        appBarButtonRecursos.IsEnabled = true;
+                        appBarButtonClientes.IsEnabled = true;
+                        appBarButtonServicios.IsEnabled = true;
+                        appBarButtonAjustes.IsEnabled = true;
 
-                    appBarAgregar.IsEnabled = false;
-                    appBarModificar.IsEnabled = true;
-                    appBarBorrar.IsEnabled = true;
-                    appBarAceptar.IsEnabled = false;
+                        appBarAgregar.IsEnabled = false;
+                        appBarModificar.IsEnabled = true;
+                        appBarBorrar.IsEnabled = true;
+                        appBarAceptar.IsEnabled = false;
 
-                    textBoxRut.IsReadOnly = true;
-                    textBoxDigitoVerificador.IsReadOnly = true;
+                        textBoxRut.IsReadOnly = true;
+                        textBoxDigitoVerificador.IsReadOnly = true;
+                        TransaccionOK = true;
+                    }
 
-                    // Agregar en Servidor Remoto
-                    ProRegistroEmpresa("AGREGAR");
-                    // Verificar Operación
+                    if (TransaccionOK)
+                    {
+                        if (LvrTransferVar.SincronizarWeb())
+                        {
+                            TransaccionOK = ProRegistroEmpresa("AGREGAR");
+                        }
+                    }
+                }
 
-                    // Aviso de OK
-                    _ = AvisoOperacionEmpresaDialogAsync("Agregando Empresa", "Operación completada con exito.");
+                if (TransaccionOK)
+                {
+                    _ = BM_Database_Empresa.Bm_Commit_Transaccion();
+                    await AvisoOperacionEmpresaDialogAsync("Agregar Empresa", "Empresa agregada exitosamente.");
                 }
                 else
                 {
-                    await AvisoOperacionEmpresaDialogAsync("Agregando Empresa", "Se a producido un error al intentar agregar la empresa.");
+                    _ = BM_Database_Empresa.Bm_Rollback_Transaccion();
+                    await AvisoOperacionEmpresaDialogAsync("Agregar Empresa", "Error en ingreso de la empresa. Reintente o escriba a soporte contacto@pentalpha.net");
                 }
             }
-            catch (System.ArgumentException)
+            catch (ArgumentException)
             {
                 await AvisoOperacionEmpresaDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
             }
@@ -389,7 +402,6 @@ namespace BikeMessenger
 
         private async void BtnModificarEmpresa(object sender, RoutedEventArgs e)
         {
-
             // Muestra de espera
             LvrProgresRing.IsActive = true;
             await Task.Delay(500); // 1 sec delay
@@ -405,28 +417,44 @@ namespace BikeMessenger
                 return;
             }
 
-            // **********************************************************
-            // Verificación de Valores de Pantalla
-            // **********************************************************
             try
             {
                 await LlenarDbConPantallaAsync();
-                if (BM_Database_Empresa.Bm_Empresa_Modificar())
+
+                bool TransaccionOK = false;
+                if (BM_Database_Empresa.Bm_Iniciar_Transaccion())
                 {
-                    ProRegistroEmpresa("MODIFICAR");
-                    _ = AvisoOperacionEmpresaDialogAsync("Modificando Empresa", "Operación completada con exito.");
+                    if (BM_Database_Empresa.Bm_Empresa_Modificar())
+                    {
+                        TransaccionOK = true;
+                    }
+
+                    if (TransaccionOK)
+                    {
+                        if (LvrTransferVar.SincronizarWeb())
+                        {
+                            TransaccionOK = ProRegistroEmpresa("MODIFICAR");
+                        }
+                    }
+                }
+
+                if (TransaccionOK)
+                {
+                    _ = BM_Database_Empresa.Bm_Commit_Transaccion();
+                    await AvisoOperacionEmpresaDialogAsync("Modificar Empresa", "Empresa modificada exitosamente.");
                 }
                 else
                 {
-                    _ = AvisoOperacionEmpresaDialogAsync("Modificando Empresa", "Se a producido un error al intentar modificar la empresa.");
+                    _ = BM_Database_Empresa.Bm_Rollback_Transaccion();
+                    await AvisoOperacionEmpresaDialogAsync("Modificar Empresa", "Error en modificación de la empresa. Reintente o escriba a soporte contacto@pentalpha.net");
                 }
             }
             catch (ArgumentException)
             {
-                _ = AvisoOperacionEmpresaDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
+                await AvisoOperacionEmpresaDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
             }
             LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // .5 sec delay
+            await Task.Delay(500); // 1 sec delay
         }
 
         private async void BtnBorrarEmpresa(object sender, RoutedEventArgs e)
@@ -443,7 +471,7 @@ namespace BikeMessenger
 
             // Muestra de espera
             LvrProgresRing.IsActive = true;
-            await Task.Delay(500); // .5 sec delay
+            await Task.Delay(500); // 1 sec delay
 
             // **********************************************************
             // Verificación de Claves
@@ -451,48 +479,64 @@ namespace BikeMessenger
             if (textBoxUsuario.Text == "" || passwordClave.Password == "")
             {
                 LvrProgresRing.IsActive = false;
-                await Task.Delay(500); // .5 sec delay
+                await Task.Delay(500); // 1 sec delay
                 _ = AvisoOperacionEmpresaDialogAsync("Identificación de Usuario", "Debe completar su usuario y clave para el envio de la Orden de Servicio.");
                 return;
             }
 
-            // **********************************************************
-            // Verificación de Valores de Pantalla
-            // **********************************************************
             try
             {
                 await LlenarDbConPantallaAsync();
-                if (BM_Database_Empresa.Bm_Empresa_Borrar())
+
+                bool TransaccionOK = false;
+
+                if (BM_Database_Empresa.Bm_Iniciar_Transaccion())
                 {
-                    appBarButtonEmpresa.IsEnabled = true;
-                    appBarButtonPersonal.IsEnabled = false;
-                    appBarButtonRecursos.IsEnabled = false;
-                    appBarButtonClientes.IsEnabled = false;
-                    appBarButtonServicios.IsEnabled = false;
-                    appBarButtonAjustes.IsEnabled = true;
+                    if (BM_Database_Empresa.Bm_Empresa_Borrar())
+                    {
+                        appBarButtonEmpresa.IsEnabled = true;
+                        appBarButtonPersonal.IsEnabled = false;
+                        appBarButtonRecursos.IsEnabled = false;
+                        appBarButtonClientes.IsEnabled = false;
+                        appBarButtonServicios.IsEnabled = false;
+                        appBarButtonAjustes.IsEnabled = true;
 
-                    appBarAgregar.IsEnabled = true;
-                    appBarModificar.IsEnabled = false;
-                    appBarBorrar.IsEnabled = false;
-                    appBarAceptar.IsEnabled = false;
+                        appBarAgregar.IsEnabled = true;
+                        appBarModificar.IsEnabled = false;
+                        appBarBorrar.IsEnabled = false;
+                        appBarAceptar.IsEnabled = false;
 
-                    textBoxRut.IsReadOnly = false;
-                    textBoxDigitoVerificador.IsReadOnly = false;
+                        textBoxRut.IsReadOnly = false;
+                        textBoxDigitoVerificador.IsReadOnly = false;
+                        TransaccionOK = true;
+                    }
 
-                    ProRegistroEmpresa("BORRAR");
-                    _ = AvisoOperacionEmpresaDialogAsync("Borrando Empresa", "Operación completada con exito.");
+                    if (TransaccionOK)
+                    {
+                        if (LvrTransferVar.SincronizarWeb())
+                        {
+                            TransaccionOK = ProRegistroEmpresa("BORRAR");
+                        }
+                    }
+                }
+
+                if (TransaccionOK)
+                {
+                    _ = BM_Database_Empresa.Bm_Commit_Transaccion();
+                    await AvisoOperacionEmpresaDialogAsync("Borrar Empresa", "Empresa borrada exitosamente.");
                 }
                 else
                 {
-                    _ = AvisoOperacionEmpresaDialogAsync("Borrando Empresa", "Se a producido un error al intentar modificar la empresa.");
+                    _ = BM_Database_Empresa.Bm_Rollback_Transaccion();
+                    await AvisoOperacionEmpresaDialogAsync("Agregar Empresa", "Error en borrado de la empresa. Reintente o escriba a soporte contacto@pentalpha.net");
                 }
             }
             catch (ArgumentException)
             {
-                _ = AvisoOperacionEmpresaDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
+                await AvisoOperacionEmpresaDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
             }
             LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // .5 sec delay
+            await Task.Delay(500); // 1 sec delay
         }
 
         private void BtnSalirEmpresa(object sender, RoutedEventArgs e)
@@ -500,6 +544,7 @@ namespace BikeMessenger
             LvrTransferVar.TV_Connection.Close();
             Application.Current.Exit();
         }
+
         private async Task<string> ConvertirImageABase64Async()
         {
             RenderTargetBitmap bitmap = new RenderTargetBitmap();
@@ -581,7 +626,7 @@ namespace BikeMessenger
         //**************************************************
         // Ejecuta operacion de registro de empresa
         //**************************************************
-        private void ProRegistroEmpresa(string pTipoOperacion)
+        private bool ProRegistroEmpresa(string pTipoOperacion)
         {
             string LvrPRecibirServer;
             string LvrPData;
@@ -613,18 +658,10 @@ namespace BikeMessenger
                 RecibirJsonEmpresaArray = JsonConvert.DeserializeObject<List<JsonBikeMessengerEmpresa>>(LvrPRecibirServer); // resp será el string JSON a deserializa
                 RecibirJsonEmpresa = RecibirJsonEmpresaArray[0];
 
-                if (RecibirJsonEmpresa.RESOPERACION == "OK") {
-                    //CopiarJsonEnMemoria(pTipoOperacion);
-                    _ = AvisoOperacionEmpresaDialogAsync("Estado Envio", RecibirJsonEmpresa.RESMENSAJE);
-                }
-                else
-                {
-                    _ = AvisoOperacionEmpresaDialogAsync("Estado Envio", RecibirJsonEmpresa.RESMENSAJE);
-                }
+                return RecibirJsonEmpresa.RESOPERACION == "OK";
 
-                return;
             }
-            _ = AvisoOperacionEmpresaDialogAsync("Registro de Empresa", "Problemas durante el registro remoto de la empresa. Debe repetir la operación");
+            return false;
         }
 
         private void CopiarMemoriaEnJson(string pOPERACION)

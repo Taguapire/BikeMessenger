@@ -197,5 +197,17 @@ namespace BikeMessenger
 
             _ = await BaseDatosOrigen.CopyAsync(FolderDestino, "BikeMessenger.db", NameCollisionOption.GenerateUniqueName);
         }
+
+        private void CambiarModoSincronizacion(object sender, RoutedEventArgs e)
+        {
+            if ((bool)checkBoxSincronizacion.IsChecked)
+            {
+                LvrTransferVar.CrearSincronizarRemoto("S");
+            }
+            else
+            {
+                LvrTransferVar.CrearSincronizarRemoto("N");
+            }
+        }
     }
 }

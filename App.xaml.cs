@@ -121,7 +121,7 @@ namespace BikeMessenger
                 LvrTransferVar.X_NROENVIO = "";
 
                 rootFrame.CacheSize = 0;
-                rootFrame.Navigate(typeof(PageEmpresa), LvrTransferVar, new SuppressNavigationTransitionInfo());
+                _ = rootFrame.Navigate(typeof(PageEmpresa), LvrTransferVar, new SuppressNavigationTransitionInfo());
             }
             // Ensure the current window is active
             Window.Current.Activate();

@@ -304,7 +304,7 @@ namespace BikeMessenger
         }
 
         private async void BtnAgregarRecursos(object sender, RoutedEventArgs e)
-        {
+        {            
             // Muestra de espera
             LvrProgresRing.IsActive = true;
             await Task.Delay(500); // .5 sec delay
@@ -313,32 +313,46 @@ namespace BikeMessenger
             {
                 await LlenarDbConPantallaAsync();
 
-                if (BM_Database_Recurso.Bm_Recursos_Agregar())
+                bool TransaccionOK = false;
+
+                if (BM_Database_Recurso.Bm_Iniciar_Transaccion())
                 {
+                    if (BM_Database_Recurso.Bm_Recursos_Agregar())
+                    {
+                        TransaccionOK = true;
+
+                    }
+                    if (TransaccionOK)
+                    {
+                        if (LvrTransferVar.SincronizarWeb())
+                        {
+                            TransaccionOK = ProRegistroRecurso("AGREGAR");
+                        }
+                    }
+                }
+                if (TransaccionOK)
+                {
+                    _ = BM_Database_Recurso.Bm_Commit_Transaccion();
+                    await AvisoOperacionRecursosDialogAsync("Agregar Recurso", "Recurso agregado exitosamente.");
                     LlenarListaRecursos();
                     LlenarListaPropietarios();
                     LvrTransferVar.R_RUTID = BM_Database_Recurso.BK_RUTID;
                     LvrTransferVar.R_DIGVER = BM_Database_Recurso.BK_DIGVER;
                     LvrTransferVar.R_PAT_SER = BM_Database_Recurso.BK_PATENTE;
-
-                    // Agregar en Servidor Remoto
-                    ProRegistroRecurso("AGREGAR");
-                    // Verificar Operación
-
-                    await AvisoOperacionRecursosDialogAsync("Agregar Recursos", "Operación completada con exito.");
                 }
                 else
                 {
-                    await AvisoOperacionRecursosDialogAsync("Agregando Recursos", "Se a producido un error al intentar agregar recurso.");
+                    _ = BM_Database_Recurso.Bm_Rollback_Transaccion();
+                    await AvisoOperacionRecursosDialogAsync("Agregar Recurso", "Error en ingreso de recurso. Reintente o escriba a soporte contacto@pentalpha.net");
                 }
             }
             catch (ArgumentException)
             {
-                await AvisoOperacionRecursosDialogAsync("Agregando Recursos", "Aun faltan datos por completar.");
+                await AvisoOperacionRecursosDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de recurso.");
             }
 
             LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // .5 sec delay
+            await Task.Delay(500); // 1 sec delay
         }
 
         private async void BtnModificarRecursos(object sender, RoutedEventArgs e)
@@ -350,32 +364,53 @@ namespace BikeMessenger
             try
             {
                 await LlenarDbConPantallaAsync();
-                if (BM_Database_Recurso.Bm_Recursos_Modificar(LvrTransferVar.R_PENTALPHA, BM_Database_Recurso.BK_PATENTE))
+
+                bool TransaccionOK = false;
+
+                if (BM_Database_Recurso.Bm_Iniciar_Transaccion())
                 {
+                    if (BM_Database_Recurso.Bm_Recursos_Modificar(LvrTransferVar.R_PENTALPHA, BM_Database_Recurso.BK_PATENTE))
+                    {
+                        TransaccionOK = true;
+                    }
+
+                    if (TransaccionOK)
+                    {
+                        if (LvrTransferVar.SincronizarWeb())
+                        {
+                            TransaccionOK = ProRegistroRecurso("MODIFICAR");
+                        }
+                    }
+                }
+
+                if (TransaccionOK)
+                {
+                    _ = BM_Database_Recurso.Bm_Commit_Transaccion();
                     LlenarListaRecursos();
                     LlenarListaPropietarios();
-                    ProRegistroRecurso("MODIFICAR");
                     LvrTransferVar.R_PAT_SER = BM_Database_Recurso.BK_PATENTE;
                     LvrTransferVar.R_RUTID = BM_Database_Recurso.BK_RUTID;
                     LvrTransferVar.R_DIGVER = BM_Database_Recurso.BK_DIGVER;
-                    await AvisoOperacionRecursosDialogAsync("Modificar Recursos", "Operación completada con exito.");
                 }
                 else
                 {
-                    await AvisoOperacionRecursosDialogAsync("Modificando Recursos", "Se a producido un error al intentar modificar recurso.");
+                    _ = BM_Database_Recurso.Bm_Rollback_Transaccion();
+                    await AvisoOperacionRecursosDialogAsync("Modificar Recurso", "Error en modificación de recurso. Reintente o escriba a soporte contacto@pentalpha.net");
                 }
             }
-            catch(ArgumentException)
+            catch (ArgumentException)
             {
-                _ = AvisoOperacionRecursosDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de personal.");
+                await AvisoOperacionRecursosDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de recursos.");
             }
+
             LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // .5 sec delay
+            await Task.Delay(500); // 1 sec delay
         }
 
 
         private async void BtnBorrarRecursos(object sender, RoutedEventArgs e)
         {
+
             BorrarSiNo = false;
 
             await AvisoBorrarRecursoDialogAsync();
@@ -392,13 +427,28 @@ namespace BikeMessenger
             try
             {
                 await LlenarDbConPantallaAsync();
-                if (BM_Database_Recurso.Bm_Recursos_Borrar(LvrTransferVar.R_PENTALPHA, BM_Database_Recurso.BK_PATENTE))
+
+                bool TransaccionOK = false;
+
+                if (BM_Database_Recurso.Bm_Iniciar_Transaccion())
                 {
-                    ProRegistroRecurso("BORRAR");
-                    await AvisoOperacionRecursosDialogAsync("Borrando Recursos", "Operación completada con exito.");
+                    if (BM_Database_Recurso.Bm_Recursos_Borrar(LvrTransferVar.R_PENTALPHA, BM_Database_Recurso.BK_PATENTE))
+                    {
+                        TransaccionOK = true;
+                    }
 
-                    textBoxPatenteCodigo.IsReadOnly = false;
+                    if (TransaccionOK)
+                    {
+                        if (LvrTransferVar.SincronizarWeb())
+                        {
+                            TransaccionOK = ProRegistroRecurso("BORRAR");
+                        }
+                    }
+                }
 
+                if (TransaccionOK)
+                {
+                    _ = BM_Database_Recurso.Bm_Commit_Transaccion();
                     if (BM_Database_Recurso.Bm_Recursos_Buscar())
                     {
                         LvrTransferVar.R_PAT_SER = BM_Database_Recurso.BK_PATENTE;
@@ -414,19 +464,20 @@ namespace BikeMessenger
                     LlenarPantallaConDb();
                     LlenarListaRecursos();
                     LlenarListaPropietarios();
+                    await AvisoOperacionRecursosDialogAsync("Borrar Recurso", "Recurso borrado exitosamente.");
                 }
                 else
                 {
-                    await AvisoOperacionRecursosDialogAsync("Borrando Recursos", "Se a producido un error al intentar borrar personal.");
+                    _ = BM_Database_Recurso.Bm_Rollback_Transaccion();
+                    await AvisoOperacionRecursosDialogAsync("Borrar Recurso", "Error en borrado de recurso. Reintente o escriba a soporte contacto@pentalpha.net");
                 }
             }
             catch (ArgumentException)
             {
-                await AvisoOperacionRecursosDialogAsync("Acceso a Base de Datos", "Debe llenar los datos del personal.");
+                await AvisoOperacionRecursosDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de recurso.");
             }
-            BorrarSiNo = false;
             LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // .5 sec delay
+            await Task.Delay(500); // 1 sec delay
         }
 
         private void BtnSalirRecursos(object sender, RoutedEventArgs e)
@@ -585,9 +636,9 @@ namespace BikeMessenger
         }
 
         //**************************************************
-        // Ejecuta operacion de registro de personal
+        // Ejecuta operacion de registro de Recurso
         //**************************************************
-        private void ProRegistroRecurso(string pTipoOperacion)
+        private bool ProRegistroRecurso(string pTipoOperacion)
         {
             string LvrPRecibirServer;
             string LvrPData;
@@ -619,19 +670,9 @@ namespace BikeMessenger
                 RecibirJsonRecursoArray = JsonConvert.DeserializeObject<List<JsonBikeMessengerRecurso>>(LvrPRecibirServer); // resp será el string JSON a deserializa
                 RecibirJsonRecurso = RecibirJsonRecursoArray[0];
 
-                if (RecibirJsonRecurso.RESOPERACION == "OK")
-                {
-                    //CopiarJsonEnMemoria(pTipoOperacion);
-                    _ = AvisoOperacionRecursosDialogAsync("Estado Envio", RecibirJsonRecurso.RESMENSAJE);
-                }
-                else
-                {
-                    _ = AvisoOperacionRecursosDialogAsync("Estado Envio", RecibirJsonRecurso.RESMENSAJE);
-                }
-
-                return;
+                return RecibirJsonRecurso.RESOPERACION == "OK";
             }
-            _ = AvisoOperacionRecursosDialogAsync("Registro de Recursos", "Problemas durante el registro remoto de Recurso. Debe repetir la operación");
+            return false;
         }
 
         private void CopiarMemoriaEnJson(string pOPERACION)

@@ -326,6 +326,7 @@ namespace BikeMessenger
 
         private async void BtnAgregarClientes(object sender, RoutedEventArgs e)
         {
+            // Muestra de espera
             LvrProgresRing.IsActive = true;
             await Task.Delay(500); // .5 sec delay
 
@@ -333,31 +334,46 @@ namespace BikeMessenger
             {
                 await LlenarDbConPantallaAsync();
 
-                if (BM_Database_Cliente.Bm_Clientes_Agregar())
+                bool TransaccionOK = false;
+
+                if (BM_Database_Cliente.Bm_Iniciar_Transaccion())
                 {
+                    if (BM_Database_Cliente.Bm_Clientes_Agregar())
+                    {
+                        TransaccionOK = true;
+
+                    }
+                    if (TransaccionOK)
+                    {
+                        if (LvrTransferVar.SincronizarWeb())
+                        {
+                            TransaccionOK = ProRegistroCliente("AGREGAR");
+                        }
+                    }
+                }
+                if (TransaccionOK)
+                {
+                    _ = BM_Database_Cliente.Bm_Commit_Transaccion();
+                    await AvisoOperacionClientesDialogAsync("Agregar Cliente", "Cliente agregado exitosamente.");
                     LlenarListaClientes();
                     LvrTransferVar.C_RUTID = BM_Database_Cliente.BK_RUTID;
                     LvrTransferVar.C_DIGVER = BM_Database_Cliente.BK_DIGVER;
-
-                    // Agregar en Servidor Remoto
-                    ProRegistroCliente("AGREGAR");
-                    // Verificar Operación
-
-                    await AvisoOperacionClientesDialogAsync("Agregar Clientes", "Operación completada con exito.");
                 }
                 else
                 {
-                    await AvisoOperacionClientesDialogAsync("Agregando Clientes", "Se a producido un error al intentar agregar clientes.");
+                    _ = BM_Database_Cliente.Bm_Rollback_Transaccion();
+                    await AvisoOperacionClientesDialogAsync("Agregar Cliente", "Error en ingreso de cliente. Reintente o escriba a soporte contacto@pentalpha.net");
                 }
             }
-            catch (System.ArgumentException)
+            catch (ArgumentException)
             {
-                await AvisoOperacionClientesDialogAsync("Agregando Clientes", "Aun faltan datos por completar.");
+                await AvisoOperacionClientesDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de cliente.");
             }
 
             LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // .5 sec delay
+            await Task.Delay(500); // 1 sec delay
         }
+
 
         private async void BtnModificarClientes(object sender, RoutedEventArgs e)
         {
@@ -368,24 +384,45 @@ namespace BikeMessenger
             try
             {
                 await LlenarDbConPantallaAsync();
-                if (BM_Database_Cliente.Bm_Clientes_Modificar(LvrTransferVar.C_PENTALPHA, BM_Database_Cliente.BK_RUTID, BM_Database_Cliente.BK_DIGVER))
+
+                bool TransaccionOK = false;
+
+                if (BM_Database_Cliente.Bm_Iniciar_Transaccion())
                 {
+                    if (BM_Database_Cliente.Bm_Clientes_Modificar(LvrTransferVar.C_PENTALPHA, BM_Database_Cliente.BK_RUTID, BM_Database_Cliente.BK_DIGVER))
+                    {
+                        TransaccionOK = true;
+                    }
+
+                    if (TransaccionOK)
+                    {
+                        if (LvrTransferVar.SincronizarWeb())
+                        {
+                            TransaccionOK = ProRegistroCliente("MODIFICAR");
+                        }
+                    }
+                }
+
+                if (TransaccionOK)
+                {
+                    _ = BM_Database_Cliente.Bm_Commit_Transaccion();
                     LlenarListaClientes();
                     LvrTransferVar.C_RUTID = BM_Database_Cliente.BK_RUTID;
                     LvrTransferVar.C_DIGVER = BM_Database_Cliente.BK_DIGVER;
-                    await AvisoOperacionClientesDialogAsync("Modificar Clientes", "Operación completada con exito.");
                 }
                 else
                 {
-                    await AvisoOperacionClientesDialogAsync("Modificando Clientes", "Se a producido un error al intentar modificar clientes.");
+                    _ = BM_Database_Cliente.Bm_Rollback_Transaccion();
+                    await AvisoOperacionClientesDialogAsync("Modificar Cliente", "Error en modificación de cliente. Reintente o escriba a soporte contacto@pentalpha.net");
                 }
             }
             catch (ArgumentException)
             {
-                _ = AvisoOperacionClientesDialogAsync("Acceso a Base de Datos", "Debe llenar los datos del cliente.");
+                await AvisoOperacionClientesDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de cliente.");
             }
+
             LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // .5 sec delay
+            await Task.Delay(500); // 1 sec delay
         }
 
         private async void BtnBorrarClientes(object sender, RoutedEventArgs e)
@@ -406,13 +443,28 @@ namespace BikeMessenger
             try
             {
                 await LlenarDbConPantallaAsync();
-                if (BM_Database_Cliente.Bm_Clientes_Borrar(LvrTransferVar.C_PENTALPHA, BM_Database_Cliente.BK_RUTID, BM_Database_Cliente.BK_DIGVER))
+
+                bool TransaccionOK = false;
+
+                if (BM_Database_Cliente.Bm_Iniciar_Transaccion())
                 {
-                    await AvisoOperacionClientesDialogAsync("Borrando Clientes", "Operación completada con exito.");
+                    if (BM_Database_Cliente.Bm_Clientes_Borrar(LvrTransferVar.C_PENTALPHA, BM_Database_Cliente.BK_RUTID, BM_Database_Cliente.BK_DIGVER))
+                    {
+                        TransaccionOK = true;
+                    }
 
-                    textBoxRut.IsReadOnly = false;
-                    textBoxDigitoVerificador.IsReadOnly = false;
+                    if (TransaccionOK)
+                    {
+                        if (LvrTransferVar.SincronizarWeb())
+                        {
+                            TransaccionOK = ProRegistroCliente("BORRAR");
+                        }
+                    }
+                }
 
+                if (TransaccionOK)
+                {
+                    _ = BM_Database_Cliente.Bm_Commit_Transaccion();
                     if (BM_Database_Cliente.Bm_Clientes_Buscar())
                     {
                         LvrTransferVar.C_RUTID = BM_Database_Cliente.BK_RUTID;
@@ -423,23 +475,22 @@ namespace BikeMessenger
                         LvrTransferVar.P_RUTID = "";
                         LvrTransferVar.P_DIGVER = "";
                     }
-
                     LlenarPantallaConDb();
                     LlenarListaClientes();
+                    await AvisoOperacionClientesDialogAsync("Borrar Cliente", "Cliente borrado exitosamente.");
                 }
                 else
                 {
-                    await AvisoOperacionClientesDialogAsync("Borrando Clientes", "Se a producido un error al intentar borrar cliente.");
+                    _ = BM_Database_Cliente.Bm_Rollback_Transaccion();
+                    await AvisoOperacionClientesDialogAsync("Borrar Cliente", "Error en borrado de cliente. Reintente o escriba a soporte contacto@pentalpha.net");
                 }
             }
             catch (ArgumentException)
             {
-                await AvisoOperacionClientesDialogAsync("Acceso a Base de Datos", "Debe llenar los datos del cliente.");
+                await AvisoOperacionClientesDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de cliente.");
             }
-            BorrarSiNo = false;
-            BorrarSiNo = false;
             LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // .5 sec delay
+            await Task.Delay(500); // 1 sec delay
         }
 
         private void BtnSalirClientes(object sender, RoutedEventArgs e)
@@ -558,9 +609,9 @@ namespace BikeMessenger
         }
 
         //**************************************************
-        // Ejecuta operacion de registro de personal
+        // Ejecuta operacion de registro de Recurso
         //**************************************************
-        private void ProRegistroCliente(string pTipoOperacion)
+        private bool ProRegistroCliente(string pTipoOperacion)
         {
             string LvrPRecibirServer;
             string LvrPData;
@@ -592,20 +643,11 @@ namespace BikeMessenger
                 RecibirJsonClienteArray = JsonConvert.DeserializeObject<List<JsonBikeMessengerCliente>>(LvrPRecibirServer); // resp será el string JSON a deserializa
                 RecibirJsonCliente = RecibirJsonClienteArray[0];
 
-                if (RecibirJsonCliente.RESOPERACION == "OK")
-                {
-                    //CopiarJsonEnMemoria(pTipoOperacion);
-                    _ = AvisoOperacionClientesDialogAsync("Estado Envio", RecibirJsonCliente.RESMENSAJE);
-                }
-                else
-                {
-                    _ = AvisoOperacionClientesDialogAsync("Estado Envio", RecibirJsonCliente.RESMENSAJE);
-                }
-
-                return;
+                return RecibirJsonCliente.RESOPERACION == "OK";
             }
-            _ = AvisoOperacionClientesDialogAsync("Registro de Clientes", "Problemas durante el registro remoto de Cliente. Debe repetir la operación");
+            return false;
         }
+
 
         private void CopiarMemoriaEnJson(string pOPERACION)
         {
