@@ -7,7 +7,7 @@ namespace BikeMessenger
     {
         // public SQLiteFactory BM_DB;
         public SqliteConnection BM_Connection;
-        private SqliteTransaction BK_Transaccion_Recurso;
+        private SqliteTransaction BK_Transaccion_Recursos;
         private SqliteCommand BK_Cmd_Recursos;
         private SqliteDataReader BK_Reader_Recursos;
 
@@ -135,6 +135,7 @@ namespace BikeMessenger
                 StrAgregar_Recursos += "'" + BK_OBSERVACIONES + "',";
                 StrAgregar_Recursos += "'" + BK_FOTO + "')";
                 BK_Cmd_Recursos = new SqliteCommand(StrAgregar_Recursos, BM_Connection);
+                BK_Cmd_Recursos.Transaction = BK_Transaccion_Recursos;
                 _ = BK_Cmd_Recursos.ExecuteNonQuery();
                 return true;
             }
@@ -190,7 +191,7 @@ namespace BikeMessenger
             try
             {
                 StrBuscar_Recursos = "SELECT * FROM RECURSOS";
-                StrBuscar_Recursos += " WHERE PENTALPHA = '" + BK_PENTALPHA + " AND PATENTE = '" + pPATENTE + "'";
+                StrBuscar_Recursos += " WHERE PENTALPHA = '" + pPENTALPHA + "' AND PATENTE = '" + pPATENTE + "'";
 
                 BK_Cmd_Recursos = new SqliteCommand(StrBuscar_Recursos, BM_Connection);
                 BK_Reader_Recursos = BK_Cmd_Recursos.ExecuteReader();
@@ -300,6 +301,7 @@ namespace BikeMessenger
                 StrModificar_Recursos += "PENTALPHA = '" + pPENTALPHA + "' AND ";
                 StrModificar_Recursos += "PATENTE = '" + pPATENTE + "'";
                 BK_Cmd_Recursos = new SqliteCommand(StrModificar_Recursos, BM_Connection);
+                BK_Cmd_Recursos.Transaction = BK_Transaccion_Recursos;
                 _ = BK_Cmd_Recursos.ExecuteNonQuery();
                 return true;
             }
@@ -319,6 +321,7 @@ namespace BikeMessenger
                 StrBorrar_Recursos += "PENTALPHA = '" + pPENTALPHA + "'";
                 StrBorrar_Recursos += "PATENTE = '" + pPATENTE + "'";
                 BK_Cmd_Recursos = new SqliteCommand(StrBorrar_Recursos, BM_Connection);
+                BK_Cmd_Recursos.Transaction = BK_Transaccion_Recursos;
                 _ = BK_Cmd_Recursos.ExecuteNonQuery();
                 LimpiarVariables();
                 return true;
@@ -333,12 +336,12 @@ namespace BikeMessenger
         {
             try
             {
-                BK_Transaccion_Recurso = BM_Connection.BeginTransaction();
+                BK_Transaccion_Recursos = BM_Connection.BeginTransaction();
                 return true;
             }
             catch (SqliteException)
             {
-                BK_Transaccion_Recurso.Dispose();
+                BK_Transaccion_Recursos.Dispose();
                 return false;
             }
         }
@@ -347,12 +350,12 @@ namespace BikeMessenger
         {
             try
             {
-                BK_Transaccion_Recurso.Commit();
+                BK_Transaccion_Recursos.Commit();
                 return true;
             }
             catch (SqliteException)
             {
-                BK_Transaccion_Recurso.Dispose();
+                BK_Transaccion_Recursos.Dispose();
                 return false;
             }
         }
@@ -361,12 +364,12 @@ namespace BikeMessenger
         {
             try
             {
-                BK_Transaccion_Recurso.Rollback();
+                BK_Transaccion_Recursos.Rollback();
                 return true;
             }
             catch (SqliteException)
             {
-                BK_Transaccion_Recurso.Dispose();
+                BK_Transaccion_Recursos.Dispose();
                 return false;
             }
         }

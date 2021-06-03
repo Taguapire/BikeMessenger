@@ -8,9 +8,13 @@ namespace BikeMessenger
     {
         // public SQLiteFactory BM_DB;
         public SqliteConnection BM_Connection;
-        private SqliteTransaction BK_Transaccion_Servicio;
+        private SqliteTransaction BK_Transaccion_Servicios;
         private SqliteCommand BK_Cmd_Servicios;
         private SqliteDataReader BK_Reader_Servicios;
+
+        // Pendientes
+        private SqliteCommand BK_Cmd_Servicios_Pendientes;
+        private SqliteDataReader BK_Reader_Servicios_Pendientes;
 
         // Envios
         private SqliteCommand BK_Cmd_Envios_Grid;
@@ -247,6 +251,7 @@ namespace BikeMessenger
             try
             {
                 BK_Cmd_Servicios = new SqliteCommand(StrAgregar_Servicios, BM_Connection);
+                BK_Cmd_Servicios.Transaction = BK_Transaccion_Servicios;
                 _ = BK_Cmd_Servicios.ExecuteNonQuery();
                 return true;
             }
@@ -328,6 +333,73 @@ namespace BikeMessenger
             }
         }
 
+
+        public string Bm_Servicios_Pendientes()
+        {
+            LvrTablaHtml DocumentoHtml = new LvrTablaHtml();
+
+            try
+            {
+                BK_Cmd_Servicios_Pendientes = new SqliteCommand(StrBuscar_Servicios, BM_Connection);
+                BK_Reader_Servicios_Pendientes = BK_Cmd_Servicios_Pendientes.ExecuteReader();
+
+                DocumentoHtml.CrearTexto("ENVIOS");
+                DocumentoHtml.InicioDocumento();
+                DocumentoHtml.AgregarTituloTabla("Listado de Envios Pendientes");
+                DocumentoHtml.AbrirEncabezado();
+                DocumentoHtml.AgregarEncabezado("Nro de envio");
+                DocumentoHtml.AgregarEncabezado("Guia de Despacho");
+                DocumentoHtml.AgregarEncabezado("Fecha de Ingreso");
+                DocumentoHtml.AgregarEncabezado("Hora de Ingreso");
+                DocumentoHtml.AgregarEncabezado("Cliente");
+                DocumentoHtml.AgregarEncabezado("Mensajero");
+                DocumentoHtml.AgregarEncabezado("Entrega");
+                DocumentoHtml.AgregarEncabezado("Recepción");
+                DocumentoHtml.CerrarEncabezado();
+
+                while (BK_Reader_Servicios_Pendientes.Read())
+                {
+                    // Llenar Valores de Servicios
+                    DocumentoHtml.AbrirFila();
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Servicios_Pendientes.GetString(
+                            BK_Reader_Servicios.GetOrdinal("NROENVIO")),false);
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Servicios_Pendientes.GetString(
+                            BK_Reader_Servicios.GetOrdinal("GUIADESPACHO")),false);
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Servicios_Pendientes.GetString(
+                            BK_Reader_Servicios.GetOrdinal("FECHA")),false);
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Servicios_Pendientes.GetString(
+                            BK_Reader_Servicios.GetOrdinal("HORA")),false);
+                    DocumentoHtml.AgregarCampo(
+                        Bm_BuscarNombreCliente(
+                            BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("CLIENTERUT")),
+                            BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("CLIENTEDIGVER"))),false);
+                    DocumentoHtml.AgregarCampo(
+                        Bm_BuscarNombreMensajero(
+                            BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("MENSAJERORUT")),
+                            BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("MENSAJERODIGVER"))), false);
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Servicios_Pendientes.GetString(
+                            BK_Reader_Servicios.GetOrdinal("ENTREGA")),false);
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Servicios_Pendientes.GetString(
+                            BK_Reader_Servicios.GetOrdinal("RECEPCION")),false);
+                    DocumentoHtml.CerrarFila();
+                }
+                BK_Reader_Servicios_Pendientes.Close();
+                DocumentoHtml.FinDocumento();
+            }
+            catch (SqliteException)
+            {
+                DocumentoHtml.FinDocumento();
+                return "<html><body><h2> No existen Envios Pendientes de Atención </h2></body></html>";
+            }
+            return DocumentoHtml.BufferHtml;
+        }
+
         public bool Bm_Servicios_Buscar(string pPENTALPHA, string pNROENVIO)
         {
             try
@@ -401,7 +473,7 @@ namespace BikeMessenger
         }
 
         // Procedimiento Modificar Servicio
-        public bool Bm_Recursos_Modificar(string pPENTALPHA, string pNROENVIO)
+        public bool Bm_Servicios_Modificar(string pPENTALPHA, string pNROENVIO)
         {
             try
             {
@@ -455,6 +527,7 @@ namespace BikeMessenger
                 StrModificar_Servicios += "PENTALPHA = '" + pPENTALPHA + "' AND ";
                 StrModificar_Servicios += "NROENVIO = '" + pNROENVIO + "'";
                 BK_Cmd_Servicios = new SqliteCommand(StrModificar_Servicios, BM_Connection);
+                BK_Cmd_Servicios.Transaction = BK_Transaccion_Servicios;
                 _ = BK_Cmd_Servicios.ExecuteNonQuery();
                 return true;
             }
@@ -475,6 +548,7 @@ namespace BikeMessenger
                 StrBorrar_Servicios += "PENTALPHA = '" + pPENTALPHA + "' AND ";
                 StrBorrar_Servicios += "NROENVIO = '" + pNROENVIO + "'";
                 BK_Cmd_Servicios = new SqliteCommand(StrBorrar_Servicios, BM_Connection);
+                BK_Cmd_Servicios.Transaction = BK_Transaccion_Servicios;
                 BK_Cmd_Servicios.ExecuteNonQuery();
                 LimpiarVariables();
                 return true;
@@ -489,12 +563,12 @@ namespace BikeMessenger
         {
             try
             {
-                BK_Transaccion_Servicio = BM_Connection.BeginTransaction();
+                BK_Transaccion_Servicios = BM_Connection.BeginTransaction();
                 return true;
             }
             catch (SqliteException)
             {
-                BK_Transaccion_Servicio.Dispose();
+                BK_Transaccion_Servicios.Dispose();
                 return false;
             }
         }
@@ -503,12 +577,12 @@ namespace BikeMessenger
         {
             try
             {
-                BK_Transaccion_Servicio.Commit();
+                BK_Transaccion_Servicios.Commit();
                 return true;
             }
             catch (SqliteException)
             {
-                BK_Transaccion_Servicio.Dispose();
+                BK_Transaccion_Servicios.Dispose();
                 return false;
             }
         }
@@ -517,16 +591,15 @@ namespace BikeMessenger
         {
             try
             {
-                BK_Transaccion_Servicio.Rollback();
+                BK_Transaccion_Servicios.Rollback();
                 return true;
             }
             catch (SqliteException)
             {
-                BK_Transaccion_Servicio.Dispose();
+                BK_Transaccion_Servicios.Dispose();
                 return false;
             }
         }
-
 
         // Procedimiento Buscar Pais
         public bool Bm_E_Pais_EjecutarSelect()

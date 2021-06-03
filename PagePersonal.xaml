@@ -85,7 +85,7 @@
         <TextBox x:Name="labelCargo_Copy1" HorizontalAlignment="Left" Margin="15,212,0,0" Text="Cargo" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="140" BorderThickness="1,1,1,1" IsReadOnly="True" IsTabStop="False" AllowFocusOnInteraction="False" IsTextPredictionEnabled="False" IsDoubleTapEnabled="False" IsHoldingEnabled="False" IsRightTapEnabled="False" IsTapEnabled="False" ManipulationMode="None" FocusVisualPrimaryThickness="1,1,1,1" HighContrastAdjustment="None"/>
         <TextBox x:Name="textBoxCargo" HorizontalAlignment="Left" Margin="160,212,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="480" BorderThickness="1,1,1,1" Background="#6626C7F7" TabIndex="7"/>
         <ComboBox x:Name="comboBoxAutorizacion" Margin="160,180,0,0" Width="480" BorderThickness="1,1,1,1" Background="#6626C7F7"  IsEditable="True" TabIndex="12"/>
-        <ProgressRing x:Name="LvrProgresRing" HorizontalAlignment="Left" Margin="469,20,0,0" VerticalAlignment="Top" Height="32" Width="31" Visibility="Visible" HighContrastAdjustment="Auto">
+        <ProgressRing x:Name="LvrProgresRing" HorizontalAlignment="Left" Margin="401,244,0,0" VerticalAlignment="Top" Height="169" Width="179" Visibility="Visible" HighContrastAdjustment="Auto">
             <ProgressRing.Foreground>
                 <SolidColorBrush Color="{ThemeResource SystemAccentColorDark3}"/>
             </ProgressRing.Foreground>

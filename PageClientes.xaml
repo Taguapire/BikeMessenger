@@ -85,14 +85,14 @@
         <TextBox x:Name="labelObservaciones" HorizontalAlignment="Left" Margin="15,496,0,0" Text="Observaciones" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="140" BorderThickness="1,1,1,1" IsReadOnly="True" IsTabStop="False" AllowFocusOnInteraction="False" IsTextPredictionEnabled="False" IsDoubleTapEnabled="False" IsHoldingEnabled="False" IsRightTapEnabled="False" IsTapEnabled="False" ManipulationMode="None" FocusVisualPrimaryThickness="1,1,1,1" HighContrastAdjustment="None"/>
         <TextBox x:Name="textBoxObservaciones" HorizontalAlignment="Left" Margin="160,496,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="1.824,0.625" Width="480" BorderThickness="1,1,1,1" AcceptsReturn="True" Background="#6626C7F7" Height="64"/>
         <Custom:DataGrid x:Name="dataGridListadoClientes" HeadersVisibility="Column" AlternatingRowBackground="LightGray" HorizontalAlignment="Left" Margin="665,348,0,0" VerticalAlignment="Top" Height="212" Width="375" BorderThickness="1,1,1,1" BorderBrush="#66000000" Background="#6626C7F7" GridLinesVisibility="All" SelectionChanged="DataGridSeleccion_Clientes" />
-        <ProgressRing x:Name="LvrProgresRing" HorizontalAlignment="Left" Margin="469,20,0,0" VerticalAlignment="Top" Height="32" Width="31" Visibility="Visible" HighContrastAdjustment="Auto">
-            <ProgressRing.Foreground>
-                <SolidColorBrush Color="{ThemeResource SystemAccentColorDark3}"/>
-            </ProgressRing.Foreground>
-        </ProgressRing>
         <TextBox x:Name="labelUsuario" HorizontalAlignment="Left" Margin="665,279,0,0" Text="Usuario" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="135" BorderThickness="1,1,1,1" IsReadOnly="True" IsTabStop="False" AllowFocusOnInteraction="False" IsTextPredictionEnabled="False" IsDoubleTapEnabled="False" IsHoldingEnabled="False" IsRightTapEnabled="False" IsTapEnabled="False" ManipulationMode="None" FocusVisualPrimaryThickness="1,1,1,1" HighContrastAdjustment="None"/>
         <TextBox x:Name="textBoxUsuario" HorizontalAlignment="Left" Margin="805,279,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="1.824,0.625" Width="235" BorderThickness="1,1,1,1" AcceptsReturn="True" Background="#6626C7F7"/>
         <TextBox x:Name="labelUsuario_Copy" HorizontalAlignment="Left" Margin="665,311,0,0" Text="Clave" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="135" BorderThickness="1,1,1,1" IsReadOnly="True" IsTabStop="False" AllowFocusOnInteraction="False" IsTextPredictionEnabled="False" IsDoubleTapEnabled="False" IsHoldingEnabled="False" IsRightTapEnabled="False" IsTapEnabled="False" ManipulationMode="None" FocusVisualPrimaryThickness="1,1,1,1" HighContrastAdjustment="None"/>
         <PasswordBox x:Name="passwordClave" HorizontalAlignment="Left" Margin="805,311,0,0" VerticalAlignment="Top" Width="235"/>
+        <ProgressRing x:Name="LvrProgresRing" HorizontalAlignment="Left" Margin="401,244,0,0" VerticalAlignment="Top" Height="169" Width="179" Visibility="Visible" HighContrastAdjustment="Auto">
+            <ProgressRing.Foreground>
+                <SolidColorBrush Color="{ThemeResource SystemAccentColorDark3}"/>
+            </ProgressRing.Foreground>
+        </ProgressRing>
     </Grid>
 </Page>

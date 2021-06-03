@@ -385,6 +385,7 @@ namespace BikeMessenger
             try
             {
                 BK_Cmd_Empresa = new SqliteCommand(StrAgregar_Empresa, BM_Connection);
+                BK_Cmd_Empresa.Transaction = BK_Transaccion_Empresa;
                 _ = BK_Cmd_Empresa.ExecuteNonQuery();
                 return true;
             }
@@ -428,6 +429,7 @@ namespace BikeMessenger
             try
             {
                 BK_Cmd_Empresa = new SqliteCommand(StrModificar_Empresa, BM_Connection);
+                BK_Cmd_Empresa.Transaction = BK_Transaccion_Empresa;
                 _ = BK_Cmd_Empresa.ExecuteNonQuery();
                 return true;
             }
@@ -445,6 +447,7 @@ namespace BikeMessenger
             try
             {
                 BK_Cmd_Empresa = new SqliteCommand(StrBorrar_Empresa, BM_Connection);
+                BK_Cmd_Empresa.Transaction = BK_Transaccion_Empresa;
                 _ = BK_Cmd_Empresa.ExecuteNonQuery();
                 return true;
             }

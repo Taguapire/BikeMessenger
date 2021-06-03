@@ -188,41 +188,51 @@ namespace BikeMessenger
 
         private async void BtnAgregarServicios(object sender, RoutedEventArgs e)
         {
+            // Muestra de espera
+            LvrProgresRing.IsActive = true;
+            await Task.Delay(500); // .5 sec delay
+
             try
             {
-                // Muestra de espera
-                LvrProgresRing.IsActive = true;
-                await Task.Delay(500); // .5 sec delay
-
                 LlenarDbConPantalla();
 
-                if (BM_Database_Servicio.Bm_Servicios_Agregar())
+                bool TransaccionOK = false;
+
+                if (BM_Database_Servicio.Bm_Iniciar_Transaccion())
                 {
+                    if (BM_Database_Servicio.Bm_Servicios_Agregar())
+                    {
+                        TransaccionOK = true;
+
+                    }
+                    if (TransaccionOK)
+                    {
+                        if (LvrTransferVar.SincronizarWeb())
+                        {
+                            TransaccionOK = ProRegistroServicio("AGREGAR");
+                        }
+                    }
+                }
+                if (TransaccionOK)
+                {
+                    _ = BM_Database_Servicio.Bm_Commit_Transaccion();
+                    await AvisoOperacionServiciosDialogAsync("Agregar Servicio", "Servicio agregado exitosamente.");
                     LlenarListaEnvios();
                     LvrTransferVar.X_NROENVIO = BM_Database_Servicio.BK_NROENVIO;
-
-                    // Agregar en Servidor Remoto
-                    ProRegistroServicio("AGREGAR");
-                    // Verificar Operación
-
-                    await AvisoOperacionServiciosDialogAsync("Agregar Servicios", "Operación completada con exito.");
                 }
                 else
                 {
-                    await AvisoOperacionServiciosDialogAsync("Agregando Servicios", "Se a producido un error al intentar agregar recurso.");
+                    _ = BM_Database_Servicio.Bm_Rollback_Transaccion();
+                    await AvisoOperacionServiciosDialogAsync("Agregar Servicio", "Error en ingreso de servicio. Reintente o escriba a soporte contacto@pentalpha.net");
                 }
             }
             catch (ArgumentException)
             {
-                await AvisoOperacionServiciosDialogAsync("Agregando Servicios", "Aun faltan datos por completar.");
-            }
-            catch (IndexOutOfRangeException)
-            {
-                await AvisoOperacionServiciosDialogAsync("Agregando Servicios", "Datos de ingresos incorrectos o no estan completos.");
+                await AvisoOperacionServiciosDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de cliente.");
             }
 
             LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // .5 sec delay
+            await Task.Delay(500); // 1 sec delay
         }
 
         private async void BtnModificarServicios(object sender, RoutedEventArgs e)
@@ -234,29 +244,44 @@ namespace BikeMessenger
             try
             {
                 LlenarDbConPantalla();
-                if (BM_Database_Servicio.Bm_Recursos_Modificar(LvrTransferVar.X_PENTALPHA, BM_Database_Servicio.BK_NROENVIO))
+
+                bool TransaccionOK = false;
+
+                if (BM_Database_Servicio.Bm_Iniciar_Transaccion())
                 {
+                    if (BM_Database_Servicio.Bm_Servicios_Modificar(LvrTransferVar.X_PENTALPHA, BM_Database_Servicio.BK_NROENVIO))
+                    {
+                        TransaccionOK = true;
+                    }
+
+                    if (TransaccionOK)
+                    {
+                        if (LvrTransferVar.SincronizarWeb())
+                        {
+                            TransaccionOK = ProRegistroServicio("MODIFICAR");
+                        }
+                    }
+                }
+
+                if (TransaccionOK)
+                {
+                    _ = BM_Database_Servicio.Bm_Commit_Transaccion();
                     LlenarListaEnvios();
-                    ProRegistroServicio("MODIFICAR");
                     LvrTransferVar.X_NROENVIO = BM_Database_Servicio.BK_NROENVIO;
-                    await AvisoOperacionServiciosDialogAsync("Modificar Servicios", "Operación completada con exito.");
                 }
                 else
                 {
-                    await AvisoOperacionServiciosDialogAsync("Modificando Servicios", "Se a producido un error al intentar modificar recurso.");
+                    _ = BM_Database_Servicio.Bm_Rollback_Transaccion();
+                    await AvisoOperacionServiciosDialogAsync("Modificar Servicio", "Error en modificación de servicio. Reintente o escriba a soporte contacto@pentalpha.net");
                 }
             }
             catch (ArgumentException)
             {
-                await AvisoOperacionServiciosDialogAsync("Modificando Servicios", "Aun faltan datos por completar.");
-            }
-            catch (IndexOutOfRangeException)
-            {
-                await AvisoOperacionServiciosDialogAsync("Modificando Servicios", "Datos de ingresos incorrectos o no estan completos.");
+                await AvisoOperacionServiciosDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de cliente.");
             }
 
             LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // .5 sec delay
+            await Task.Delay(500); // 1 sec delay
         }
 
         private async void BtnBorrarServicios(object sender, RoutedEventArgs e)
@@ -276,14 +301,29 @@ namespace BikeMessenger
 
             try
             {
-                if (BM_Database_Servicio.Bm_Servicios_Borrar(LvrTransferVar.X_PENTALPHA, BM_Database_Servicio.BK_NROENVIO))
+                LlenarDbConPantalla();
+
+                bool TransaccionOK = false;
+
+                if (BM_Database_Servicio.Bm_Iniciar_Transaccion())
                 {
-                    ProRegistroServicio("BORRAR");
+                    if (BM_Database_Servicio.Bm_Servicios_Borrar(LvrTransferVar.X_PENTALPHA, BM_Database_Servicio.BK_NROENVIO))
+                    {
+                        TransaccionOK = true;
+                    }
 
-                    await AvisoOperacionServiciosDialogAsync("Borrando Servicios", "Operación completada con exito.");
+                    if (TransaccionOK)
+                    {
+                        if (LvrTransferVar.SincronizarWeb())
+                        {
+                            TransaccionOK = ProRegistroServicio("BORRAR");
+                        }
+                    }
+                }
 
-                    textBoxNroDeEnvio.IsReadOnly = false;
-
+                if (TransaccionOK)
+                {
+                    _ = BM_Database_Servicio.Bm_Commit_Transaccion();
                     if (BM_Database_Servicio.Bm_Servicios_Buscar())
                     {
                         LvrTransferVar.X_NROENVIO = BM_Database_Servicio.BK_NROENVIO;
@@ -292,22 +332,27 @@ namespace BikeMessenger
                     {
                         LvrTransferVar.X_NROENVIO = "";
                     }
+                    textBoxNroDeEnvio.IsReadOnly = false;
+
                     LlenarListaEnvios();
                     LlenarPantallaConDb();
+                    
+                    await AvisoOperacionServiciosDialogAsync("Borrar Servicio", "Servicio borrado exitosamente.");
                 }
                 else
                 {
-                    await AvisoOperacionServiciosDialogAsync("Borrando Servicios", "Se a producido un error al intentar borrar personal.");
+                    _ = BM_Database_Servicio.Bm_Rollback_Transaccion();
+                    await AvisoOperacionServiciosDialogAsync("Borrar Servicio", "Error en borrado de servicio. Reintente o escriba a soporte contacto@pentalpha.net");
                 }
             }
             catch (ArgumentException)
             {
-                await AvisoOperacionServiciosDialogAsync("Acceso a Base de Datos", "Debe llenar los datos del personal.");
+                await AvisoOperacionServiciosDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de cliente.");
             }
-            BorrarSiNo = false;
             LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // .5 sec delay
+            await Task.Delay(500); // 1 sec delay
         }
+
 
         private async void BtnMapaBuscarRutaServicios(object sender, RoutedEventArgs e)
         {
@@ -393,6 +438,7 @@ namespace BikeMessenger
                 appBarBuscarRuta.IsEnabled = true;
             }
         }
+
         private void LlenarPantallaConDb()
         {
             try
@@ -461,6 +507,7 @@ namespace BikeMessenger
         private void LlenarDbConPantalla()
         {
             BM_Database_Servicio.BK_NROENVIO = textBoxNroDeEnvio.Text;
+            BM_Database_Servicio.BK_PENTALPHA = LvrTransferVar.X_PENTALPHA;
             BM_Database_Servicio.BK_GUIADESPACHO = textBoxGuiaDeDespacho.Text;
             BM_Database_Servicio.BK_FECHA = controlFecha.Date.Date.ToShortDateString().ToString();
             BM_Database_Servicio.BK_HORA = controlHora.Time.ToString();
@@ -839,9 +886,9 @@ namespace BikeMessenger
         }
 
         //**************************************************
-        // Ejecuta operacion de registro de Servicios
+        // Ejecuta operacion de registro de Servicio
         //**************************************************
-        private void ProRegistroServicio(string pTipoOperacion)
+        private bool ProRegistroServicio(string pTipoOperacion)
         {
             string LvrPRecibirServer;
             string LvrPData;
@@ -873,19 +920,9 @@ namespace BikeMessenger
                 RecibirJsonServicioArray = JsonConvert.DeserializeObject<List<JsonBikeMessengerServicio>>(LvrPRecibirServer); // resp será el string JSON a deserializa
                 RecibirJsonServicio = RecibirJsonServicioArray[0];
 
-                if (RecibirJsonServicio.RESOPERACION == "OK")
-                {
-                    //CopiarJsonEnMemoria(pTipoOperacion);
-                    _ = AvisoOperacionServiciosDialogAsync("Estado Envio", RecibirJsonServicio.RESMENSAJE);
-                }
-                else
-                {
-                    _ = AvisoOperacionServiciosDialogAsync("Estado Envio", RecibirJsonServicio.RESMENSAJE);
-                }
-
-                return;
+                return RecibirJsonServicio.RESOPERACION == "OK";
             }
-            _ = AvisoOperacionServiciosDialogAsync("Registro de Servicios", "Problemas durante el registro remoto de Servicio. Debe repetir la operación");
+            return false;
         }
 
         private void CopiarMemoriaEnJson(string pOPERACION)
@@ -1054,6 +1091,19 @@ namespace BikeMessenger
             BM_Database_Servicio.BK_PROGRAMADO = EnviarJsonServicio.PROGRAMADO;
             // EnviarJsonServicio.RESOPERACION = "";
             // EnviarJsonServicio.RESMENSAJE = "";
+        }
+
+        private void BtnServiciosPendientes(object sender, RoutedEventArgs e)
+        {
+            if (LvrWebView.Visibility == Visibility.Visible)
+            {
+                LvrWebView.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                LvrWebView.Visibility = Visibility.Visible;
+                LvrWebView.NavigateToString(BM_Database_Servicio.Bm_Servicios_Pendientes());
+            }
         }
     }
 

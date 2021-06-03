@@ -135,6 +135,8 @@ namespace BikeMessenger
             TabCLIENTES += "RUTID	TEXT NOT NULL,";
             TabCLIENTES += "DIGVER	TEXT NOT NULL,";
             TabCLIENTES += "NOMBRE	TEXT,";
+            TabCLIENTES += "USUARIO	TEXT,";
+            TabCLIENTES += "CLAVE	TEXT,";
             TabCLIENTES += "ACTIVIDAD1	TEXT,";
             TabCLIENTES += "ACTIVIDAD2	TEXT,";
             TabCLIENTES += "REPRESENTANTE1	TEXT,";

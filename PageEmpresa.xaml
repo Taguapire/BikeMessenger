@@ -82,10 +82,9 @@
         <TextBox x:Name="textBoxTelefono1" HorizontalAlignment="Left" Margin="160,468,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Background="#6626C7F7" TabIndex="11" RenderTransformOrigin="0.531,0.312" Width="152"/>
         <TextBox x:Name="textBoxTelefono2" HorizontalAlignment="Left" Margin="325,468,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Background="#6626C7F7" TabIndex="12" Width="151"/>
         <TextBox x:Name="textBoxTelefono3" HorizontalAlignment="Left" Margin="489,468,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Background="#6626C7F7" TabIndex="12" Width="151"/>
-        <ProgressRing x:Name="LvrProgresRing" HorizontalAlignment="Left" Margin="469,20,0,0" VerticalAlignment="Top" Height="32" Width="31" Visibility="Visible" HighContrastAdjustment="Auto">
+        <ProgressRing x:Name="LvrProgresRing" HorizontalAlignment="Left" Margin="401,244,0,0" VerticalAlignment="Top" Height="169" Width="179" Visibility="Visible" HighContrastAdjustment="Auto">
             <ProgressRing.Foreground>
                 <SolidColorBrush Color="{ThemeResource SystemAccentColorDark3}"/>
             </ProgressRing.Foreground>
-        </ProgressRing>
-    </Grid>
+        </ProgressRing>    </Grid>
 </Page>

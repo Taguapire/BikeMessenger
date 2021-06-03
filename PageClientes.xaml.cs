@@ -341,7 +341,6 @@ namespace BikeMessenger
                     if (BM_Database_Cliente.Bm_Clientes_Agregar())
                     {
                         TransaccionOK = true;
-
                     }
                     if (TransaccionOK)
                     {
@@ -609,7 +608,7 @@ namespace BikeMessenger
         }
 
         //**************************************************
-        // Ejecuta operacion de registro de Recurso
+        // Ejecuta operacion de registro de Clientes
         //**************************************************
         private bool ProRegistroCliente(string pTipoOperacion)
         {

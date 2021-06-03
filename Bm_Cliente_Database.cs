@@ -166,6 +166,7 @@ namespace BikeMessenger
             try
             {
                 BK_Cmd_Clientes = new SqliteCommand(StrAgregar_Clientes, BM_Connection);
+                BK_Cmd_Clientes.Transaction = BK_Transaccion_Cliente;
                 _ = BK_Cmd_Clientes.ExecuteNonQuery();
                 return true;
             }
@@ -307,10 +308,11 @@ namespace BikeMessenger
             try
             {
                 BK_Cmd_Clientes = new SqliteCommand(StrModificar_Clientes, BM_Connection);
-                BK_Cmd_Clientes.ExecuteNonQuery();
+                BK_Cmd_Clientes.Transaction = BK_Transaccion_Cliente;
+                _ = BK_Cmd_Clientes.ExecuteNonQuery();
                 return true;
             }
-            catch (Microsoft.Data.Sqlite.SqliteException)
+            catch (SqliteException)
             {
                 return false;
             }
@@ -327,6 +329,7 @@ namespace BikeMessenger
                 StrBorrar_Clientes += "RUTID = '" + pRUTID + "' AND ";
                 StrBorrar_Clientes += "DIGVER = '" + pDIGVER + "'";
                 BK_Cmd_Clientes = new SqliteCommand(StrBorrar_Clientes, BM_Connection);
+                BK_Cmd_Clientes.Transaction = BK_Transaccion_Cliente;
                 _ = BK_Cmd_Clientes.ExecuteNonQuery();
                 return true;
             }

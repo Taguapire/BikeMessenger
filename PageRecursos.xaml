@@ -79,7 +79,7 @@
         <TextBox x:Name="labelListadoDePropietarios" HorizontalAlignment="Left" Margin="665,291,0,0" Text="Listado de Propietarios" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="375" BorderThickness="1,1,1,1" IsReadOnly="True" IsTabStop="False" AllowFocusOnInteraction="False" IsTextPredictionEnabled="False" IsDoubleTapEnabled="False" IsHoldingEnabled="False" IsRightTapEnabled="False" IsTapEnabled="False" ManipulationMode="None" FocusVisualPrimaryThickness="1,1,1,1" HighContrastAdjustment="None"/>
         <Custom:DataGrid x:Name="dataGridListadoPropietarios" HeadersVisibility="Column" AlternatingRowBackground="LightGray" HorizontalAlignment="Left" Margin="665,323,0,0" VerticalAlignment="Top" Height="277" Width="375" BorderThickness="1,1,1,1" BorderBrush="#66000000" Background="#6626C7F7" GridLinesVisibility="All" SelectionChanged="DataGridSeleccion_Propietario" />
         <ComboBox x:Name="comboBoxTipo" Margin="400,52,0,0" Width="240" BorderThickness="1,1,1,1" Background="#6626C7F7" IsEditable="True"/>
-        <ProgressRing x:Name="LvrProgresRing" HorizontalAlignment="Left" Margin="469,20,0,0" VerticalAlignment="Top" Height="32" Width="31" Visibility="Visible" HighContrastAdjustment="Auto">
+        <ProgressRing x:Name="LvrProgresRing" HorizontalAlignment="Left" Margin="401,244,0,0" VerticalAlignment="Top" Height="169" Width="179" Visibility="Visible" HighContrastAdjustment="Auto">
             <ProgressRing.Foreground>
                 <SolidColorBrush Color="{ThemeResource SystemAccentColorDark3}"/>
             </ProgressRing.Foreground>

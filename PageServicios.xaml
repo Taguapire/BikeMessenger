@@ -28,7 +28,7 @@
             <CommandBar.Content>
                 <TextBlock Text="Servicios" Margin="12,8"/>
             </CommandBar.Content>
-            <AppBarButton x:Name="appBarBuscar" Icon="Find" Label="Buscar"/>
+            <AppBarButton x:Name="appBarPendientes" Icon="Find" Label="Pendientes" Click="BtnServiciosPendientes"/>
             <AppBarButton x:Name="appBarAgregar" Icon="Add" Label="Agregar" Click="BtnAgregarServicios"/>
             <AppBarButton x:Name="appBarModificar" Icon="Edit" Label="Modificar" Click="BtnModificarServicios"/>
             <AppBarButton x:Name="appBarBorrar" Icon="Delete" Label="Borrar" Click="BtnBorrarServicios"/>
@@ -158,7 +158,6 @@
                 </Flyout>
             </Button.Flyout>
         </Button>
-        <Custom1:MapControl x:Name="mapControlBikeMessenger" Visibility="Collapsed"/>
         <TextBox x:Name="textBoxFacturas" HorizontalAlignment="Left" Margin="655,410,0,0" Text="0" TextWrapping="Wrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Background="#6626C7F7" Width="64" TabIndex="33"/>
         <TextBox x:Name="textBoxCheques" HorizontalAlignment="Left" Margin="655,442,0,0" Text="0" TextWrapping="Wrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Background="#6626C7F7" Width="64" TabIndex="36"/>
         <TextBox x:Name="textBoxBultos" HorizontalAlignment="Left" Margin="816,410,0,0" Text="0" TextWrapping="Wrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Background="#6626C7F7" Width="64" TabIndex="34"/>
@@ -171,10 +170,12 @@
         <TextBox x:Name="labelSobres" HorizontalAlignment="Left" Margin="734,442,0,0" Text="Sobres" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="77" BorderThickness="1,1,1,1" IsReadOnly="True" IsTabStop="False" AllowFocusOnInteraction="False" IsTextPredictionEnabled="False" IsDoubleTapEnabled="False" IsHoldingEnabled="False" IsRightTapEnabled="False" IsTapEnabled="False" ManipulationMode="None" FocusVisualPrimaryThickness="1,1,1,1" HighContrastAdjustment="None"/>
         <TextBox x:Name="labelCompras" HorizontalAlignment="Left" Margin="894,410,0,0" Text="Compras" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="77" BorderThickness="1,1,1,1" IsReadOnly="True" IsTabStop="False" AllowFocusOnInteraction="False" IsTextPredictionEnabled="False" IsDoubleTapEnabled="False" IsHoldingEnabled="False" IsRightTapEnabled="False" IsTapEnabled="False" ManipulationMode="None" FocusVisualPrimaryThickness="1,1,1,1" HighContrastAdjustment="None"/>
         <TextBox x:Name="labelOtros" HorizontalAlignment="Left" Margin="894,442,0,0" Text="Otros" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="77" BorderThickness="1,1,1,1" IsReadOnly="True" IsTabStop="False" AllowFocusOnInteraction="False" IsTextPredictionEnabled="False" IsDoubleTapEnabled="False" IsHoldingEnabled="False" IsRightTapEnabled="False" IsTapEnabled="False" ManipulationMode="None" FocusVisualPrimaryThickness="1,1,1,1" HighContrastAdjustment="None"/>
-        <ProgressRing x:Name="LvrProgresRing" HorizontalAlignment="Left" Margin="860,20,0,0" VerticalAlignment="Top" Height="32" Width="35" Visibility="Visible" HighContrastAdjustment="Auto">
+        <Custom1:MapControl x:Name="mapControlBikeMessenger" Visibility="Collapsed"/>
+        <ProgressRing x:Name="LvrProgresRing" HorizontalAlignment="Left" Margin="459,223,0,0" VerticalAlignment="Top" Height="187" Width="211" Visibility="Visible" HighContrastAdjustment="Auto">
             <ProgressRing.Foreground>
                 <SolidColorBrush Color="{ThemeResource SystemAccentColorDark3}"/>
             </ProgressRing.Foreground>
         </ProgressRing>
+        <WebView x:Name="LvrWebView" Visibility="Collapsed"/>
     </Grid>
 </Page>
