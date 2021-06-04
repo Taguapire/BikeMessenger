@@ -492,6 +492,12 @@ namespace BikeMessenger
             await Task.Delay(500); // 1 sec delay
         }
 
+        private void BtnListarClientes(object sender, RoutedEventArgs e)
+        {
+            LvrTransferVar.PantallaAnterior = "CLIENTE";
+            _ = Frame.Navigate(typeof(ListadosGenerales), LvrTransferVar, new SuppressNavigationTransitionInfo());
+        }
+
         private void BtnSalirClientes(object sender, RoutedEventArgs e)
         {
             LvrTransferVar.TV_Connection.Close();

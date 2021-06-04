@@ -4,17 +4,13 @@ using Microsoft.Data.Sqlite;
 
 namespace BikeMessenger
 {
-    class Bm_Servicio_Database
+    internal class Bm_Servicio_Database
     {
         // public SQLiteFactory BM_DB;
         public SqliteConnection BM_Connection;
         private SqliteTransaction BK_Transaccion_Servicios;
         private SqliteCommand BK_Cmd_Servicios;
         private SqliteDataReader BK_Reader_Servicios;
-
-        // Pendientes
-        private SqliteCommand BK_Cmd_Servicios_Pendientes;
-        private SqliteDataReader BK_Reader_Servicios_Pendientes;
 
         // Envios
         private SqliteCommand BK_Cmd_Envios_Grid;
@@ -334,8 +330,12 @@ namespace BikeMessenger
         }
 
 
-        public string Bm_Servicios_Pendientes()
+        public string Bm_Servicios_Listado()
         {
+            // Pendientes
+            SqliteCommand BK_Cmd_Servicios_Pendientes;
+            SqliteDataReader BK_Reader_Servicios_Pendientes;
+
             LvrTablaHtml DocumentoHtml = new LvrTablaHtml();
 
             try
@@ -363,30 +363,34 @@ namespace BikeMessenger
                     DocumentoHtml.AbrirFila();
                     DocumentoHtml.AgregarCampo(
                         BK_Reader_Servicios_Pendientes.GetString(
-                            BK_Reader_Servicios.GetOrdinal("NROENVIO")),false);
+                            BK_Reader_Servicios_Pendientes.GetOrdinal("NROENVIO")), false);
                     DocumentoHtml.AgregarCampo(
                         BK_Reader_Servicios_Pendientes.GetString(
-                            BK_Reader_Servicios.GetOrdinal("GUIADESPACHO")),false);
+                            BK_Reader_Servicios_Pendientes.GetOrdinal("GUIADESPACHO")), false);
                     DocumentoHtml.AgregarCampo(
                         BK_Reader_Servicios_Pendientes.GetString(
-                            BK_Reader_Servicios.GetOrdinal("FECHA")),false);
+                            BK_Reader_Servicios_Pendientes.GetOrdinal("FECHA")), false);
                     DocumentoHtml.AgregarCampo(
                         BK_Reader_Servicios_Pendientes.GetString(
-                            BK_Reader_Servicios.GetOrdinal("HORA")),false);
+                            BK_Reader_Servicios_Pendientes.GetOrdinal("HORA")), false);
                     DocumentoHtml.AgregarCampo(
                         Bm_BuscarNombreCliente(
-                            BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("CLIENTERUT")),
-                            BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("CLIENTEDIGVER"))),false);
+                            BK_Reader_Servicios_Pendientes.GetString(
+                                BK_Reader_Servicios_Pendientes.GetOrdinal("CLIENTERUT")),
+                            BK_Reader_Servicios_Pendientes.GetString(
+                                BK_Reader_Servicios_Pendientes.GetOrdinal("CLIENTEDIGVER"))), false);
                     DocumentoHtml.AgregarCampo(
                         Bm_BuscarNombreMensajero(
-                            BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("MENSAJERORUT")),
-                            BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("MENSAJERODIGVER"))), false);
+                            BK_Reader_Servicios_Pendientes.GetString(
+                                BK_Reader_Servicios_Pendientes.GetOrdinal("MENSAJERORUT")),
+                            BK_Reader_Servicios_Pendientes.GetString(
+                                BK_Reader_Servicios_Pendientes.GetOrdinal("MENSAJERODIGVER"))), false);
                     DocumentoHtml.AgregarCampo(
                         BK_Reader_Servicios_Pendientes.GetString(
-                            BK_Reader_Servicios.GetOrdinal("ENTREGA")),false);
+                            BK_Reader_Servicios_Pendientes.GetOrdinal("ENTREGA")), false);
                     DocumentoHtml.AgregarCampo(
                         BK_Reader_Servicios_Pendientes.GetString(
-                            BK_Reader_Servicios.GetOrdinal("RECEPCION")),false);
+                            BK_Reader_Servicios_Pendientes.GetOrdinal("RECEPCION")), false);
                     DocumentoHtml.CerrarFila();
                 }
                 BK_Reader_Servicios_Pendientes.Close();
@@ -395,6 +399,10 @@ namespace BikeMessenger
             catch (SqliteException)
             {
                 DocumentoHtml.FinDocumento();
+                return "<html><body><h2> No existen Envios Pendientes de Atención </h2></body></html>";
+            }
+            catch (NullReferenceException)
+            {
                 return "<html><body><h2> No existen Envios Pendientes de Atención </h2></body></html>";
             }
             return DocumentoHtml.BufferHtml;

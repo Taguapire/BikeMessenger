@@ -32,11 +32,11 @@
             <AppBarButton x:Name="appBarAgregar" Icon="Add" Label="Agregar" Click="BtnAgregarPersonal"/>
             <AppBarButton x:Name="appBarModificar" Icon="Edit" Label="Modificar" Click="BtnModificarPersonal"/>
             <AppBarButton x:Name="appBarBorrar" Icon="Delete" Label="Borrar" Click="BtnBorrarPersonal"/>
-            <AppBarButton x:Name="appBarImprimir" Icon="Print" Label="Imprimir"/>
+            <AppBarButton x:Name="appBarListar" Icon="Document" Label="Listar" Click="BtnListarPersonal"/>
             <AppBarButton x:Name="appBarSalir" Icon="Go" Label="Salir" Click="BtnSalirPersonal"/>
         </CommandBar>
     </Page.BottomAppBar>
-    <Grid x:Name="GridPersonal" AutomationProperties.AccessibilityView="Content" RequestedTheme="Default" MinWidth="1280" MinHeight="720" MaxWidth="1280" MaxHeight="720" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
+    <Grid x:Name="GridPersonal" AutomationProperties.AccessibilityView="Content" RequestedTheme="Default" MinWidth="1280" MinHeight="720" MaxWidth="1280" MaxHeight="720" UseLayoutRounding="False" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
         <Grid.Background>
             <AcrylicBrush TintColor="#CCABDAF5"/>
         </Grid.Background>
@@ -86,8 +86,8 @@
         <TextBox x:Name="textBoxCargo" HorizontalAlignment="Left" Margin="160,212,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="480" BorderThickness="1,1,1,1" Background="#6626C7F7" TabIndex="7"/>
         <ComboBox x:Name="comboBoxAutorizacion" Margin="160,180,0,0" Width="480" BorderThickness="1,1,1,1" Background="#6626C7F7"  IsEditable="True" TabIndex="12"/>
         <ProgressRing x:Name="LvrProgresRing" HorizontalAlignment="Left" Margin="401,244,0,0" VerticalAlignment="Top" Height="169" Width="179" Visibility="Visible" HighContrastAdjustment="Auto">
-            <ProgressRing.Foreground>
-                <SolidColorBrush Color="{ThemeResource SystemAccentColorDark3}"/>
+        <ProgressRing.Foreground>
+            <SolidColorBrush Color="{ThemeResource SystemAccentColorDark3}"/>
             </ProgressRing.Foreground>
         </ProgressRing>
     </Grid>

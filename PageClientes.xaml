@@ -32,7 +32,7 @@
             <AppBarButton x:Name="appBarAgregar" Icon="Add" Label="Agregar" Click="BtnAgregarClientes"/>
             <AppBarButton x:Name="appBarModificar" Icon="Edit" Label="Modificar" Click="BtnModificarClientes"/>
             <AppBarButton x:Name="appBarBorrar" Icon="Delete" Label="Borrar" Click="BtnBorrarClientes"/>
-            <AppBarButton x:Name="appBarImprimir" Icon="Print" Label="Imprimir"/>
+            <AppBarButton x:Name="appBarListar" Icon="Document" Label="Listar" Click="BtnListarClientes"/>
             <AppBarButton x:Name="appBarSalir" Icon="Go" Label="Salir" Click="BtnSalirClientes"/>
         </CommandBar>
     </Page.BottomAppBar>

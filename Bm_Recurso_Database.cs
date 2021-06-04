@@ -3,7 +3,7 @@ using Microsoft.Data.Sqlite;
 
 namespace BikeMessenger
 {
-    class Bm_Recurso_Database
+    internal class Bm_Recurso_Database
     {
         // public SQLiteFactory BM_DB;
         public SqliteConnection BM_Connection;
@@ -89,7 +89,7 @@ namespace BikeMessenger
         public string BK_RGRID_MODELO { get; set; }
         public string BK_RGRID_CIUDAD { get; set; }
 
-        public Boolean BM_CreateDatabase(SqliteConnection BM_Connection)
+        public bool BM_CreateDatabase(SqliteConnection BM_Connection)
         {
             this.BM_Connection = BM_Connection;
             return true;
@@ -275,6 +275,93 @@ namespace BikeMessenger
                 return false;
             }
         }
+
+        public string Bm_Recursos_Listado()
+        {
+            // Pendientes
+            StrBuscar_Recursos = "SELECT * FROM RECURSOS";
+            SqliteCommand BK_Cmd_Recurso_Listado;
+            SqliteDataReader BK_Reader_Recurso_Listado;
+
+            LvrTablaHtml DocumentoHtml = new LvrTablaHtml();
+
+            try
+            {
+                BK_Cmd_Recurso_Listado = new SqliteCommand(StrBuscar_Recursos, BM_Connection);
+                BK_Reader_Recurso_Listado = BK_Cmd_Recurso_Listado.ExecuteReader();
+
+                DocumentoHtml.CrearTexto("RECURSOS");
+                DocumentoHtml.InicioDocumento();
+                DocumentoHtml.AgregarTituloTabla("Listado de Recursos");
+                DocumentoHtml.AbrirEncabezado();
+                DocumentoHtml.AgregarEncabezado("RUT-DIGVER");
+                DocumentoHtml.AgregarEncabezado("PROPIETARIO");
+                DocumentoHtml.AgregarEncabezado("TIPO");
+                DocumentoHtml.AgregarEncabezado("PATENTE");
+                DocumentoHtml.AgregarEncabezado("MARCA");
+                DocumentoHtml.AgregarEncabezado("MODELO");
+                DocumentoHtml.AgregarEncabezado("VARIANTE");
+                DocumentoHtml.AgregarEncabezado("AÑO");
+                DocumentoHtml.AgregarEncabezado("CIUDAD");
+                DocumentoHtml.AgregarEncabezado("COMUNA");
+                DocumentoHtml.AgregarEncabezado("REGION");
+                DocumentoHtml.AgregarEncabezado("PAIS");
+                DocumentoHtml.CerrarEncabezado();
+
+                while (BK_Reader_Recurso_Listado.Read())
+                {
+                    DocumentoHtml.AbrirFila();
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Recurso_Listado.GetString(
+                            BK_Reader_Recurso_Listado.GetOrdinal("RUTID")) +
+                            "-" +
+                            BK_Reader_Recurso_Listado.GetString(
+                                BK_Reader_Recurso_Listado.GetOrdinal("DIGVER")), false);
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Recurso_Listado.GetString(
+                            BK_Reader_Recurso_Listado.GetOrdinal("PROPIETARIO")), false);
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Recurso_Listado.GetString(
+                            BK_Reader_Recurso_Listado.GetOrdinal("TIPO")), false);
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Recurso_Listado.GetString(
+                            BK_Reader_Recurso_Listado.GetOrdinal("PATENTE")), false);
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Recurso_Listado.GetString(
+                            BK_Reader_Recurso_Listado.GetOrdinal("MARCA")), false);
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Recurso_Listado.GetString(
+                            BK_Reader_Recurso_Listado.GetOrdinal("MODELO")), false);
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Recurso_Listado.GetString(
+                            BK_Reader_Recurso_Listado.GetOrdinal("VARIANTE")), false);
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Recurso_Listado.GetString(
+                            BK_Reader_Recurso_Listado.GetOrdinal("ANO")), false);
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Recurso_Listado.GetString(
+                            BK_Reader_Recurso_Listado.GetOrdinal("CIUDAD")), false);
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Recurso_Listado.GetString(
+                            BK_Reader_Recurso_Listado.GetOrdinal("COMUNA")), false);
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Recurso_Listado.GetString(
+                            BK_Reader_Recurso_Listado.GetOrdinal("REGION")), false);
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Recurso_Listado.GetString(
+                            BK_Reader_Recurso_Listado.GetOrdinal("PAIS")), false);
+                    DocumentoHtml.CerrarFila();
+                }
+
+                DocumentoHtml.FinDocumento();
+                return DocumentoHtml.BufferHtml;
+            }
+            catch (SqliteException)
+            {
+                return "<html><body><h2> No existen recursos </h2></body></html>"; ;
+            }
+        }
+
 
         // Procedimiento Modificar Recursos
         public bool Bm_Recursos_Modificar(string pPENTALPHA, string pPATENTE)

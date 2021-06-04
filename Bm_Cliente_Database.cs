@@ -275,6 +275,85 @@ namespace BikeMessenger
             }
         }
 
+        public string Bm_Clientes_Listado()
+        {
+            SqliteCommand BK_Cmd_Clientes_Listado;
+            SqliteDataReader BK_Reader_Clientes_Listado;
+            LvrTablaHtml DocumentoHtml = new LvrTablaHtml();
+
+            try
+            {
+                BK_Cmd_Clientes_Listado = new SqliteCommand(StrBuscar_Clientes, BM_Connection);
+                BK_Reader_Clientes_Listado = BK_Cmd_Clientes_Listado.ExecuteReader();
+
+                DocumentoHtml.CrearTexto("CLIENTES");
+                DocumentoHtml.InicioDocumento();
+                DocumentoHtml.AgregarTituloTabla("Listado de Clientes");
+                DocumentoHtml.AbrirEncabezado();
+                DocumentoHtml.AgregarEncabezado("RUT-DIGVER");
+                DocumentoHtml.AgregarEncabezado("NOMBRE");
+                DocumentoHtml.AgregarEncabezado("ACTIVIDAD");
+                DocumentoHtml.AgregarEncabezado("REPRESENTANTE");
+                DocumentoHtml.AgregarEncabezado("TELEFONO");
+                DocumentoHtml.AgregarEncabezado("DOMICILIO");
+                DocumentoHtml.AgregarEncabezado("NUMERO");
+                DocumentoHtml.AgregarEncabezado("OFICINA");
+                DocumentoHtml.AgregarEncabezado("CIUDAD");
+                DocumentoHtml.AgregarEncabezado("COMUNA");
+                DocumentoHtml.CerrarEncabezado();
+
+                while (BK_Reader_Clientes_Listado.Read())
+                {
+                    // Llenar Valores de Cliente
+                    DocumentoHtml.AbrirFila();
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Clientes_Listado.GetString(
+                            BK_Reader_Clientes_Listado.GetOrdinal("RUTID")) +
+                        BK_Reader_Clientes_Listado.GetString(
+                            BK_Reader_Clientes_Listado.GetOrdinal("DIGVER")), false);
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Clientes_Listado.GetString(
+                            BK_Reader_Clientes_Listado.GetOrdinal("NOMBRE")), false);
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Clientes_Listado.GetString(
+                            BK_Reader_Clientes_Listado.GetOrdinal("ACTIVIDAD1")), false);
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Clientes_Listado.GetString(
+                            BK_Reader_Clientes_Listado.GetOrdinal("REPRESENTANTE1")), false);
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Clientes_Listado.GetString(
+                            BK_Reader_Clientes_Listado.GetOrdinal("TELEFONO1")), false);
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Clientes_Listado.GetString(
+                            BK_Reader_Clientes_Listado.GetOrdinal("DOMICILIO1")), false);
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Clientes_Listado.GetString(
+                            BK_Reader_Clientes_Listado.GetOrdinal("NUMERO")), false);
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Clientes_Listado.GetString(
+                            BK_Reader_Clientes_Listado.GetOrdinal("OFICINA")), false);
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Clientes_Listado.GetString(
+                            BK_Reader_Clientes_Listado.GetOrdinal("CIUDAD")), false);
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Clientes_Listado.GetString(
+                            BK_Reader_Clientes_Listado.GetOrdinal("COMUNA")), false);
+                    DocumentoHtml.CerrarFila();
+                }
+                DocumentoHtml.FinDocumento();
+                return DocumentoHtml.BufferHtml;
+            }
+            catch (SqliteException)
+            {
+                return "<html><body><h2> No existen clientes </h2></body></html>";
+            }
+            catch (System.NullReferenceException)
+            {
+                return "<html><body><h2> No existen clientes </h2></body></html>";
+            }
+        }
+
+
         // Procedimiento Modificar Clientes
         public bool Bm_Clientes_Modificar(string pPENTALPHA, string pRUTID, string pDIGVER)
         {

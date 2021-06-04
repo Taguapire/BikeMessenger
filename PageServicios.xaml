@@ -28,13 +28,14 @@
             <CommandBar.Content>
                 <TextBlock Text="Servicios" Margin="12,8"/>
             </CommandBar.Content>
-            <AppBarButton x:Name="appBarPendientes" Icon="Find" Label="Pendientes" Click="BtnServiciosPendientes"/>
+            <AppBarButton x:Name="appBarBuscar" Icon="Find" Label="Buscar"/>
             <AppBarButton x:Name="appBarAgregar" Icon="Add" Label="Agregar" Click="BtnAgregarServicios"/>
             <AppBarButton x:Name="appBarModificar" Icon="Edit" Label="Modificar" Click="BtnModificarServicios"/>
             <AppBarButton x:Name="appBarBorrar" Icon="Delete" Label="Borrar" Click="BtnBorrarServicios"/>
             <AppBarButton x:Name="appBarImprimir" Icon="Print" Label="Imprimir"/>
             <AppBarButton x:Name="appBarMapa" Icon="Map" Label="Mapa" Click="BtnMapaServicios"/>
             <AppBarButton x:Name="appBarBuscarRuta" Icon="Map" Label="Buscar Ruta" Click="BtnMapaBuscarRutaServicios"/>
+            <AppBarButton x:Name="appBarListar" Icon="Document" Label="Listar" Click="BtnListarServicio"/>
             <AppBarButton x:Name="appBarSalir" Icon="Go" Label="Salir" Click="BtnSalirServicios"/>
         </CommandBar>
     </Page.BottomAppBar>
@@ -176,6 +177,5 @@
                 <SolidColorBrush Color="{ThemeResource SystemAccentColorDark3}"/>
             </ProgressRing.Foreground>
         </ProgressRing>
-        <WebView x:Name="LvrWebView" Visibility="Collapsed"/>
     </Grid>
 </Page>

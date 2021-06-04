@@ -41,6 +41,8 @@ namespace BikeMessenger
         public string SincronizarRemoto { get; set; }
         public string PENTALPHA_REMOTO { get; internal set; }
 
+        public string PantallaAnterior;
+        public string TipoDeInforme;
 
         public TransferVar()
         {

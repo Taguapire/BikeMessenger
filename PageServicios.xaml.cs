@@ -1093,16 +1093,11 @@ namespace BikeMessenger
             // EnviarJsonServicio.RESMENSAJE = "";
         }
 
-        private void BtnServiciosPendientes(object sender, RoutedEventArgs e)
+        private void BtnListarServicio(object sender, RoutedEventArgs e)
         {
-            if (LvrWebView.Visibility == Visibility.Visible)
             {
-                LvrWebView.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                LvrWebView.Visibility = Visibility.Visible;
-                LvrWebView.NavigateToString(BM_Database_Servicio.Bm_Servicios_Pendientes());
+                LvrTransferVar.PantallaAnterior = "SERVICIO";
+                _ = Frame.Navigate(typeof(ListadosGenerales), LvrTransferVar, new SuppressNavigationTransitionInfo());
             }
         }
     }

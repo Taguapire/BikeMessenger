@@ -241,6 +241,80 @@ namespace BikeMessenger
             }
         }
 
+        public string Bm_Personal_Listado()
+        {
+            // Pendientes
+            SqliteCommand BK_Cmd_Personal_Listado;
+            SqliteDataReader BK_Reader_Personal_Listado;
+
+            LvrTablaHtml DocumentoHtml = new LvrTablaHtml();
+
+            try
+            {
+                BK_Cmd_Personal_Listado = new SqliteCommand(StrBuscar_Personal, BM_Connection);
+                BK_Reader_Personal_Listado = BK_Cmd_Personal_Listado.ExecuteReader();
+
+                DocumentoHtml.CrearTexto("ENVIOS");
+                DocumentoHtml.InicioDocumento();
+                DocumentoHtml.AgregarTituloTabla("Listado de Personal");
+                DocumentoHtml.AbrirEncabezado();
+                DocumentoHtml.AgregarEncabezado("RUT-DIGVER");
+                DocumentoHtml.AgregarEncabezado("APELLIDOS");
+                DocumentoHtml.AgregarEncabezado("NOMBRES");
+                DocumentoHtml.AgregarEncabezado("TELEFONO 1");
+                DocumentoHtml.AgregarEncabezado("TELEFONO 2");
+                DocumentoHtml.AgregarEncabezado("EMAIL");
+                DocumentoHtml.AgregarEncabezado("AUTORIZACION");
+                DocumentoHtml.AgregarEncabezado("CARGO");
+                DocumentoHtml.AgregarEncabezado("CIUDAD");
+                DocumentoHtml.CerrarEncabezado();
+
+                while (BK_Reader_Personal_Listado.Read())
+                {
+                    DocumentoHtml.AbrirFila();
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Personal_Listado.GetString(
+                            BK_Reader_Personal_Listado.GetOrdinal("RUTID")) + 
+                            "-" + 
+                            BK_Reader_Personal_Listado.GetString(
+                                BK_Reader_Personal_Listado.GetOrdinal("DIGVER")), false);
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Personal_Listado.GetString(
+                            BK_Reader_Personal_Listado.GetOrdinal("APELLIDOS")), false);
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Personal_Listado.GetString(
+                            BK_Reader_Personal_Listado.GetOrdinal("NOMBRES")), false);
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Personal_Listado.GetString(
+                            BK_Reader_Personal_Listado.GetOrdinal("TELEFONO1")), false);
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Personal_Listado.GetString(
+                            BK_Reader_Personal_Listado.GetOrdinal("TELEFONO2")), false);
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Personal_Listado.GetString(
+                            BK_Reader_Personal_Listado.GetOrdinal("EMAIL")), false);
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Personal_Listado.GetString(
+                            BK_Reader_Personal_Listado.GetOrdinal("AUTORIZACION")), false);
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Personal_Listado.GetString(
+                            BK_Reader_Personal_Listado.GetOrdinal("CARGO")), false);
+                    DocumentoHtml.AgregarCampo(
+                        BK_Reader_Personal_Listado.GetString(
+                            BK_Reader_Personal_Listado.GetOrdinal("CIUDAD")), false);
+                    DocumentoHtml.CerrarFila();
+                }
+
+                DocumentoHtml.FinDocumento();
+                return DocumentoHtml.BufferHtml;
+            }
+            catch (SqliteException)
+            {
+                return "<html><body><h2> No existen clientes </h2></body></html>";
+            }
+        }
+
+
         // Procedimiento Modificar Personal
         public bool Bm_Personal_Modificar(string pPENTALPHA, string pRUTID, string pDIGVER)
         {
