@@ -28,7 +28,6 @@
             <CommandBar.Content>
                 <TextBlock Text="Personal" Margin="12,8"/>
             </CommandBar.Content>
-            <AppBarButton x:Name="appBarBuscar" Icon="Find" Label="Buscar"/>
             <AppBarButton x:Name="appBarAgregar" Icon="Add" Label="Agregar" Click="BtnAgregarPersonal"/>
             <AppBarButton x:Name="appBarModificar" Icon="Edit" Label="Modificar" Click="BtnModificarPersonal"/>
             <AppBarButton x:Name="appBarBorrar" Icon="Delete" Label="Borrar" Click="BtnBorrarPersonal"/>

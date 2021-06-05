@@ -44,23 +44,37 @@ namespace BikeMessenger
             }
         }
 
-        public void LvrInetPOST(string purl, string json)
+        public void LvrInetPOST(string pUrl, string pPort, string pController, string jSon)
         {
             try
             {
                 // Construct the HttpClient and Uri. This endpoint is for test purposes only.
 
+                string httpsCadena;
 
-                System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient();
-                System.Net.Http.HttpResponseMessage httpResponseMessage;
+                HttpClient httpClient = new HttpClient();
+                HttpResponseMessage httpResponseMessage;
                 string httpResponseBody;
-                Uri uri = new Uri(purl);
+
+                httpsCadena = pUrl;
+
+                if (pPort != "") {
+                    httpsCadena += ":";
+                    httpsCadena += pPort;
+                }
+
+                if (pController != "")
+                {
+                    httpsCadena += pController;
+                }
+
+                Uri uri = new Uri(httpsCadena);
 
                 // Construct the JSON to post.
-                StringContent content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+                StringContent content = new StringContent(jSon, System.Text.Encoding.UTF8, "application/json");
 
                 // Post the JSON and wait for a response.
-                httpResponseMessage = httpClient.PostAsync(purl, content).Result;
+                httpResponseMessage = httpClient.PostAsync(pUrl, content).Result;
 
                 // Make sure the post succeeded, and write out the response.
                 httpResponseBody = httpResponseMessage.Content.ReadAsStringAsync().Result;

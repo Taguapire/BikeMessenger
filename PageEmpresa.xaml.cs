@@ -12,6 +12,7 @@ using Windows.UI.Xaml.Navigation;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using QRCoder;
 
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
@@ -95,8 +96,6 @@ namespace BikeMessenger
                         appBarAgregar.IsEnabled = false;
                         appBarModificar.IsEnabled = true;
                         appBarBorrar.IsEnabled = true;
-                        appBarAceptar.IsEnabled = false;
-                        appBarAceptar.IsEnabled = false;
 
                         textBoxRut.IsReadOnly = true;
                         textBoxDigitoVerificador.IsReadOnly = true;
@@ -114,8 +113,6 @@ namespace BikeMessenger
                         appBarAgregar.IsEnabled = true;
                         appBarModificar.IsEnabled = false;
                         appBarBorrar.IsEnabled = false;
-                        appBarAceptar.IsEnabled = false;
-                        appBarAceptar.IsEnabled = false;
 
                         textBoxRut.IsReadOnly = false;
                         textBoxDigitoVerificador.IsReadOnly = false;
@@ -365,7 +362,7 @@ namespace BikeMessenger
                         appBarAgregar.IsEnabled = false;
                         appBarModificar.IsEnabled = true;
                         appBarBorrar.IsEnabled = true;
-                        appBarAceptar.IsEnabled = false;
+                        
 
                         textBoxRut.IsReadOnly = true;
                         textBoxDigitoVerificador.IsReadOnly = true;
@@ -374,7 +371,11 @@ namespace BikeMessenger
 
                     if (TransaccionOK)
                     {
-                        if (LvrTransferVar.SincronizarWeb())
+                        if (LvrTransferVar.SincronizarWebRemoto())
+                        {
+                            TransaccionOK = ProRegistroEmpresa("AGREGAR");
+                        }
+                        if (LvrTransferVar.SincronizarWebPropio())
                         {
                             TransaccionOK = ProRegistroEmpresa("AGREGAR");
                         }
@@ -431,7 +432,11 @@ namespace BikeMessenger
 
                     if (TransaccionOK)
                     {
-                        if (LvrTransferVar.SincronizarWeb())
+                        if (LvrTransferVar.SincronizarWebRemoto())
+                        {
+                            TransaccionOK = ProRegistroEmpresa("MODIFICAR");
+                        }
+                        if (LvrTransferVar.SincronizarWebPropio())
                         {
                             TransaccionOK = ProRegistroEmpresa("MODIFICAR");
                         }
@@ -504,7 +509,6 @@ namespace BikeMessenger
                         appBarAgregar.IsEnabled = true;
                         appBarModificar.IsEnabled = false;
                         appBarBorrar.IsEnabled = false;
-                        appBarAceptar.IsEnabled = false;
 
                         textBoxRut.IsReadOnly = false;
                         textBoxDigitoVerificador.IsReadOnly = false;
@@ -513,7 +517,11 @@ namespace BikeMessenger
 
                     if (TransaccionOK)
                     {
-                        if (LvrTransferVar.SincronizarWeb())
+                        if (LvrTransferVar.SincronizarWebRemoto())
+                        {
+                            TransaccionOK = ProRegistroEmpresa("BORRAR");
+                        }
+                        if (LvrTransferVar.SincronizarWebPropio())
                         {
                             TransaccionOK = ProRegistroEmpresa("BORRAR");
                         }
@@ -623,6 +631,25 @@ namespace BikeMessenger
             BM_Database_Empresa.BK_PENTALPHA = LvrCrypto.LvrByteArrayToString(LvrCrypto.LvrCalculoSHA256(TempTexto));
         }
 
+        private async void BtnCodigoQR(object sender, RoutedEventArgs e) {
+
+            QRCodeGenerator qrGenerator = new QRCodeGenerator();
+            QRCodeData qrCodeData = qrGenerator.CreateQrCode(BM_Database_Empresa.BK_PENTALPHA, QRCodeGenerator.ECCLevel.Q);
+            PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
+            
+            byte[] qrCodeAsPngByteArr = qrCode.GetGraphic(20);
+
+            InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream();
+
+            DataWriter writer = new DataWriter(stream.GetOutputStreamAt(0));
+            writer.WriteBytes(qrCodeAsPngByteArr);
+            await writer.StoreAsync();
+            var image = new BitmapImage();
+            await image.SetSourceAsync(stream);
+
+            imageQrEmpresa.Source = image;
+         }
+
         //**************************************************
         // Ejecuta operacion de registro de empresa
         //**************************************************
@@ -630,7 +657,9 @@ namespace BikeMessenger
         {
             string LvrPRecibirServer;
             string LvrPData;
-            string LvrStringHttp1 = "https://finanven.ddns.net/Api/BikeMessengerEmpresa";
+            string LvrStringHttp = "https://finanven.ddns.net";
+            string LvrStringPort = "443";
+            string LvrStringController = "/Api/BikeMessengerEmpresa";
 
             LvrInternet LvrBKInternet = new LvrInternet();
             string LvrParametros;
@@ -649,7 +678,7 @@ namespace BikeMessenger
             // Preparar Parametros
             LvrParametros = LvrPData;
 
-            LvrBKInternet.LvrInetPOST(LvrStringHttp1, LvrParametros);
+            LvrBKInternet.LvrInetPOST(LvrStringHttp, LvrStringPort, LvrStringController, LvrParametros);
             LvrPRecibirServer = LvrBKInternet.LvrResultadoWeb;
 
             if (LvrPRecibirServer != "ERROR" && LvrPRecibirServer != "" && LvrPRecibirServer != null)

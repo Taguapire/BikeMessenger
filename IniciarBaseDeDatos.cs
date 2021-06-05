@@ -1,4 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
+using System;
+using Windows.UI.Xaml;
 
 namespace BikeMessenger
 {
@@ -540,6 +542,10 @@ namespace BikeMessenger
                 return true;
             }
             catch (SqliteException)
+            {
+                return false;
+            }
+            catch (InvalidOperationException)
             {
                 return false;
             }

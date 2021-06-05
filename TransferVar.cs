@@ -1,5 +1,9 @@
 ﻿using Microsoft.Data.Sqlite;
+using System;
+using System.Threading.Tasks;
 using Windows.Storage;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace BikeMessenger
 {
@@ -36,22 +40,21 @@ namespace BikeMessenger
 
         // Valores Directorio
         public string Directorio { get; set; }
-        public string PENTALPHA { get; internal set; }
+        public string DirectorioRespaldos { get; set; }
 
         public string SincronizarRemoto { get; set; }
-        public string PENTALPHA_REMOTO { get; internal set; }
 
-        public string PantallaAnterior;
-        public string TipoDeInforme;
+        public string SincronizarPropio { get; set; }
+
+        public string PantallaAnterior { get; set; }
+        // public string TipoDeInforme;
 
         public TransferVar()
         {
-            //TV_Factory = new SqliteFactory;
-            // Crear Automaticamente la Base de Datos
-
             if (!VerificarDirectorio())
             {
                 CrearDirectorio(ApplicationData.Current.LocalFolder.Path);
+                CrearDirectorioRespaldo(ApplicationData.Current.LocalFolder.Path);
             }
 
             LeerDirectorio();
@@ -63,12 +66,47 @@ namespace BikeMessenger
 
             LeerSincronizarRemoto();
 
-            //TV_Connection = (SqliteConnection)TV_Factory.CreateConnection();
-            TV_Connection = (SqliteConnection)SqliteFactory.Instance.CreateConnection();
-            TV_Connection.ConnectionString = "Data Source=" + Directorio + "\\BikeMessenger.db";
-            TV_Connection.Open();
+            if (!VerificarSincronizarPropio())
+            {
+                CrearSincronizarPropio("N");
+            }
 
-            // Console.WriteLine(Directorio);
+            LeerSincronizarPropio();
+
+            AbrirBaseDeDatosAsync();
+        }
+
+        private async void AbrirBaseDeDatosAsync()
+        {
+            try
+            {
+                //TV_Connection = (SqliteConnection)TV_Factory.CreateConnection();
+                TV_Connection = (SqliteConnection)SqliteFactory.Instance.CreateConnection();
+                TV_Connection.ConnectionString = "Data Source=" + Directorio + "\\BikeMessenger.db3";
+                TV_Connection.Open();
+            }
+            catch (SqliteException)
+            {
+                await AvisoDeError();
+            }
+            catch (InvalidOperationException)
+            {
+                await AvisoDeError();
+            }
+            return;
+        }
+
+        private async Task AvisoDeError()
+        {
+            ContentDialog AbrirBasedeDatos = new ContentDialog
+            {
+                Title = "Error en Apertura de Base de Datos",
+                Content = "Error en la apertura de la Base de Datos",
+                CloseButtonText = "Salir"
+            };
+            _ = await AbrirBasedeDatos.ShowAsync();
+            Application.Current.Exit();
+            return;
         }
 
         public bool VerificarDirectorio()
@@ -86,10 +124,18 @@ namespace BikeMessenger
             return;
         }
 
+        public void CrearDirectorioRespaldo(string pDirectorioRespaldos)
+        {
+            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+            localSettings.Values["PENTALPHA_RESPALDOS"] = pDirectorioRespaldos;
+            return;
+        }
+
         public void LeerDirectorio()
         {
             ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
             Directorio = (string)localSettings.Values["PENTALPHA"];
+            DirectorioRespaldos = (string)localSettings.Values["PENTALPHA_RESPALDOS"];
             return;
         }
 
@@ -101,10 +147,25 @@ namespace BikeMessenger
             return SincronizarRemoto != null && SincronizarRemoto != "";
         }
 
+        public bool VerificarSincronizarPropio()
+        {
+            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+            SincronizarPropio = (string)localSettings.Values["PENTALPHA_PROPIO"];
+
+            return SincronizarPropio != null && SincronizarPropio != "";
+        }
+
         public void CrearSincronizarRemoto(string pSincronizarRemoto)
         {
             ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
             localSettings.Values["PENTALPHA_REMOTO"] = pSincronizarRemoto;
+            return;
+        }
+
+        public void CrearSincronizarPropio(string pSincronizarPropio)
+        {
+            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+            localSettings.Values["PENTALPHA_PROPIO"] = pSincronizarPropio;
             return;
         }
 
@@ -115,12 +176,28 @@ namespace BikeMessenger
             return;
         }
 
-        public bool SincronizarWeb()
+        public void LeerSincronizarPropio()
+        {
+            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+            SincronizarPropio = (string)localSettings.Values["PENTALPHA_PROPIO"];
+            return;
+        }
+
+        public bool SincronizarWebRemoto()
         {
             ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
             SincronizarRemoto = (string)localSettings.Values["PENTALPHA_REMOTO"];
 
             return SincronizarRemoto == "S";
         }
+
+        public bool SincronizarWebPropio()
+        {
+            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+            SincronizarPropio = (string)localSettings.Values["PENTALPHA_PROPIO"];
+
+            return SincronizarPropio == "S";
+        }
+
     }
 }

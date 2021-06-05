@@ -342,7 +342,11 @@ namespace BikeMessenger
                     }
                     if (TransaccionOK)
                     {
-                        if (LvrTransferVar.SincronizarWeb())
+                        if (LvrTransferVar.SincronizarWebRemoto())
+                        {
+                            TransaccionOK = ProRegistroPersonal("AGREGAR");
+                        }
+                        if (LvrTransferVar.SincronizarWebPropio())
                         {
                             TransaccionOK = ProRegistroPersonal("AGREGAR");
                         }
@@ -392,7 +396,11 @@ namespace BikeMessenger
 
                     if (TransaccionOK)
                     {
-                        if (LvrTransferVar.SincronizarWeb())
+                        if (LvrTransferVar.SincronizarWebRemoto())
+                        {
+                            TransaccionOK = ProRegistroPersonal("MODIFICAR");
+                        }
+                        if (LvrTransferVar.SincronizarWebPropio())
                         {
                             TransaccionOK = ProRegistroPersonal("MODIFICAR");
                         }
@@ -453,7 +461,11 @@ namespace BikeMessenger
 
                     if (TransaccionOK)
                     {
-                        if (LvrTransferVar.SincronizarWeb())
+                        if (LvrTransferVar.SincronizarWebRemoto())
+                        {
+                            TransaccionOK = ProRegistroPersonal("BORRAR");
+                        }
+                        if (LvrTransferVar.SincronizarWebPropio())
                         {
                             TransaccionOK = ProRegistroPersonal("BORRAR");
                         }
@@ -621,7 +633,9 @@ namespace BikeMessenger
         {
             string LvrPRecibirServer;
             string LvrPData;
-            string LvrStringHttp1 = "https://finanven.ddns.net/Api/BikeMessengerPersonal";
+            string LvrStringHttp = "https://finanven.ddns.net";
+            string LvrStringPort = "443";
+            string LvrStringController = "/Api/BikeMessengerPersonal";
 
             LvrInternet LvrBKInternet = new LvrInternet();
             string LvrParametros;
@@ -640,7 +654,7 @@ namespace BikeMessenger
             // Preparar Parametros
             LvrParametros = LvrPData;
 
-            LvrBKInternet.LvrInetPOST(LvrStringHttp1, LvrParametros);
+            LvrBKInternet.LvrInetPOST(LvrStringHttp, LvrStringPort, LvrStringController, LvrParametros);
             LvrPRecibirServer = LvrBKInternet.LvrResultadoWeb;
 
             if (LvrPRecibirServer != "ERROR" && LvrPRecibirServer != "" && LvrPRecibirServer != null)

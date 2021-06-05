@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Data.Sqlite;
+using System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
@@ -14,7 +15,7 @@ namespace BikeMessenger
 
     public sealed partial class App : Application
     {
-        static readonly TransferVar LvrTransferVar = new TransferVar();
+        private static readonly TransferVar LvrTransferVar = new TransferVar();
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
