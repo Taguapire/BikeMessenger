@@ -134,8 +134,10 @@ namespace BikeMessenger
                 StrAgregar_Personal += "'" + BK_PAIS + "',";
                 StrAgregar_Personal += "'" + BK_OBSERVACIONES + "',";
                 StrAgregar_Personal += "'" + BK_FOTO + "')";
-                BK_Cmd_Personal = new SqliteCommand(StrAgregar_Personal, BM_Connection);
-                BK_Cmd_Personal.Transaction = BK_Transaccion_Personal;
+                BK_Cmd_Personal = new SqliteCommand(StrAgregar_Personal, BM_Connection)
+                {
+                    Transaction = BK_Transaccion_Personal
+                };
                 _ = BK_Cmd_Personal.ExecuteNonQuery();
                 return true;
             }
@@ -343,8 +345,10 @@ namespace BikeMessenger
                 StrModificar_Personal += "PENTALPHA = '" + pPENTALPHA + "' AND ";
                 StrModificar_Personal += "RUTID = '" + pRUTID + "' AND ";
                 StrModificar_Personal += "DIGVER = '" + pDIGVER + "'";
-                BK_Cmd_Personal = new SqliteCommand(StrModificar_Personal, BM_Connection);
-                BK_Cmd_Personal.Transaction = BK_Transaccion_Personal;
+                BK_Cmd_Personal = new SqliteCommand(StrModificar_Personal, BM_Connection)
+                {
+                    Transaction = BK_Transaccion_Personal
+                };
                 _ = BK_Cmd_Personal.ExecuteNonQuery();
                 return true;
             }
@@ -365,8 +369,10 @@ namespace BikeMessenger
                 StrBorrar_Personal += "PENTALPHA = '" + pPENTALPHA + "' AND ";
                 StrBorrar_Personal += "RUTID = '" + pRUTID + "' AND ";
                 StrBorrar_Personal += "DIGVER = '" + pDIGVER + "'";
-                BK_Cmd_Personal = new SqliteCommand(StrBorrar_Personal, BM_Connection);
-                BK_Cmd_Personal.Transaction = BK_Transaccion_Personal;
+                BK_Cmd_Personal = new SqliteCommand(StrBorrar_Personal, BM_Connection)
+                {
+                    Transaction = BK_Transaccion_Personal
+                };
                 _ = BK_Cmd_Personal.ExecuteNonQuery();
                 LimpiarVariables();
                 return true;

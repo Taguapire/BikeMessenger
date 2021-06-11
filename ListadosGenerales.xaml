@@ -22,7 +22,7 @@
             <CommandBar.Content>
                 <TextBlock Text="Listados" Margin="12,8"/>
             </CommandBar.Content>
-            <AppBarButton x:Name="appBarImprimir" Icon="Print" Label="Imprimir" Click="LvrImprimir"/>
+            <AppBarButton x:Name="appBarImprimir" Icon="Print" Label="Imprimir" Click="LvrEnviar"/>
         </CommandBar>
     </Page.BottomAppBar>
     <ScrollContentPresenter>

@@ -246,8 +246,10 @@ namespace BikeMessenger
             StrAgregar_Servicios += "'" + BK_PROGRAMADO + "')";
             try
             {
-                BK_Cmd_Servicios = new SqliteCommand(StrAgregar_Servicios, BM_Connection);
-                BK_Cmd_Servicios.Transaction = BK_Transaccion_Servicios;
+                BK_Cmd_Servicios = new SqliteCommand(StrAgregar_Servicios, BM_Connection)
+                {
+                    Transaction = BK_Transaccion_Servicios
+                };
                 _ = BK_Cmd_Servicios.ExecuteNonQuery();
                 return true;
             }
@@ -534,8 +536,10 @@ namespace BikeMessenger
                 StrModificar_Servicios += "WHERE ";
                 StrModificar_Servicios += "PENTALPHA = '" + pPENTALPHA + "' AND ";
                 StrModificar_Servicios += "NROENVIO = '" + pNROENVIO + "'";
-                BK_Cmd_Servicios = new SqliteCommand(StrModificar_Servicios, BM_Connection);
-                BK_Cmd_Servicios.Transaction = BK_Transaccion_Servicios;
+                BK_Cmd_Servicios = new SqliteCommand(StrModificar_Servicios, BM_Connection)
+                {
+                    Transaction = BK_Transaccion_Servicios
+                };
                 _ = BK_Cmd_Servicios.ExecuteNonQuery();
                 return true;
             }
@@ -555,8 +559,10 @@ namespace BikeMessenger
                 StrBorrar_Servicios += "WHERE ";
                 StrBorrar_Servicios += "PENTALPHA = '" + pPENTALPHA + "' AND ";
                 StrBorrar_Servicios += "NROENVIO = '" + pNROENVIO + "'";
-                BK_Cmd_Servicios = new SqliteCommand(StrBorrar_Servicios, BM_Connection);
-                BK_Cmd_Servicios.Transaction = BK_Transaccion_Servicios;
+                BK_Cmd_Servicios = new SqliteCommand(StrBorrar_Servicios, BM_Connection)
+                {
+                    Transaction = BK_Transaccion_Servicios
+                };
                 BK_Cmd_Servicios.ExecuteNonQuery();
                 LimpiarVariables();
                 return true;

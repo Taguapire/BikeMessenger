@@ -134,8 +134,10 @@ namespace BikeMessenger
                 StrAgregar_Recursos += "'" + BK_PAIS + "',";
                 StrAgregar_Recursos += "'" + BK_OBSERVACIONES + "',";
                 StrAgregar_Recursos += "'" + BK_FOTO + "')";
-                BK_Cmd_Recursos = new SqliteCommand(StrAgregar_Recursos, BM_Connection);
-                BK_Cmd_Recursos.Transaction = BK_Transaccion_Recursos;
+                BK_Cmd_Recursos = new SqliteCommand(StrAgregar_Recursos, BM_Connection)
+                {
+                    Transaction = BK_Transaccion_Recursos
+                };
                 _ = BK_Cmd_Recursos.ExecuteNonQuery();
                 return true;
             }
@@ -387,8 +389,10 @@ namespace BikeMessenger
                 StrModificar_Recursos += "WHERE ";
                 StrModificar_Recursos += "PENTALPHA = '" + pPENTALPHA + "' AND ";
                 StrModificar_Recursos += "PATENTE = '" + pPATENTE + "'";
-                BK_Cmd_Recursos = new SqliteCommand(StrModificar_Recursos, BM_Connection);
-                BK_Cmd_Recursos.Transaction = BK_Transaccion_Recursos;
+                BK_Cmd_Recursos = new SqliteCommand(StrModificar_Recursos, BM_Connection)
+                {
+                    Transaction = BK_Transaccion_Recursos
+                };
                 _ = BK_Cmd_Recursos.ExecuteNonQuery();
                 return true;
             }
@@ -407,8 +411,10 @@ namespace BikeMessenger
                 StrBorrar_Recursos += "WHERE ";
                 StrBorrar_Recursos += "PENTALPHA = '" + pPENTALPHA + "'";
                 StrBorrar_Recursos += "PATENTE = '" + pPATENTE + "'";
-                BK_Cmd_Recursos = new SqliteCommand(StrBorrar_Recursos, BM_Connection);
-                BK_Cmd_Recursos.Transaction = BK_Transaccion_Recursos;
+                BK_Cmd_Recursos = new SqliteCommand(StrBorrar_Recursos, BM_Connection)
+                {
+                    Transaction = BK_Transaccion_Recursos
+                };
                 _ = BK_Cmd_Recursos.ExecuteNonQuery();
                 LimpiarVariables();
                 return true;
