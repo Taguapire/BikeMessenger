@@ -1,4 +1,5 @@
 ﻿using Microsoft.Toolkit.Uwp.UI.Controls;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,7 +13,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
-using Newtonsoft.Json;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -23,6 +23,8 @@ namespace BikeMessenger
     /// </summary>
     public sealed partial class PageRecursos : Page
     {
+        private List<JsonBikeMessengerRecurso> RecursoIOArray = null;
+        private JsonBikeMessengerRecurso RecursoIO = null;
         private readonly JsonBikeMessengerRecurso EnviarJsonRecurso = new JsonBikeMessengerRecurso();
         private JsonBikeMessengerRecurso RecibirJsonRecurso = new JsonBikeMessengerRecurso();
         private readonly Bm_Recurso_Database BM_Database_Recurso = new Bm_Recurso_Database();
@@ -85,20 +87,21 @@ namespace BikeMessenger
             else
             {
                 LvrTransferVar = (TransferVar)navigationEvent.Parameter;
-                _ = BM_Database_Recurso.BM_CreateDatabase(LvrTransferVar.TV_Connection);
                 RellenarCombos();
 
                 if (LvrTransferVar.R_PAT_SER == "")
                 {
-                    if (BM_Database_Recurso.Bm_Recursos_Buscar())
+                    if ((RecursoIOArray = BM_Database_Recurso.BuscarRecurso()) != null)
                     {
+                        RecursoIO = RecursoIOArray[0];
                         LlenarPantallaConDb();
                     }
                 }
                 else
                 {
-                    if (BM_Database_Recurso.Bm_Recursos_Buscar(LvrTransferVar.R_PENTALPHA, LvrTransferVar.R_PAT_SER))
+                    if ((RecursoIOArray = BM_Database_Recurso.BuscarRecurso(LvrTransferVar.R_PENTALPHA, LvrTransferVar.R_PAT_SER)) != null)
                     {
+                        RecursoIO = RecursoIOArray[0];
                         LlenarPantallaConDb();
                     }
                 }
@@ -182,39 +185,31 @@ namespace BikeMessenger
             comboBoxCiudad.Items.Clear();
 
             // Llenar Combo Pais
-            if (BM_Database_Recurso.Bm_E_Pais_EjecutarSelect())
+            List<string> ListaPais = BM_Database_Recurso.GetPais();
+            for (int i = 0; i < ListaPais.Count; i++)
             {
-                while (BM_Database_Recurso.Bm_E_Pais_Buscar())
-                {
-                    comboBoxPais.Items.Add(BM_Database_Recurso.BK_E_PAIS);
-                }
+                comboBoxPais.Items.Add(ListaPais[i]);
             }
 
             // Llenar Combo Region
-            if (BM_Database_Recurso.Bm_E_Region_EjecutarSelect())
+            List<string> ListaEstado = BM_Database_Recurso.GetRegion();
+            for (int i = 0; i < ListaEstado.Count; i++)
             {
-                while (BM_Database_Recurso.Bm_E_Region_Buscar())
-                {
-                    comboBoxEstado.Items.Add(BM_Database_Recurso.BK_E_REGION);
-                }
+                comboBoxEstado.Items.Add(ListaEstado[i]);
             }
 
             // Llenar Combo Comuna
-            if (BM_Database_Recurso.Bm_E_Comuna_EjecutarSelect())
+            List<string> ListaComuna = BM_Database_Recurso.GetComuna();
+            for (int i = 0; i < ListaComuna.Count; i++)
             {
-                while (BM_Database_Recurso.Bm_E_Comuna_Buscar())
-                {
-                    comboBoxComuna.Items.Add(BM_Database_Recurso.BK_E_COMUNA);
-                }
+                comboBoxComuna.Items.Add(ListaComuna[i]);
             }
 
             // Llenar Combo Ciudad
-            if (BM_Database_Recurso.Bm_E_Ciudad_EjecutarSelect())
+            List<string> ListaCiudad = BM_Database_Recurso.GetCiudad();
+            for (int i = 0; i < ListaCiudad.Count; i++)
             {
-                while (BM_Database_Recurso.Bm_E_Ciudad_Buscar())
-                {
-                    comboBoxCiudad.Items.Add(BM_Database_Recurso.BK_E_CIUDAD);
-                }
+                comboBoxCiudad.Items.Add(ListaCiudad[i]);
             }
         }
 
@@ -222,26 +217,26 @@ namespace BikeMessenger
         {
             try
             {
-                // LvrTransferVar.R_PENTALPHA = BM_Database_Recurso.BK_PENTALPHA;
-                LvrTransferVar.R_RUTID = BM_Database_Recurso.BK_RUTID;
-                LvrTransferVar.R_DIGVER = BM_Database_Recurso.BK_DIGVER;
-                LvrTransferVar.R_PAT_SER = BM_Database_Recurso.BK_PATENTE;
-                textBoxRut.Text = BM_Database_Recurso.BK_RUTID;
-                textBoxDigitoVerificador.Text = BM_Database_Recurso.BK_DIGVER;
-                textBoxPropietario.Text = BM_Database_Recurso.BK_PROPIETARIO;
-                comboBoxTipo.SelectedValue = BM_Database_Recurso.BK_TIPO;
-                textBoxPatenteCodigo.Text = BM_Database_Recurso.BK_PATENTE;
-                textBoxMarca.Text = BM_Database_Recurso.BK_MARCA;
-                textBoxModelo.Text = BM_Database_Recurso.BK_MODELO;
-                textBoxVariante.Text = BM_Database_Recurso.BK_VARIANTE;
-                textBoxAno.Text = BM_Database_Recurso.BK_ANO;
-                textBoxColor.Text = BM_Database_Recurso.BK_COLOR;
-                comboBoxPais.SelectedValue = BM_Database_Recurso.BK_PAIS;
-                comboBoxEstado.SelectedValue = BM_Database_Recurso.BK_REGION;
-                comboBoxComuna.SelectedValue = BM_Database_Recurso.BK_COMUNA;
-                comboBoxCiudad.SelectedValue = BM_Database_Recurso.BK_CIUDAD;
-                textBoxObservaciones.Text = BM_Database_Recurso.BK_OBSERVACIONES;
-                imageFotoRecurso.Source = Base64StringToBitmap(BM_Database_Recurso.BK_FOTO);
+                // LvrTransferVar.R_PENTALPHA = RecursoIO.PENTALPHA;
+                LvrTransferVar.R_RUTID = RecursoIO.RUTID;
+                LvrTransferVar.R_DIGVER = RecursoIO.DIGVER;
+                LvrTransferVar.R_PAT_SER = RecursoIO.PATENTE;
+                textBoxRut.Text = RecursoIO.RUTID;
+                textBoxDigitoVerificador.Text = RecursoIO.DIGVER;
+                textBoxPropietario.Text = RecursoIO.PROPIETARIO;
+                comboBoxTipo.SelectedValue = RecursoIO.TIPO;
+                textBoxPatenteCodigo.Text = RecursoIO.PATENTE;
+                textBoxMarca.Text = RecursoIO.MARCA;
+                textBoxModelo.Text = RecursoIO.MODELO;
+                textBoxVariante.Text = RecursoIO.VARIANTE;
+                textBoxAno.Text = RecursoIO.ANO;
+                textBoxColor.Text = RecursoIO.COLOR;
+                comboBoxPais.SelectedValue = RecursoIO.PAIS;
+                comboBoxEstado.SelectedValue = RecursoIO.REGION;
+                comboBoxComuna.SelectedValue = RecursoIO.COMUNA;
+                comboBoxCiudad.SelectedValue = RecursoIO.CIUDAD;
+                textBoxObservaciones.Text = RecursoIO.OBSERVACIONES;
+                imageFotoRecurso.Source = Base64StringToBitmap(RecursoIO.FOTO);
             }
             catch (ArgumentNullException)
             {
@@ -274,85 +269,78 @@ namespace BikeMessenger
 
         private async Task LlenarDbConPantallaAsync()
         {
-            BM_Database_Recurso.BK_PENTALPHA = LvrTransferVar.R_PENTALPHA;
-            BM_Database_Recurso.BK_PATENTE = textBoxPatenteCodigo.Text;
-            BM_Database_Recurso.BK_RUTID = textBoxRut.Text;
-            BM_Database_Recurso.BK_DIGVER = textBoxDigitoVerificador.Text;
+            RecursoIO.PENTALPHA = LvrTransferVar.R_PENTALPHA;
+            RecursoIO.PATENTE = textBoxPatenteCodigo.Text;
+            RecursoIO.RUTID = textBoxRut.Text;
+            RecursoIO.DIGVER = textBoxDigitoVerificador.Text;
             // ***********************************************************
             // Agregando Campos de Parametros
-            LvrTransferVar.R_PAT_SER = BM_Database_Recurso.BK_PATENTE;
-            LvrTransferVar.R_RUTID = BM_Database_Recurso.BK_RUTID;
-            LvrTransferVar.R_DIGVER = BM_Database_Recurso.BK_DIGVER;
+            LvrTransferVar.R_PAT_SER = RecursoIO.PATENTE;
+            LvrTransferVar.R_RUTID = RecursoIO.RUTID;
+            LvrTransferVar.R_DIGVER = RecursoIO.DIGVER;
             // ***********************************************************
-            BM_Database_Recurso.BK_PROPIETARIO = textBoxPropietario.Text;
-            BM_Database_Recurso.BK_TIPO = comboBoxTipo.Text;
-            BM_Database_Recurso.BK_MARCA = textBoxMarca.Text;
-            BM_Database_Recurso.BK_MODELO = textBoxModelo.Text;
-            BM_Database_Recurso.BK_VARIANTE = textBoxVariante.Text;
-            BM_Database_Recurso.BK_ANO = textBoxAno.Text;
-            BM_Database_Recurso.BK_COLOR = textBoxColor.Text;
+            RecursoIO.PROPIETARIO = textBoxPropietario.Text;
+            RecursoIO.TIPO = comboBoxTipo.Text;
+            RecursoIO.MARCA = textBoxMarca.Text;
+            RecursoIO.MODELO = textBoxModelo.Text;
+            RecursoIO.VARIANTE = textBoxVariante.Text;
+            RecursoIO.ANO = textBoxAno.Text;
+            RecursoIO.COLOR = textBoxColor.Text;
             if (comboBoxCiudad.Text != "")
-                BM_Database_Recurso.BK_CIUDAD = comboBoxCiudad.Text;
+                RecursoIO.CIUDAD = comboBoxCiudad.Text;
             if (comboBoxComuna.Text != "")
-                BM_Database_Recurso.BK_COMUNA = comboBoxComuna.Text;
+                RecursoIO.COMUNA = comboBoxComuna.Text;
             if (comboBoxEstado.Text != "")
-                BM_Database_Recurso.BK_REGION = comboBoxEstado.Text;
+                RecursoIO.REGION = comboBoxEstado.Text;
             if (comboBoxPais.Text != "")
-                BM_Database_Recurso.BK_PAIS = comboBoxPais.Text;
-            BM_Database_Recurso.BK_OBSERVACIONES = textBoxObservaciones.Text;
-            BM_Database_Recurso.BK_FOTO = await ConvertirImageABase64Async();
+                RecursoIO.PAIS = comboBoxPais.Text;
+            RecursoIO.OBSERVACIONES = textBoxObservaciones.Text;
+            RecursoIO.FOTO = await ConvertirImageABase64Async();
         }
 
+
         private async void BtnAgregarRecursos(object sender, RoutedEventArgs e)
-        {            
+        {
             // Muestra de espera
             LvrProgresRing.IsActive = true;
             await Task.Delay(500); // .5 sec delay
 
-            try
+            await LlenarDbConPantallaAsync();
+
+            bool TransaccionOK = false;
+
+            if (BM_Database_Recurso.AgregarRecurso(RecursoIO))
             {
-                await LlenarDbConPantallaAsync();
+                TransaccionOK = true;
 
-                bool TransaccionOK = false;
-
-                if (BM_Database_Recurso.Bm_Iniciar_Transaccion())
+                if (LvrTransferVar.SincronizarWebRemoto())
                 {
-                    if (BM_Database_Recurso.Bm_Recursos_Agregar())
-                    {
-                        TransaccionOK = true;
-
-                    }
-                    if (TransaccionOK)
-                    {
-                        if (LvrTransferVar.SincronizarWebRemoto())
-                        {
-                            TransaccionOK = ProRegistroRecurso("AGREGAR");
-                        }
-                        if (LvrTransferVar.SincronizarWebPropio())
-                        {
-                            TransaccionOK = ProRegistroRecurso("AGREGAR");
-                        }
-                    }
+                    TransaccionOK = ProRegistroRecurso("AGREGAR");
                 }
+
+                if (LvrTransferVar.SincronizarWebPropio())
+                {
+                    TransaccionOK = ProRegistroRecurso("AGREGAR");
+                }
+
                 if (TransaccionOK)
                 {
-                    _ = BM_Database_Recurso.Bm_Commit_Transaccion();
                     await AvisoOperacionRecursosDialogAsync("Agregar Recurso", "Recurso agregado exitosamente.");
                     LlenarListaRecursos();
                     LlenarListaPropietarios();
-                    LvrTransferVar.R_RUTID = BM_Database_Recurso.BK_RUTID;
-                    LvrTransferVar.R_DIGVER = BM_Database_Recurso.BK_DIGVER;
-                    LvrTransferVar.R_PAT_SER = BM_Database_Recurso.BK_PATENTE;
+                    LvrTransferVar.R_RUTID = RecursoIO.RUTID;
+                    LvrTransferVar.R_DIGVER = RecursoIO.DIGVER;
+                    LvrTransferVar.R_PAT_SER = RecursoIO.PATENTE;
                 }
+
                 else
                 {
-                    _ = BM_Database_Recurso.Bm_Rollback_Transaccion();
-                    await AvisoOperacionRecursosDialogAsync("Agregar Recurso", "Error en ingreso de recurso. Reintente o escriba a soporte contacto@pentalpha.net");
+                    await AvisoOperacionRecursosDialogAsync("Agregar Recurso", "Error en ingreso de Recurso. Reintente o escriba a soporte contacto@pentalpha.net");
                 }
             }
-            catch (ArgumentException)
+            else
             {
-                await AvisoOperacionRecursosDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de recurso.");
+                await AvisoOperacionRecursosDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de Cliente.");
             }
 
             LvrProgresRing.IsActive = false;
@@ -362,51 +350,40 @@ namespace BikeMessenger
         private async void BtnModificarRecursos(object sender, RoutedEventArgs e)
         {
             // Muestra de espera
+            bool TransaccionOK = false;
             LvrProgresRing.IsActive = true;
             await Task.Delay(500); // .5 sec delay
 
-            try
+            await LlenarDbConPantallaAsync();
+
+            if (BM_Database_Recurso.ModificarRecurso(RecursoIO))
             {
-                await LlenarDbConPantallaAsync();
+                TransaccionOK = true;
 
-                bool TransaccionOK = false;
-
-                if (BM_Database_Recurso.Bm_Iniciar_Transaccion())
+                if (LvrTransferVar.SincronizarWebRemoto())
                 {
-                    if (BM_Database_Recurso.Bm_Recursos_Modificar(LvrTransferVar.R_PENTALPHA, BM_Database_Recurso.BK_PATENTE))
-                    {
-                        TransaccionOK = true;
-                    }
-
-                    if (TransaccionOK)
-                    {
-                        if (LvrTransferVar.SincronizarWebRemoto())
-                        {
-                            TransaccionOK = ProRegistroRecurso("MODIFICAR");
-                        }
-                        if (LvrTransferVar.SincronizarWebPropio())
-                        {
-                            TransaccionOK = ProRegistroRecurso("MODIFICAR");
-                        }
-                    }
+                    TransaccionOK = ProRegistroRecurso("MODIFICAR");
                 }
+                if (LvrTransferVar.SincronizarWebPropio())
+                {
+                    TransaccionOK = ProRegistroRecurso("MODIFICAR");
+                }
+
 
                 if (TransaccionOK)
                 {
-                    _ = BM_Database_Recurso.Bm_Commit_Transaccion();
                     LlenarListaRecursos();
                     LlenarListaPropietarios();
-                    LvrTransferVar.R_PAT_SER = BM_Database_Recurso.BK_PATENTE;
-                    LvrTransferVar.R_RUTID = BM_Database_Recurso.BK_RUTID;
-                    LvrTransferVar.R_DIGVER = BM_Database_Recurso.BK_DIGVER;
+                    LvrTransferVar.R_PAT_SER = RecursoIO.PATENTE;
+                    LvrTransferVar.R_RUTID = RecursoIO.RUTID;
+                    LvrTransferVar.R_DIGVER = RecursoIO.DIGVER;
                 }
                 else
                 {
-                    _ = BM_Database_Recurso.Bm_Rollback_Transaccion();
                     await AvisoOperacionRecursosDialogAsync("Modificar Recurso", "Error en modificación de recurso. Reintente o escriba a soporte contacto@pentalpha.net");
                 }
             }
-            catch (ArgumentException)
+            else
             {
                 await AvisoOperacionRecursosDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de recursos.");
             }
@@ -414,6 +391,7 @@ namespace BikeMessenger
             LvrProgresRing.IsActive = false;
             await Task.Delay(500); // 1 sec delay
         }
+
 
 
         private async void BtnBorrarRecursos(object sender, RoutedEventArgs e)
@@ -429,43 +407,32 @@ namespace BikeMessenger
             }
 
             // Muestra de espera
+            bool TransaccionOK = false;
             LvrProgresRing.IsActive = true;
             await Task.Delay(500); // .5 sec delay
 
-            try
+            if (BM_Database_Recurso.BorrarRecurso(LvrTransferVar.R_PENTALPHA, RecursoIO.PATENTE))
             {
-                await LlenarDbConPantallaAsync();
+                TransaccionOK = true;
 
-                bool TransaccionOK = false;
-
-                if (BM_Database_Recurso.Bm_Iniciar_Transaccion())
+                if (LvrTransferVar.SincronizarWebRemoto())
                 {
-                    if (BM_Database_Recurso.Bm_Recursos_Borrar(LvrTransferVar.R_PENTALPHA, BM_Database_Recurso.BK_PATENTE))
-                    {
-                        TransaccionOK = true;
-                    }
-
-                    if (TransaccionOK)
-                    {
-                        if (LvrTransferVar.SincronizarWebRemoto())
-                        {
-                            TransaccionOK = ProRegistroRecurso("BORRAR");
-                        }
-                        if (LvrTransferVar.SincronizarWebPropio())
-                        {
-                            TransaccionOK = ProRegistroRecurso("BORRAR");
-                        }
-                    }
+                    TransaccionOK = ProRegistroRecurso("BORRAR");
                 }
+
+                if (LvrTransferVar.SincronizarWebPropio())
+                {
+                    TransaccionOK = ProRegistroRecurso("BORRAR");
+                }
+
 
                 if (TransaccionOK)
                 {
-                    _ = BM_Database_Recurso.Bm_Commit_Transaccion();
-                    if (BM_Database_Recurso.Bm_Recursos_Buscar())
+                    if ((RecursoIOArray = BM_Database_Recurso.BuscarRecurso()) != null)
                     {
-                        LvrTransferVar.R_PAT_SER = BM_Database_Recurso.BK_PATENTE;
-                        LvrTransferVar.R_RUTID = BM_Database_Recurso.BK_RUTID;
-                        LvrTransferVar.R_DIGVER = BM_Database_Recurso.BK_DIGVER;
+                        LvrTransferVar.R_PAT_SER = RecursoIO.PATENTE;
+                        LvrTransferVar.R_RUTID = RecursoIO.RUTID;
+                        LvrTransferVar.R_DIGVER = RecursoIO.DIGVER;
                     }
                     else
                     {
@@ -480,11 +447,10 @@ namespace BikeMessenger
                 }
                 else
                 {
-                    _ = BM_Database_Recurso.Bm_Rollback_Transaccion();
                     await AvisoOperacionRecursosDialogAsync("Borrar Recurso", "Error en borrado de recurso. Reintente o escriba a soporte contacto@pentalpha.net");
                 }
             }
-            catch (ArgumentException)
+            else
             {
                 await AvisoOperacionRecursosDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de recurso.");
             }
@@ -500,7 +466,6 @@ namespace BikeMessenger
 
         private void BtnSalirRecursos(object sender, RoutedEventArgs e)
         {
-            LvrTransferVar.TV_Connection.Close();
             Application.Current.Exit();
         }
 
@@ -558,6 +523,28 @@ namespace BikeMessenger
 
             BorrarSiNo = result == ContentDialogResult.Primary;
         }
+        //**************************************** Propietarios ************************************
+        private void LlenarListaPropietarios()
+        {
+            List<JsonBikeMessengerPersonal> GridPersonalDb = new List<JsonBikeMessengerPersonal>();
+            List<GridPropietarioIndividual> GridPropietariosLista = new List<GridPropietarioIndividual>();
+
+            if ((GridPersonalDb = BM_Database_Recurso.BuscarGridPersonal()) != null)
+            {
+                for (int i = 0; i < GridPersonalDb.Count; i++)
+                {
+                    GridPropietariosLista.Add(
+                        new GridPropietarioIndividual
+                        {
+                            RUT = GridPersonalDb[i].RUTID + "-" + GridPersonalDb[i].DIGVER,
+                            APELLIDO = GridPersonalDb[i].APELLIDOS,
+                            NOMBRE = GridPersonalDb[i].NOMBRES
+                        });
+                }
+            }
+            dataGridListadoPropietarios.IsReadOnly = true;
+            dataGridListadoPropietarios.ItemsSource = GridPropietariosLista;
+        }
 
         private void DataGridSeleccion_Propietario(object sender, SelectionChangedEventArgs e)
         {
@@ -577,24 +564,29 @@ namespace BikeMessenger
             }
         }
 
-        private void LlenarListaPropietarios()
+        //**************************************** Recursos ************************************
+        private void LlenarListaRecursos()
         {
-            List<GridPropietarioIndividual> GridPropietariosLista = new List<GridPropietarioIndividual>();
-            if (BM_Database_Recurso.Bm_Personal_BuscarGrid())
+
+            List<JsonBikeMessengerRecurso> GridRecursoDb = new List<JsonBikeMessengerRecurso>();
+            List<GridRecursoIndividual> GridRecursoLista = new List<GridRecursoIndividual>();
+            if ((GridRecursoDb = BM_Database_Recurso.BuscarRecurso()) != null)
             {
-                while (BM_Database_Recurso.Bm_Personal_BuscarGridProxima())
+                for (int i = 0; i < GridRecursoDb.Count; i++)
                 {
-                    GridPropietariosLista.Add(
-                        new GridPropietarioIndividual
+                    GridRecursoLista.Add(
+                        new GridRecursoIndividual
                         {
-                            RUT = BM_Database_Recurso.BK_GRID_RUT,
-                            APELLIDO = BM_Database_Recurso.BK_GRID_APELLIDOS,
-                            NOMBRE = BM_Database_Recurso.BK_GRID_NOMBRES
+                            PATENTE = GridRecursoDb[i].PATENTE,
+                            TIPO = GridRecursoDb[i].TIPO,
+                            MARCA = GridRecursoDb[i].MARCA,
+                            MODELO = GridRecursoDb[i].MODELO,
+                            CIUDAD = GridRecursoDb[i].CIUDAD
                         });
                 }
             }
-            dataGridListadoPropietarios.IsReadOnly = true;
-            dataGridListadoPropietarios.ItemsSource = GridPropietariosLista;
+            dataGridListadoRecursos.IsReadOnly = true;
+            dataGridListadoRecursos.ItemsSource = GridRecursoLista;
         }
 
         private void DataGridRecursos_Seleccion(object sender, SelectionChangedEventArgs e)
@@ -603,9 +595,9 @@ namespace BikeMessenger
             {
                 DataGrid CeldaSeleccionada = sender as DataGrid;
                 GridRecursoIndividual Fila = (GridRecursoIndividual)CeldaSeleccionada.SelectedItems[0];
-                if (BM_Database_Recurso.Bm_Recursos_Buscar(LvrTransferVar.R_PENTALPHA, Fila.PATENTE))
+                if ((RecursoIOArray = BM_Database_Recurso.BuscarRecurso(LvrTransferVar.R_PENTALPHA, Fila.PATENTE)) != null)
                 {
-                    // LimpiarPantalla();
+                    LimpiarPantalla();
                     LlenarPantallaConDb();
                     // LlenarListaPersonal();
                 }
@@ -618,28 +610,6 @@ namespace BikeMessenger
             {
                 ;
             }
-        }
-
-        private void LlenarListaRecursos()
-        {
-            List<GridRecursoIndividual> GridRecursoLista = new List<GridRecursoIndividual>();
-            if (BM_Database_Recurso.Bm_Recursos_BuscarGrid())
-            {
-                while (BM_Database_Recurso.Bm_Recursos_BuscarGridProxima())
-                {
-                    GridRecursoLista.Add(
-                        new GridRecursoIndividual
-                        {
-                            PATENTE = BM_Database_Recurso.BK_RGRID_PATENTE,
-                            TIPO = BM_Database_Recurso.BK_RGRID_TIPO,
-                            MARCA = BM_Database_Recurso.BK_RGRID_MARCA,
-                            MODELO = BM_Database_Recurso.BK_RGRID_MODELO,
-                            CIUDAD = BM_Database_Recurso.BK_RGRID_CIUDAD
-                        });
-                }
-            }
-            dataGridListadoRecursos.IsReadOnly = true;
-            dataGridListadoRecursos.ItemsSource = GridRecursoLista;
         }
 
         private async Task AvisoOperacionRecursosDialogAsync(string xTitulo, string xDescripcion)
@@ -723,23 +693,23 @@ namespace BikeMessenger
 
             // Llenar Variables
             EnviarJsonRecurso.OPERACION = pOPERACION;
-            EnviarJsonRecurso.PENTALPHA = BM_Database_Recurso.BK_PENTALPHA;
-            EnviarJsonRecurso.PATENTE = BM_Database_Recurso.BK_PATENTE;
-            EnviarJsonRecurso.RUTID = BM_Database_Recurso.BK_RUTID;
-            EnviarJsonRecurso.DIGVER = BM_Database_Recurso.BK_DIGVER;
-            EnviarJsonRecurso.PROPIETARIO = BM_Database_Recurso.BK_PROPIETARIO;
-            EnviarJsonRecurso.TIPO = BM_Database_Recurso.BK_TIPO;
-            EnviarJsonRecurso.MARCA = BM_Database_Recurso.BK_MARCA;
-            EnviarJsonRecurso.MODELO = BM_Database_Recurso.BK_MODELO;
-            EnviarJsonRecurso.VARIANTE = BM_Database_Recurso.BK_VARIANTE;
-            EnviarJsonRecurso.ANO = BM_Database_Recurso.BK_ANO;
-            EnviarJsonRecurso.COLOR = BM_Database_Recurso.BK_COLOR;
-            EnviarJsonRecurso.CIUDAD = BM_Database_Recurso.BK_CIUDAD;
-            EnviarJsonRecurso.COMUNA = BM_Database_Recurso.BK_COMUNA;
-            EnviarJsonRecurso.REGION = BM_Database_Recurso.BK_REGION;
-            EnviarJsonRecurso.PAIS = BM_Database_Recurso.BK_PAIS;
-            EnviarJsonRecurso.OBSERVACIONES = BM_Database_Recurso.BK_OBSERVACIONES;
-            EnviarJsonRecurso.FOTO = BM_Database_Recurso.BK_FOTO;
+            EnviarJsonRecurso.PENTALPHA = RecursoIO.PENTALPHA;
+            EnviarJsonRecurso.PATENTE = RecursoIO.PATENTE;
+            EnviarJsonRecurso.RUTID = RecursoIO.RUTID;
+            EnviarJsonRecurso.DIGVER = RecursoIO.DIGVER;
+            EnviarJsonRecurso.PROPIETARIO = RecursoIO.PROPIETARIO;
+            EnviarJsonRecurso.TIPO = RecursoIO.TIPO;
+            EnviarJsonRecurso.MARCA = RecursoIO.MARCA;
+            EnviarJsonRecurso.MODELO = RecursoIO.MODELO;
+            EnviarJsonRecurso.VARIANTE = RecursoIO.VARIANTE;
+            EnviarJsonRecurso.ANO = RecursoIO.ANO;
+            EnviarJsonRecurso.COLOR = RecursoIO.COLOR;
+            EnviarJsonRecurso.CIUDAD = RecursoIO.CIUDAD;
+            EnviarJsonRecurso.COMUNA = RecursoIO.COMUNA;
+            EnviarJsonRecurso.REGION = RecursoIO.REGION;
+            EnviarJsonRecurso.PAIS = RecursoIO.PAIS;
+            EnviarJsonRecurso.OBSERVACIONES = RecursoIO.OBSERVACIONES;
+            EnviarJsonRecurso.FOTO = RecursoIO.FOTO;
             EnviarJsonRecurso.RESOPERACION = "";
             EnviarJsonRecurso.RESMENSAJE = "";
         }
@@ -749,23 +719,23 @@ namespace BikeMessenger
             // Proceso
             // EnviarJsonPersonal.OPERACION = pOPERACION;
             // EnviarJsonRecurso.OPERACION = pOPERACION;
-            BM_Database_Recurso.BK_PENTALPHA = EnviarJsonRecurso.PENTALPHA;
-            BM_Database_Recurso.BK_PATENTE = EnviarJsonRecurso.PATENTE;
-            BM_Database_Recurso.BK_RUTID = EnviarJsonRecurso.RUTID;
-            BM_Database_Recurso.BK_DIGVER = EnviarJsonRecurso.DIGVER;
-            BM_Database_Recurso.BK_PROPIETARIO = EnviarJsonRecurso.PROPIETARIO;
-            BM_Database_Recurso.BK_TIPO = EnviarJsonRecurso.TIPO;
-            BM_Database_Recurso.BK_MARCA = EnviarJsonRecurso.MARCA;
-            BM_Database_Recurso.BK_MODELO = EnviarJsonRecurso.MODELO;
-            BM_Database_Recurso.BK_VARIANTE = EnviarJsonRecurso.VARIANTE;
-            BM_Database_Recurso.BK_ANO = EnviarJsonRecurso.ANO;
-            BM_Database_Recurso.BK_COLOR = EnviarJsonRecurso.COLOR;
-            BM_Database_Recurso.BK_CIUDAD = EnviarJsonRecurso.CIUDAD;
-            BM_Database_Recurso.BK_COMUNA = EnviarJsonRecurso.COMUNA;
-            BM_Database_Recurso.BK_REGION = EnviarJsonRecurso.REGION;
-            BM_Database_Recurso.BK_PAIS = EnviarJsonRecurso.PAIS;
-            BM_Database_Recurso.BK_OBSERVACIONES = EnviarJsonRecurso.OBSERVACIONES;
-            BM_Database_Recurso.BK_FOTO = EnviarJsonRecurso.FOTO;
+            RecursoIO.PENTALPHA = EnviarJsonRecurso.PENTALPHA;
+            RecursoIO.PATENTE = EnviarJsonRecurso.PATENTE;
+            RecursoIO.RUTID = EnviarJsonRecurso.RUTID;
+            RecursoIO.DIGVER = EnviarJsonRecurso.DIGVER;
+            RecursoIO.PROPIETARIO = EnviarJsonRecurso.PROPIETARIO;
+            RecursoIO.TIPO = EnviarJsonRecurso.TIPO;
+            RecursoIO.MARCA = EnviarJsonRecurso.MARCA;
+            RecursoIO.MODELO = EnviarJsonRecurso.MODELO;
+            RecursoIO.VARIANTE = EnviarJsonRecurso.VARIANTE;
+            RecursoIO.ANO = EnviarJsonRecurso.ANO;
+            RecursoIO.COLOR = EnviarJsonRecurso.COLOR;
+            RecursoIO.CIUDAD = EnviarJsonRecurso.CIUDAD;
+            RecursoIO.COMUNA = EnviarJsonRecurso.COMUNA;
+            RecursoIO.REGION = EnviarJsonRecurso.REGION;
+            RecursoIO.PAIS = EnviarJsonRecurso.PAIS;
+            RecursoIO.OBSERVACIONES = EnviarJsonRecurso.OBSERVACIONES;
+            RecursoIO.FOTO = EnviarJsonRecurso.FOTO;
             // EnviarJsonRecurso.RESOPERACION = "";
             // EnviarJsonRecurso.RESMENSAJE = "";
         }

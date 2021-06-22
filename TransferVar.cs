@@ -1,5 +1,4 @@
-﻿using Microsoft.Data.Sqlite;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.UI.Xaml;
@@ -10,8 +9,6 @@ namespace BikeMessenger
     internal class TransferVar
     {
         // Valores de Base de Datos
-
-        public SqliteConnection TV_Connection { get; set; }
 
         // Valores de Empresa
         public string E_PENTALPHA { get; set; }
@@ -51,12 +48,9 @@ namespace BikeMessenger
 
         public TransferVar()
         {
-            if (!VerificarDirectorio())
-            {
-                CrearDirectorio(ApplicationData.Current.LocalFolder.Path);
-                CrearDirectorioRespaldo(ApplicationData.Current.LocalFolder.Path);
-            }
-
+            CrearDirectorio(ApplicationData.Current.LocalFolder.Path);
+            CrearDirectorioRespaldo(ApplicationData.Current.LocalFolder.Path);
+ 
             LeerDirectorio();
 
             if (!VerificarSincronizarRemoto())
@@ -73,27 +67,6 @@ namespace BikeMessenger
 
             LeerSincronizarPropio();
 
-            AbrirBaseDeDatosAsync();
-        }
-
-        private async void AbrirBaseDeDatosAsync()
-        {
-            try
-            {
-                //TV_Connection = (SqliteConnection)TV_Factory.CreateConnection();
-                TV_Connection = (SqliteConnection)SqliteFactory.Instance.CreateConnection();
-                TV_Connection.ConnectionString = "Data Source=" + Directorio + "\\BikeMessenger.db3";
-                TV_Connection.Open();
-            }
-            catch (SqliteException)
-            {
-                await AvisoDeError();
-            }
-            catch (InvalidOperationException)
-            {
-                await AvisoDeError();
-            }
-            return;
         }
 
         private async Task AvisoDeError()
@@ -109,14 +82,6 @@ namespace BikeMessenger
             return;
         }
 
-        public bool VerificarDirectorio()
-        {
-            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
-            Directorio = (string)localSettings.Values["PENTALPHA"];
-
-            return Directorio != null && Directorio != "";
-        }
-
         public void CrearDirectorio(string pDirectorio)
         {
             ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
@@ -127,6 +92,7 @@ namespace BikeMessenger
         public void CrearDirectorioRespaldo(string pDirectorioRespaldos)
         {
             ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+
             localSettings.Values["PENTALPHA_RESPALDOS"] = pDirectorioRespaldos;
             return;
         }

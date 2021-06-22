@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
-using Windows.Storage;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -103,7 +103,6 @@ namespace BikeMessenger
 
         private void BtnSalirAjustes(object sender, RoutedEventArgs e)
         {
-            LvrTransferVar.TV_Connection.Close();
             Application.Current.Exit();
         }
 
@@ -216,8 +215,6 @@ namespace BikeMessenger
             StorageFolder FolderDestino = await StorageFolder.GetFolderFromPathAsync(DirectorioDestino);
             //StorageFile BaseDatosDestino = await FolderDestino.GetFileAsync("BikeMessenger.db3");
 
-            LvrTransferVar.TV_Connection.Close();
-            
             _ = await BaseDatosOrigen.CopyAsync(FolderDestino, "BikeMessenger.db3", NameCollisionOption.GenerateUniqueName);
 
             LvrTransferVar.CrearDirectorioRespaldo(DirectorioDestino);

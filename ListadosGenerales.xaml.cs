@@ -1,16 +1,10 @@
 ﻿using System;
+using System.Threading.Tasks;
+using Windows.Graphics.Printing;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
-using Windows.Graphics.Printing;
-using Windows.UI.Xaml.Printing;
 using Windows.UI.Xaml.Media.Animation;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.UI.Xaml.Shapes;
-using Microsoft.FactoryOrchestrator.UWP;
-using Microsoft.FactoryOrchestrator.Core;
-using System.Net;
-using System.Threading.Tasks;
+using Windows.UI.Xaml.Navigation;
 
 
 
@@ -110,26 +104,22 @@ namespace BikeMessenger
                     break;
                 case "PERSONAL":
                     Bm_Personal_Database BM_Database_Personal = new Bm_Personal_Database();
-                    BM_Database_Personal.BM_CreateDatabase(LvrTransferVar.TV_Connection);
                     HtmlImprimir = BM_Database_Personal.Bm_Personal_Listado();
                     VisorWeb.NavigateToString(HtmlImprimir);
                     break;
                 case "RECURSO":
                     Bm_Recurso_Database BM_Database_Recurso = new Bm_Recurso_Database();
-                    BM_Database_Recurso.BM_CreateDatabase(LvrTransferVar.TV_Connection);
-                    HtmlImprimir = BM_Database_Recurso.Bm_Recursos_Listado();
+                    HtmlImprimir = BM_Database_Recurso.Bm_Recurso_Listado();
                     VisorWeb.NavigateToString(HtmlImprimir);
                     break;
                 case "CLIENTE":
                     Bm_Cliente_Database BM_Database_Cliente = new Bm_Cliente_Database();
-                    BM_Database_Cliente.BM_CreateDatabase(LvrTransferVar.TV_Connection);
-                    HtmlImprimir = BM_Database_Cliente.Bm_Clientes_Listado();
+                    HtmlImprimir = BM_Database_Cliente.Bm_Cliente_Listado();
                     VisorWeb.NavigateToString(HtmlImprimir);
                     break;
                 case "SERVICIO":
                     Bm_Servicio_Database BM_Database_Servicio = new Bm_Servicio_Database();
-                    BM_Database_Servicio.BM_CreateDatabase(LvrTransferVar.TV_Connection);
-                    HtmlImprimir = BM_Database_Servicio.Bm_Servicios_Listado();
+                    HtmlImprimir = BM_Database_Servicio.Bm_Servicio_Listado();
                     VisorWeb.NavigateToString(HtmlImprimir);
                     break;
                 default:
@@ -177,35 +167,11 @@ namespace BikeMessenger
                     PrimaryButtonText = "OK"
                 };
                 _ = await noPrintingDialog.ShowAsync();
-            }            
+            }
         }
 
-        private async void LvrEnviar(object sender, RoutedEventArgs e)
+        private void LvrEnviar(object sender, RoutedEventArgs e)
         {
-            // Create client instance targeting service at desired IP Address
-           
-            FactoryOrchestratorUWPClient cliente = new FactoryOrchestratorUWPClient(IPAddress.Loopback);
-
-            try
-            {
-                // Establish connection.
-                await cliente.Connect();
-            }
-           
-            catch (Exception)
-            {
-                await AvisoOperacionListadoDialogAsync("Llamada a Browser", "Problemas para conectarse a procesos internos.").ConfigureAwait(false);
-                return;
-            }
-
-            try
-            {
-                _ = await cliente.RunExecutable("C:\\Program Files\\Mozilla Firefox\\firefox.exe", HtmlImprimir, null, false);
-            }
-            catch (Exception)
-            {
-                await AvisoOperacionListadoDialogAsync("Llamada a Browser", "Problemas para ejecutar broser de impresion");
-            }
         }
 
         private async Task AvisoOperacionListadoDialogAsync(string xTitulo, string xDescripcion)

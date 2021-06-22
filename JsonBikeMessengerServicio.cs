@@ -26,7 +26,6 @@
         public string OESTADO { get; set; }
         public string OPAIS { get; set; }
         public string OCOORDENADAS { get; set; }
-        public string DISTANCIA_KM { get; set; }
         public string DDOMICILIO1 { get; set; }
         public string DDOMICILIO2 { get; set; }
         public string DNUMERO { get; set; }
@@ -91,21 +90,20 @@
             DESTADO = "";
             DPAIS = "";
             DCOORDENADAS = "";
-            DISTANCIA_KM = "";
             DESCRIPCION = "";
-            FACTURAS = "";
-            BULTOS = "";
-            COMPRAS = "";
-            CHEQUES = "";
-            SOBRES = "";
-            OTROS = "";
+            FACTURAS = "0";
+            BULTOS = "0";
+            COMPRAS = "0";
+            CHEQUES = "0";
+            SOBRES = "0";
+            OTROS = "0";
             OBSERVACIONES = "";
             ENTREGA = "";
             RECEPCION = "";
             TESPERA = "";
             FECHAENTREGA = "";
             HORAENTREGA = "";
-            DISTANCIA = "";
+            DISTANCIA = "0";
             PROGRAMADO = "";
             RESOPERACION = "";
             RESMENSAJE = "";

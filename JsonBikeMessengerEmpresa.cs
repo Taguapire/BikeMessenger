@@ -25,6 +25,9 @@
         public string ESTADOREGION { get; set; }
         public string CODIGOPOSTAL { get; set; }
         public string PAIS { get; set; }
+        public string TELEFONO1 { get; set; }
+        public string TELEFONO2 { get; set; }
+        public string TELEFONO3 { get; set; }
         public string OBSERVACIONES { get; set; }
         public string LOGO { get; set; }
         public string RESOPERACION { get; set; }
@@ -54,6 +57,9 @@
             ESTADOREGION = "";
             CODIGOPOSTAL = "";
             PAIS = "";
+            TELEFONO1 = "";
+            TELEFONO2 = "";
+            TELEFONO3 = "";
             OBSERVACIONES = "";
             LOGO = "";
             RESOPERACION = "";

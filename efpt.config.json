@@ -1,0 +1,68 @@
+﻿{
+   "CodeGenerationMode": 2,
+   "ContextClassName": "BK_SQliteContext",
+   "ContextNamespace": null,
+   "DefaultDacpacSchema": null,
+   "FilterSchemas": false,
+   "IncludeConnectionString": true,
+   "ModelNamespace": null,
+   "OutputContextPath": "",
+   "OutputPath": "",
+   "ProjectRootNamespace": "BikeMessenger",
+   "Schemas": null,
+   "SelectedHandlebarsLanguage": 0,
+   "SelectedToBeGenerated": 0,
+   "Tables": [
+      {
+         "Name": "PAIS",
+         "ObjectType": 0
+      },
+      {
+         "Name": "ESTADOREGION",
+         "ObjectType": 0
+      },
+      {
+         "Name": "EMPRESA",
+         "ObjectType": 0
+      },
+      {
+         "Name": "PERSONAL",
+         "ObjectType": 0
+      },
+      {
+         "Name": "RECURSOS",
+         "ObjectType": 0
+      },
+      {
+         "Name": "COMUNA",
+         "ObjectType": 0
+      },
+      {
+         "Name": "CLIENTES",
+         "ObjectType": 0
+      },
+      {
+         "Name": "SERVICIOS",
+         "ObjectType": 0
+      },
+      {
+         "Name": "CIUDAD",
+         "ObjectType": 0
+      }
+   ],
+   "UiHint": "BikeMessengerDB",
+   "UseBoolPropertiesWithoutDefaultSql": false,
+   "UseDatabaseNames": true,
+   "UseDbContextSplitting": false,
+   "UseFluentApiOnly": false,
+   "UseHandleBars": false,
+   "UseInflector": false,
+   "UseLegacyPluralizer": false,
+   "UseNoConstructor": false,
+   "UseNoNavigations": false,
+   "UseNoObjectFilter": true,
+   "UseNodaTime": false,
+   "UseNullableReferences": false,
+   "UseSchemaFolders": false,
+   "UseSpatial": false
+}

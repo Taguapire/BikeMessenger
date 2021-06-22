@@ -1,7 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using QRCoder;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml;
@@ -9,10 +13,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using QRCoder;
 
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
@@ -24,11 +24,13 @@ namespace BikeMessenger
     /// </summary>
     public sealed partial class PageEmpresa : Page
     {
-        private readonly JsonBikeMessengerEmpresa EnviarJsonEmpresa = new JsonBikeMessengerEmpresa();
+        private List<JsonBikeMessengerEmpresa> EmpresaIOArray = null;
+        private JsonBikeMessengerEmpresa EmpresaIO = new JsonBikeMessengerEmpresa();
+        private JsonBikeMessengerEmpresa EnviarJsonEmpresa = new JsonBikeMessengerEmpresa();
         private JsonBikeMessengerEmpresa RecibirJsonEmpresa = new JsonBikeMessengerEmpresa();
-        private readonly Bm_Empresa_Database BM_Database_Empresa = new Bm_Empresa_Database();
+        private Bm_Empresa_Database BM_Database_Empresa = new Bm_Empresa_Database();
         private TransferVar LvrTransferVar;
-        private readonly PentalphaCripto LvrCrypto = new PentalphaCripto();
+        private PentalphaCripto LvrCrypto = new PentalphaCripto();
         private bool BorrarSiNo;
 
         public PageEmpresa()
@@ -79,45 +81,44 @@ namespace BikeMessenger
             else
             {
                 LvrTransferVar = (TransferVar)navigationEvent.Parameter;
-                if (BM_Database_Empresa.BM_CreateDatabase(LvrTransferVar.TV_Connection))
+                RellenarCombos();
+
+                if (BM_Database_Empresa.BuscarEmpresa().Count > 0)
                 {
-                    RellenarCombos();
-                    if (BM_Database_Empresa.Bm_Empresa_Buscar())
-                    {
-                        LlenarPantallaConDb();
+                    EmpresaIO = EmpresaIOArray[0];
+                    LlenarPantallaConDb();
 
-                        appBarButtonEmpresa.IsEnabled = true;
-                        appBarButtonPersonal.IsEnabled = true;
-                        appBarButtonRecursos.IsEnabled = true;
-                        appBarButtonClientes.IsEnabled = true;
-                        appBarButtonServicios.IsEnabled = true;
-                        appBarButtonAjustes.IsEnabled = true;
+                    appBarButtonEmpresa.IsEnabled = true;
+                    appBarButtonPersonal.IsEnabled = true;
+                    appBarButtonRecursos.IsEnabled = true;
+                    appBarButtonClientes.IsEnabled = true;
+                    appBarButtonServicios.IsEnabled = true;
+                    appBarButtonAjustes.IsEnabled = true;
 
-                        appBarAgregar.IsEnabled = false;
-                        appBarModificar.IsEnabled = true;
-                        appBarBorrar.IsEnabled = true;
+                    appBarAgregar.IsEnabled = false;
+                    appBarModificar.IsEnabled = true;
+                    appBarBorrar.IsEnabled = true;
 
-                        textBoxRut.IsReadOnly = true;
-                        textBoxDigitoVerificador.IsReadOnly = true;
+                    textBoxRut.IsReadOnly = true;
+                    textBoxDigitoVerificador.IsReadOnly = true;
 
-                    }
-                    else
-                    {
-                        appBarButtonEmpresa.IsEnabled = true;
-                        appBarButtonPersonal.IsEnabled = false;
-                        appBarButtonRecursos.IsEnabled = false;
-                        appBarButtonClientes.IsEnabled = false;
-                        appBarButtonServicios.IsEnabled = false;
-                        appBarButtonAjustes.IsEnabled = true;
+                }
+                else
+                {
+                    appBarButtonEmpresa.IsEnabled = true;
+                    appBarButtonPersonal.IsEnabled = false;
+                    appBarButtonRecursos.IsEnabled = false;
+                    appBarButtonClientes.IsEnabled = false;
+                    appBarButtonServicios.IsEnabled = false;
+                    appBarButtonAjustes.IsEnabled = true;
 
-                        appBarAgregar.IsEnabled = true;
-                        appBarModificar.IsEnabled = false;
-                        appBarBorrar.IsEnabled = false;
+                    appBarAgregar.IsEnabled = true;
+                    appBarModificar.IsEnabled = false;
+                    appBarBorrar.IsEnabled = false;
 
-                        textBoxRut.IsReadOnly = false;
-                        textBoxDigitoVerificador.IsReadOnly = false;
-                        await AvisoOperacionEmpresaDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
-                    }
+                    textBoxRut.IsReadOnly = false;
+                    textBoxDigitoVerificador.IsReadOnly = false;
+                    await AvisoOperacionEmpresaDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
                 }
             }
         }
@@ -182,53 +183,51 @@ namespace BikeMessenger
                 // Open a stream for the selected file.
                 // The 'using' block ensures the stream is disposed
                 // after the image is loaded.
-                using (IRandomAccessStream fileStream = await file.OpenAsync(Windows.Storage.FileAccessMode.Read))
-                {
-                    // Set the image source to the selected bitmap.
-                    BitmapImage bitmapImage = new Windows.UI.Xaml.Media.Imaging.BitmapImage();
+                using IRandomAccessStream fileStream = await file.OpenAsync(Windows.Storage.FileAccessMode.Read);
+                // Set the image source to the selected bitmap.
+                BitmapImage bitmapImage = new Windows.UI.Xaml.Media.Imaging.BitmapImage();
 
-                    bitmapImage.SetSource(fileStream);
-                    imageLogoEmpresa.Source = bitmapImage;
-                }
+                bitmapImage.SetSource(fileStream);
+                imageLogoEmpresa.Source = bitmapImage;
             }
         }
         private async void LlenarPantallaConDb()
         {
             try
             {
-                LlenarBasePentalpha(BM_Database_Empresa.BK_PENTALPHA);
-                textBoxRut.Text = BM_Database_Empresa.BK_RUTID;
-                textBoxDigitoVerificador.Text = BM_Database_Empresa.BK_DIGVER;
-                textBoxNombreEmpresa.Text = BM_Database_Empresa.BK_NOMBRE;
-                textBoxUsuario.Text = BM_Database_Empresa.BK_USUARIO;
-                passwordClave.Password = BM_Database_Empresa.BK_CLAVE;
-                textBoxActividad1.Text = BM_Database_Empresa.BK_ACTIVIDAD1;
-                textBoxActividad2.Text = BM_Database_Empresa.BK_ACTIVIDAD2;
-                textBoxRepresentantes1.Text = BM_Database_Empresa.BK_REPRESENTANTE1;
-                textBoxRepresentantes2.Text = BM_Database_Empresa.BK_REPRESENTANTE2;
-                textBoxRepresentantes3.Text = BM_Database_Empresa.BK_REPRESENTANTE3;
+                LlenarBasePentalpha(EmpresaIO.PENTALPHA);
+                textBoxRut.Text = EmpresaIO.RUTID;
+                textBoxDigitoVerificador.Text = EmpresaIO.DIGVER;
+                textBoxNombreEmpresa.Text = EmpresaIO.NOMBRE;
+                textBoxUsuario.Text = EmpresaIO.USUARIO;
+                passwordClave.Password = EmpresaIO.CLAVE;
+                textBoxActividad1.Text = EmpresaIO.ACTIVIDAD1;
+                textBoxActividad2.Text = EmpresaIO.ACTIVIDAD2;
+                textBoxRepresentantes1.Text = EmpresaIO.REPRESENTANTE1;
+                textBoxRepresentantes2.Text = EmpresaIO.REPRESENTANTE2;
+                textBoxRepresentantes3.Text = EmpresaIO.REPRESENTANTE3;
 
-                textBoxCalleAvenida1.Text = BM_Database_Empresa.BK_DOMICILIO1;
-                textBoxCalleAvenida2.Text = BM_Database_Empresa.BK_DOMICILIO2;
-                textBoxNumero.Text = BM_Database_Empresa.BK_NUMERO;
-                textBoxPiso.Text = BM_Database_Empresa.BK_PISO;
-                textBoxOficina.Text = BM_Database_Empresa.BK_OFICINA;
-                textBoxCodigoPostal.Text = BM_Database_Empresa.BK_CODIGOPOSTAL;
+                textBoxCalleAvenida1.Text = EmpresaIO.DOMICILIO1;
+                textBoxCalleAvenida2.Text = EmpresaIO.DOMICILIO2;
+                textBoxNumero.Text = EmpresaIO.NUMERO;
+                textBoxPiso.Text = EmpresaIO.PISO;
+                textBoxOficina.Text = EmpresaIO.OFICINA;
+                textBoxCodigoPostal.Text = EmpresaIO.CODIGOPOSTAL;
 
-                comboBoxPais.SelectedValue = BM_Database_Empresa.BK_PAIS;
-                comboBoxEstado.SelectedValue = BM_Database_Empresa.BK_ESTADOREGION;
-                comboBoxComuna.SelectedValue = BM_Database_Empresa.BK_COMUNA;
-                comboBoxCiudad.SelectedValue = BM_Database_Empresa.BK_CIUDAD;
+                comboBoxPais.SelectedValue = EmpresaIO.PAIS;
+                comboBoxEstado.SelectedValue = EmpresaIO.ESTADOREGION;
+                comboBoxComuna.SelectedValue = EmpresaIO.COMUNA;
+                comboBoxCiudad.SelectedValue = EmpresaIO.CIUDAD;
 
-                textBoxTelefono1.Text = BM_Database_Empresa.BK_TELEFONO1;
-                textBoxTelefono1.Text = BM_Database_Empresa.BK_TELEFONO2;
-                textBoxTelefono1.Text = BM_Database_Empresa.BK_TELEFONO3;
+                textBoxTelefono1.Text = EmpresaIO.TELEFONO1;
+                textBoxTelefono2.Text = EmpresaIO.TELEFONO2;
+                textBoxTelefono3.Text = EmpresaIO.TELEFONO3;
 
-                textBoxObservaciones.Text = BM_Database_Empresa.BK_OBSERVACIONES;
+                textBoxObservaciones.Text = EmpresaIO.OBSERVACIONES;
 
-                imageLogoEmpresa.Source = Base64StringToBitmap(BM_Database_Empresa.BK_LOGO);
+                imageLogoEmpresa.Source = Base64StringToBitmap(EmpresaIO.LOGO);
             }
-            catch (System.ArgumentNullException)
+            catch (ArgumentNullException)
             {
                 await AvisoOperacionEmpresaDialogAsync("Acceso a Base de Datos Empresa", "Error de carga de datos desde la Base de Datos.");
             }
@@ -244,87 +243,120 @@ namespace BikeMessenger
             comboBoxCiudad.Items.Clear();
 
             // Llenar Combo Pais
-            if (BM_Database_Empresa.Bm_E_Pais_EjecutarSelect())
+            List<string> ListaPais = BM_Database_Empresa.GetPais();
+            if (ListaPais != null)
             {
-                while (BM_Database_Empresa.Bm_E_Pais_Buscar())
+                try
                 {
-                    comboBoxPais.Items.Add(BM_Database_Empresa.BK_E_PAIS);
+                    for (int i = 0; i < ListaPais.Count; i++)
+                    {
+                        comboBoxPais.Items.Add(ListaPais[i]);
+                    }
+                }
+                catch (NullReferenceException)
+                {
+                    // Sin valores
                 }
             }
 
             // Llenar Combo Region
-            if (BM_Database_Empresa.Bm_E_Region_EjecutarSelect())
+            List<string> ListaEstado = BM_Database_Empresa.GetRegion();
+            if (ListaEstado != null)
             {
-                while (BM_Database_Empresa.Bm_E_Region_Buscar())
+                try
                 {
-                    comboBoxEstado.Items.Add(BM_Database_Empresa.BK_E_REGION);
+                    for (int i = 0; i < ListaEstado.Count; i++)
+                    {
+                        comboBoxEstado.Items.Add(ListaEstado[i]);
+                    }
+                }
+                catch (System.NullReferenceException)
+                {
+                    // Sin valores
                 }
             }
 
             // Llenar Combo Comuna
-            if (BM_Database_Empresa.Bm_E_Comuna_EjecutarSelect())
+            List<string> ListaComuna = BM_Database_Empresa.GetComuna();
+            if (ListaComuna != null)
             {
-                while (BM_Database_Empresa.Bm_E_Comuna_Buscar())
+                try
                 {
-                    comboBoxComuna.Items.Add(BM_Database_Empresa.BK_E_COMUNA);
+                    for (int i = 0; i < ListaComuna.Count; i++)
+                    {
+                        comboBoxComuna.Items.Add(ListaComuna[i]);
+                    }
+                }
+                catch (System.NullReferenceException)
+                {
+                    // Sin valores
                 }
             }
 
             // Llenar Combo Ciudad
-            if (BM_Database_Empresa.Bm_E_Ciudad_EjecutarSelect())
+
+            List<string> ListaCiudad = BM_Database_Empresa.GetCiudad();
+            if (ListaCiudad != null)
             {
-                while (BM_Database_Empresa.Bm_E_Ciudad_Buscar())
+                try
                 {
-                    comboBoxCiudad.Items.Add(BM_Database_Empresa.BK_E_CIUDAD);
+                    for (int i = 0; i < ListaCiudad.Count; i++)
+                    {
+                        comboBoxCiudad.Items.Add(ListaCiudad[i]);
+                    }
+                }
+                catch (System.NullReferenceException)
+                {
+                    // Sin valores
                 }
             }
         }
 
         private async Task LlenarDbConPantallaAsync()
         {
-            BM_Database_Empresa.BK_RUTID = textBoxRut.Text;
-            BM_Database_Empresa.BK_DIGVER = textBoxDigitoVerificador.Text;
-            BM_Database_Empresa.BK_NOMBRE = textBoxNombreEmpresa.Text;
-            BM_Database_Empresa.BK_USUARIO = textBoxUsuario.Text;
-            BM_Database_Empresa.BK_CLAVE = passwordClave.Password;
-            BM_Database_Empresa.BK_ACTIVIDAD1 = textBoxActividad1.Text;
-            BM_Database_Empresa.BK_ACTIVIDAD2 = textBoxActividad2.Text;
-            BM_Database_Empresa.BK_REPRESENTANTE1 = textBoxRepresentantes1.Text;
-            BM_Database_Empresa.BK_REPRESENTANTE2 = textBoxRepresentantes2.Text;
-            BM_Database_Empresa.BK_REPRESENTANTE3 = textBoxRepresentantes3.Text;
-            BM_Database_Empresa.BK_DOMICILIO1 = textBoxCalleAvenida1.Text;
-            BM_Database_Empresa.BK_DOMICILIO2 = textBoxCalleAvenida2.Text;
-            BM_Database_Empresa.BK_NUMERO = textBoxNumero.Text;
-            BM_Database_Empresa.BK_PISO = textBoxPiso.Text;
-            BM_Database_Empresa.BK_OFICINA = textBoxOficina.Text;
-            BM_Database_Empresa.BK_CODIGOPOSTAL = textBoxCodigoPostal.Text;
+            EmpresaIO.RUTID = textBoxRut.Text;
+            EmpresaIO.DIGVER = textBoxDigitoVerificador.Text;
+            EmpresaIO.NOMBRE = textBoxNombreEmpresa.Text;
+            EmpresaIO.USUARIO = textBoxUsuario.Text;
+            EmpresaIO.CLAVE = passwordClave.Password;
+            EmpresaIO.ACTIVIDAD1 = textBoxActividad1.Text;
+            EmpresaIO.ACTIVIDAD2 = textBoxActividad2.Text;
+            EmpresaIO.REPRESENTANTE1 = textBoxRepresentantes1.Text;
+            EmpresaIO.REPRESENTANTE2 = textBoxRepresentantes2.Text;
+            EmpresaIO.REPRESENTANTE3 = textBoxRepresentantes3.Text;
+            EmpresaIO.DOMICILIO1 = textBoxCalleAvenida1.Text;
+            EmpresaIO.DOMICILIO2 = textBoxCalleAvenida2.Text;
+            EmpresaIO.NUMERO = textBoxNumero.Text;
+            EmpresaIO.PISO = textBoxPiso.Text;
+            EmpresaIO.OFICINA = textBoxOficina.Text;
+            EmpresaIO.CODIGOPOSTAL = textBoxCodigoPostal.Text;
 
             if (comboBoxPais.Text != "")
             {
-                BM_Database_Empresa.BK_PAIS = comboBoxPais.Text;
+                EmpresaIO.PAIS = comboBoxPais.Text;
             }
 
             if (comboBoxEstado.Text != "")
             {
-                BM_Database_Empresa.BK_ESTADOREGION = comboBoxEstado.Text;
+                EmpresaIO.ESTADOREGION = comboBoxEstado.Text;
             }
 
             if (comboBoxComuna.Text != "")
             {
-                BM_Database_Empresa.BK_COMUNA = comboBoxComuna.Text;
+                EmpresaIO.COMUNA = comboBoxComuna.Text;
             }
 
             if (comboBoxCiudad.Text != "")
             {
-                BM_Database_Empresa.BK_CIUDAD = comboBoxCiudad.Text;
+                EmpresaIO.CIUDAD = comboBoxCiudad.Text;
             }
 
-            BM_Database_Empresa.BK_TELEFONO1 = textBoxTelefono1.Text;
-            BM_Database_Empresa.BK_TELEFONO2 = textBoxTelefono2.Text;
-            BM_Database_Empresa.BK_TELEFONO3 = textBoxTelefono3.Text;
+            EmpresaIO.TELEFONO1 = textBoxTelefono1.Text;
+            EmpresaIO.TELEFONO2 = textBoxTelefono2.Text;
+            EmpresaIO.TELEFONO3 = textBoxTelefono3.Text;
 
-            BM_Database_Empresa.BK_OBSERVACIONES = textBoxObservaciones.Text;
-            BM_Database_Empresa.BK_LOGO = await ConvertirImageABase64Async();
+            EmpresaIO.OBSERVACIONES = textBoxObservaciones.Text;
+            EmpresaIO.LOGO = await ConvertirImageABase64Async();
         }
 
         private async void BtnAgregarEmpresa(object sender, RoutedEventArgs e)
@@ -343,57 +375,46 @@ namespace BikeMessenger
                 return;
             }
 
-            try
+            await LlenarDbConPantallaAsync();
+
+            if (BM_Database_Empresa.AgregarEmpresa(EmpresaIO))
             {
-                await LlenarDbConPantallaAsync();
+                bool TransaccionOK = true;
+                appBarButtonEmpresa.IsEnabled = true;
+                appBarButtonPersonal.IsEnabled = true;
+                appBarButtonRecursos.IsEnabled = true;
+                appBarButtonClientes.IsEnabled = true;
+                appBarButtonServicios.IsEnabled = true;
+                appBarButtonAjustes.IsEnabled = true;
 
-                bool TransaccionOK = false;
-                if (BM_Database_Empresa.Bm_Iniciar_Transaccion())
+                appBarAgregar.IsEnabled = false;
+                appBarModificar.IsEnabled = true;
+                appBarBorrar.IsEnabled = true;
+
+
+                textBoxRut.IsReadOnly = true;
+                textBoxDigitoVerificador.IsReadOnly = true;
+
+                if (LvrTransferVar.SincronizarWebRemoto())
                 {
-                    if (BM_Database_Empresa.Bm_Empresa_Agregar())
-                    {
-                        appBarButtonEmpresa.IsEnabled = true;
-                        appBarButtonPersonal.IsEnabled = true;
-                        appBarButtonRecursos.IsEnabled = true;
-                        appBarButtonClientes.IsEnabled = true;
-                        appBarButtonServicios.IsEnabled = true;
-                        appBarButtonAjustes.IsEnabled = true;
+                    TransaccionOK = ProRegistroEmpresa("AGREGAR");
+                }
 
-                        appBarAgregar.IsEnabled = false;
-                        appBarModificar.IsEnabled = true;
-                        appBarBorrar.IsEnabled = true;
-                        
-
-                        textBoxRut.IsReadOnly = true;
-                        textBoxDigitoVerificador.IsReadOnly = true;
-                        TransaccionOK = true;
-                    }
-
-                    if (TransaccionOK)
-                    {
-                        if (LvrTransferVar.SincronizarWebRemoto())
-                        {
-                            TransaccionOK = ProRegistroEmpresa("AGREGAR");
-                        }
-                        if (LvrTransferVar.SincronizarWebPropio())
-                        {
-                            TransaccionOK = ProRegistroEmpresa("AGREGAR");
-                        }
-                    }
+                if (LvrTransferVar.SincronizarWebPropio())
+                {
+                    TransaccionOK = ProRegistroEmpresa("AGREGAR");
                 }
 
                 if (TransaccionOK)
                 {
-                    _ = BM_Database_Empresa.Bm_Commit_Transaccion();
                     await AvisoOperacionEmpresaDialogAsync("Agregar Empresa", "Empresa agregada exitosamente.");
                 }
                 else
                 {
-                    _ = BM_Database_Empresa.Bm_Rollback_Transaccion();
                     await AvisoOperacionEmpresaDialogAsync("Agregar Empresa", "Error en ingreso de la empresa. Reintente o escriba a soporte contacto@pentalpha.net");
                 }
             }
-            catch (ArgumentException)
+            else
             {
                 await AvisoOperacionEmpresaDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
             }
@@ -418,43 +439,33 @@ namespace BikeMessenger
                 return;
             }
 
-            try
+            await LlenarDbConPantallaAsync();
+
+
+            if (BM_Database_Empresa.ModificarEmpresa(EmpresaIO))
             {
-                await LlenarDbConPantallaAsync();
+                bool TransaccionOK = true;
 
-                bool TransaccionOK = false;
-                if (BM_Database_Empresa.Bm_Iniciar_Transaccion())
+                if (LvrTransferVar.SincronizarWebRemoto())
                 {
-                    if (BM_Database_Empresa.Bm_Empresa_Modificar())
-                    {
-                        TransaccionOK = true;
-                    }
+                    TransaccionOK = ProRegistroEmpresa("MODIFICAR");
+                }
 
-                    if (TransaccionOK)
-                    {
-                        if (LvrTransferVar.SincronizarWebRemoto())
-                        {
-                            TransaccionOK = ProRegistroEmpresa("MODIFICAR");
-                        }
-                        if (LvrTransferVar.SincronizarWebPropio())
-                        {
-                            TransaccionOK = ProRegistroEmpresa("MODIFICAR");
-                        }
-                    }
+                if (LvrTransferVar.SincronizarWebPropio())
+                {
+                    TransaccionOK = ProRegistroEmpresa("MODIFICAR");
                 }
 
                 if (TransaccionOK)
                 {
-                    _ = BM_Database_Empresa.Bm_Commit_Transaccion();
                     await AvisoOperacionEmpresaDialogAsync("Modificar Empresa", "Empresa modificada exitosamente.");
                 }
                 else
                 {
-                    _ = BM_Database_Empresa.Bm_Rollback_Transaccion();
                     await AvisoOperacionEmpresaDialogAsync("Modificar Empresa", "Error en modificación de la empresa. Reintente o escriba a soporte contacto@pentalpha.net");
                 }
             }
-            catch (ArgumentException)
+            else
             {
                 await AvisoOperacionEmpresaDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
             }
@@ -489,57 +500,50 @@ namespace BikeMessenger
                 return;
             }
 
-            try
+            await LlenarDbConPantallaAsync();
+
+            if (BM_Database_Empresa.BorrarEmpresa(EmpresaIO.PENTALPHA))
             {
-                await LlenarDbConPantallaAsync();
+                bool TransaccionOK = true;
 
-                bool TransaccionOK = false;
+                appBarButtonEmpresa.IsEnabled = true;
+                appBarButtonPersonal.IsEnabled = false;
+                appBarButtonRecursos.IsEnabled = false;
+                appBarButtonClientes.IsEnabled = false;
+                appBarButtonServicios.IsEnabled = false;
+                appBarButtonAjustes.IsEnabled = true;
 
-                if (BM_Database_Empresa.Bm_Iniciar_Transaccion())
-                {
-                    if (BM_Database_Empresa.Bm_Empresa_Borrar())
-                    {
-                        appBarButtonEmpresa.IsEnabled = true;
-                        appBarButtonPersonal.IsEnabled = false;
-                        appBarButtonRecursos.IsEnabled = false;
-                        appBarButtonClientes.IsEnabled = false;
-                        appBarButtonServicios.IsEnabled = false;
-                        appBarButtonAjustes.IsEnabled = true;
+                appBarAgregar.IsEnabled = true;
+                appBarModificar.IsEnabled = false;
+                appBarBorrar.IsEnabled = false;
 
-                        appBarAgregar.IsEnabled = true;
-                        appBarModificar.IsEnabled = false;
-                        appBarBorrar.IsEnabled = false;
+                textBoxRut.IsReadOnly = false;
+                textBoxDigitoVerificador.IsReadOnly = false;
 
-                        textBoxRut.IsReadOnly = false;
-                        textBoxDigitoVerificador.IsReadOnly = false;
-                        TransaccionOK = true;
-                    }
-
-                    if (TransaccionOK)
-                    {
-                        if (LvrTransferVar.SincronizarWebRemoto())
-                        {
-                            TransaccionOK = ProRegistroEmpresa("BORRAR");
-                        }
-                        if (LvrTransferVar.SincronizarWebPropio())
-                        {
-                            TransaccionOK = ProRegistroEmpresa("BORRAR");
-                        }
-                    }
-                }
 
                 if (TransaccionOK)
                 {
-                    _ = BM_Database_Empresa.Bm_Commit_Transaccion();
+                    if (LvrTransferVar.SincronizarWebRemoto())
+                    {
+                        TransaccionOK = ProRegistroEmpresa("BORRAR");
+                    }
+                    if (LvrTransferVar.SincronizarWebPropio())
+                    {
+                        TransaccionOK = ProRegistroEmpresa("BORRAR");
+                    }
+                }
+
+
+                if (TransaccionOK)
+                {
                     await AvisoOperacionEmpresaDialogAsync("Borrar Empresa", "Empresa borrada exitosamente.");
                 }
                 else
                 {
-                    _ = BM_Database_Empresa.Bm_Rollback_Transaccion();
                     await AvisoOperacionEmpresaDialogAsync("Agregar Empresa", "Error en borrado de la empresa. Reintente o escriba a soporte contacto@pentalpha.net");
                 }
             }
-            catch (ArgumentException)
+            else
             {
                 await AvisoOperacionEmpresaDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
             }
@@ -549,7 +553,6 @@ namespace BikeMessenger
 
         private void BtnSalirEmpresa(object sender, RoutedEventArgs e)
         {
-            LvrTransferVar.TV_Connection.Close();
             Application.Current.Exit();
         }
 
@@ -622,21 +625,22 @@ namespace BikeMessenger
         private void LvrCalculoHashEmpresa(object sender, TextChangedEventArgs e)
         {
             string TempTexto = LvrCrypto.LvrRegionGeografica() + textBoxRut.Text + "-" + textBoxDigitoVerificador.Text + LvrCrypto.LvrGenRandomData(5);
-            BM_Database_Empresa.BK_PENTALPHA = LvrCrypto.LvrByteArrayToString(LvrCrypto.LvrCalculoSHA256(TempTexto));
+            EmpresaIO.PENTALPHA = LvrCrypto.LvrByteArrayToString(LvrCrypto.LvrCalculoSHA256(TempTexto));
         }
 
         private void LvrCalculoHashEmpresaDig(object sender, TextChangedEventArgs e)
         {
             string TempTexto = LvrCrypto.LvrRegionGeografica() + textBoxRut.Text + "-" + textBoxDigitoVerificador.Text + LvrCrypto.LvrGenRandomData(5);
-            BM_Database_Empresa.BK_PENTALPHA = LvrCrypto.LvrByteArrayToString(LvrCrypto.LvrCalculoSHA256(TempTexto));
+            EmpresaIO.PENTALPHA = LvrCrypto.LvrByteArrayToString(LvrCrypto.LvrCalculoSHA256(TempTexto));
         }
 
-        private async void BtnCodigoQR(object sender, RoutedEventArgs e) {
+        private async void BtnCodigoQR(object sender, RoutedEventArgs e)
+        {
 
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
-            QRCodeData qrCodeData = qrGenerator.CreateQrCode(BM_Database_Empresa.BK_PENTALPHA, QRCodeGenerator.ECCLevel.Q);
+            QRCodeData qrCodeData = qrGenerator.CreateQrCode(EmpresaIO.PENTALPHA, QRCodeGenerator.ECCLevel.Q);
             PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
-            
+
             byte[] qrCodeAsPngByteArr = qrCode.GetGraphic(20);
 
             InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream();
@@ -648,7 +652,7 @@ namespace BikeMessenger
             await image.SetSourceAsync(stream);
 
             imageQrEmpresa.Source = image;
-         }
+        }
 
         //**************************************************
         // Ejecuta operacion de registro de empresa
@@ -695,59 +699,31 @@ namespace BikeMessenger
 
         private void CopiarMemoriaEnJson(string pOPERACION)
         {
-            // Limpiar Variables
-            EnviarJsonEmpresa.OPERACION = "";
-            EnviarJsonEmpresa.PENTALPHA = "";
-            EnviarJsonEmpresa.RUTID = "";
-            EnviarJsonEmpresa.DIGVER = "";
-            EnviarJsonEmpresa.NOMBRE = "";
-            EnviarJsonEmpresa.USUARIO = "";
-            EnviarJsonEmpresa.CLAVE = "";
-            EnviarJsonEmpresa.ACTIVIDAD1 = "";
-            EnviarJsonEmpresa.ACTIVIDAD2 = "";
-            EnviarJsonEmpresa.REPRESENTANTE1 = "";
-            EnviarJsonEmpresa.REPRESENTANTE2 = "";
-            EnviarJsonEmpresa.REPRESENTANTE3 = "";
-            EnviarJsonEmpresa.DOMICILIO1 = "";
-            EnviarJsonEmpresa.DOMICILIO2 = "";
-            EnviarJsonEmpresa.NUMERO = "";
-            EnviarJsonEmpresa.PISO = "";
-            EnviarJsonEmpresa.OFICINA = "";
-            EnviarJsonEmpresa.CIUDAD = "";
-            EnviarJsonEmpresa.COMUNA = "";
-            EnviarJsonEmpresa.ESTADOREGION = "";
-            EnviarJsonEmpresa.CODIGOPOSTAL = "";
-            EnviarJsonEmpresa.PAIS = "";
-            EnviarJsonEmpresa.OBSERVACIONES = "";
-            EnviarJsonEmpresa.LOGO = "";
-            EnviarJsonEmpresa.RESOPERACION = "";
-            EnviarJsonEmpresa.RESMENSAJE = "";
-
             // Llenar Variables
             EnviarJsonEmpresa.OPERACION = pOPERACION;
-            EnviarJsonEmpresa.PENTALPHA = BM_Database_Empresa.BK_PENTALPHA;
-            EnviarJsonEmpresa.RUTID = BM_Database_Empresa.BK_RUTID;
-            EnviarJsonEmpresa.DIGVER = BM_Database_Empresa.BK_DIGVER;
-            EnviarJsonEmpresa.NOMBRE = BM_Database_Empresa.BK_NOMBRE;
-            EnviarJsonEmpresa.USUARIO = BM_Database_Empresa.BK_USUARIO;
-            EnviarJsonEmpresa.CLAVE = BM_Database_Empresa.BK_CLAVE;
-            EnviarJsonEmpresa.ACTIVIDAD1 = BM_Database_Empresa.BK_ACTIVIDAD1;
-            EnviarJsonEmpresa.ACTIVIDAD2 = BM_Database_Empresa.BK_ACTIVIDAD2;
-            EnviarJsonEmpresa.REPRESENTANTE1 = BM_Database_Empresa.BK_REPRESENTANTE1;
-            EnviarJsonEmpresa.REPRESENTANTE2 = BM_Database_Empresa.BK_REPRESENTANTE2;
-            EnviarJsonEmpresa.REPRESENTANTE3 = BM_Database_Empresa.BK_REPRESENTANTE3;
-            EnviarJsonEmpresa.DOMICILIO1 = BM_Database_Empresa.BK_DOMICILIO1;
-            EnviarJsonEmpresa.DOMICILIO2 = BM_Database_Empresa.BK_DOMICILIO2;
-            EnviarJsonEmpresa.NUMERO = BM_Database_Empresa.BK_NUMERO;
-            EnviarJsonEmpresa.PISO = BM_Database_Empresa.BK_PISO;
-            EnviarJsonEmpresa.OFICINA = BM_Database_Empresa.BK_OFICINA;
-            EnviarJsonEmpresa.CIUDAD = BM_Database_Empresa.BK_CIUDAD;
-            EnviarJsonEmpresa.COMUNA = BM_Database_Empresa.BK_COMUNA;
-            EnviarJsonEmpresa.ESTADOREGION = BM_Database_Empresa.BK_ESTADOREGION;
-            EnviarJsonEmpresa.CODIGOPOSTAL = BM_Database_Empresa.BK_CODIGOPOSTAL;
-            EnviarJsonEmpresa.PAIS = BM_Database_Empresa.BK_PAIS;
-            EnviarJsonEmpresa.OBSERVACIONES = BM_Database_Empresa.BK_OBSERVACIONES;
-            EnviarJsonEmpresa.LOGO = BM_Database_Empresa.BK_LOGO;
+            EnviarJsonEmpresa.PENTALPHA = EmpresaIO.PENTALPHA;
+            EnviarJsonEmpresa.RUTID = EmpresaIO.RUTID;
+            EnviarJsonEmpresa.DIGVER = EmpresaIO.DIGVER;
+            EnviarJsonEmpresa.NOMBRE = EmpresaIO.NOMBRE;
+            EnviarJsonEmpresa.USUARIO = EmpresaIO.USUARIO;
+            EnviarJsonEmpresa.CLAVE = EmpresaIO.CLAVE;
+            EnviarJsonEmpresa.ACTIVIDAD1 = EmpresaIO.ACTIVIDAD1;
+            EnviarJsonEmpresa.ACTIVIDAD2 = EmpresaIO.ACTIVIDAD2;
+            EnviarJsonEmpresa.REPRESENTANTE1 = EmpresaIO.REPRESENTANTE1;
+            EnviarJsonEmpresa.REPRESENTANTE2 = EmpresaIO.REPRESENTANTE2;
+            EnviarJsonEmpresa.REPRESENTANTE3 = EmpresaIO.REPRESENTANTE3;
+            EnviarJsonEmpresa.DOMICILIO1 = EmpresaIO.DOMICILIO1;
+            EnviarJsonEmpresa.DOMICILIO2 = EmpresaIO.DOMICILIO2;
+            EnviarJsonEmpresa.NUMERO = EmpresaIO.NUMERO;
+            EnviarJsonEmpresa.PISO = EmpresaIO.PISO;
+            EnviarJsonEmpresa.OFICINA = EmpresaIO.OFICINA;
+            EnviarJsonEmpresa.CIUDAD = EmpresaIO.CIUDAD;
+            EnviarJsonEmpresa.COMUNA = EmpresaIO.COMUNA;
+            EnviarJsonEmpresa.ESTADOREGION = EmpresaIO.ESTADOREGION;
+            EnviarJsonEmpresa.CODIGOPOSTAL = EmpresaIO.CODIGOPOSTAL;
+            EnviarJsonEmpresa.PAIS = EmpresaIO.PAIS;
+            EnviarJsonEmpresa.OBSERVACIONES = EmpresaIO.OBSERVACIONES;
+            EnviarJsonEmpresa.LOGO = EmpresaIO.LOGO;
             EnviarJsonEmpresa.RESOPERACION = "";
             EnviarJsonEmpresa.RESMENSAJE = "";
         }
@@ -756,29 +732,29 @@ namespace BikeMessenger
         {
             // Proceso
             // RecibirJsonEmpresa.Json_OPERACION = pOPERACION;
-            BM_Database_Empresa.BK_PENTALPHA = RecibirJsonEmpresa.PENTALPHA;
-            BM_Database_Empresa.BK_RUTID = RecibirJsonEmpresa.RUTID;
-            BM_Database_Empresa.BK_DIGVER = RecibirJsonEmpresa.DIGVER;
-            BM_Database_Empresa.BK_NOMBRE = RecibirJsonEmpresa.NOMBRE;
-            BM_Database_Empresa.BK_USUARIO = RecibirJsonEmpresa.USUARIO;
-            BM_Database_Empresa.BK_CLAVE = RecibirJsonEmpresa.CLAVE;
-            BM_Database_Empresa.BK_ACTIVIDAD1 = RecibirJsonEmpresa.ACTIVIDAD1;
-            BM_Database_Empresa.BK_ACTIVIDAD2 = RecibirJsonEmpresa.ACTIVIDAD2;
-            BM_Database_Empresa.BK_REPRESENTANTE1 = RecibirJsonEmpresa.REPRESENTANTE1;
-            BM_Database_Empresa.BK_REPRESENTANTE2 = RecibirJsonEmpresa.REPRESENTANTE2;
-            BM_Database_Empresa.BK_REPRESENTANTE3 = RecibirJsonEmpresa.REPRESENTANTE3;
-            BM_Database_Empresa.BK_DOMICILIO1 = RecibirJsonEmpresa.DOMICILIO1;
-            BM_Database_Empresa.BK_DOMICILIO2 = RecibirJsonEmpresa.DOMICILIO2;
-            BM_Database_Empresa.BK_NUMERO = RecibirJsonEmpresa.NUMERO;
-            BM_Database_Empresa.BK_PISO = RecibirJsonEmpresa.PISO;
-            BM_Database_Empresa.BK_OFICINA = RecibirJsonEmpresa.OFICINA;
-            BM_Database_Empresa.BK_CIUDAD = RecibirJsonEmpresa.CIUDAD;
-            BM_Database_Empresa.BK_COMUNA = RecibirJsonEmpresa.COMUNA;
-            BM_Database_Empresa.BK_ESTADOREGION = RecibirJsonEmpresa.ESTADOREGION;
-            BM_Database_Empresa.BK_CODIGOPOSTAL = RecibirJsonEmpresa.CODIGOPOSTAL;
-            BM_Database_Empresa.BK_PAIS = RecibirJsonEmpresa.PAIS;
-            BM_Database_Empresa.BK_OBSERVACIONES = RecibirJsonEmpresa.OBSERVACIONES;
-            BM_Database_Empresa.BK_LOGO = RecibirJsonEmpresa.LOGO;
+            EmpresaIO.PENTALPHA = RecibirJsonEmpresa.PENTALPHA;
+            EmpresaIO.RUTID = RecibirJsonEmpresa.RUTID;
+            EmpresaIO.DIGVER = RecibirJsonEmpresa.DIGVER;
+            EmpresaIO.NOMBRE = RecibirJsonEmpresa.NOMBRE;
+            EmpresaIO.USUARIO = RecibirJsonEmpresa.USUARIO;
+            EmpresaIO.CLAVE = RecibirJsonEmpresa.CLAVE;
+            EmpresaIO.ACTIVIDAD1 = RecibirJsonEmpresa.ACTIVIDAD1;
+            EmpresaIO.ACTIVIDAD2 = RecibirJsonEmpresa.ACTIVIDAD2;
+            EmpresaIO.REPRESENTANTE1 = RecibirJsonEmpresa.REPRESENTANTE1;
+            EmpresaIO.REPRESENTANTE2 = RecibirJsonEmpresa.REPRESENTANTE2;
+            EmpresaIO.REPRESENTANTE3 = RecibirJsonEmpresa.REPRESENTANTE3;
+            EmpresaIO.DOMICILIO1 = RecibirJsonEmpresa.DOMICILIO1;
+            EmpresaIO.DOMICILIO2 = RecibirJsonEmpresa.DOMICILIO2;
+            EmpresaIO.NUMERO = RecibirJsonEmpresa.NUMERO;
+            EmpresaIO.PISO = RecibirJsonEmpresa.PISO;
+            EmpresaIO.OFICINA = RecibirJsonEmpresa.OFICINA;
+            EmpresaIO.CIUDAD = RecibirJsonEmpresa.CIUDAD;
+            EmpresaIO.COMUNA = RecibirJsonEmpresa.COMUNA;
+            EmpresaIO.ESTADOREGION = RecibirJsonEmpresa.ESTADOREGION;
+            EmpresaIO.CODIGOPOSTAL = RecibirJsonEmpresa.CODIGOPOSTAL;
+            EmpresaIO.PAIS = RecibirJsonEmpresa.PAIS;
+            EmpresaIO.OBSERVACIONES = RecibirJsonEmpresa.OBSERVACIONES;
+            EmpresaIO.LOGO = RecibirJsonEmpresa.LOGO;
             // BM_Database_Empresa = RecibirJsonEmpresa.Json_Resultado;
             // BM_Database_Empresa = RecibirJsonEmpresa.Json_ResultadoMsg;
         }

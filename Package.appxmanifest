@@ -43,17 +43,6 @@
           <uap:Rotation Preference="landscape"/></uap:InitialRotationPreference>
         <uap:LockScreen BadgeLogo="Assets\BadgeLogo.png" Notification="badgeAndTileText"/>
       </uap:VisualElements>
-      <Extensions>
-        <uap:Extension Category="windows.fileTypeAssociation">
-          <uap:FileTypeAssociation  Name="sqlite">
-            <uap:SupportedFileTypes>
-              <uap:FileType ContentType="sqlite/db3">.db3</uap:FileType>
-            </uap:SupportedFileTypes>
-            <uap:DisplayName>SQLite Database 3</uap:DisplayName>
-            <uap:EditFlags OpenIsSafe="true"/>
-          </uap:FileTypeAssociation>
-        </uap:Extension>
-      </Extensions>
     </Application>
   </Applications>
 

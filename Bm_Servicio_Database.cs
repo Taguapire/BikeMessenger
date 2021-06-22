@@ -1,1050 +1,504 @@
-﻿using System;
-using System.Globalization;
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace BikeMessenger
 {
     internal class Bm_Servicio_Database
     {
-        // public SQLiteFactory BM_DB;
-        public SqliteConnection BM_Connection;
-        private SqliteTransaction BK_Transaccion_Servicios;
-        private SqliteCommand BK_Cmd_Servicios;
-        private SqliteDataReader BK_Reader_Servicios;
+        private static JsonBikeMessengerServicio BK_Servicio;
+        private static List<JsonBikeMessengerServicio> BK_ServicioLista;
 
-        // Envios
-        private SqliteCommand BK_Cmd_Envios_Grid;
-        private SqliteDataReader BK_Reader_Servicios_Envios;
-        readonly string StrBuscar_Servicios_Envios = "SELECT NROENVIO, FECHA, CLIENTERUT, CLIENTEDIGVER, ENTREGA FROM SERVICIOS ORDER BY NROENVIO ASC";
+        private static List<string> BK_Pais;
+        private static List<string> BK_Region;
+        private static List<string> BK_Comuna;
+        private static List<string> BK_Ciudad;
 
-        // Clientes
-        private SqliteCommand BK_Cmd_Clientes_Grid;
-        private SqliteDataReader BK_Reader_Servicios_Clientes;
-        readonly string StrBuscar_Servicios_Clientes = "SELECT RUTID||'-'||DIGVER, NOMBRE FROM CLIENTES ORDER BY NOMBRE ASC";
-
-        // Mensajeros
-        private SqliteCommand BK_Cmd_Mensajeros_Grid;
-        private SqliteDataReader BK_Reader_Servicios_Mensajeros;
-        readonly string StrBuscar_Servicios_Mensajeros = "SELECT RUTID||'-'||DIGVER, APELLIDOS||', '||NOMBRES FROM PERSONAL ORDER BY APELLIDOS ASC";
-
-        // Mensajeros
-        private SqliteCommand BK_Cmd_Recursos_Grid;
-        private SqliteDataReader BK_Reader_Servicios_Recursos;
-        readonly string StrBuscar_Servicios_Recursos = "SELECT PATENTE,TIPO,MARCA,MODELO,PROPIETARIO FROM RECURSOS ORDER BY TIPO ASC,MARCA ASC,MODELO ASC";
-
-        private SqliteCommand BK_Cmd_Servicios_Pais;
-        private SqliteDataReader BK_Reader_Servicios_Pais;
-
-        private SqliteCommand BK_Cmd_Servicios_Region;
-        private SqliteDataReader BK_Reader_Servicios_Region;
-
-        private SqliteCommand BK_Cmd_Servicios_Comuna;
-        private SqliteDataReader BK_Reader_Servicios_Comuna;
-
-        private SqliteCommand BK_Cmd_Servicios_Ciudad;
-        private SqliteDataReader BK_Reader_Servicios_Ciudad;
-
-        private string StrAgregar_Servicios;
-        private string StrModificar_Servicios;
-        private string StrBorrar_Servicios;
-
-        private readonly string StrBuscar_Servicios = "SELECT * FROM SERVICIOS";
-
-        private readonly string StrBuscar_Servicios_Pais = "SELECT * FROM PAIS ORDER BY PAIS ASC";
-        private readonly string StrBuscar_Servicios_Region = "SELECT * FROM ESTADOREGION ORDER BY REGION ASC";
-        private readonly string StrBuscar_Servicios_Comuna = "SELECT * FROM COMUNA ORDER BY COMUNA ASC";
-        private readonly string StrBuscar_Servicios_Ciudad = "SELECT * FROM CIUDAD ORDER BY CIUDAD ASC";
-
-        // Campos Servicios
-        public string BK_PENTALPHA { get; set; }
-        public string BK_NROENVIO { get; set; }
-        public string BK_GUIADESPACHO { get; set; }
-        public string BK_FECHA { get; set; }
-        public string BK_HORA { get; set; }
-        public string BK_CLIENTERUT { get; set; }
-        public string BK_CLIENTEDIGVER { get; set; }
-        public string BK_CLIENTE { get; set; }
-        public string BK_MENSAJERORUT { get; set; }
-        public string BK_MENSAJERODIGVER { get; set; }
-        public string BK_MENSAJERO { get; set; }
-        public string BK_RECURSOID { get; set; }
-        public string BK_RECURSO { get; set; }
-        public string BK_ODOMICILIO1 { get; set; }
-        public string BK_ODOMICILIO2 { get; set; }
-        public string BK_ONUMERO { get; set; }
-        public string BK_OPISO { get; set; }
-        public string BK_OOFICINA { get; set; }
-        public string BK_OCIUDAD { get; set; }
-        public string BK_OCOMUNA { get; set; }
-        public string BK_OESTADO { get; set; }
-        public string BK_OPAIS { get; set; }
-        public string BK_OCOORDENADAS { get; set; }
-        public string BK_DDOMICILIO1 { get; set; }
-        public string BK_DDOMICILIO2 { get; set; }
-        public string BK_DNUMERO { get; set; }
-        public string BK_DPISO { get; set; }
-        public string BK_DOFICINA { get; set; }
-        public string BK_DCIUDAD { get; set; }
-        public string BK_DCOMUNA { get; set; }
-        public string BK_DESTADO { get; set; }
-        public string BK_DPAIS { get; set; }
-        public string BK_DCOORDENADAS { get; set; }
-        public double BK_DISTANCIA_KM { get; set; }
-        public string BK_DESCRIPCION { get; set; }
-        public int BK_FACTURAS { get; set; }
-        public int BK_BULTOS { get; set; }
-        public int BK_COMPRAS { get; set; }
-        public int BK_CHEQUES { get; set; }
-        public int BK_SOBRES { get; set; }
-        public int BK_OTROS { get; set; }
-        public string BK_OBSERVACIONES { get; set; }
-        public string BK_ENTREGA { get; set; }
-        public string BK_RECEPCION { get; set; }
-        public string BK_TESPERA { get; set; }
-        public string BK_FECHAENTREGA { get; set; }
-        public string BK_HORAENTREGA { get; set; }
-        public string BK_DISTANCIA { get; set; }
-        public string BK_PROGRAMADO { get; set; }
-
-        // Campos Envios Grid
-        public string BK_GRID_ENVIO_NRO { get; set; }
-        public string BK_GRID_ENVIO_FECHA { get; set; }
-        public string BK_GRID_ENVIO_CLIENTE { get; set; }
-        public string BK_GRID_ENVIO_ENTREGA { get; set; }
-
-        // Campos Clientes Grid
-        public string BK_GRID_CLIENTE_RUTID { get; set; }
-        public string BK_GRID_CLIENTE_NOMBRE { get; set; }
-
-        // Campos Mensajeros Grid
-        public string BK_GRID_MENSAJERO_RUTID { get; set; }
-        public string BK_GRID_MENSAJERO_NOMBRE { get; set; }
-
-        // Campos Mensajeros 
-        public string BK_GRID_RECURSO_PATENTE { get; set; }
-        public string BK_GRID_RECURSO_TIPO { get; set; }
-        public string BK_GRID_RECURSO_MARCA { get; set; }
-        public string BK_GRID_RECURSO_MODELO { get; set; }
-        public string BK_GRID_RECURSO_PROPIETARIO { get; set; }
-
-        // Campos de PAIS
-        public short BK_E_CODPAIS { get; set; }
-        public string BK_E_PAIS { get; set; }
-
-        // Campos de REGION
-        public short BK_E_CODREGION { get; set; }
-        public string BK_E_REGION { get; set; }
-
-        // Campos de COMUNA
-        public short BK_E_CODCOMUNA { get; set; }
-        public string BK_E_COMUNA { get; set; }
-
-        // Campos de CIUDAD
-        public short BK_E_CODCIUDAD { get; set; }
-        public string BK_E_CIUDAD { get; set; }
-
-        public bool BM_CreateDatabase(SqliteConnection BM_Connection)
+        // Busqueda por Muchos
+        public List<JsonBikeMessengerServicio> BuscarServicio()
         {
-            this.BM_Connection = BM_Connection;
-            return true;
+            BK_ServicioLista = null;
+            using (var db = new BK_SQliteContext())
+            {
+                foreach (var LvrServicio in db.SERVICIOs)
+                {
+                    BK_Servicio = null;
+                    BK_Servicio.PENTALPHA = LvrServicio.PENTALPHA;
+                    BK_Servicio.NROENVIO = LvrServicio.NROENVIO;
+                    BK_Servicio.GUIADESPACHO = LvrServicio.GUIADESPACHO;
+                    BK_Servicio.FECHA = LvrServicio.FECHA;
+                    BK_Servicio.HORA = LvrServicio.HORA;
+                    BK_Servicio.CLIENTERUT = LvrServicio.CLIENTERUT;
+                    BK_Servicio.CLIENTEDIGVER = LvrServicio.CLIENTEDIGVER;
+                    // BK_Servicio.CLIENTE = LvrServicio.CLIENTE;
+                    BK_Servicio.MENSAJERORUT = LvrServicio.MENSAJERORUT;
+                    BK_Servicio.MENSAJERODIGVER = LvrServicio.MENSAJERODIGVER;
+                    // BK_Servicio.MENSAJERO = LvrServicio.MENSAJERO;
+                    BK_Servicio.RECURSOID = LvrServicio.RECURSOID;
+                    // BK_Servicio.RECURSO = LvrServicio.RECURSO;
+                    BK_Servicio.ODOMICILIO1 = LvrServicio.ODOMICILIO1;
+                    BK_Servicio.ODOMICILIO2 = LvrServicio.ODOMICILIO2;
+                    BK_Servicio.ONUMERO = LvrServicio.ONUMERO;
+                    BK_Servicio.OPISO = LvrServicio.OPISO;
+                    BK_Servicio.OOFICINA = LvrServicio.OOFICINA;
+                    BK_Servicio.OCIUDAD = LvrServicio.OCIUDAD;
+                    BK_Servicio.OCOMUNA = LvrServicio.OCOMUNA;
+                    BK_Servicio.OESTADO = LvrServicio.OESTADO;
+                    BK_Servicio.OPAIS = LvrServicio.OPAIS;
+                    BK_Servicio.OCOORDENADAS = LvrServicio.OCOORDENADAS;
+                    BK_Servicio.DDOMICILIO1 = LvrServicio.DDOMICILIO1;
+                    BK_Servicio.DDOMICILIO2 = LvrServicio.DDOMICILIO2;
+                    BK_Servicio.DNUMERO = LvrServicio.DNUMERO;
+                    BK_Servicio.DPISO = LvrServicio.DPISO;
+                    BK_Servicio.DOFICINA = LvrServicio.DOFICINA;
+                    BK_Servicio.DCIUDAD = LvrServicio.DCIUDAD;
+                    BK_Servicio.DCOMUNA = LvrServicio.DCOMUNA;
+                    BK_Servicio.DESTADO = LvrServicio.DESTADO;
+                    BK_Servicio.DPAIS = LvrServicio.DPAIS;
+                    BK_Servicio.DCOORDENADAS = LvrServicio.DCOORDENADAS;
+                    BK_Servicio.DESCRIPCION = LvrServicio.DESCRIPCION;
+                    BK_Servicio.FACTURAS = LvrServicio.FACTURAS;
+                    BK_Servicio.BULTOS = LvrServicio.BULTOS;
+                    BK_Servicio.COMPRAS = LvrServicio.COMPRAS;
+                    BK_Servicio.CHEQUES = LvrServicio.CHEQUES;
+                    BK_Servicio.SOBRES = LvrServicio.SOBRES;
+                    BK_Servicio.OTROS = LvrServicio.OTROS;
+                    BK_Servicio.OBSERVACIONES = LvrServicio.OBSERVACIONES;
+                    BK_Servicio.ENTREGA = LvrServicio.ENTREGA;
+                    BK_Servicio.RECEPCION = LvrServicio.RECEPCION;
+                    BK_Servicio.TESPERA = LvrServicio.TESPERA;
+                    BK_Servicio.FECHAENTREGA = LvrServicio.FECHAENTREGA;
+                    BK_Servicio.HORAENTREGA = LvrServicio.HORAENTREGA;
+                    BK_Servicio.DISTANCIA = LvrServicio.DISTANCIA;
+                    BK_Servicio.PROGRAMADO = LvrServicio.PROGRAMADO;
+                    BK_ServicioLista.Add(BK_Servicio);
+                }
+            }
+            return BK_ServicioLista;
         }
 
-        public bool Bm_Servicios_Agregar()
+        public List<JsonBikeMessengerServicio> BuscarServicio(string pPENTALPHA, string pPATENTE)
         {
-            StrAgregar_Servicios = "INSERT INTO SERVICIOS (";
-            StrAgregar_Servicios += "PENTALPHA,";
-            StrAgregar_Servicios += "NROENVIO,";
-            StrAgregar_Servicios += "GUIADESPACHO,";
-            StrAgregar_Servicios += "FECHA,";
-            StrAgregar_Servicios += "HORA,";
-            StrAgregar_Servicios += "CLIENTERUT,";
-            StrAgregar_Servicios += "CLIENTEDIGVER,";
-            StrAgregar_Servicios += "MENSAJERORUT,";
-            StrAgregar_Servicios += "MENSAJERODIGVER,";
-            StrAgregar_Servicios += "RECURSOID,";
-            StrAgregar_Servicios += "ODOMICILIO1,";
-            StrAgregar_Servicios += "ODOMICILIO2,";
-            StrAgregar_Servicios += "ONUMERO,";
-            StrAgregar_Servicios += "OPISO,";
-            StrAgregar_Servicios += "OOFICINA,";
-            StrAgregar_Servicios += "OCIUDAD,";
-            StrAgregar_Servicios += "OCOMUNA,";
-            StrAgregar_Servicios += "OESTADO,";
-            StrAgregar_Servicios += "OPAIS,";
-            StrAgregar_Servicios += "OCOORDENADAS,";
-            StrAgregar_Servicios += "DDOMICILIO1,";
-            StrAgregar_Servicios += "DDOMICILIO2,";
-            StrAgregar_Servicios += "DNUMERO,";
-            StrAgregar_Servicios += "DPISO,";
-            StrAgregar_Servicios += "DOFICINA,";
-            StrAgregar_Servicios += "DCIUDAD,";
-            StrAgregar_Servicios += "DCOMUNA,";
-            StrAgregar_Servicios += "DESTADO,";
-            StrAgregar_Servicios += "DPAIS,";
-            StrAgregar_Servicios += "DCOORDENADAS,";
-            StrAgregar_Servicios += "DISTANCIA_KM,";
-            StrAgregar_Servicios += "DESCRIPCION,";
-            StrAgregar_Servicios += "FACTURAS,";
-            StrAgregar_Servicios += "BULTOS,";
-            StrAgregar_Servicios += "COMPRAS,";
-            StrAgregar_Servicios += "CHEQUES,";
-            StrAgregar_Servicios += "SOBRES,";
-            StrAgregar_Servicios += "OTROS,";
-            StrAgregar_Servicios += "OBSERVACIONES,";
-            StrAgregar_Servicios += "ENTREGA,";
-            StrAgregar_Servicios += "RECEPCION,";
-            StrAgregar_Servicios += "TESPERA,";
-            StrAgregar_Servicios += "FECHAENTREGA,";
-            StrAgregar_Servicios += "HORAENTREGA,";
-            StrAgregar_Servicios += "DISTANCIA,";
-            StrAgregar_Servicios += "PROGRAMADO) VALUES (";
-            StrAgregar_Servicios += "'" + BK_PENTALPHA + "',";
-            StrAgregar_Servicios += "'" + BK_NROENVIO + "',";
-            StrAgregar_Servicios += "'" + BK_GUIADESPACHO + "',";
-            StrAgregar_Servicios += "'" + BK_FECHA + "',";
-            StrAgregar_Servicios += "'" + BK_HORA + "',";
-            StrAgregar_Servicios += "'" + BK_CLIENTERUT + "',";
-            StrAgregar_Servicios += "'" + BK_CLIENTEDIGVER + "',";
-            StrAgregar_Servicios += "'" + BK_MENSAJERORUT + "',";
-            StrAgregar_Servicios += "'" + BK_MENSAJERODIGVER + "',";
-            StrAgregar_Servicios += "'" + BK_RECURSOID + "',";
-            StrAgregar_Servicios += "'" + BK_ODOMICILIO1 + "',";
-            StrAgregar_Servicios += "'" + BK_ODOMICILIO2 + "',";
-            StrAgregar_Servicios += "'" + BK_ONUMERO + "',";
-            StrAgregar_Servicios += "'" + BK_OPISO + "',";
-            StrAgregar_Servicios += "'" + BK_OOFICINA + "',";
-            StrAgregar_Servicios += "'" + BK_OCIUDAD + "',";
-            StrAgregar_Servicios += "'" + BK_OCOMUNA + "',";
-            StrAgregar_Servicios += "'" + BK_OESTADO + "',";
-            StrAgregar_Servicios += "'" + BK_OPAIS + "',";
-            StrAgregar_Servicios += "'" + BK_OCOORDENADAS + "',";
-            StrAgregar_Servicios += "'" + BK_DDOMICILIO1 + "',";
-            StrAgregar_Servicios += "'" + BK_DDOMICILIO2 + "',";
-            StrAgregar_Servicios += "'" + BK_DNUMERO + "',";
-            StrAgregar_Servicios += "'" + BK_DPISO + "',";
-            StrAgregar_Servicios += "'" + BK_DOFICINA + "',";
-            StrAgregar_Servicios += "'" + BK_DCIUDAD + "',";
-            StrAgregar_Servicios += "'" + BK_DCOMUNA + "',";
-            StrAgregar_Servicios += "'" + BK_DESTADO + "',";
-            StrAgregar_Servicios += "'" + BK_DPAIS + "',";
-            StrAgregar_Servicios += "'" + BK_DCOORDENADAS + "',";
-            StrAgregar_Servicios += " " + BK_DISTANCIA_KM.ToString("G", CultureInfo.InvariantCulture) + " ,";
-            StrAgregar_Servicios += "'" + BK_DESCRIPCION + "',";
-            StrAgregar_Servicios += " " + BK_FACTURAS.ToString() + " ,";
-            StrAgregar_Servicios += " " + BK_BULTOS.ToString() + " ,";
-            StrAgregar_Servicios += " " + BK_COMPRAS.ToString() + " ,";
-            StrAgregar_Servicios += " " + BK_CHEQUES.ToString() + " ,";
-            StrAgregar_Servicios += " " + BK_SOBRES.ToString() + " ,";
-            StrAgregar_Servicios += " " + BK_OTROS.ToString() + " ,";
-            StrAgregar_Servicios += "'" + BK_OBSERVACIONES + "',";
-            StrAgregar_Servicios += "'" + BK_ENTREGA + "',";
-            StrAgregar_Servicios += "'" + BK_RECEPCION + "',";
-            StrAgregar_Servicios += "'" + BK_TESPERA + "',";
-            StrAgregar_Servicios += "'" + BK_FECHAENTREGA + "',";
-            StrAgregar_Servicios += "'" + BK_HORAENTREGA + "',";
-            StrAgregar_Servicios += "'" + BK_DISTANCIA + "',";
-            StrAgregar_Servicios += "'" + BK_PROGRAMADO + "')";
+            BK_ServicioLista = null;
+            using (var db = new BK_SQliteContext())
+            {
+                BK_Servicio = null;
+                SERVICIO LvrServicio;
+                LvrServicio = db.SERVICIOs.Find(pPENTALPHA, pPATENTE);
+                BK_Servicio = null;
+                BK_Servicio.PENTALPHA = LvrServicio.PENTALPHA;
+                BK_Servicio.NROENVIO = LvrServicio.NROENVIO;
+                BK_Servicio.GUIADESPACHO = LvrServicio.GUIADESPACHO;
+                BK_Servicio.FECHA = LvrServicio.FECHA;
+                BK_Servicio.HORA = LvrServicio.HORA;
+                BK_Servicio.CLIENTERUT = LvrServicio.CLIENTERUT;
+                BK_Servicio.CLIENTEDIGVER = LvrServicio.CLIENTEDIGVER;
+                // BK_Servicio.CLIENTE = LvrServicio.CLIENTE;
+                BK_Servicio.MENSAJERORUT = LvrServicio.MENSAJERORUT;
+                BK_Servicio.MENSAJERODIGVER = LvrServicio.MENSAJERODIGVER;
+                // BK_Servicio.MENSAJERO = LvrServicio.MENSAJERO;
+                BK_Servicio.RECURSOID = LvrServicio.RECURSOID;
+                // BK_Servicio.RECURSO = LvrServicio.RECURSO;
+                BK_Servicio.ODOMICILIO1 = LvrServicio.ODOMICILIO1;
+                BK_Servicio.ODOMICILIO2 = LvrServicio.ODOMICILIO2;
+                BK_Servicio.ONUMERO = LvrServicio.ONUMERO;
+                BK_Servicio.OPISO = LvrServicio.OPISO;
+                BK_Servicio.OOFICINA = LvrServicio.OOFICINA;
+                BK_Servicio.OCIUDAD = LvrServicio.OCIUDAD;
+                BK_Servicio.OCOMUNA = LvrServicio.OCOMUNA;
+                BK_Servicio.OESTADO = LvrServicio.OESTADO;
+                BK_Servicio.OPAIS = LvrServicio.OPAIS;
+                BK_Servicio.OCOORDENADAS = LvrServicio.OCOORDENADAS;
+                BK_Servicio.DDOMICILIO1 = LvrServicio.DDOMICILIO1;
+                BK_Servicio.DDOMICILIO2 = LvrServicio.DDOMICILIO2;
+                BK_Servicio.DNUMERO = LvrServicio.DNUMERO;
+                BK_Servicio.DPISO = LvrServicio.DPISO;
+                BK_Servicio.DOFICINA = LvrServicio.DOFICINA;
+                BK_Servicio.DCIUDAD = LvrServicio.DCIUDAD;
+                BK_Servicio.DCOMUNA = LvrServicio.DCOMUNA;
+                BK_Servicio.DESTADO = LvrServicio.DESTADO;
+                BK_Servicio.DPAIS = LvrServicio.DPAIS;
+                BK_Servicio.DCOORDENADAS = LvrServicio.DCOORDENADAS;
+                BK_Servicio.DESCRIPCION = LvrServicio.DESCRIPCION;
+                BK_Servicio.FACTURAS = LvrServicio.FACTURAS;
+                BK_Servicio.BULTOS = LvrServicio.BULTOS;
+                BK_Servicio.COMPRAS = LvrServicio.COMPRAS;
+                BK_Servicio.CHEQUES = LvrServicio.CHEQUES;
+                BK_Servicio.SOBRES = LvrServicio.SOBRES;
+                BK_Servicio.OTROS = LvrServicio.OTROS;
+                BK_Servicio.OBSERVACIONES = LvrServicio.OBSERVACIONES;
+                BK_Servicio.ENTREGA = LvrServicio.ENTREGA;
+                BK_Servicio.RECEPCION = LvrServicio.RECEPCION;
+                BK_Servicio.TESPERA = LvrServicio.TESPERA;
+                BK_Servicio.FECHAENTREGA = LvrServicio.FECHAENTREGA;
+                BK_Servicio.HORAENTREGA = LvrServicio.HORAENTREGA;
+                BK_Servicio.DISTANCIA = LvrServicio.DISTANCIA;
+                BK_Servicio.PROGRAMADO = LvrServicio.PROGRAMADO;
+                BK_ServicioLista.Add(BK_Servicio);
+            }
+            return BK_ServicioLista;
+        }
+
+
+        public bool AgregarServicio(JsonBikeMessengerServicio aBK_Servicio)
+        {
             try
             {
-                BK_Cmd_Servicios = new SqliteCommand(StrAgregar_Servicios, BM_Connection)
+                using (var db = new BK_SQliteContext())
                 {
-                    Transaction = BK_Transaccion_Servicios
+                    var LvrServicio = new SERVICIO()
+                    {
+                        PENTALPHA = aBK_Servicio.PENTALPHA,
+                        NROENVIO = aBK_Servicio.NROENVIO,
+                        GUIADESPACHO = aBK_Servicio.GUIADESPACHO,
+                        FECHA = aBK_Servicio.FECHA,
+                        HORA = aBK_Servicio.HORA,
+                        CLIENTERUT = aBK_Servicio.CLIENTERUT,
+                        CLIENTEDIGVER = aBK_Servicio.CLIENTEDIGVER,
+                        // CLIENTE = aBK_Servicio.CLIENTE,
+                        MENSAJERORUT = aBK_Servicio.MENSAJERORUT,
+                        MENSAJERODIGVER = aBK_Servicio.MENSAJERODIGVER,
+                        // MENSAJERO = aBK_Servicio.MENSAJERO,
+                        RECURSOID = aBK_Servicio.RECURSOID,
+                        // RECURSO = aBK_Servicio.RECURSO,
+                        ODOMICILIO1 = aBK_Servicio.ODOMICILIO1,
+                        ODOMICILIO2 = aBK_Servicio.ODOMICILIO2,
+                        ONUMERO = aBK_Servicio.ONUMERO,
+                        OPISO = aBK_Servicio.OPISO,
+                        OOFICINA = aBK_Servicio.OOFICINA,
+                        OCIUDAD = aBK_Servicio.OCIUDAD,
+                        OCOMUNA = aBK_Servicio.OCOMUNA,
+                        OESTADO = aBK_Servicio.OESTADO,
+                        OPAIS = aBK_Servicio.OPAIS,
+                        OCOORDENADAS = aBK_Servicio.OCOORDENADAS,
+                        DDOMICILIO1 = aBK_Servicio.DDOMICILIO1,
+                        DDOMICILIO2 = aBK_Servicio.DDOMICILIO2,
+                        DNUMERO = aBK_Servicio.DNUMERO,
+                        DPISO = aBK_Servicio.DPISO,
+                        DOFICINA = aBK_Servicio.DOFICINA,
+                        DCIUDAD = aBK_Servicio.DCIUDAD,
+                        DCOMUNA = aBK_Servicio.DCOMUNA,
+                        DESTADO = aBK_Servicio.DESTADO,
+                        DPAIS = aBK_Servicio.DPAIS,
+                        DCOORDENADAS = aBK_Servicio.DCOORDENADAS,
+                        DESCRIPCION = aBK_Servicio.DESCRIPCION,
+                        FACTURAS = aBK_Servicio.FACTURAS,
+                        BULTOS = aBK_Servicio.BULTOS,
+                        COMPRAS = aBK_Servicio.COMPRAS,
+                        CHEQUES = aBK_Servicio.CHEQUES,
+                        SOBRES = aBK_Servicio.SOBRES,
+                        OTROS = aBK_Servicio.OTROS,
+                        OBSERVACIONES = aBK_Servicio.OBSERVACIONES,
+                        ENTREGA = aBK_Servicio.ENTREGA,
+                        RECEPCION = aBK_Servicio.RECEPCION,
+                        TESPERA = aBK_Servicio.TESPERA,
+                        FECHAENTREGA = aBK_Servicio.FECHAENTREGA,
+                        HORAENTREGA = aBK_Servicio.HORAENTREGA,
+                        DISTANCIA = aBK_Servicio.DISTANCIA,
+                        PROGRAMADO = aBK_Servicio.PROGRAMADO
+                    };
+                    _ = db.Add(LvrServicio);
+                    _ = db.SaveChanges();
                 };
-                _ = BK_Cmd_Servicios.ExecuteNonQuery();
                 return true;
             }
-            catch (SqliteException)
+            catch (DbUpdateException Ex)
             {
+                Console.WriteLine(Ex.InnerException.Message);
                 return false;
             }
         }
 
-        public bool Bm_Servicios_Buscar()
+
+        public bool ModificarServicio(JsonBikeMessengerServicio mBK_Servicio)
         {
             try
             {
-                BK_Cmd_Servicios = new SqliteCommand(StrBuscar_Servicios, BM_Connection);
-                BK_Reader_Servicios = BK_Cmd_Servicios.ExecuteReader();
-
-                if (BK_Reader_Servicios.Read())
+                using (var db = new BK_SQliteContext())
                 {
-                    // Llenar Valores de Servicios
-                    BK_NROENVIO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("NROENVIO"));
-                    BK_GUIADESPACHO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("GUIADESPACHO"));
-                    BK_FECHA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("FECHA"));
-                    BK_HORA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("HORA"));
-                    BK_CLIENTERUT = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("CLIENTERUT"));
-                    BK_CLIENTEDIGVER = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("CLIENTEDIGVER"));
-                    BK_CLIENTE = Bm_BuscarNombreCliente(BK_CLIENTERUT, BK_CLIENTEDIGVER);
-                    BK_MENSAJERORUT = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("MENSAJERORUT"));
-                    BK_MENSAJERODIGVER = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("MENSAJERODIGVER"));
-                    BK_MENSAJERO = Bm_BuscarNombreMensajero(BK_MENSAJERORUT, BK_MENSAJERODIGVER);
-                    BK_RECURSOID = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("RECURSOID"));
-                    BK_RECURSO = Bm_BuscarNombreRecurso(BK_RECURSOID);
-                    BK_ODOMICILIO1 = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("ODOMICILIO1"));
-                    BK_ODOMICILIO2 = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("ODOMICILIO2"));
-                    BK_ONUMERO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("ONUMERO"));
-                    BK_OPISO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OPISO"));
-                    BK_OOFICINA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OOFICINA"));
-                    BK_OCIUDAD = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OCIUDAD"));
-                    BK_OCOMUNA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OCOMUNA"));
-                    BK_OESTADO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OESTADO"));
-                    BK_OPAIS = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OPAIS"));
-                    BK_OCOORDENADAS = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OCOORDENADAS"));
-                    BK_DDOMICILIO1 = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DDOMICILIO1"));
-                    BK_DDOMICILIO2 = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DDOMICILIO2"));
-                    BK_DNUMERO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DNUMERO"));
-                    BK_DPISO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OPISO"));
-                    BK_DOFICINA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DOFICINA"));
-                    BK_DCIUDAD = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DCIUDAD"));
-                    BK_DCOMUNA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DCOMUNA"));
-                    BK_DESTADO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DESTADO"));
-                    BK_DPAIS = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DPAIS"));
-                    BK_DCOORDENADAS = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DCOORDENADAS"));
-                    BK_DISTANCIA_KM = BK_Reader_Servicios.GetDouble(BK_Reader_Servicios.GetOrdinal("DISTANCIA_KM"));
-                    BK_DESCRIPCION = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DESCRIPCION"));
-                    BK_FACTURAS = BK_Reader_Servicios.GetInt32(BK_Reader_Servicios.GetOrdinal("FACTURAS"));
-                    BK_BULTOS = BK_Reader_Servicios.GetInt32(BK_Reader_Servicios.GetOrdinal("BULTOS"));
-                    BK_COMPRAS = BK_Reader_Servicios.GetInt32(BK_Reader_Servicios.GetOrdinal("COMPRAS"));
-                    BK_CHEQUES = BK_Reader_Servicios.GetInt32(BK_Reader_Servicios.GetOrdinal("CHEQUES"));
-                    BK_SOBRES = BK_Reader_Servicios.GetInt32(BK_Reader_Servicios.GetOrdinal("SOBRES"));
-                    BK_OTROS = BK_Reader_Servicios.GetInt32(BK_Reader_Servicios.GetOrdinal("OTROS"));
-                    BK_OBSERVACIONES = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OBSERVACIONES"));
-                    BK_ENTREGA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("ENTREGA"));
-                    BK_RECEPCION = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("RECEPCION"));
-                    BK_TESPERA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("TESPERA"));
-                    BK_FECHAENTREGA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("FECHAENTREGA"));
-                    BK_HORAENTREGA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("HORAENTREGA"));
-                    BK_DISTANCIA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DISTANCIA"));
-                    BK_PROGRAMADO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("PROGRAMADO"));
-                    return true;
-                }
-                else
-                {
-                    LimpiarVariables();
-                    return false;
-                }
+                    var LvrServicio = new SERVICIO()
+                    {
+                        PENTALPHA = mBK_Servicio.PENTALPHA,
+                        NROENVIO = mBK_Servicio.NROENVIO,
+                        GUIADESPACHO = mBK_Servicio.GUIADESPACHO,
+                        FECHA = mBK_Servicio.FECHA,
+                        HORA = mBK_Servicio.HORA,
+                        CLIENTERUT = mBK_Servicio.CLIENTERUT,
+                        CLIENTEDIGVER = mBK_Servicio.CLIENTEDIGVER,
+                        // CLIENTE = mBK_Servicio.CLIENTE,
+                        MENSAJERORUT = mBK_Servicio.MENSAJERORUT,
+                        MENSAJERODIGVER = mBK_Servicio.MENSAJERODIGVER,
+                        // MENSAJERO = mBK_Servicio.MENSAJERO,
+                        RECURSOID = mBK_Servicio.RECURSOID,
+                        // RECURSO = mBK_Servicio.RECURSO,
+                        ODOMICILIO1 = mBK_Servicio.ODOMICILIO1,
+                        ODOMICILIO2 = mBK_Servicio.ODOMICILIO2,
+                        ONUMERO = mBK_Servicio.ONUMERO,
+                        OPISO = mBK_Servicio.OPISO,
+                        OOFICINA = mBK_Servicio.OOFICINA,
+                        OCIUDAD = mBK_Servicio.OCIUDAD,
+                        OCOMUNA = mBK_Servicio.OCOMUNA,
+                        OESTADO = mBK_Servicio.OESTADO,
+                        OPAIS = mBK_Servicio.OPAIS,
+                        OCOORDENADAS = mBK_Servicio.OCOORDENADAS,
+                        DDOMICILIO1 = mBK_Servicio.DDOMICILIO1,
+                        DDOMICILIO2 = mBK_Servicio.DDOMICILIO2,
+                        DNUMERO = mBK_Servicio.DNUMERO,
+                        DPISO = mBK_Servicio.DPISO,
+                        DOFICINA = mBK_Servicio.DOFICINA,
+                        DCIUDAD = mBK_Servicio.DCIUDAD,
+                        DCOMUNA = mBK_Servicio.DCOMUNA,
+                        DESTADO = mBK_Servicio.DESTADO,
+                        DPAIS = mBK_Servicio.DPAIS,
+                        DCOORDENADAS = mBK_Servicio.DCOORDENADAS,
+                        DESCRIPCION = mBK_Servicio.DESCRIPCION,
+                        FACTURAS = mBK_Servicio.FACTURAS,
+                        BULTOS = mBK_Servicio.BULTOS,
+                        COMPRAS = mBK_Servicio.COMPRAS,
+                        CHEQUES = mBK_Servicio.CHEQUES,
+                        SOBRES = mBK_Servicio.SOBRES,
+                        OTROS = mBK_Servicio.OTROS,
+                        OBSERVACIONES = mBK_Servicio.OBSERVACIONES,
+                        ENTREGA = mBK_Servicio.ENTREGA,
+                        RECEPCION = mBK_Servicio.RECEPCION,
+                        TESPERA = mBK_Servicio.TESPERA,
+                        FECHAENTREGA = mBK_Servicio.FECHAENTREGA,
+                        HORAENTREGA = mBK_Servicio.HORAENTREGA,
+                        DISTANCIA = mBK_Servicio.DISTANCIA,
+                        PROGRAMADO = mBK_Servicio.PROGRAMADO
+                    };
+                    _ = db.Update(LvrServicio);
+                    _ = db.SaveChanges();
+                };
+                return true;
             }
-            catch (SqliteException)
+            catch (DbUpdateException Ex)
             {
+                Console.WriteLine(Ex.InnerException.Message);
                 return false;
             }
         }
 
+        public bool BorrarServicio(string pPENTALPHA, string pNROENVIO)
+        {
+            try
+            {
+                using (var db = new BK_SQliteContext())
+                {
+                    SERVICIO LvrServicio;
+                    LvrServicio = db.SERVICIOs.Find(pPENTALPHA, pNROENVIO);
+                    _ = db.Remove(LvrServicio);
+                    _ = db.SaveChanges();
+                }
+                return true;
+            }
+            catch (DbUpdateException Ex)
+            {
+                Console.WriteLine(Ex.InnerException.Message);
+                return false;
+            }
+        }
 
-        public string Bm_Servicios_Listado()
+        // Utilitarios
+        public List<JsonBikeMessengerRecurso> BuscarGridRecurso()
+        {
+            JsonBikeMessengerRecurso BK_Recurso;
+            List<JsonBikeMessengerRecurso> BK_RecursoLista;
+            BK_RecursoLista = null;
+            using (var db = new BK_SQliteContext())
+            {
+                foreach (var LvrRecurso in db.RECURSOs)
+                {
+                    BK_Recurso = null;
+                    BK_Recurso.PATENTE = LvrRecurso.PATENTE;
+                    BK_Recurso.TIPO = LvrRecurso.TIPO;
+                    BK_Recurso.MARCA = LvrRecurso.MARCA;
+                    BK_Recurso.MODELO = LvrRecurso.MODELO;
+                    BK_Recurso.CIUDAD = LvrRecurso.CIUDAD;
+                    BK_RecursoLista.Add(BK_Recurso);
+                }
+            }
+            return BK_RecursoLista;
+        }
+
+        public List<JsonBikeMessengerPersonal> BuscarGridPersonal()
+        {
+            JsonBikeMessengerPersonal BK_Personal;
+            List<JsonBikeMessengerPersonal> BK_PersonalLista;
+            BK_PersonalLista = null;
+            using (var db = new BK_SQliteContext())
+            {
+                foreach (var LvrPersonal in db.PERSONALs)
+                {
+                    BK_Personal = null;
+                    BK_Personal.RUTID = LvrPersonal.RUTID;
+                    BK_Personal.DIGVER = LvrPersonal.DIGVER;
+                    BK_Personal.APELLIDOS = LvrPersonal.APELLIDOS;
+                    BK_Personal.NOMBRES = LvrPersonal.NOMBRES;
+                    BK_PersonalLista.Add(BK_Personal);
+                }
+            }
+            return BK_PersonalLista;
+        }
+
+
+        public List<JsonBikeMessengerCliente> BuscarGridCliente()
+        {
+            List<JsonBikeMessengerCliente> BK_ClienteLista;
+            JsonBikeMessengerCliente BK_Cliente;
+
+            BK_ClienteLista = null;
+            using (var db = new BK_SQliteContext())
+            {
+                foreach (var LvrCliente in db.CLIENTEs)
+                {
+                    BK_Cliente = null;
+                    BK_Cliente.RUTID = LvrCliente.RUTID;
+                    BK_Cliente.DIGVER = LvrCliente.DIGVER;
+                    BK_Cliente.NOMBRE = LvrCliente.NOMBRE;
+                    BK_ClienteLista.Add(BK_Cliente);
+                }
+            }
+            return BK_ClienteLista;
+        }
+
+        private string Bm_BuscarNombreCliente(string pPENTALPHA, string pRUT, string pDIGVER)
+        {
+            string lRetorno = "";
+            using (var db = new BK_SQliteContext())
+            {
+                CLIENTE LvrCliente;
+                LvrCliente = db.CLIENTEs.Find(pPENTALPHA, pRUT, pDIGVER);
+                lRetorno = LvrCliente.NOMBRE;
+            }
+            return lRetorno;
+        }
+
+        private string Bm_BuscarNombreMensajero(string pPENTALPHA, string pRUT, string pDIGVER)
+        {
+            string lRetorno = "";
+            using (var db = new BK_SQliteContext())
+            {
+                PERSONAL LvrPersonal;
+                LvrPersonal = db.PERSONALs.Find(pPENTALPHA, pRUT, pDIGVER);
+                lRetorno = LvrPersonal.APELLIDOS + ", " + LvrPersonal.NOMBRES;
+            }
+            return lRetorno;
+        }
+
+        private string Bm_BuscarNombreRecurso(string pPENTALPHA, string pPATENTE)
+        {
+            string lRetorno = "";
+            using (var db = new BK_SQliteContext())
+            {
+                RECURSO LvrRecurso;
+                LvrRecurso = db.RECURSOs.Find(pPENTALPHA, pPATENTE);
+                lRetorno = LvrRecurso.TIPO + "-" + LvrRecurso.MARCA + "-" + LvrRecurso.MODELO;
+            }
+            return lRetorno;
+        }
+
+        public List<string> GetPais()
+        {
+            BK_Pais = null;
+
+            using (var db = new BK_SQliteContext())
+            {
+                foreach (var LvrPais in db.PAIs)
+                {
+                    string Pais = LvrPais.NOMBRE;
+                    BK_Pais.Add(Pais);
+                }
+            }
+            return BK_Pais;
+        }
+
+        public List<string> GetRegion()
+        {
+            BK_Region = null;
+
+            using (var db = new BK_SQliteContext())
+            {
+                foreach (var LvrRegion in db.ESTADOREGIONs)
+                {
+                    string Region = LvrRegion.NOMBRE;
+                    BK_Region.Add(Region);
+                }
+            }
+            return BK_Region;
+        }
+
+        public List<string> GetComuna()
+        {
+            BK_Comuna = null;
+
+            using (var db = new BK_SQliteContext())
+            {
+                foreach (var LvrComuna in db.COMUNAs)
+                {
+                    string Comuna = LvrComuna.NOMBRE;
+                    BK_Comuna.Add(Comuna);
+                }
+            }
+            return BK_Comuna;
+        }
+
+        public List<string> GetCiudad()
+        {
+            BK_Ciudad = null;
+
+            using (var db = new BK_SQliteContext())
+            {
+                foreach (var LvrCiudad in db.CIUDADs)
+                {
+                    string Ciudad = LvrCiudad.NOMBRE;
+                    BK_Ciudad.Add(Ciudad);
+                }
+            }
+            return BK_Ciudad;
+        }
+
+
+        public string Bm_Servicio_Listado()
         {
             // Pendientes
-            SqliteCommand BK_Cmd_Servicios_Pendientes;
-            SqliteDataReader BK_Reader_Servicios_Pendientes;
 
             LvrTablaHtml DocumentoHtml = new LvrTablaHtml();
 
-            try
+            DocumentoHtml.CrearTexto("ENVIOS");
+            DocumentoHtml.InicioDocumento();
+            DocumentoHtml.AgregarTituloTabla("Listado de Envios");
+            DocumentoHtml.AbrirEncabezado();
+            DocumentoHtml.AgregarEncabezado("Nro de Envío");
+            DocumentoHtml.AgregarEncabezado("Guia de Despacho");
+            DocumentoHtml.AgregarEncabezado("Fecha de Ingreso");
+            DocumentoHtml.AgregarEncabezado("Hora de Ingreso");
+            DocumentoHtml.AgregarEncabezado("Cliente");
+            DocumentoHtml.AgregarEncabezado("Mensajero");
+            DocumentoHtml.AgregarEncabezado("Entrega");
+            DocumentoHtml.AgregarEncabezado("Recepción");
+            DocumentoHtml.CerrarEncabezado();
+
+            BK_ServicioLista = null;
+            using (var db = new BK_SQliteContext())
             {
-                BK_Cmd_Servicios_Pendientes = new SqliteCommand(StrBuscar_Servicios, BM_Connection);
-                BK_Reader_Servicios_Pendientes = BK_Cmd_Servicios_Pendientes.ExecuteReader();
-
-                DocumentoHtml.CrearTexto("ENVIOS");
-                DocumentoHtml.InicioDocumento();
-                DocumentoHtml.AgregarTituloTabla("Listado de Envios Pendientes");
-                DocumentoHtml.AbrirEncabezado();
-                DocumentoHtml.AgregarEncabezado("Nro de envio");
-                DocumentoHtml.AgregarEncabezado("Guia de Despacho");
-                DocumentoHtml.AgregarEncabezado("Fecha de Ingreso");
-                DocumentoHtml.AgregarEncabezado("Hora de Ingreso");
-                DocumentoHtml.AgregarEncabezado("Cliente");
-                DocumentoHtml.AgregarEncabezado("Mensajero");
-                DocumentoHtml.AgregarEncabezado("Entrega");
-                DocumentoHtml.AgregarEncabezado("Recepción");
-                DocumentoHtml.CerrarEncabezado();
-
-                while (BK_Reader_Servicios_Pendientes.Read())
+                foreach (var LvrServicio in db.SERVICIOs)
                 {
-                    // Llenar Valores de Servicios
                     DocumentoHtml.AbrirFila();
-                    DocumentoHtml.AgregarCampo(
-                        BK_Reader_Servicios_Pendientes.GetString(
-                            BK_Reader_Servicios_Pendientes.GetOrdinal("NROENVIO")), false);
-                    DocumentoHtml.AgregarCampo(
-                        BK_Reader_Servicios_Pendientes.GetString(
-                            BK_Reader_Servicios_Pendientes.GetOrdinal("GUIADESPACHO")), false);
-                    DocumentoHtml.AgregarCampo(
-                        BK_Reader_Servicios_Pendientes.GetString(
-                            BK_Reader_Servicios_Pendientes.GetOrdinal("FECHA")), false);
-                    DocumentoHtml.AgregarCampo(
-                        BK_Reader_Servicios_Pendientes.GetString(
-                            BK_Reader_Servicios_Pendientes.GetOrdinal("HORA")), false);
-                    DocumentoHtml.AgregarCampo(
-                        Bm_BuscarNombreCliente(
-                            BK_Reader_Servicios_Pendientes.GetString(
-                                BK_Reader_Servicios_Pendientes.GetOrdinal("CLIENTERUT")),
-                            BK_Reader_Servicios_Pendientes.GetString(
-                                BK_Reader_Servicios_Pendientes.GetOrdinal("CLIENTEDIGVER"))), false);
-                    DocumentoHtml.AgregarCampo(
-                        Bm_BuscarNombreMensajero(
-                            BK_Reader_Servicios_Pendientes.GetString(
-                                BK_Reader_Servicios_Pendientes.GetOrdinal("MENSAJERORUT")),
-                            BK_Reader_Servicios_Pendientes.GetString(
-                                BK_Reader_Servicios_Pendientes.GetOrdinal("MENSAJERODIGVER"))), false);
-                    DocumentoHtml.AgregarCampo(
-                        BK_Reader_Servicios_Pendientes.GetString(
-                            BK_Reader_Servicios_Pendientes.GetOrdinal("ENTREGA")), false);
-                    DocumentoHtml.AgregarCampo(
-                        BK_Reader_Servicios_Pendientes.GetString(
-                            BK_Reader_Servicios_Pendientes.GetOrdinal("RECEPCION")), false);
+                    DocumentoHtml.AgregarCampo(LvrServicio.NROENVIO, false);
+                    DocumentoHtml.AgregarCampo(LvrServicio.GUIADESPACHO, false);
+                    DocumentoHtml.AgregarCampo(LvrServicio.FECHA.ToString(), false);
+                    DocumentoHtml.AgregarCampo(LvrServicio.HORA.ToString(), false);
+                    DocumentoHtml.AgregarCampo(LvrServicio.CLIENTERUT + "-" + LvrServicio.CLIENTEDIGVER, false);
+                    DocumentoHtml.AgregarCampo(LvrServicio.MENSAJERORUT + "-" + LvrServicio.MENSAJERODIGVER, false);
+                    DocumentoHtml.AgregarCampo(LvrServicio.ENTREGA, false);
+                    DocumentoHtml.AgregarCampo(LvrServicio.RECEPCION, false);
                     DocumentoHtml.CerrarFila();
                 }
-                BK_Reader_Servicios_Pendientes.Close();
-                DocumentoHtml.FinDocumento();
             }
-            catch (SqliteException)
-            {
-                DocumentoHtml.FinDocumento();
-                return "<html><body><h2> No existen Envios Pendientes de Atención </h2></body></html>";
-            }
-            catch (NullReferenceException)
-            {
-                return "<html><body><h2> No existen Envios Pendientes de Atención </h2></body></html>";
-            }
+            DocumentoHtml.FinDocumento();
             return DocumentoHtml.BufferHtml;
-        }
-
-        public bool Bm_Servicios_Buscar(string pPENTALPHA, string pNROENVIO)
-        {
-            try
-            {
-                BK_Cmd_Servicios = new SqliteCommand(StrBuscar_Servicios + " WHERE PENTALPHA = '" + pPENTALPHA + "' AND NROENVIO = '" + pNROENVIO + "'", BM_Connection);
-                BK_Reader_Servicios = BK_Cmd_Servicios.ExecuteReader();
-
-                if (BK_Reader_Servicios.Read())
-                {
-                    // Llenar Valores de Servicios
-                    BK_NROENVIO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("NROENVIO"));
-                    BK_GUIADESPACHO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("GUIADESPACHO"));
-                    BK_FECHA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("FECHA"));
-                    BK_HORA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("HORA"));
-                    BK_CLIENTERUT = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("CLIENTERUT"));
-                    BK_CLIENTEDIGVER = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("CLIENTEDIGVER"));
-                    BK_CLIENTE = Bm_BuscarNombreCliente(BK_CLIENTERUT, BK_CLIENTEDIGVER);
-                    BK_MENSAJERORUT = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("MENSAJERORUT"));
-                    BK_MENSAJERODIGVER = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("MENSAJERODIGVER"));
-                    BK_MENSAJERO = Bm_BuscarNombreMensajero(BK_MENSAJERORUT, BK_MENSAJERODIGVER);
-                    BK_RECURSOID = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("RECURSOID"));
-                    BK_RECURSO = Bm_BuscarNombreRecurso(BK_RECURSOID);
-                    BK_ODOMICILIO1 = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("ODOMICILIO1"));
-                    BK_ODOMICILIO2 = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("ODOMICILIO2"));
-                    BK_ONUMERO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("ONUMERO"));
-                    BK_OPISO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OPISO"));
-                    BK_OOFICINA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OOFICINA"));
-                    BK_OCIUDAD = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OCIUDAD"));
-                    BK_OCOMUNA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OCOMUNA"));
-                    BK_OESTADO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OESTADO"));
-                    BK_OPAIS = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OPAIS"));
-                    BK_OCOORDENADAS = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OCOORDENADAS"));
-                    BK_DDOMICILIO1 = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DDOMICILIO1"));
-                    BK_DDOMICILIO2 = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DDOMICILIO2"));
-                    BK_DNUMERO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DNUMERO"));
-                    BK_DPISO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OPISO"));
-                    BK_DOFICINA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DOFICINA"));
-                    BK_DCIUDAD = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DCIUDAD"));
-                    BK_DCOMUNA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DCOMUNA"));
-                    BK_DESTADO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DESTADO"));
-                    BK_DPAIS = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DPAIS"));
-                    BK_DCOORDENADAS = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DCOORDENADAS"));
-                    BK_DISTANCIA_KM = BK_Reader_Servicios.GetDouble(BK_Reader_Servicios.GetOrdinal("DISTANCIA_KM"));
-                    BK_DESCRIPCION = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DESCRIPCION"));
-                    BK_FACTURAS = BK_Reader_Servicios.GetInt32(BK_Reader_Servicios.GetOrdinal("FACTURAS"));
-                    BK_BULTOS = BK_Reader_Servicios.GetInt32(BK_Reader_Servicios.GetOrdinal("BULTOS"));
-                    BK_COMPRAS = BK_Reader_Servicios.GetInt32(BK_Reader_Servicios.GetOrdinal("COMPRAS"));
-                    BK_CHEQUES = BK_Reader_Servicios.GetInt32(BK_Reader_Servicios.GetOrdinal("CHEQUES"));
-                    BK_SOBRES = BK_Reader_Servicios.GetInt32(BK_Reader_Servicios.GetOrdinal("SOBRES"));
-                    BK_OTROS = BK_Reader_Servicios.GetInt32(BK_Reader_Servicios.GetOrdinal("OTROS"));
-                    BK_OBSERVACIONES = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("OBSERVACIONES"));
-                    BK_ENTREGA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("ENTREGA"));
-                    BK_RECEPCION = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("RECEPCION"));
-                    BK_TESPERA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("TESPERA"));
-                    BK_FECHAENTREGA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("FECHAENTREGA"));
-                    BK_HORAENTREGA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("HORAENTREGA"));
-                    BK_DISTANCIA = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("DISTANCIA"));
-                    BK_PROGRAMADO = BK_Reader_Servicios.GetString(BK_Reader_Servicios.GetOrdinal("PROGRAMADO"));
-                    return true;
-                }
-                else
-                {
-                    LimpiarVariables();
-                    return false;
-                }
-            }
-            catch (SqliteException)
-            {
-                return false;
-            }
-        }
-
-        // Procedimiento Modificar Servicio
-        public bool Bm_Servicios_Modificar(string pPENTALPHA, string pNROENVIO)
-        {
-            try
-            {
-                StrModificar_Servicios = "UPDATE SERVICIOS SET ";
-                // StrModificar_Servicios += "NROENVIO = '" + BK_NROENVIO + "',";
-                StrModificar_Servicios += "GUIADESPACHO = '" + BK_GUIADESPACHO + "',";
-                StrModificar_Servicios += "FECHA = '" + BK_FECHA + "',";
-                StrModificar_Servicios += "HORA = '" + BK_HORA + "',";
-                StrModificar_Servicios += "CLIENTERUT = '" + BK_CLIENTERUT + "',";
-                StrModificar_Servicios += "CLIENTEDIGVER = '" + BK_CLIENTEDIGVER + "',";
-                StrModificar_Servicios += "MENSAJERORUT = '" + BK_MENSAJERORUT + "',";
-                StrModificar_Servicios += "MENSAJERODIGVER = '" + BK_MENSAJERODIGVER + "',";
-                StrModificar_Servicios += "RECURSOID = '" + BK_RECURSOID + "',";
-                StrModificar_Servicios += "ODOMICILIO1 = '" + BK_ODOMICILIO1 + "',";
-                StrModificar_Servicios += "ODOMICILIO2 = '" + BK_ODOMICILIO2 + "',";
-                StrModificar_Servicios += "ONUMERO = '" + BK_ONUMERO + "',";
-                StrModificar_Servicios += "OPISO = '" + BK_OPISO + "',";
-                StrModificar_Servicios += "OOFICINA = '" + BK_OOFICINA + "',";
-                StrModificar_Servicios += "OCIUDAD = '" + BK_OCIUDAD + "',";
-                StrModificar_Servicios += "OCOMUNA = '" + BK_OCOMUNA + "',";
-                StrModificar_Servicios += "OESTADO = '" + BK_OESTADO + "',";
-                StrModificar_Servicios += "OPAIS = '" + BK_OPAIS + "',";
-                StrModificar_Servicios += "OCOORDENADAS = '" + BK_OCOORDENADAS + "',";
-                StrModificar_Servicios += "DDOMICILIO1 = '" + BK_DDOMICILIO1 + "',";
-                StrModificar_Servicios += "DDOMICILIO2 = '" + BK_DDOMICILIO2 + "',";
-                StrModificar_Servicios += "DNUMERO = '" + BK_DNUMERO + "',";
-                StrModificar_Servicios += "DPISO = '" + BK_DPISO + "',";
-                StrModificar_Servicios += "DOFICINA = '" + BK_DOFICINA + "',";
-                StrModificar_Servicios += "DCIUDAD = '" + BK_DCIUDAD + "',";
-                StrModificar_Servicios += "DCOMUNA = '" + BK_DCOMUNA + "',";
-                StrModificar_Servicios += "DESTADO = '" + BK_DESTADO + "',";
-                StrModificar_Servicios += "DPAIS = '" + BK_DPAIS + "',";
-                StrModificar_Servicios += "DCOORDENADAS = '" + BK_DCOORDENADAS + "',";
-                StrModificar_Servicios += "DISTANCIA_KM = " + BK_DISTANCIA_KM.ToString("G", CultureInfo.InvariantCulture) + " ,";
-                StrModificar_Servicios += "DESCRIPCION = '" + BK_DESCRIPCION + "',";
-                StrModificar_Servicios += "FACTURAS = " + BK_FACTURAS.ToString() + " ,";
-                StrModificar_Servicios += "BULTOS = " + BK_BULTOS.ToString() + " ,";
-                StrModificar_Servicios += "COMPRAS = " + BK_COMPRAS.ToString() + " ,";
-                StrModificar_Servicios += "CHEQUES = " + BK_CHEQUES.ToString() + " ,";
-                StrModificar_Servicios += "SOBRES = " + BK_SOBRES.ToString() + " ,";
-                StrModificar_Servicios += "OTROS = " + BK_OTROS.ToString() + " ,";
-                StrModificar_Servicios += "OBSERVACIONES = '" + BK_OBSERVACIONES + "',";
-                StrModificar_Servicios += "ENTREGA = '" + BK_ENTREGA + "',";
-                StrModificar_Servicios += "RECEPCION = '" + BK_RECEPCION + "',";
-                StrModificar_Servicios += "TESPERA = '" + BK_TESPERA + "',";
-                StrModificar_Servicios += "FECHAENTREGA = '" + BK_FECHAENTREGA + "',";
-                StrModificar_Servicios += "HORAENTREGA = '" + BK_HORAENTREGA + "',";
-                StrModificar_Servicios += "DISTANCIA = '" + BK_DISTANCIA + "',";
-                StrModificar_Servicios += "PROGRAMADO = '" + BK_PROGRAMADO + "' ";
-                StrModificar_Servicios += "WHERE ";
-                StrModificar_Servicios += "PENTALPHA = '" + pPENTALPHA + "' AND ";
-                StrModificar_Servicios += "NROENVIO = '" + pNROENVIO + "'";
-                BK_Cmd_Servicios = new SqliteCommand(StrModificar_Servicios, BM_Connection)
-                {
-                    Transaction = BK_Transaccion_Servicios
-                };
-                _ = BK_Cmd_Servicios.ExecuteNonQuery();
-                return true;
-            }
-            catch (SqliteException)
-            {
-                return false;
-            }
-        }
-
-
-        // Procedimiento Borrar Servicios
-        public bool Bm_Servicios_Borrar(string pPENTALPHA, string pNROENVIO)
-        {
-            try
-            {
-                StrBorrar_Servicios = "DELETE FROM SERVICIOS ";
-                StrBorrar_Servicios += "WHERE ";
-                StrBorrar_Servicios += "PENTALPHA = '" + pPENTALPHA + "' AND ";
-                StrBorrar_Servicios += "NROENVIO = '" + pNROENVIO + "'";
-                BK_Cmd_Servicios = new SqliteCommand(StrBorrar_Servicios, BM_Connection)
-                {
-                    Transaction = BK_Transaccion_Servicios
-                };
-                BK_Cmd_Servicios.ExecuteNonQuery();
-                LimpiarVariables();
-                return true;
-            }
-            catch (SqliteException)
-            {
-                return false;
-            }
-        }
-
-        public bool Bm_Iniciar_Transaccion()
-        {
-            try
-            {
-                BK_Transaccion_Servicios = BM_Connection.BeginTransaction();
-                return true;
-            }
-            catch (SqliteException)
-            {
-                BK_Transaccion_Servicios.Dispose();
-                return false;
-            }
-        }
-
-        public object Bm_Commit_Transaccion()
-        {
-            try
-            {
-                BK_Transaccion_Servicios.Commit();
-                return true;
-            }
-            catch (SqliteException)
-            {
-                BK_Transaccion_Servicios.Dispose();
-                return false;
-            }
-        }
-
-        public bool Bm_Rollback_Transaccion()
-        {
-            try
-            {
-                BK_Transaccion_Servicios.Rollback();
-                return true;
-            }
-            catch (SqliteException)
-            {
-                BK_Transaccion_Servicios.Dispose();
-                return false;
-            }
-        }
-
-        // Procedimiento Buscar Pais
-        public bool Bm_E_Pais_EjecutarSelect()
-        {
-            try
-            {
-                BK_Cmd_Servicios_Pais = new SqliteCommand(StrBuscar_Servicios_Pais, BM_Connection);
-                BK_Reader_Servicios_Pais = BK_Cmd_Servicios_Pais.ExecuteReader();
-                return true;
-            }
-            catch (SqliteException)
-            {
-                return false;
-            }
-        }
-
-        public bool Bm_E_Pais_Buscar()
-        {
-            try
-            {
-                if (BK_Reader_Servicios_Pais.Read())
-                {
-                    BK_E_CODPAIS = BK_Reader_Servicios_Pais.GetInt16(BK_Reader_Servicios_Pais.GetOrdinal("CODPAIS"));
-                    BK_E_PAIS = BK_Reader_Servicios_Pais.GetString(BK_Reader_Servicios_Pais.GetOrdinal("PAIS"));
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            catch (SqliteException)
-            {
-                return false;
-            }
-        }
-
-        // Procedimiento Buscar Region
-        public bool Bm_E_Region_EjecutarSelect()
-        {
-            try
-            {
-                BK_Cmd_Servicios_Region = new SqliteCommand(StrBuscar_Servicios_Region, BM_Connection);
-                BK_Reader_Servicios_Region = BK_Cmd_Servicios_Region.ExecuteReader();
-                return true;
-            }
-            catch (SqliteException)
-            {
-                return false;
-            }
-        }
-
-        public bool Bm_E_Region_Buscar()
-        {
-            try
-            {
-                if (BK_Reader_Servicios_Region.Read())
-                {
-                    BK_E_CODREGION = BK_Reader_Servicios_Region.GetInt16(BK_Reader_Servicios_Region.GetOrdinal("CODREGION"));
-                    BK_E_REGION = BK_Reader_Servicios_Region.GetString(BK_Reader_Servicios_Region.GetOrdinal("REGION"));
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            catch (SqliteException)
-            {
-                return false;
-            }
-        }
-
-
-        // Procedimiento Buscar Comuna
-        public bool Bm_E_Comuna_EjecutarSelect()
-        {
-            try
-            {
-                BK_Cmd_Servicios_Comuna = new SqliteCommand(StrBuscar_Servicios_Comuna, BM_Connection);
-                BK_Reader_Servicios_Comuna = BK_Cmd_Servicios_Comuna.ExecuteReader();
-                return true;
-            }
-            catch (SqliteException)
-            {
-                return false;
-            }
-        }
-
-        public bool Bm_E_Comuna_Buscar()
-        {
-            try
-            {
-                if (BK_Reader_Servicios_Comuna.Read())
-                {
-                    BK_E_CODCOMUNA = BK_Reader_Servicios_Comuna.GetInt16(BK_Reader_Servicios_Comuna.GetOrdinal("CODCOMU"));
-                    BK_E_COMUNA = BK_Reader_Servicios_Comuna.GetString(BK_Reader_Servicios_Comuna.GetOrdinal("COMUNA"));
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            catch (SqliteException)
-            {
-                return false;
-            }
-        }
-
-        // Procedimiento Buscar Ciudad
-        public bool Bm_E_Ciudad_EjecutarSelect()
-        {
-            try
-            {
-                BK_Cmd_Servicios_Ciudad = new SqliteCommand(StrBuscar_Servicios_Ciudad, BM_Connection);
-                BK_Reader_Servicios_Ciudad = BK_Cmd_Servicios_Ciudad.ExecuteReader();
-                return true;
-            }
-            catch (SqliteException)
-            {
-                return false;
-            }
-        }
-
-        public bool Bm_E_Ciudad_Buscar()
-        {
-            try
-            {
-                if (BK_Reader_Servicios_Ciudad.Read())
-                {
-                    BK_E_CODCIUDAD = BK_Reader_Servicios_Ciudad.GetInt16(BK_Reader_Servicios_Ciudad.GetOrdinal("CODCIUDAD"));
-                    BK_E_CIUDAD = BK_Reader_Servicios_Ciudad.GetString(BK_Reader_Servicios_Ciudad.GetOrdinal("CIUDAD"));
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            catch (SqliteException)
-            {
-                return false;
-            }
-        }
-
-        public void LimpiarVariables()
-        {
-            BK_NROENVIO = "";
-            BK_GUIADESPACHO = "";
-            BK_FECHA = "";
-            BK_HORA = "";
-            BK_CLIENTERUT = "";
-            BK_CLIENTEDIGVER = "";
-            BK_CLIENTE = "";
-            BK_MENSAJERORUT = "";
-            BK_MENSAJERODIGVER = "";
-            BK_MENSAJERO = "";
-            BK_RECURSOID = "";
-            BK_RECURSO = "";
-            BK_ODOMICILIO1 = "";
-            BK_ODOMICILIO2 = "";
-            BK_ONUMERO = "";
-            BK_OPISO = "";
-            BK_OOFICINA = "";
-            BK_OCIUDAD = "";
-            BK_OCOMUNA = "";
-            BK_OESTADO = "";
-            BK_OPAIS = "";
-            BK_OCOORDENADAS = "";
-            BK_DDOMICILIO1 = "";
-            BK_DDOMICILIO2 = "";
-            BK_DNUMERO = "";
-            BK_DPISO = "";
-            BK_DOFICINA = "";
-            BK_DCIUDAD = "";
-            BK_DCOMUNA = "";
-            BK_DESTADO = "";
-            BK_DPAIS = "";
-            BK_DCOORDENADAS = "";
-            BK_DISTANCIA_KM = 0;
-            BK_DESCRIPCION = "";
-            BK_FACTURAS = 0;
-            BK_BULTOS = 0;
-            BK_COMPRAS = 0;
-            BK_CHEQUES = 0;
-            BK_SOBRES = 0;
-            BK_OTROS = 0;
-            BK_OBSERVACIONES = "";
-            BK_ENTREGA = "";
-            BK_RECEPCION = "";
-            BK_TESPERA = "";
-            BK_FECHAENTREGA = "";
-            BK_HORAENTREGA = "";
-            BK_DISTANCIA = "";
-            BK_PROGRAMADO = "";
-        }
-
-        private string Bm_BuscarNombreCliente(string pRUT, string pDIGVER)
-        {
-            SqliteCommand BK_Cmd_BuscarCliente;
-            SqliteDataReader BK_Reader_BuscarCliente;
-            string lRetorno;
-            try
-            {
-                BK_Cmd_BuscarCliente = new SqliteCommand("SELECT NOMBRE FROM CLIENTES WHERE RUTID = '" + pRUT + "' AND DIGVER = '" + pDIGVER + "'", BM_Connection);
-                BK_Reader_BuscarCliente = BK_Cmd_BuscarCliente.ExecuteReader();
-                if (BK_Reader_BuscarCliente.Read())
-                    lRetorno = BK_Reader_BuscarCliente.GetString(0);
-                else
-                    lRetorno = "CLIENTE NO REGISTRADO";
-                BK_Reader_BuscarCliente.Close();
-                BK_Cmd_BuscarCliente.Dispose();
-            }
-            catch (SqliteException)
-            {
-                lRetorno = "CLIENTE NO REGISTRADO";
-            }
-            return lRetorno;
-        }
-
-        private string Bm_BuscarNombreMensajero(string pRUT, string pDIGVER)
-        {
-            SqliteCommand BK_Cmd_BuscarMensajero;
-            SqliteDataReader BK_Reader_BuscarMensajero;
-            string lRetorno;
-            try
-            {
-                BK_Cmd_BuscarMensajero = new SqliteCommand("SELECT APELLIDOS||'. '||NOMBRES FROM PERSONAL WHERE RUTID = '" + pRUT + "' AND DIGVER = '" + pDIGVER + "'", BM_Connection);
-                BK_Reader_BuscarMensajero = BK_Cmd_BuscarMensajero.ExecuteReader();
-                if (BK_Reader_BuscarMensajero.Read())
-                    lRetorno = BK_Reader_BuscarMensajero.GetString(0);
-                else
-                    lRetorno = "MENSAJERO NO REGISTRADO";
-                BK_Reader_BuscarMensajero.Close();
-                BK_Cmd_BuscarMensajero.Dispose();
-            }
-            catch (SqliteException)
-            {
-                lRetorno = "MENSAJERO NO REGISTRADO";
-            }
-            return lRetorno;
-        }
-
-        private string Bm_BuscarNombreRecurso(string pRECURSOID)
-        {
-            SqliteCommand BK_Cmd_BuscarRecurso;
-            SqliteDataReader BK_Reader_BuscarRecurso;
-            string lRetorno;
-            try
-            {
-                BK_Cmd_BuscarRecurso = new SqliteCommand("SELECT TIPO||'-'||MARCA||'-'||MODELO FROM RECURSOS WHERE PATENTE = '" + pRECURSOID + "'", BM_Connection);
-                BK_Reader_BuscarRecurso = BK_Cmd_BuscarRecurso.ExecuteReader();
-                if (BK_Reader_BuscarRecurso.Read())
-                    lRetorno = BK_Reader_BuscarRecurso.GetString(0);
-                else
-                    lRetorno = "RECURSO NO REGISTRADO";
-                BK_Reader_BuscarRecurso.Close();
-                BK_Cmd_BuscarRecurso.Dispose();
-            }
-            catch (SqliteException)
-            {
-                lRetorno = "RECURSO NO REGISTRADO";
-            }
-            return lRetorno;
-        }
-
-        // ****************************************************
-        // Procedimientos de Envios
-        //*****************************************************
-        public bool Bm_Envios_BuscarGrid()
-        {
-            try
-            {
-                BK_Cmd_Envios_Grid = new SqliteCommand(StrBuscar_Servicios_Envios, BM_Connection);
-                BK_Reader_Servicios_Envios = BK_Cmd_Envios_Grid.ExecuteReader();
-                return true;
-            }
-            catch (SqliteException)
-            {
-                return false;
-            }
-        }
-
-        public bool Bm_Envios_BuscarGridProxima()
-        {
-            try
-            {
-                if (BK_Reader_Servicios_Envios.Read())
-                {
-                    // Llenar Valores de la Empresa
-                    BK_GRID_ENVIO_NRO = BK_Reader_Servicios_Envios.GetString(0);
-                    BK_GRID_ENVIO_FECHA = DateTime.Parse(BK_Reader_Servicios_Envios.GetString(1)).ToShortDateString();
-                    BK_GRID_ENVIO_CLIENTE = Bm_BuscarNombreCliente(BK_Reader_Servicios_Envios.GetString(2), BK_Reader_Servicios_Envios.GetString(3));
-                    BK_GRID_ENVIO_ENTREGA = BK_Reader_Servicios_Envios.GetString(4);
-                    return true;
-                }
-                else
-                {
-                    // No existe la empresa
-                    return false;
-                }
-            }
-            catch (SqliteException)
-            {
-                return false;
-            }
-        }
-
-        //********************************************************
-        // Procedimientos de Clientes
-        //********************************************************
-        public bool Bm_Clientes_BuscarGrid()
-        {
-            try
-            {
-                BK_Cmd_Clientes_Grid = new SqliteCommand(StrBuscar_Servicios_Clientes, BM_Connection);
-                BK_Reader_Servicios_Clientes = BK_Cmd_Clientes_Grid.ExecuteReader();
-                return true;
-            }
-            catch (SqliteException)
-            {
-                return false;
-            }
-        }
-
-        public bool Bm_Clientes_BuscarGridProxima()
-        {
-            try
-            {
-                if (BK_Reader_Servicios_Clientes.Read())
-                {
-                    // Llenar Valores de la Empresa
-                    BK_GRID_CLIENTE_RUTID = BK_Reader_Servicios_Clientes.GetString(0);
-                    BK_GRID_CLIENTE_NOMBRE = BK_Reader_Servicios_Clientes.GetString(1);
-                    return true;
-                }
-                else
-                {
-                    // No existe la empresa
-                    return false;
-                }
-            }
-            catch (SqliteException)
-            {
-                return false;
-            }
-        }
-
-        //********************************************************
-        // Procedimientos de Mensajeros
-        //********************************************************
-        public bool Bm_Mensajeros_BuscarGrid()
-        {
-            try
-            {
-                BK_Cmd_Mensajeros_Grid = new SqliteCommand(StrBuscar_Servicios_Mensajeros, BM_Connection);
-                BK_Reader_Servicios_Mensajeros = BK_Cmd_Mensajeros_Grid.ExecuteReader();
-                return true;
-            }
-            catch (Microsoft.Data.Sqlite.SqliteException)
-            {
-                return false;
-            }
-        }
-
-        public bool Bm_Mensajeros_BuscarGridProxima()
-        {
-            try
-            {
-                if (BK_Reader_Servicios_Mensajeros.Read())
-                {
-                    // Llenar Valores de la Empresa
-                    BK_GRID_MENSAJERO_RUTID = BK_Reader_Servicios_Mensajeros.GetString(0);
-                    BK_GRID_MENSAJERO_NOMBRE = BK_Reader_Servicios_Mensajeros.GetString(1);
-                    return true;
-                }
-                else
-                {
-                    // No existe la empresa
-                    return false;
-                }
-            }
-            catch (SqliteException)
-            {
-                return false;
-            }
-        }
-
-        //********************************************************
-        // Procedimientos de Recursos
-        //********************************************************
-        public bool Bm_Recursos_BuscarGrid()
-        {
-            try
-            {
-                BK_Cmd_Recursos_Grid = new SqliteCommand(StrBuscar_Servicios_Recursos, BM_Connection);
-                BK_Reader_Servicios_Recursos = BK_Cmd_Recursos_Grid.ExecuteReader();
-                return true;
-            }
-            catch (SqliteException)
-            {
-                return false;
-            }
-        }
-
-        public bool Bm_Recursos_BuscarGridProxima()
-        {
-            try
-            {
-                if (BK_Reader_Servicios_Recursos.Read())
-                {
-                    // Llenar Valores de la Empresa
-                    //
-                    BK_GRID_RECURSO_PATENTE = BK_Reader_Servicios_Recursos.GetString(0);
-                    BK_GRID_RECURSO_TIPO = BK_Reader_Servicios_Recursos.GetString(1);
-                    BK_GRID_RECURSO_MARCA = BK_Reader_Servicios_Recursos.GetString(2);
-                    BK_GRID_RECURSO_MODELO = BK_Reader_Servicios_Recursos.GetString(3);
-                    BK_GRID_RECURSO_PROPIETARIO = BK_Reader_Servicios_Recursos.GetString(4);
-                    return true;
-                }
-                else
-                {
-                    // No existe la empresa
-                    return false;
-                }
-            }
-            catch (SqliteException)
-            {
-                return false;
-            }
         }
     }
 }

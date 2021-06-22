@@ -61,7 +61,7 @@
         <TextBlock x:Name="labelPais" HorizontalAlignment="Left" Margin="15,340,0,0" Text="Pais" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" AllowFocusOnInteraction="False" IsDoubleTapEnabled="False" IsHoldingEnabled="False" IsRightTapEnabled="False" IsTapEnabled="False" ManipulationMode="None" FocusVisualPrimaryThickness="1,1,1,1" HighContrastAdjustment="None" />
         <TextBox x:Name="textBoxOficina" HorizontalAlignment="Left" Margin="415,308,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Background="#6626C7F7" TabIndex="13"/>
         <ComboBox x:Name="comboBoxComuna" Margin="160,404,0,0" Width="480" BorderThickness="1,1,1,1" Background="#6626C7F7" IsEditable="True" TabIndex="17"/>
-        <ComboBox x:Name="comboBoxEstado" Margin="160,372,0,0" Width="480" BorderThickness="1,1,1,1" Background="#6626C7F7" IsEditable="True" TabIndex="16"/>
+        <ComboBox x:Name="comboBoxEstado" Margin="160,372,0,0" Width="480" BorderThickness="1,1,1,1" Background="#66070708" IsEditable="True" TabIndex="16"/>
         <ComboBox x:Name="comboBoxPais" Margin="160,340,0,0" Width="480" BorderThickness="1,1,1,1" Background="#6626C7F7" IsEditable="True" TabIndex="15"/>
         <Button x:Name="BtnCargarFoto" Content="Cargar Foto" Height="32" Margin="505,20,0,0" VerticalAlignment="Top" Width="135" Click="BtnEmpresasCargarFoto"/>
         <TextBox x:Name="textBoxActividad1" HorizontalAlignment="Left" Margin="160,84,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" RenderTransformOrigin="1.824,0.625" Width="480" BorderThickness="1,1,1,1" AcceptsReturn="True" Background="#6626C7F7" TabIndex="4"/>

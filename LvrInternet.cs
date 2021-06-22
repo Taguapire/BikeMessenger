@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Net.Http;
-using System.Net;
 using System.IO;
+using System.Net;
+using System.Net.Http;
 
 namespace BikeMessenger
 {
@@ -58,7 +58,8 @@ namespace BikeMessenger
 
                 httpsCadena = pUrl;
 
-                if (pPort != "") {
+                if (pPort != "")
+                {
                     httpsCadena += ":";
                     httpsCadena += pPort;
                 }

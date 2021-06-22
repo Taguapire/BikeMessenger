@@ -1,5 +1,4 @@
-﻿using Microsoft.Data.Sqlite;
-using System;
+﻿using System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
@@ -36,7 +35,7 @@ namespace BikeMessenger
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
             Frame rootFrame = Window.Current.Content as Frame;
-
+        
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
             if (rootFrame == null)
@@ -98,8 +97,8 @@ namespace BikeMessenger
                 // configuring the new page by passing required information as a navigation
                 // parameter
                 // rootFrame.Navigate(typeof(PageEmpresa), e.Arguments);
-                IniciarBaseDeDatos LvrIniciarBaseDeDatos = new IniciarBaseDeDatos(LvrTransferVar.TV_Connection);
-                LvrIniciarBaseDeDatos = null;
+                // IniciarBaseDeDatos LvrIniciarBaseDeDatos = new IniciarBaseDeDatos(LvrTransferVar.Directorio);
+                // LvrIniciarBaseDeDatos = null;
                 // Empresa
                 LvrTransferVar.E_PENTALPHA = "";
                 LvrTransferVar.E_RUTID = "";
@@ -122,7 +121,7 @@ namespace BikeMessenger
                 LvrTransferVar.X_NROENVIO = "";
 
                 rootFrame.CacheSize = 0;
-                _ = rootFrame.Navigate(typeof(PageEmpresa), LvrTransferVar, new SuppressNavigationTransitionInfo());
+                rootFrame.Navigate(typeof(PageEmpresa), LvrTransferVar, new SuppressNavigationTransitionInfo());
             }
             // Ensure the current window is active
             Window.Current.Activate();

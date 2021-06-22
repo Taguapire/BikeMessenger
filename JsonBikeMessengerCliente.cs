@@ -15,6 +15,8 @@
         public string REPRESENTANTE1 { get; set; }
         public string REPRESENTANTE2 { get; set; }
         public string REPRESENTANTE3 { get; set; }
+        public string TELEFONO1 { get; set; }
+        public string TELEFONO2 { get; set; }
         public string DOMICILIO1 { get; set; }
         public string DOMICILIO2 { get; set; }
         public string NUMERO { get; set; }
@@ -44,6 +46,8 @@
             REPRESENTANTE1 = "";
             REPRESENTANTE2 = "";
             REPRESENTANTE3 = "";
+            TELEFONO1 = "";
+            TELEFONO2 = "";
             DOMICILIO1 = "";
             DOMICILIO2 = "";
             NUMERO = "";
