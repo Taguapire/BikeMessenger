@@ -4,6 +4,7 @@ using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
+
 namespace BikeMessenger
 {
     internal class TransferVar
@@ -68,6 +69,7 @@ namespace BikeMessenger
             LeerSincronizarPropio();
 
         }
+
 
         private async Task AvisoDeError()
         {

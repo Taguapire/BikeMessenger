@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Data.SQLite;
 
 namespace BikeMessenger
 {
@@ -10,61 +12,84 @@ namespace BikeMessenger
         // public SqliteFactory BM_DB;
         // Paso de Parametros Sqlite
         // ***************************************
+        private static SQLiteConnection BM_Conexion;
+        private TransferVar BM_TrasferVar;
+
         private static JsonBikeMessengerEmpresa BK_Empresa;
         private static List<JsonBikeMessengerEmpresa> BK_EmpresaLista;
 
-        private static List<string> BK_Pais;
-        private static List<string> BK_Region;
-        private static List<string> BK_Comuna;
-        private static List<string> BK_Ciudad;
+        private string BM_CadenaConexion;
 
+        
         public Bm_Empresa_Database()
         {
-
+            try
+            {
+                BM_TrasferVar = new TransferVar();
+                BM_TrasferVar.LeerDirectorio();
+                BM_CadenaConexion = BM_TrasferVar.Directorio;
+                BM_Conexion = new SQLiteConnection("Data Source=" + BM_CadenaConexion + "\\BikeMessenger.db");
+                BM_Conexion.Open();
+            }
+            catch (System.Data.SQLite.SQLiteException Ex)
+            {
+                Console.WriteLine(Ex.InnerException.Message);
+            }
         }
 
         // Busqueda por Muchos
         public List<JsonBikeMessengerEmpresa> BuscarEmpresa()
         {
+            BK_Empresa = new JsonBikeMessengerEmpresa();
             BK_EmpresaLista = new List<JsonBikeMessengerEmpresa>();
+            DataSet BM_DataSet;
+            SQLiteDataAdapter BM_Adaptador;
+            SQLiteCommand BM_Comando;
+
             try
             {
-                using (var db = new BK_SQliteContext())
+                BM_Comando = BM_Conexion.CreateCommand();
+                BM_Comando.CommandText = string.Format("SELECT * FROM EMPRESA");
+
+                BM_Adaptador = new SQLiteDataAdapter(BM_Comando)
                 {
-                    foreach (var LvrEmpresa in db.EMPRESAs)
-                    {
-                        BK_Empresa = new JsonBikeMessengerEmpresa();
-                        BK_Empresa.PENTALPHA = LvrEmpresa.PENTALPHA;
-                        BK_Empresa.RUTID = LvrEmpresa.RUTID;
-                        BK_Empresa.DIGVER = LvrEmpresa.DIGVER;
-                        BK_Empresa.NOMBRE = LvrEmpresa.NOMBRE;
-                        BK_Empresa.USUARIO = LvrEmpresa.USUARIO;
-                        BK_Empresa.CLAVE = LvrEmpresa.CLAVE;
-                        BK_Empresa.ACTIVIDAD1 = LvrEmpresa.ACTIVIDAD1;
-                        BK_Empresa.ACTIVIDAD2 = LvrEmpresa.ACTIVIDAD2;
-                        BK_Empresa.REPRESENTANTE1 = LvrEmpresa.REPRESENTANTE1;
-                        BK_Empresa.REPRESENTANTE2 = LvrEmpresa.REPRESENTANTE2;
-                        BK_Empresa.REPRESENTANTE3 = LvrEmpresa.REPRESENTANTE3;
-                        BK_Empresa.DOMICILIO1 = LvrEmpresa.DOMICILIO1;
-                        BK_Empresa.DOMICILIO2 = LvrEmpresa.DOMICILIO2;
-                        BK_Empresa.NUMERO = LvrEmpresa.NUMERO;
-                        BK_Empresa.PISO = LvrEmpresa.PISO;
-                        BK_Empresa.OFICINA = LvrEmpresa.OFICINA;
-                        BK_Empresa.CIUDAD = LvrEmpresa.CIUDAD;
-                        BK_Empresa.COMUNA = LvrEmpresa.COMUNA;
-                        BK_Empresa.ESTADOREGION = LvrEmpresa.ESTADOREGION;
-                        BK_Empresa.CODIGOPOSTAL = LvrEmpresa.CODIGOPOSTAL;
-                        BK_Empresa.PAIS = LvrEmpresa.PAIS;
-                        BK_Empresa.TELEFONO1 = LvrEmpresa.TELEFONO1;
-                        BK_Empresa.TELEFONO2 = LvrEmpresa.TELEFONO2;
-                        BK_Empresa.TELEFONO3 = LvrEmpresa.TELEFONO3;
-                        BK_Empresa.OBSERVACIONES = LvrEmpresa.OBSERVACIONES;
-                        BK_Empresa.LOGO = LvrEmpresa.LOGO;
-                        BK_EmpresaLista.Add(BK_Empresa);
-                    }
+                    AcceptChangesDuringFill = false
+                };
+                BM_DataSet = new DataSet();
+                BM_Adaptador.Fill(BM_DataSet, "EMPRESA");
+
+                foreach (DataRow LvrEmpresa in BM_DataSet.Tables["EMPRESA"].Rows)
+                {
+                    BK_Empresa.PENTALPHA = LvrEmpresa["PENTALPHA"].ToString();
+                    BK_Empresa.RUTID = LvrEmpresa["RUTID"].ToString();
+                    BK_Empresa.DIGVER = LvrEmpresa["DIGVER"].ToString();
+                    BK_Empresa.NOMBRE = LvrEmpresa["NOMBRE"].ToString();
+                    BK_Empresa.USUARIO = LvrEmpresa["USUARIO"].ToString();
+                    BK_Empresa.CLAVE = LvrEmpresa["CLAVE"].ToString();
+                    BK_Empresa.ACTIVIDAD1 = LvrEmpresa["ACTIVIDAD1"].ToString();
+                    BK_Empresa.ACTIVIDAD2 = LvrEmpresa["ACTIVIDAD2"].ToString();
+                    BK_Empresa.REPRESENTANTE1 = LvrEmpresa["REPRESENTANTE1"].ToString();
+                    BK_Empresa.REPRESENTANTE2 = LvrEmpresa["REPRESENTANTE2"].ToString();
+                    BK_Empresa.REPRESENTANTE3 = LvrEmpresa["REPRESENTANTE3"].ToString();
+                    BK_Empresa.DOMICILIO1 = LvrEmpresa["DOMICILIO1"].ToString();
+                    BK_Empresa.DOMICILIO2 = LvrEmpresa["DOMICILIO2"].ToString();
+                    BK_Empresa.NUMERO = LvrEmpresa["NUMERO"].ToString();
+                    BK_Empresa.PISO = LvrEmpresa["PISO"].ToString();
+                    BK_Empresa.OFICINA = LvrEmpresa["OFICINA"].ToString();
+                    BK_Empresa.CIUDAD = LvrEmpresa["CIUDAD"].ToString();
+                    BK_Empresa.COMUNA = LvrEmpresa["COMUNA"].ToString();
+                    BK_Empresa.ESTADOREGION = LvrEmpresa["ESTADOREGION"].ToString();
+                    BK_Empresa.CODIGOPOSTAL = LvrEmpresa["CODIGOPOSTAL"].ToString();
+                    BK_Empresa.PAIS = LvrEmpresa["PAIS"].ToString();
+                    BK_Empresa.TELEFONO1 = LvrEmpresa["TELEFONO1"].ToString();
+                    BK_Empresa.TELEFONO2 = LvrEmpresa["TELEFONO2"].ToString();
+                    BK_Empresa.TELEFONO3 = LvrEmpresa["TELEFONO3"].ToString();
+                    BK_Empresa.OBSERVACIONES = LvrEmpresa["OBSERVACIONES"].ToString();
+                    BK_Empresa.LOGO = LvrEmpresa["LOGO"].ToString();
+                    BK_EmpresaLista.Add(BK_Empresa);
                 }
             }
-            catch (DbUpdateException Ex)
+            catch (System.Data.SQLite.SQLiteException Ex)
             {
                 Console.WriteLine(Ex.InnerException.Message);
                 return null;
@@ -72,47 +97,58 @@ namespace BikeMessenger
             return BK_EmpresaLista;
         }
 
-
-
         public List<JsonBikeMessengerEmpresa> BuscarEmpresa(string pPENTALPHA)
         {
+            BK_Empresa = new JsonBikeMessengerEmpresa();
+            BK_EmpresaLista = new List<JsonBikeMessengerEmpresa>();
+            DataSet BM_DataSet;
+            SQLiteDataAdapter BM_Adaptador;
+            SQLiteCommand BM_Comando;
+
             try
             {
-                BK_EmpresaLista = null;
-                using (var db = new BK_SQliteContext())
+                BM_Comando = BM_Conexion.CreateCommand();
+                BM_Comando.CommandText = string.Format("SELECT * FROM EMPRESA WHERE PENTALPHA = '" + "pPENTALPHA" + "'");
+
+                BM_Adaptador = new SQLiteDataAdapter(BM_Comando)
                 {
-                    EMPRESA LvrEmpresa;
-                    LvrEmpresa = db.EMPRESAs.Find(pPENTALPHA);
-                    BK_Empresa.PENTALPHA = LvrEmpresa.PENTALPHA;
-                    BK_Empresa.RUTID = LvrEmpresa.RUTID;
-                    BK_Empresa.DIGVER = LvrEmpresa.DIGVER;
-                    BK_Empresa.NOMBRE = LvrEmpresa.NOMBRE;
-                    BK_Empresa.USUARIO = LvrEmpresa.USUARIO;
-                    BK_Empresa.CLAVE = LvrEmpresa.CLAVE;
-                    BK_Empresa.ACTIVIDAD1 = LvrEmpresa.ACTIVIDAD1;
-                    BK_Empresa.ACTIVIDAD2 = LvrEmpresa.ACTIVIDAD2;
-                    BK_Empresa.REPRESENTANTE1 = LvrEmpresa.REPRESENTANTE1;
-                    BK_Empresa.REPRESENTANTE2 = LvrEmpresa.REPRESENTANTE2;
-                    BK_Empresa.REPRESENTANTE3 = LvrEmpresa.REPRESENTANTE3;
-                    BK_Empresa.DOMICILIO1 = LvrEmpresa.DOMICILIO1;
-                    BK_Empresa.DOMICILIO2 = LvrEmpresa.DOMICILIO2;
-                    BK_Empresa.NUMERO = LvrEmpresa.NUMERO;
-                    BK_Empresa.PISO = LvrEmpresa.PISO;
-                    BK_Empresa.OFICINA = LvrEmpresa.OFICINA;
-                    BK_Empresa.CIUDAD = LvrEmpresa.CIUDAD;
-                    BK_Empresa.COMUNA = LvrEmpresa.COMUNA;
-                    BK_Empresa.ESTADOREGION = LvrEmpresa.ESTADOREGION;
-                    BK_Empresa.CODIGOPOSTAL = LvrEmpresa.CODIGOPOSTAL;
-                    BK_Empresa.PAIS = LvrEmpresa.PAIS;
-                    BK_Empresa.TELEFONO1 = LvrEmpresa.TELEFONO1;
-                    BK_Empresa.TELEFONO2 = LvrEmpresa.TELEFONO2;
-                    BK_Empresa.TELEFONO3 = LvrEmpresa.TELEFONO3;
-                    BK_Empresa.OBSERVACIONES = LvrEmpresa.OBSERVACIONES;
-                    BK_Empresa.LOGO = LvrEmpresa.LOGO;
+                    AcceptChangesDuringFill = false
+                };
+                BM_DataSet = new DataSet();
+                BM_Adaptador.Fill(BM_DataSet, "EMPRESA");
+
+                foreach (DataRow LvrEmpresa in BM_DataSet.Tables["EMPRESA"].Rows)
+                {
+                    BK_Empresa.PENTALPHA = LvrEmpresa["PENTALPHA"].ToString();
+                    BK_Empresa.RUTID = LvrEmpresa["RUTID"].ToString();
+                    BK_Empresa.DIGVER = LvrEmpresa["DIGVER"].ToString();
+                    BK_Empresa.NOMBRE = LvrEmpresa["NOMBRE"].ToString();
+                    BK_Empresa.USUARIO = LvrEmpresa["USUARIO"].ToString();
+                    BK_Empresa.CLAVE = LvrEmpresa["CLAVE"].ToString();
+                    BK_Empresa.ACTIVIDAD1 = LvrEmpresa["ACTIVIDAD1"].ToString();
+                    BK_Empresa.ACTIVIDAD2 = LvrEmpresa["ACTIVIDAD2"].ToString();
+                    BK_Empresa.REPRESENTANTE1 = LvrEmpresa["REPRESENTANTE1"].ToString();
+                    BK_Empresa.REPRESENTANTE2 = LvrEmpresa["REPRESENTANTE2"].ToString();
+                    BK_Empresa.REPRESENTANTE3 = LvrEmpresa["REPRESENTANTE3"].ToString();
+                    BK_Empresa.DOMICILIO1 = LvrEmpresa["DOMICILIO1"].ToString();
+                    BK_Empresa.DOMICILIO2 = LvrEmpresa["DOMICILIO2"].ToString();
+                    BK_Empresa.NUMERO = LvrEmpresa["NUMERO"].ToString();
+                    BK_Empresa.PISO = LvrEmpresa["PISO"].ToString();
+                    BK_Empresa.OFICINA = LvrEmpresa["OFICINA"].ToString();
+                    BK_Empresa.CIUDAD = LvrEmpresa["CIUDAD"].ToString();
+                    BK_Empresa.COMUNA = LvrEmpresa["COMUNA"].ToString();
+                    BK_Empresa.ESTADOREGION = LvrEmpresa["ESTADOREGION"].ToString();
+                    BK_Empresa.CODIGOPOSTAL = LvrEmpresa["CODIGOPOSTAL"].ToString();
+                    BK_Empresa.PAIS = LvrEmpresa["PAIS"].ToString();
+                    BK_Empresa.TELEFONO1 = LvrEmpresa["TELEFONO1"].ToString();
+                    BK_Empresa.TELEFONO2 = LvrEmpresa["TELEFONO2"].ToString();
+                    BK_Empresa.TELEFONO3 = LvrEmpresa["TELEFONO3"].ToString();
+                    BK_Empresa.OBSERVACIONES = LvrEmpresa["OBSERVACIONES"].ToString();
+                    BK_Empresa.LOGO = LvrEmpresa["LOGO"].ToString();
                     BK_EmpresaLista.Add(BK_Empresa);
                 }
             }
-            catch (DbUpdateException Ex)
+            catch (System.Data.SQLite.SQLiteException Ex)
             {
                 Console.WriteLine(Ex.InnerException.Message);
                 return null;
@@ -122,203 +158,297 @@ namespace BikeMessenger
 
         public bool AgregarEmpresa(JsonBikeMessengerEmpresa aBK_Empresa)
         {
+            BK_Empresa = new JsonBikeMessengerEmpresa();
+            BK_EmpresaLista = new List<JsonBikeMessengerEmpresa>();
+            
+            DataSet BM_DataSet;
+            SQLiteDataAdapter BM_Adaptador;
+            SQLiteCommand BM_Comando;
+            SQLiteCommandBuilder BM_Builder;
+
             try
             {
-                using (var db = new BK_SQliteContext())
+                BM_Comando = BM_Conexion.CreateCommand();
+                BM_Comando.CommandText = string.Format("SELECT * FROM EMPRESA");
+
+                BM_Adaptador = new SQLiteDataAdapter(BM_Comando)
                 {
-                    var LvrEmpresa = new EMPRESA()
-                    {
-                        PENTALPHA = aBK_Empresa.PENTALPHA,
-                        RUTID = aBK_Empresa.RUTID,
-                        DIGVER = aBK_Empresa.DIGVER,
-                        NOMBRE = aBK_Empresa.NOMBRE,
-                        USUARIO = aBK_Empresa.USUARIO,
-                        CLAVE = aBK_Empresa.CLAVE,
-                        ACTIVIDAD1 = aBK_Empresa.ACTIVIDAD1,
-                        ACTIVIDAD2 = aBK_Empresa.ACTIVIDAD2,
-                        REPRESENTANTE1 = aBK_Empresa.REPRESENTANTE1,
-                        REPRESENTANTE2 = aBK_Empresa.REPRESENTANTE2,
-                        REPRESENTANTE3 = aBK_Empresa.REPRESENTANTE3,
-                        DOMICILIO1 = aBK_Empresa.DOMICILIO1,
-                        DOMICILIO2 = aBK_Empresa.DOMICILIO2,
-                        NUMERO = aBK_Empresa.NUMERO,
-                        PISO = aBK_Empresa.PISO,
-                        OFICINA = aBK_Empresa.OFICINA,
-                        CIUDAD = aBK_Empresa.CIUDAD,
-                        COMUNA = aBK_Empresa.COMUNA,
-                        ESTADOREGION = aBK_Empresa.ESTADOREGION,
-                        CODIGOPOSTAL = aBK_Empresa.CODIGOPOSTAL,
-                        PAIS = aBK_Empresa.PAIS,
-                        TELEFONO1 = aBK_Empresa.TELEFONO1,
-                        TELEFONO2 = aBK_Empresa.TELEFONO2,
-                        TELEFONO3 = aBK_Empresa.TELEFONO3,
-                        OBSERVACIONES = aBK_Empresa.OBSERVACIONES,
-                        LOGO = aBK_Empresa.LOGO
-                    };
-                    db.Add(LvrEmpresa);
-                    db.SaveChanges();
+                    AcceptChangesDuringFill = false
                 };
-                return true;
+                BM_DataSet = new DataSet();
+                BM_Adaptador.Fill(BM_DataSet, "EMPRESA");
+
+                DataRow LvrEmpresa = BM_DataSet.Tables["EMPRESA"].NewRow();
+                BM_Builder = new SQLiteCommandBuilder(BM_Adaptador);
+
+                LvrEmpresa["PENTALPHA"] = aBK_Empresa.PENTALPHA;
+                LvrEmpresa["RUTID"] = aBK_Empresa.RUTID;
+                LvrEmpresa["DIGVER"] = aBK_Empresa.DIGVER;
+                LvrEmpresa["NOMBRE"] = aBK_Empresa.NOMBRE;
+                LvrEmpresa["USUARIO"] = aBK_Empresa.USUARIO;
+                LvrEmpresa["CLAVE"] = aBK_Empresa.CLAVE;
+                LvrEmpresa["ACTIVIDAD1"] = aBK_Empresa.ACTIVIDAD1;
+                LvrEmpresa["ACTIVIDAD2"] = aBK_Empresa.ACTIVIDAD2;
+                LvrEmpresa["REPRESENTANTE1"] = aBK_Empresa.REPRESENTANTE1;
+                LvrEmpresa["REPRESENTANTE2"] = aBK_Empresa.REPRESENTANTE2;
+                LvrEmpresa["REPRESENTANTE3"] = aBK_Empresa.REPRESENTANTE3;
+                LvrEmpresa["DOMICILIO1"] = aBK_Empresa.DOMICILIO1;
+                LvrEmpresa["DOMICILIO2"] = aBK_Empresa.DOMICILIO2;
+                LvrEmpresa["NUMERO"] = aBK_Empresa.NUMERO;
+                LvrEmpresa["PISO"] = aBK_Empresa.PISO;
+                LvrEmpresa["OFICINA"] = aBK_Empresa.OFICINA;
+                LvrEmpresa["CIUDAD"] = aBK_Empresa.CIUDAD;
+                LvrEmpresa["COMUNA"] = aBK_Empresa.COMUNA;
+                LvrEmpresa["ESTADOREGION"] = aBK_Empresa.ESTADOREGION;
+                LvrEmpresa["CODIGOPOSTAL"] = aBK_Empresa.CODIGOPOSTAL;
+                LvrEmpresa["PAIS"] = aBK_Empresa.PAIS;
+                LvrEmpresa["TELEFONO1"] = aBK_Empresa.TELEFONO1;
+                LvrEmpresa["TELEFONO2"] = aBK_Empresa.TELEFONO2;
+                LvrEmpresa["TELEFONO3"] = aBK_Empresa.TELEFONO3;
+                LvrEmpresa["OBSERVACIONES"] = aBK_Empresa.OBSERVACIONES;
+                LvrEmpresa["LOGO"] = aBK_Empresa.LOGO;
+                BM_DataSet.Tables["EMPRESA"].Rows.Add(LvrEmpresa);
+                BM_Builder.GetInsertCommand();
+                BM_Adaptador.Update(BM_DataSet, "EMPRESA");
             }
-            catch (DbUpdateException Ex)
+            catch (System.Data.SQLite.SQLiteException Ex)
             {
                 Console.WriteLine(Ex.InnerException.Message);
                 return false;
             }
+            catch (Exception Ex)
+            {
+                Console.WriteLine(Ex.InnerException.Message);
+                return false;
+            }
+            return true;
         }
 
         public bool ModificarEmpresa(JsonBikeMessengerEmpresa mBK_Empresa)
         {
+            BK_Empresa = new JsonBikeMessengerEmpresa();
+            BK_EmpresaLista = new List<JsonBikeMessengerEmpresa>();
+            DataSet BM_DataSet;
+            SQLiteDataAdapter BM_Adaptador;
+            SQLiteCommand BM_Comando;
+
             try
             {
-                using (var db = new BK_SQliteContext())
+                BM_Comando = BM_Conexion.CreateCommand();
+                BM_Comando.CommandText = string.Format("SELECT * FROM EMPRESA WHERE PENTALPHA = '" + mBK_Empresa.PENTALPHA + "'");
+
+                BM_Adaptador = new SQLiteDataAdapter(BM_Comando)
                 {
-                    var LvrEmpresa = new EMPRESA()
-                    {
-                        PENTALPHA = mBK_Empresa.PENTALPHA,
-                        RUTID = mBK_Empresa.RUTID,
-                        DIGVER = mBK_Empresa.DIGVER,
-                        NOMBRE = mBK_Empresa.NOMBRE,
-                        USUARIO = mBK_Empresa.USUARIO,
-                        CLAVE = mBK_Empresa.CLAVE,
-                        ACTIVIDAD1 = mBK_Empresa.ACTIVIDAD1,
-                        ACTIVIDAD2 = mBK_Empresa.ACTIVIDAD2,
-                        REPRESENTANTE1 = mBK_Empresa.REPRESENTANTE1,
-                        REPRESENTANTE2 = mBK_Empresa.REPRESENTANTE2,
-                        REPRESENTANTE3 = mBK_Empresa.REPRESENTANTE3,
-                        DOMICILIO1 = mBK_Empresa.DOMICILIO1,
-                        DOMICILIO2 = mBK_Empresa.DOMICILIO2,
-                        NUMERO = mBK_Empresa.NUMERO,
-                        PISO = mBK_Empresa.PISO,
-                        OFICINA = mBK_Empresa.OFICINA,
-                        CIUDAD = mBK_Empresa.CIUDAD,
-                        COMUNA = mBK_Empresa.COMUNA,
-                        ESTADOREGION = mBK_Empresa.ESTADOREGION,
-                        CODIGOPOSTAL = mBK_Empresa.CODIGOPOSTAL,
-                        PAIS = mBK_Empresa.PAIS,
-                        TELEFONO1 = mBK_Empresa.TELEFONO1,
-                        TELEFONO2 = mBK_Empresa.TELEFONO2,
-                        TELEFONO3 = mBK_Empresa.TELEFONO3,
-                        OBSERVACIONES = mBK_Empresa.OBSERVACIONES,
-                        LOGO = mBK_Empresa.LOGO
-                    };
-                    db.Update(LvrEmpresa);
-                    db.SaveChanges();
+                    AcceptChangesDuringFill = false
                 };
-                return true;
+                BM_DataSet = new DataSet();
+                BM_Adaptador.Fill(BM_DataSet, "EMPRESA");
+
+                DataRow LvrEmpresa = BM_DataSet.Tables["EMPRESA"].NewRow();
+
+                LvrEmpresa["PENTALPHA"] = mBK_Empresa.PENTALPHA;
+                LvrEmpresa["RUTID"] = mBK_Empresa.RUTID;
+                LvrEmpresa["DIGVER"] = mBK_Empresa.DIGVER;
+                LvrEmpresa["NOMBRE"] = mBK_Empresa.NOMBRE;
+                LvrEmpresa["USUARIO"] = mBK_Empresa.USUARIO;
+                LvrEmpresa["CLAVE"] = mBK_Empresa.CLAVE;
+                LvrEmpresa["ACTIVIDAD1"] = mBK_Empresa.ACTIVIDAD1;
+                LvrEmpresa["ACTIVIDAD2"] = mBK_Empresa.ACTIVIDAD2;
+                LvrEmpresa["REPRESENTANTE1"] = mBK_Empresa.REPRESENTANTE1;
+                LvrEmpresa["REPRESENTANTE2"] = mBK_Empresa.REPRESENTANTE2;
+                LvrEmpresa["REPRESENTANTE3"] = mBK_Empresa.REPRESENTANTE3;
+                LvrEmpresa["DOMICILIO1"] = mBK_Empresa.DOMICILIO1;
+                LvrEmpresa["DOMICILIO2"] = mBK_Empresa.DOMICILIO2;
+                LvrEmpresa["NUMERO"] = mBK_Empresa.NUMERO;
+                LvrEmpresa["PISO"] = mBK_Empresa.PISO;
+                LvrEmpresa["OFICINA"] = mBK_Empresa.OFICINA;
+                LvrEmpresa["CIUDAD"] = mBK_Empresa.CIUDAD;
+                LvrEmpresa["COMUNA"] = mBK_Empresa.COMUNA;
+                LvrEmpresa["ESTADOREGION"] = mBK_Empresa.ESTADOREGION;
+                LvrEmpresa["CODIGOPOSTAL"] = mBK_Empresa.CODIGOPOSTAL;
+                LvrEmpresa["PAIS"] = mBK_Empresa.PAIS;
+                LvrEmpresa["TELEFONO1"] = mBK_Empresa.TELEFONO1;
+                LvrEmpresa["TELEFONO2"] = mBK_Empresa.TELEFONO2;
+                LvrEmpresa["TELEFONO3"] = mBK_Empresa.TELEFONO3;
+                LvrEmpresa["OBSERVACIONES"] = mBK_Empresa.OBSERVACIONES;
+                LvrEmpresa["LOGO"] = mBK_Empresa.LOGO;
+                BM_DataSet.Tables["EMPRESA"].Rows.Add(LvrEmpresa);
+                BM_Adaptador.Update(BM_DataSet, "EMPRESA");
             }
-            catch (DbUpdateException Ex)
+            catch (System.Data.SQLite.SQLiteException Ex)
             {
                 Console.WriteLine(Ex.InnerException.Message);
                 return false;
             }
+            return true;
         }
 
         public bool BorrarEmpresa(string pPENTALPHA)
         {
+            BK_Empresa = new JsonBikeMessengerEmpresa();
+            BK_EmpresaLista = new List<JsonBikeMessengerEmpresa>();
+            SQLiteCommand BM_Comando;
+
             try
             {
-                using (var db = new BK_SQliteContext())
-                {
-                    EMPRESA LvrEmpresa;
-                    LvrEmpresa = db.EMPRESAs.Find(pPENTALPHA);
-                    db.Remove(LvrEmpresa);
-                    db.SaveChanges();
-                }
-                return true;
+                BM_Comando = BM_Conexion.CreateCommand();
+                BM_Comando.CommandText = string.Format("DELETE FROM EMPRESA WHERE PENTALPHA = '" + pPENTALPHA + "'");
             }
-            catch (DbUpdateException Ex)
+            catch (System.Data.SQLite.SQLiteException Ex)
             {
                 Console.WriteLine(Ex.InnerException.Message);
                 return false;
             }
+            return true;
         }
 
         public List<string> GetPais()
         {
-            BK_Pais = null;
+            List<string> BK_PaisLista = new List<string>();
+            DataSet BM_DataSetPais;
+            SQLiteDataAdapter BM_AdaptadorPais;
+            SQLiteCommand BM_ComandoPais;
+            string BK_Pais = "";
 
             try
             {
-                using (var db = new BK_SQliteContext())
+                BM_ComandoPais = BM_Conexion.CreateCommand();
+                BM_ComandoPais.CommandText = string.Format("SELECT * FROM PAIS ORDER BY NOMBRE");
+                
+                BM_AdaptadorPais = new SQLiteDataAdapter(BM_ComandoPais);
+
+                BM_DataSetPais = new DataSet();
+                BM_AdaptadorPais.Fill(BM_DataSetPais,"PAIS");
+
+                foreach (DataRow LvrPais in BM_DataSetPais.Tables["PAIS"].Rows)
                 {
-                    foreach (var LvrPais in db.PAIs)
-                    {
-                        string Pais = LvrPais.NOMBRE;
-                        BK_Pais.Add(Pais);
-                    }
+                    BK_Pais = LvrPais["NOMBRE"].ToString();
+                    BK_PaisLista.Add(BK_Pais);
                 }
-                return BK_Pais;
             }
-            catch (DbUpdateException)
+            catch (System.NullReferenceException Ex)
             {
+                Console.WriteLine(Ex.InnerException.Message);
                 return null;
             }
+            catch (System.Data.SQLite.SQLiteException Ex)
+            {
+                Console.WriteLine(Ex.InnerException.Message);
+                return null;
+            }
+
+            return BK_PaisLista;
         }
 
         public List<string> GetRegion()
         {
-            BK_Region = null;
+            List<string> BK_RegionLista = new List<string>();
+            DataSet BM_DataSetRegion;
+            SQLiteDataAdapter BM_AdaptadorRegion;
+            SQLiteCommand BM_ComandoRegion;
+            string BK_Region;
+
             try
             {
-                using (var db = new BK_SQliteContext())
+                BM_ComandoRegion = BM_Conexion.CreateCommand();
+                BM_ComandoRegion.CommandText = string.Format("SELECT * FROM ESTADOREGION ORDER BY NOMBRE");
+
+                BM_AdaptadorRegion = new SQLiteDataAdapter(BM_ComandoRegion);
+
+                BM_DataSetRegion = new DataSet();
+                BM_AdaptadorRegion.Fill(BM_DataSetRegion, "ESTADOREGION");
+
+                foreach (DataRow LvrRegion in BM_DataSetRegion.Tables["ESTADOREGION"].Rows)
                 {
-                    foreach (var LvrRegion in db.ESTADOREGIONs)
-                    {
-                        string Region = LvrRegion.NOMBRE;
-                        BK_Region.Add(Region);
-                    }
+                    BK_Region = LvrRegion["NOMBRE"].ToString();
+                    BK_RegionLista.Add(BK_Region);
                 }
-                return BK_Region;
             }
-            catch (DbUpdateException)
+            catch (System.NullReferenceException Ex)
             {
+                Console.WriteLine(Ex.InnerException.Message);
                 return null;
             }
+            catch (System.Data.SQLite.SQLiteException Ex)
+            {
+                Console.WriteLine(Ex.InnerException.Message);
+                return null;
+            }
+            return BK_RegionLista;
         }
 
         public List<string> GetComuna()
         {
-            BK_Comuna = null;
+            List<string> BK_ComunaLista = new List<string>();
+            DataSet BM_DataSetComuna;
+            SQLiteDataAdapter BM_AdaptadorComuna;
+            SQLiteCommand BM_ComandoComuna;
+            string BK_Comuna;
+
             try
             {
-                using (var db = new BK_SQliteContext())
+                BM_ComandoComuna = BM_Conexion.CreateCommand();
+                BM_ComandoComuna.CommandText = string.Format("SELECT * FROM COMUNA ORDER BY NOMBRE");
+
+                BM_AdaptadorComuna = new SQLiteDataAdapter(BM_ComandoComuna);
+
+                BM_DataSetComuna = new DataSet();
+                BM_AdaptadorComuna.Fill(BM_DataSetComuna, "COMUNA");
+
+                foreach (DataRow LvrComuna in BM_DataSetComuna.Tables["COMUNA"].Rows)
                 {
-                    foreach (var LvrComuna in db.COMUNAs)
-                    {
-                        string Comuna = LvrComuna.NOMBRE;
-                        BK_Comuna.Add(Comuna);
-                    }
+                    BK_Comuna = LvrComuna["NOMBRE"].ToString();
+                    BK_ComunaLista.Add(BK_Comuna);
                 }
-                return BK_Comuna;
             }
-            catch (DbUpdateException)
+            catch (System.NullReferenceException Ex)
             {
+                Console.WriteLine(Ex.InnerException.Message);
                 return null;
             }
+            catch (System.Data.SQLite.SQLiteException Ex)
+            {
+                Console.WriteLine(Ex.InnerException.Message);
+                return null;
+            }
+            return BK_ComunaLista;
         }
 
         public List<string> GetCiudad()
         {
-            BK_Ciudad = null;
+            List<string> BK_CiudadLista = new List<string>();
+            DataSet BM_DataSetCiudad;
+            SQLiteDataAdapter BM_AdaptadorRegion;
+            SQLiteCommand BM_ComandoCiudad;
+            string BK_Ciudad;
 
             try
             {
-                using (var db = new BK_SQliteContext())
-                {
-                    foreach (var LvrCiudad in db.CIUDADs)
-                    {
-                        string Ciudad = LvrCiudad.NOMBRE;
-                        BK_Ciudad.Add(Ciudad);
-                    }
-                }
-                return BK_Ciudad;
-            }
+                BM_ComandoCiudad = BM_Conexion.CreateCommand();
+                BM_ComandoCiudad.CommandText = string.Format("SELECT * FROM CIUDAD ORDER BY NOMBRE");
 
-            catch (DbUpdateException)
+                BM_AdaptadorRegion = new SQLiteDataAdapter(BM_ComandoCiudad);
+
+                BM_DataSetCiudad = new DataSet();
+                BM_AdaptadorRegion.Fill(BM_DataSetCiudad, "CIUDAD");
+
+                foreach (DataRow LvrCiudad in BM_DataSetCiudad.Tables["CIUDAD"].Rows)
+                {
+                    BK_Ciudad = LvrCiudad["NOMBRE"].ToString();
+                    BK_CiudadLista.Add(BK_Ciudad);
+                }
+            }
+            catch (System.NullReferenceException Ex)
             {
+                Console.WriteLine(Ex.InnerException.Message);
                 return null;
             }
+            catch (System.Data.SQLite.SQLiteException Ex)
+            {
+                Console.WriteLine(Ex.InnerException.Message);
+                return null;
+            }
+            return BK_CiudadLista;
         }
     }
 }

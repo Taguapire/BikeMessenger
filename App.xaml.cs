@@ -100,6 +100,7 @@ namespace BikeMessenger
                 // IniciarBaseDeDatos LvrIniciarBaseDeDatos = new IniciarBaseDeDatos(LvrTransferVar.Directorio);
                 // LvrIniciarBaseDeDatos = null;
                 // Empresa
+                // LvrTransferVar.VerificarSQLite();
                 LvrTransferVar.E_PENTALPHA = "";
                 LvrTransferVar.E_RUTID = "";
                 LvrTransferVar.E_DIGVER = "";

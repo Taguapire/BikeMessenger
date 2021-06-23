@@ -1,18 +1,19 @@
-﻿using Newtonsoft.Json;
-using QRCoder;
+﻿
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.Graphics.Imaging;
-using Windows.Storage.Streams;
+using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
+using Windows.Storage.Streams;
+using Windows.Graphics.Imaging;
+using QRCoder;
+using Newtonsoft.Json;
 
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
@@ -24,7 +25,7 @@ namespace BikeMessenger
     /// </summary>
     public sealed partial class PageEmpresa : Page
     {
-        private List<JsonBikeMessengerEmpresa> EmpresaIOArray = null;
+        private List<JsonBikeMessengerEmpresa> EmpresaIOArray = new List<JsonBikeMessengerEmpresa>();
         private JsonBikeMessengerEmpresa EmpresaIO = new JsonBikeMessengerEmpresa();
         private JsonBikeMessengerEmpresa EnviarJsonEmpresa = new JsonBikeMessengerEmpresa();
         private JsonBikeMessengerEmpresa RecibirJsonEmpresa = new JsonBikeMessengerEmpresa();
@@ -83,7 +84,8 @@ namespace BikeMessenger
                 LvrTransferVar = (TransferVar)navigationEvent.Parameter;
                 RellenarCombos();
 
-                if (BM_Database_Empresa.BuscarEmpresa().Count > 0)
+                EmpresaIOArray = BM_Database_Empresa.BuscarEmpresa();
+                if (EmpresaIOArray.Count > 0)
                 {
                     EmpresaIO = EmpresaIOArray[0];
                     LlenarPantallaConDb();
@@ -244,71 +246,32 @@ namespace BikeMessenger
 
             // Llenar Combo Pais
             List<string> ListaPais = BM_Database_Empresa.GetPais();
-            if (ListaPais != null)
+            foreach (var LocalLista in ListaPais)
             {
-                try
-                {
-                    for (int i = 0; i < ListaPais.Count; i++)
-                    {
-                        comboBoxPais.Items.Add(ListaPais[i]);
-                    }
-                }
-                catch (NullReferenceException)
-                {
-                    // Sin valores
-                }
+                comboBoxPais.Items.Add(LocalLista);
             }
 
             // Llenar Combo Region
             List<string> ListaEstado = BM_Database_Empresa.GetRegion();
-            if (ListaEstado != null)
+            foreach (var LocalLista in ListaPais)
             {
-                try
-                {
-                    for (int i = 0; i < ListaEstado.Count; i++)
-                    {
-                        comboBoxEstado.Items.Add(ListaEstado[i]);
-                    }
-                }
-                catch (System.NullReferenceException)
-                {
-                    // Sin valores
-                }
+                comboBoxEstado.Items.Add(ListaEstado);
             }
 
             // Llenar Combo Comuna
             List<string> ListaComuna = BM_Database_Empresa.GetComuna();
-            if (ListaComuna != null)
+            foreach (var LocalLista in ListaComuna)
             {
-                try
-                {
-                    for (int i = 0; i < ListaComuna.Count; i++)
-                    {
-                        comboBoxComuna.Items.Add(ListaComuna[i]);
-                    }
-                }
-                catch (System.NullReferenceException)
-                {
-                    // Sin valores
-                }
+                comboBoxComuna.Items.Add(ListaEstado);
             }
 
+            
             // Llenar Combo Ciudad
 
             List<string> ListaCiudad = BM_Database_Empresa.GetCiudad();
-            if (ListaCiudad != null)
+            foreach (var LocalLista in ListaCiudad)
             {
-                try
-                {
-                    for (int i = 0; i < ListaCiudad.Count; i++)
-                    {
-                        comboBoxCiudad.Items.Add(ListaCiudad[i]);
-                    }
-                }
-                catch (System.NullReferenceException)
-                {
-                    // Sin valores
-                }
+                comboBoxCiudad.Items.Add(ListaEstado);
             }
         }
 

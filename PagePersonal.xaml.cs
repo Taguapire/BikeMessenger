@@ -23,8 +23,8 @@ namespace BikeMessenger
     /// </summary>
     public sealed partial class PagePersonal : Page
     {
-        private List<JsonBikeMessengerPersonal> PersonalIOArray = null;
-        private JsonBikeMessengerPersonal PersonalIO = null;
+        private static List<JsonBikeMessengerPersonal> PersonalIOArray = new List<JsonBikeMessengerPersonal>();
+        private static JsonBikeMessengerPersonal PersonalIO = new JsonBikeMessengerPersonal();
         private readonly JsonBikeMessengerPersonal EnviarJsonPersonal = new JsonBikeMessengerPersonal();
         private JsonBikeMessengerPersonal RecibirJsonPersonal = new JsonBikeMessengerPersonal();
         private readonly Bm_Personal_Database BM_Database_Personal = new Bm_Personal_Database();
@@ -87,7 +87,8 @@ namespace BikeMessenger
 
                 if (LvrTransferVar.P_RUTID == "")
                 {
-                    if ((PersonalIOArray = BM_Database_Personal.BuscarPersonal()) != null)
+                    PersonalIOArray = BM_Database_Personal.BuscarPersonal();
+                    if (PersonalIOArray != null)
                     {
                         PersonalIO = PersonalIOArray[0];
                         LlenarPantallaConDb();
@@ -595,21 +596,19 @@ namespace BikeMessenger
 
         private void LlenarListaPersonal()
         {
-            List<JsonBikeMessengerPersonal> GridPersonalDb = new List<JsonBikeMessengerPersonal>();
+            List<ClasePersonalGrid> GridPersonalDb;
             List<GridPersonalIndividual> GridPersonalLista = new List<GridPersonalIndividual>();
 
-            if ((GridPersonalDb = BM_Database_Personal.BuscarGridPersonal()) != null)
+            GridPersonalDb = BM_Database_Personal.BuscarGridPersonal();
+            foreach (var LocalPersonal in GridPersonalDb)
             {
-                for (int i = 0; i < GridPersonalDb.Count; i++)
-                {
-                    GridPersonalLista.Add(
-                        new GridPersonalIndividual
-                        {
-                            RUT = GridPersonalDb[i].RUTID + "-" + GridPersonalDb[i].DIGVER,
-                            APELLIDO = GridPersonalDb[i].APELLIDOS,
-                            NOMBRE = GridPersonalDb[i].NOMBRES
-                        });
-                }
+                GridPersonalLista.Add(
+                    new GridPersonalIndividual
+                    {
+                        RUT = LocalPersonal.RUTID + "-" + LocalPersonal.DIGVER,
+                        APELLIDO = LocalPersonal.APELLIDOS,
+                        NOMBRE = LocalPersonal.NOMBRES
+                    });
             }
             dataGridPersonal.IsReadOnly = true;
             dataGridPersonal.ItemsSource = GridPersonalLista;
@@ -623,7 +622,9 @@ namespace BikeMessenger
                 GridPersonalIndividual Fila = (GridPersonalIndividual)CeldaSeleccionada.SelectedItems[0];
                 string[] CadenaDividida = Fila.RUT.Split("-", 2, StringSplitOptions.None);
 
-                if ((PersonalIOArray = BM_Database_Personal.BuscarPersonal(LvrTransferVar.P_PENTALPHA, CadenaDividida[0], CadenaDividida[1])) != null)
+                PersonalIOArray = BM_Database_Personal.BuscarPersonal(LvrTransferVar.P_PENTALPHA, CadenaDividida[0], CadenaDividida[1]);
+
+                if (PersonalIOArray != null)
                 {
                     PersonalIO = PersonalIOArray[0];
                     LimpiarPantalla();
@@ -773,5 +774,12 @@ namespace BikeMessenger
         public string RUT { get; set; }
         public string APELLIDO { get; set; }
         public string NOMBRE { get; set; }
+
+        public GridPersonalIndividual()
+        {
+            RUT = "";
+            APELLIDO = "";
+            NOMBRE = "";
+        }
     }
 }

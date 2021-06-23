@@ -12,7 +12,7 @@
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.19041.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -136,17 +136,11 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BK_SQliteContext.cs" />
     <Compile Include="Bm_Cliente_Database.cs" />
     <Compile Include="Bm_Empresa_Database.cs" />
     <Compile Include="Bm_Personal_Database.cs" />
     <Compile Include="Bm_Recurso_Database.cs" />
     <Compile Include="Bm_Servicio_Database.cs" />
-    <Compile Include="CIUDAD.cs" />
-    <Compile Include="CLIENTE.cs" />
-    <Compile Include="COMUNA.cs" />
-    <Compile Include="EMPRESA.cs" />
-    <Compile Include="ESTADOREGION.cs" />
     <Compile Include="JsonBikeMessengerCliente.cs" />
     <Compile Include="JsonBikeMessengerEmpresa.cs" />
     <Compile Include="JsonBikeMessengerPersonal.cs" />
@@ -178,13 +172,9 @@
     <Compile Include="PageServicios.xaml.cs">
       <DependentUpon>PageServicios.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PAI.cs" />
     <Compile Include="PentalphaCripto.cs" />
     <Compile Include="PentalphaJson.cs" />
-    <Compile Include="PERSONAL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RECURSO.cs" />
-    <Compile Include="SERVICIO.cs" />
     <Compile Include="TransferVar.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -193,6 +183,7 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="SQLite.txt" />
     <None Include="efpt.config.json" />
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Assets\BadgeLogo.scale-100.png" />
@@ -293,32 +284,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Data.Sqlite">
-      <Version>2.2.6</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore">
-      <Version>2.2.6</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions">
-      <Version>2.2.6</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers">
-      <Version>2.2.6</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
-      <Version>2.2.6</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational">
-      <Version>2.2.6</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite">
-      <Version>2.2.6</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
-      <Version>2.2.6</Version>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.12</Version>
     </PackageReference>
@@ -331,6 +296,12 @@
     <PackageReference Include="QRCoder">
       <Version>1.4.1</Version>
     </PackageReference>
+    <PackageReference Include="System.Data.SqlClient">
+      <Version>4.8.2</Version>
+    </PackageReference>
+    <PackageReference Include="System.Data.SQLite">
+      <Version>1.0.114.4</Version>
+    </PackageReference>
     <PackageReference Include="System.Drawing.Common">
       <Version>5.0.2</Version>
     </PackageReference>
@@ -340,14 +311,6 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <SDKReference Include="Microsoft.VCLibs.Desktop, Version=14.0">
-      <Name>Visual C++ 2015-2019 UWP Desktop Runtime for native apps</Name>
-    </SDKReference>
-    <SDKReference Include="WindowsDesktop, Version=10.0.17763.0">
-      <Name>Windows Desktop Extensions for the UWP</Name>
-    </SDKReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

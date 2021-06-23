@@ -526,7 +526,7 @@ namespace BikeMessenger
         //**************************************** Propietarios ************************************
         private void LlenarListaPropietarios()
         {
-            List<JsonBikeMessengerPersonal> GridPersonalDb = new List<JsonBikeMessengerPersonal>();
+            List<ClasePersonalGrid> GridPersonalDb = new List<ClasePersonalGrid>();
             List<GridPropietarioIndividual> GridPropietariosLista = new List<GridPropietarioIndividual>();
 
             if ((GridPersonalDb = BM_Database_Recurso.BuscarGridPersonal()) != null)

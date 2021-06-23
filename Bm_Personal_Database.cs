@@ -1,86 +1,151 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+using System.Data;
+using System.Data.SQLite;
 
 namespace BikeMessenger
 {
     internal class Bm_Personal_Database
     {
 
+        // public SqliteFactory BM_DB;
+        // Paso de Parametros Sqlite
+        // ***************************************
+        private static SQLiteConnection BM_Conexion;
+        private TransferVar BM_TrasferVar;
+
         private static JsonBikeMessengerPersonal BK_Personal;
         private static List<JsonBikeMessengerPersonal> BK_PersonalLista;
+
+        private string BM_CadenaConexion;
+
 
         private static List<string> BK_Pais;
         private static List<string> BK_Region;
         private static List<string> BK_Comuna;
         private static List<string> BK_Ciudad;
 
+        // Cambio de Operador
+        // Busqueda por Muchos
+
+
+        public Bm_Personal_Database()
+        {
+            BM_TrasferVar = new TransferVar();
+            BM_TrasferVar.LeerDirectorio();
+            BM_CadenaConexion = BM_TrasferVar.Directorio;
+            BM_Conexion = new SQLiteConnection("Data Source=" + BM_CadenaConexion + "\\BikeMessenger.db");
+            BM_Conexion.Open();
+        }
+
+
         // Busqueda por Muchos
         public List<JsonBikeMessengerPersonal> BuscarPersonal()
         {
-            BK_PersonalLista = null;
-            using (var db = new BK_SQliteContext())
+            BK_Personal = new JsonBikeMessengerPersonal();
+            BK_PersonalLista = new List<JsonBikeMessengerPersonal>();
+            DataSet BM_DataSet;
+            SQLiteDataAdapter BM_Adaptador;
+            SQLiteCommand BM_Comando;
+
+            try
             {
-                foreach (var LvrPersonal in db.PERSONALs)
+                BM_Comando = BM_Conexion.CreateCommand();
+                BM_Comando.CommandText = string.Format("SELECT * FROM PERSONAL");
+
+                BM_Adaptador = new SQLiteDataAdapter(BM_Comando)
                 {
-                    BK_Personal = null;
-                    BK_Personal.PENTALPHA = LvrPersonal.PENTALPHA;
-                    BK_Personal.RUTID = LvrPersonal.RUTID;
-                    BK_Personal.DIGVER = LvrPersonal.DIGVER;
-                    BK_Personal.APELLIDOS = LvrPersonal.APELLIDOS;
-                    BK_Personal.NOMBRES = LvrPersonal.NOMBRES;
-                    BK_Personal.TELEFONO1 = LvrPersonal.TELEFONO1;
-                    BK_Personal.TELEFONO2 = LvrPersonal.TELEFONO2;
-                    BK_Personal.EMAIL = LvrPersonal.EMAIL;
-                    BK_Personal.AUTORIZACION = LvrPersonal.AUTORIZACION;
-                    BK_Personal.CARGO = LvrPersonal.CARGO;
-                    BK_Personal.DOMICILIO = LvrPersonal.DOMICILIO;
-                    BK_Personal.NUMERO = LvrPersonal.NUMERO;
-                    BK_Personal.PISO = LvrPersonal.PISO;
-                    BK_Personal.DPTO = LvrPersonal.DPTO;
-                    BK_Personal.CODIGOPOSTAL = LvrPersonal.CODIGOPOSTAL;
-                    BK_Personal.CIUDAD = LvrPersonal.CIUDAD;
-                    BK_Personal.COMUNA = LvrPersonal.COMUNA;
-                    BK_Personal.REGION = LvrPersonal.REGION;
-                    BK_Personal.PAIS = LvrPersonal.PAIS;
-                    BK_Personal.OBSERVACIONES = LvrPersonal.OBSERVACIONES;
-                    BK_Personal.FOTO = LvrPersonal.FOTO;
+                    AcceptChangesDuringFill = false
+                };
+                BM_DataSet = new DataSet();
+                BM_Adaptador.Fill(BM_DataSet, "PERSONAL");
+
+                foreach (DataRow LvrPersonal in BM_DataSet.Tables["PERSONAL"].Rows)
+                {
+                    BK_Personal = new JsonBikeMessengerPersonal();
+                    BK_Personal.PENTALPHA = LvrPersonal["PENTALPHA"].ToString();
+                    BK_Personal.RUTID = LvrPersonal["RUTID"].ToString();
+                    BK_Personal.DIGVER = LvrPersonal["DIGVER"].ToString();
+                    BK_Personal.APELLIDOS = LvrPersonal["APELLIDOS"].ToString();
+                    BK_Personal.NOMBRES = LvrPersonal["NOMBRES"].ToString();
+                    BK_Personal.TELEFONO1 = LvrPersonal["TELEFONO1"].ToString();
+                    BK_Personal.TELEFONO2 = LvrPersonal["TELEFONO2"].ToString();
+                    BK_Personal.EMAIL = LvrPersonal["EMAIL"].ToString();
+                    BK_Personal.AUTORIZACION = LvrPersonal["AUTORIZACION"].ToString();
+                    BK_Personal.CARGO = LvrPersonal["CARGO"].ToString();
+                    BK_Personal.DOMICILIO = LvrPersonal["DOMICILIO"].ToString();
+                    BK_Personal.NUMERO = LvrPersonal["NUMERO"].ToString();
+                    BK_Personal.PISO = LvrPersonal["PISO"].ToString();
+                    BK_Personal.DPTO = LvrPersonal["DPTO"].ToString();
+                    BK_Personal.CODIGOPOSTAL = LvrPersonal["CODIGOPOSTAL"].ToString();
+                    BK_Personal.CIUDAD = LvrPersonal["CIUDAD"].ToString();
+                    BK_Personal.COMUNA = LvrPersonal["COMUNA"].ToString();
+                    BK_Personal.REGION = LvrPersonal["REGION"].ToString();
+                    BK_Personal.PAIS = LvrPersonal["PAIS"].ToString();
+                    BK_Personal.OBSERVACIONES = LvrPersonal["OBSERVACIONES"].ToString();
+                    BK_Personal.FOTO = LvrPersonal["FOTO"].ToString();
                     BK_PersonalLista.Add(BK_Personal);
                 }
+            }
+            catch (Exception Ex)
+            {
+                Console.WriteLine(Ex.InnerException.Message);
+                return null;
             }
             return BK_PersonalLista;
         }
 
         public List<JsonBikeMessengerPersonal> BuscarPersonal(string pPENTALPHA, string pRUTID, string pDIGVER)
         {
-            BK_PersonalLista = null;
-            using (var db = new BK_SQliteContext())
+            BK_Personal = new JsonBikeMessengerPersonal();
+            BK_PersonalLista = new List<JsonBikeMessengerPersonal>();
+            DataSet BM_DataSet;
+            SQLiteDataAdapter BM_Adaptador;
+            SQLiteCommand BM_Comando;
+
+            try
             {
-                BK_Personal = null;
-                PERSONAL LvrPersonal;
-                LvrPersonal = db.PERSONALs.Find(pPENTALPHA, pRUTID, pDIGVER);
-                BK_Personal.PENTALPHA = LvrPersonal.PENTALPHA;
-                BK_Personal.RUTID = LvrPersonal.RUTID;
-                BK_Personal.DIGVER = LvrPersonal.DIGVER;
-                BK_Personal.APELLIDOS = LvrPersonal.APELLIDOS;
-                BK_Personal.NOMBRES = LvrPersonal.NOMBRES;
-                BK_Personal.TELEFONO1 = LvrPersonal.TELEFONO1;
-                BK_Personal.TELEFONO2 = LvrPersonal.TELEFONO2;
-                BK_Personal.EMAIL = LvrPersonal.EMAIL;
-                BK_Personal.AUTORIZACION = LvrPersonal.AUTORIZACION;
-                BK_Personal.CARGO = LvrPersonal.CARGO;
-                BK_Personal.DOMICILIO = LvrPersonal.DOMICILIO;
-                BK_Personal.NUMERO = LvrPersonal.NUMERO;
-                BK_Personal.PISO = LvrPersonal.PISO;
-                BK_Personal.DPTO = LvrPersonal.DPTO;
-                BK_Personal.CODIGOPOSTAL = LvrPersonal.CODIGOPOSTAL;
-                BK_Personal.CIUDAD = LvrPersonal.CIUDAD;
-                BK_Personal.COMUNA = LvrPersonal.COMUNA;
-                BK_Personal.REGION = LvrPersonal.REGION;
-                BK_Personal.PAIS = LvrPersonal.PAIS;
-                BK_Personal.OBSERVACIONES = LvrPersonal.OBSERVACIONES;
-                BK_Personal.FOTO = LvrPersonal.FOTO;
-                BK_PersonalLista.Add(BK_Personal);
+                BM_Comando = BM_Conexion.CreateCommand();
+                BM_Comando.CommandText = string.Format("SELECT * FROM PERSONAL WHERE PENTALPHA = '" + pPENTALPHA + "'  AND RUTID = '" + pRUTID + "' AND DIGVER = '" + pDIGVER + "'");
+
+                BM_Adaptador = new SQLiteDataAdapter(BM_Comando)
+                {
+                    AcceptChangesDuringFill = false
+                };
+                BM_DataSet = new DataSet();
+                BM_Adaptador.Fill(BM_DataSet, "PERSONAL");
+
+                foreach (DataRow LvrPersonal in BM_DataSet.Tables["PERSONAL"].Rows)
+                {
+                    BK_Personal = new JsonBikeMessengerPersonal();
+                    BK_Personal.PENTALPHA = LvrPersonal["PENTALPHA"].ToString();
+                    BK_Personal.RUTID = LvrPersonal["RUTID"].ToString();
+                    BK_Personal.DIGVER = LvrPersonal["DIGVER"].ToString();
+                    BK_Personal.APELLIDOS = LvrPersonal["APELLIDOS"].ToString();
+                    BK_Personal.NOMBRES = LvrPersonal["NOMBRES"].ToString();
+                    BK_Personal.TELEFONO1 = LvrPersonal["TELEFONO1"].ToString();
+                    BK_Personal.TELEFONO2 = LvrPersonal["TELEFONO2"].ToString();
+                    BK_Personal.EMAIL = LvrPersonal["EMAIL"].ToString();
+                    BK_Personal.AUTORIZACION = LvrPersonal["AUTORIZACION"].ToString();
+                    BK_Personal.CARGO = LvrPersonal["CARGO"].ToString();
+                    BK_Personal.DOMICILIO = LvrPersonal["DOMICILIO"].ToString();
+                    BK_Personal.NUMERO = LvrPersonal["NUMERO"].ToString();
+                    BK_Personal.PISO = LvrPersonal["PISO"].ToString();
+                    BK_Personal.DPTO = LvrPersonal["DPTO"].ToString();
+                    BK_Personal.CODIGOPOSTAL = LvrPersonal["CODIGOPOSTAL"].ToString();
+                    BK_Personal.CIUDAD = LvrPersonal["CIUDAD"].ToString();
+                    BK_Personal.COMUNA = LvrPersonal["COMUNA"].ToString();
+                    BK_Personal.REGION = LvrPersonal["REGION"].ToString();
+                    BK_Personal.PAIS = LvrPersonal["PAIS"].ToString();
+                    BK_Personal.OBSERVACIONES = LvrPersonal["OBSERVACIONES"].ToString();
+                    BK_Personal.FOTO = LvrPersonal["FOTO"].ToString();
+                    BK_PersonalLista.Add(BK_Personal);
+                }
+            }
+            catch (Exception Ex)
+            {
+                Console.WriteLine(Ex.InnerException.Message);
+                return null;
             }
             return BK_PersonalLista;
         }
@@ -88,194 +153,310 @@ namespace BikeMessenger
 
         public bool AgregarPersonal(JsonBikeMessengerPersonal aBK_Personal)
         {
+            BK_Personal = new JsonBikeMessengerPersonal();
+            BK_PersonalLista = new List<JsonBikeMessengerPersonal>();
+
+            DataSet BM_DataSet;
+            SQLiteDataAdapter BM_Adaptador;
+            SQLiteCommand BM_Comando;
+
             try
             {
-                using (var db = new BK_SQliteContext())
+                BM_Comando = BM_Conexion.CreateCommand();
+                BM_Comando.CommandText = string.Format("SELECT * FROM CLIENTES");
+
+                BM_Adaptador = new SQLiteDataAdapter(BM_Comando)
                 {
-                    var LvrPersonal = new PERSONAL()
-                    {
-                        PENTALPHA = aBK_Personal.PENTALPHA,
-                        RUTID = aBK_Personal.RUTID,
-                        DIGVER = aBK_Personal.DIGVER,
-                        APELLIDOS = aBK_Personal.APELLIDOS,
-                        NOMBRES = aBK_Personal.NOMBRES,
-                        TELEFONO1 = aBK_Personal.TELEFONO1,
-                        TELEFONO2 = aBK_Personal.TELEFONO2,
-                        EMAIL = aBK_Personal.EMAIL,
-                        AUTORIZACION = aBK_Personal.AUTORIZACION,
-                        CARGO = aBK_Personal.CARGO,
-                        DOMICILIO = aBK_Personal.DOMICILIO,
-                        NUMERO = aBK_Personal.NUMERO,
-                        PISO = aBK_Personal.PISO,
-                        DPTO = aBK_Personal.DPTO,
-                        CODIGOPOSTAL = aBK_Personal.CODIGOPOSTAL,
-                        CIUDAD = aBK_Personal.CIUDAD,
-                        COMUNA = aBK_Personal.COMUNA,
-                        REGION = aBK_Personal.REGION,
-                        PAIS = aBK_Personal.PAIS,
-                        OBSERVACIONES = aBK_Personal.OBSERVACIONES,
-                        FOTO = aBK_Personal.FOTO
-                    };
-                    db.Add(LvrPersonal);
-                    db.SaveChanges();
+                    AcceptChangesDuringFill = false
                 };
-                return true;
+
+                BM_DataSet = new DataSet();
+                BM_Adaptador.Fill(BM_DataSet, "PERSONAL");
+
+                DataRow LvrPersonal = BM_DataSet.Tables["PERSONAL"].NewRow();
+
+                LvrPersonal["PENTALPHA"] = aBK_Personal.PENTALPHA;
+                LvrPersonal["RUTID"] = aBK_Personal.RUTID;
+                LvrPersonal["DIGVER"] = aBK_Personal.DIGVER;
+                LvrPersonal["APELLIDOS"] = aBK_Personal.APELLIDOS;
+                LvrPersonal["NOMBRES"] = aBK_Personal.NOMBRES;
+                LvrPersonal["TELEFONO1"] = aBK_Personal.TELEFONO1;
+                LvrPersonal["TELEFONO2"] = aBK_Personal.TELEFONO2;
+                LvrPersonal["EMAIL"] = aBK_Personal.EMAIL;
+                LvrPersonal["AUTORIZACION"] = aBK_Personal.AUTORIZACION;
+                LvrPersonal["CARGO"] = aBK_Personal.CARGO;
+                LvrPersonal["DOMICILIO"] = aBK_Personal.DOMICILIO;
+                LvrPersonal["NUMERO"] = aBK_Personal.NUMERO;
+                LvrPersonal["PISO"] = aBK_Personal.PISO;
+                LvrPersonal["DPTO"] = aBK_Personal.DPTO;
+                LvrPersonal["CODIGOPOSTAL"] = aBK_Personal.CODIGOPOSTAL;
+                LvrPersonal["CIUDAD"] = aBK_Personal.CIUDAD;
+                LvrPersonal["COMUNA"] = aBK_Personal.COMUNA;
+                LvrPersonal["REGION"] = aBK_Personal.REGION;
+                LvrPersonal["PAIS"] = aBK_Personal.PAIS;
+                LvrPersonal["OBSERVACIONES"] = aBK_Personal.OBSERVACIONES;
+                LvrPersonal["FOTO"] = aBK_Personal.FOTO;
+                BM_DataSet.Tables["PERSONAL"].Rows.Add(LvrPersonal);
+                BM_Adaptador.Update(BM_DataSet, "PERSONAL");
             }
-            catch (DbUpdateException Ex)
+            catch (Exception Ex)
             {
                 Console.WriteLine(Ex.InnerException.Message);
                 return false;
             }
+            return true;
         }
 
 
         public bool ModificarPersonal(JsonBikeMessengerPersonal mBK_Personal)
         {
+            BK_Personal = new JsonBikeMessengerPersonal();
+            BK_PersonalLista = new List<JsonBikeMessengerPersonal>();
+            DataSet BM_DataSet;
+            SQLiteDataAdapter BM_Adaptador;
+            SQLiteCommand BM_Comando;
+
             try
             {
-                using (var db = new BK_SQliteContext())
+                BM_Comando = BM_Conexion.CreateCommand();
+                BM_Comando.CommandText = string.Format("SELECT * FROM PERSONAL WHERE PENTALPHA = '" + mBK_Personal.PENTALPHA + "' AND RUTID = '" + mBK_Personal.RUTID + "' AND DIGVER = '" + mBK_Personal.DIGVER + "'");
+
+                BM_Adaptador = new SQLiteDataAdapter(BM_Comando)
                 {
-                    var LvrPersonal = new PERSONAL()
-                    {
-                        PENTALPHA = mBK_Personal.PENTALPHA,
-                        RUTID = mBK_Personal.RUTID,
-                        DIGVER = mBK_Personal.DIGVER,
-                        APELLIDOS = mBK_Personal.APELLIDOS,
-                        NOMBRES = mBK_Personal.NOMBRES,
-                        TELEFONO1 = mBK_Personal.TELEFONO1,
-                        TELEFONO2 = mBK_Personal.TELEFONO2,
-                        EMAIL = mBK_Personal.EMAIL,
-                        AUTORIZACION = mBK_Personal.AUTORIZACION,
-                        CARGO = mBK_Personal.CARGO,
-                        DOMICILIO = mBK_Personal.DOMICILIO,
-                        NUMERO = mBK_Personal.NUMERO,
-                        PISO = mBK_Personal.PISO,
-                        DPTO = mBK_Personal.DPTO,
-                        CODIGOPOSTAL = mBK_Personal.CODIGOPOSTAL,
-                        CIUDAD = mBK_Personal.CIUDAD,
-                        COMUNA = mBK_Personal.COMUNA,
-                        REGION = mBK_Personal.REGION,
-                        PAIS = mBK_Personal.PAIS,
-                        OBSERVACIONES = mBK_Personal.OBSERVACIONES,
-                        FOTO = mBK_Personal.FOTO
-                    };
-                    db.Update(LvrPersonal);
-                    db.SaveChanges();
+                    AcceptChangesDuringFill = false
                 };
-                return true;
+
+                BM_DataSet = new DataSet();
+                BM_Adaptador.Fill(BM_DataSet, "PERSONAL");
+
+                DataRow LvrPersonal = BM_DataSet.Tables["PERSONAL"].NewRow();
+                LvrPersonal["PENTALPHA"] = mBK_Personal.PENTALPHA;
+                LvrPersonal["RUTID"] = mBK_Personal.RUTID;
+                LvrPersonal["DIGVER"] = mBK_Personal.DIGVER;
+                LvrPersonal["APELLIDOS"] = mBK_Personal.APELLIDOS;
+                LvrPersonal["NOMBRES"] = mBK_Personal.NOMBRES;
+                LvrPersonal["TELEFONO1"] = mBK_Personal.TELEFONO1;
+                LvrPersonal["TELEFONO2"] = mBK_Personal.TELEFONO2;
+                LvrPersonal["EMAIL"] = mBK_Personal.EMAIL;
+                LvrPersonal["AUTORIZACION"] = mBK_Personal.AUTORIZACION;
+                LvrPersonal["CARGO"] = mBK_Personal.CARGO;
+                LvrPersonal["DOMICILIO"] = mBK_Personal.DOMICILIO;
+                LvrPersonal["NUMERO"] = mBK_Personal.NUMERO;
+                LvrPersonal["PISO"] = mBK_Personal.PISO;
+                LvrPersonal["DPTO"] = mBK_Personal.DPTO;
+                LvrPersonal["CODIGOPOSTAL"] = mBK_Personal.CODIGOPOSTAL;
+                LvrPersonal["CIUDAD"] = mBK_Personal.CIUDAD;
+                LvrPersonal["COMUNA"] = mBK_Personal.COMUNA;
+                LvrPersonal["REGION"] = mBK_Personal.REGION;
+                LvrPersonal["PAIS"] = mBK_Personal.PAIS;
+                LvrPersonal["OBSERVACIONES"] = mBK_Personal.OBSERVACIONES;
+                LvrPersonal["FOTO"] = mBK_Personal.FOTO;
+                BM_DataSet.Tables["PERSONAL"].Rows.Add(LvrPersonal);
+                BM_Adaptador.Update(BM_DataSet, "PERSONAL");
             }
-            catch (DbUpdateException Ex)
+            catch (Exception Ex)
             {
                 Console.WriteLine(Ex.InnerException.Message);
                 return false;
             }
+            return true;
         }
 
         public bool BorrarPersonal(string pPENTALPHA, string pRUTID, string pDIGVER)
         {
+            BK_Personal = new JsonBikeMessengerPersonal();
+            BK_PersonalLista = new List<JsonBikeMessengerPersonal>();
+            SQLiteCommand BM_Comando;
+
             try
             {
-                using (var db = new BK_SQliteContext())
-                {
-                    PERSONAL LvrPersonal;
-                    LvrPersonal = db.PERSONALs.Find(pPENTALPHA, pRUTID, pDIGVER);
-                    db.Remove(LvrPersonal);
-                    db.SaveChanges();
-                }
-                return true;
+                BM_Comando = BM_Conexion.CreateCommand();
+                BM_Comando.CommandText = string.Format("DELETE FROM PERSONAL WHERE PENTALPHA = '" + pPENTALPHA + "' AND RUTID = '" + pRUTID + "' AND DIGVER = '" + pDIGVER + "'");
             }
-            catch (DbUpdateException Ex)
+            catch (Exception Ex)
             {
                 Console.WriteLine(Ex.InnerException.Message);
                 return false;
             }
+            return true;
         }
 
-        public List<JsonBikeMessengerPersonal> BuscarGridPersonal()
+
+        public List<ClasePersonalGrid> BuscarGridPersonal()
         {
-            BK_PersonalLista = null;
-            using (BK_SQliteContext db = new BK_SQliteContext())
+            List<ClasePersonalGrid> GridLocalPersonalLista = new List<ClasePersonalGrid>();
+
+            DataSet BM_DataSet;
+            SQLiteDataAdapter BM_Adaptador;
+            SQLiteCommand BM_Comando;
+
+            try
             {
-                foreach (var LvrPersonal in db.PERSONALs)
+                BM_Comando = BM_Conexion.CreateCommand();
+                BM_Comando.CommandText = string.Format("SELECT * FROM CLIENTES");
+
+                BM_Adaptador = new SQLiteDataAdapter(BM_Comando)
                 {
-                    BK_Personal = null;
-                    BK_Personal.RUTID = LvrPersonal.RUTID;
-                    BK_Personal.DIGVER = LvrPersonal.DIGVER;
-                    BK_Personal.APELLIDOS = LvrPersonal.APELLIDOS;
-                    BK_Personal.NOMBRES = LvrPersonal.NOMBRES;
-                    BK_PersonalLista.Add(BK_Personal);
+                    AcceptChangesDuringFill = false
+                };
+                BM_DataSet = new DataSet();
+                BM_Adaptador.Fill(BM_DataSet, "PERSONAL");
+
+                foreach (DataRow LvrPersonal in BM_DataSet.Tables["PERSONAL"].Rows)
+                {
+                    ClasePersonalGrid GridLocalPersonal = new ClasePersonalGrid();
+                    GridLocalPersonal.RUTID = LvrPersonal["RUTID"].ToString();
+                    GridLocalPersonal.DIGVER = LvrPersonal["DIGVER"].ToString();
+                    GridLocalPersonal.APELLIDOS = LvrPersonal["APELLIDOS"].ToString();
+                    GridLocalPersonal.NOMBRES = LvrPersonal["NOMBRES"].ToString();
+                    GridLocalPersonalLista.Add(GridLocalPersonal);
                 }
             }
-            return BK_PersonalLista;
+            catch (Exception Ex)
+            {
+                Console.WriteLine(Ex.InnerException.Message);
+                return null;
+            }
+            return GridLocalPersonalLista;
         }
 
         public List<string> GetPais()
         {
-            BK_Pais = null;
+            List<string> BK_PaisLista = new List<string>();
+            DataSet BM_DataSetPais;
+            SQLiteDataAdapter BM_AdaptadorPais;
+            SQLiteCommand BM_ComandoPais;
+            string BK_Pais;
 
-            using (var db = new BK_SQliteContext())
+            try
             {
-                foreach (var LvrPais in db.PAIs)
+                BM_ComandoPais = BM_Conexion.CreateCommand();
+                BM_ComandoPais.CommandText = string.Format("SELECT * FROM PAIS ORDER BY NOMBEW");
+
+                BM_AdaptadorPais = new SQLiteDataAdapter(BM_ComandoPais);
+
+                BM_DataSetPais = new DataSet();
+                BM_AdaptadorPais.Fill(BM_DataSetPais, "PAIS");
+
+                foreach (DataRow LvrPais in BM_DataSetPais.Tables["PAIS"].Rows)
                 {
-                    string Pais = LvrPais.NOMBRE;
-                    BK_Pais.Add(Pais);
+                    BK_Pais = LvrPais["NOMBRE"].ToString();
+                    BK_PaisLista.Add(BK_Pais);
                 }
             }
-            return BK_Pais;
+            catch (Exception Ex)
+            {
+                Console.WriteLine(Ex.InnerException.Message);
+                return null;
+            }
+            return BK_PaisLista;
         }
 
         public List<string> GetRegion()
         {
-            BK_Region = null;
+            List<string> BK_RegionLista = new List<string>();
+            DataSet BM_DataSetRegion;
+            SQLiteDataAdapter BM_AdaptadorRegion;
+            SQLiteCommand BM_ComandoRegion;
+            string BK_Region;
 
-            using (var db = new BK_SQliteContext())
+            try
             {
-                foreach (var LvrRegion in db.ESTADOREGIONs)
+                BM_ComandoRegion = BM_Conexion.CreateCommand();
+                BM_ComandoRegion.CommandText = string.Format("SELECT * FROM ESTADOREGION ORDER BY NOMBRE");
+
+                BM_AdaptadorRegion = new SQLiteDataAdapter(BM_ComandoRegion);
+
+                BM_DataSetRegion = new DataSet();
+                BM_AdaptadorRegion.Fill(BM_DataSetRegion, "ESTADOREGION");
+
+                foreach (DataRow LvrRegion in BM_DataSetRegion.Tables["ESTADOREGION"].Rows)
                 {
-                    string Region = LvrRegion.NOMBRE;
-                    BK_Region.Add(Region);
+                    BK_Region = LvrRegion["NOMBRE"].ToString();
+                    BK_RegionLista.Add(BK_Region);
                 }
             }
-            return BK_Region;
+            catch (Exception Ex)
+            {
+                Console.WriteLine(Ex.InnerException.Message);
+                return null;
+            }
+            return BK_RegionLista;
         }
 
         public List<string> GetComuna()
         {
-            BK_Comuna = null;
+            List<string> BK_ComunaLista = new List<string>();
+            DataSet BM_DataSetComuna;
+            SQLiteDataAdapter BM_AdaptadorComuna;
+            SQLiteCommand BM_ComandoComuna;
+            string BK_Comuna;
 
-            using (var db = new BK_SQliteContext())
+            try
             {
-                foreach (var LvrComuna in db.COMUNAs)
+                BM_ComandoComuna = BM_Conexion.CreateCommand();
+                BM_ComandoComuna.CommandText = string.Format("SELECT * FROM COMUNA ORDER BY NOMBRE");
+
+                BM_AdaptadorComuna = new SQLiteDataAdapter(BM_ComandoComuna);
+
+                BM_DataSetComuna = new DataSet();
+                BM_AdaptadorComuna.Fill(BM_DataSetComuna, "COMUNA");
+
+                foreach (DataRow LvrComuna in BM_DataSetComuna.Tables["COMUNA"].Rows)
                 {
-                    string Comuna = LvrComuna.NOMBRE;
-                    BK_Comuna.Add(Comuna);
+                    BK_Comuna = LvrComuna["NOMBRE"].ToString();
+                    BK_ComunaLista.Add(BK_Comuna);
                 }
             }
-            return BK_Comuna;
+            catch (Exception Ex)
+            {
+                Console.WriteLine(Ex.InnerException.Message);
+                return null;
+            }
+            return BK_ComunaLista;
         }
 
         public List<string> GetCiudad()
         {
-            BK_Ciudad = null;
+            List<string> BK_RegionLista = new List<string>();
+            DataSet BM_DataSetRegion;
+            SQLiteDataAdapter BM_AdaptadorRegion;
+            SQLiteCommand BM_ComandoRegion;
+            string BK_Region;
 
-            using (var db = new BK_SQliteContext())
+            try
             {
-                foreach (var LvrCiudad in db.CIUDADs)
+                BM_ComandoRegion = BM_Conexion.CreateCommand();
+                BM_ComandoRegion.CommandText = string.Format("SELECT * FROM ESTADOREGION ORDER BY NOMBRE");
+
+                BM_AdaptadorRegion = new SQLiteDataAdapter(BM_ComandoRegion);
+
+                BM_DataSetRegion = new DataSet();
+                BM_AdaptadorRegion.Fill(BM_DataSetRegion, "ESTADOREGION");
+
+                foreach (DataRow LvrPais in BM_DataSetRegion.Tables["ESTADOREGION"].Rows)
                 {
-                    string Ciudad = LvrCiudad.NOMBRE;
-                    BK_Ciudad.Add(Ciudad);
+                    BK_Region = LvrPais["NOMBRE"].ToString();
+                    BK_RegionLista.Add(BK_Region);
                 }
             }
-            return BK_Ciudad;
+            catch (Exception Ex)
+            {
+                Console.WriteLine(Ex.InnerException.Message);
+                return null;
+            }
+            return BK_RegionLista;
         }
-
 
         public string Bm_Personal_Listado()
         {
-            // Pendientes
+            BK_Personal = new JsonBikeMessengerPersonal();
+            BK_PersonalLista = new List<JsonBikeMessengerPersonal>();
+            DataSet BM_DataSet;
+            SQLiteDataAdapter BM_Adaptador;
+            SQLiteCommand BM_Comando;
 
             LvrTablaHtml DocumentoHtml = new LvrTablaHtml();
-
             DocumentoHtml.CrearTexto("ENVIOS");
             DocumentoHtml.InicioDocumento();
             DocumentoHtml.AgregarTituloTabla("Listado de Personal");
@@ -291,27 +472,49 @@ namespace BikeMessenger
             DocumentoHtml.AgregarEncabezado("CIUDAD");
             DocumentoHtml.CerrarEncabezado();
 
-            BK_PersonalLista = null;
-            using (var db = new BK_SQliteContext())
+            try
             {
-                foreach (var LvrPersonal in db.PERSONALs)
+                BM_Comando = BM_Conexion.CreateCommand();
+                BM_Comando.CommandText = string.Format("SELECT * FROM PERSONAL");
+
+                BM_Adaptador = new SQLiteDataAdapter(BM_Comando)
+                {
+                    AcceptChangesDuringFill = false
+                };
+                BM_DataSet = new DataSet();
+                BM_Adaptador.Fill(BM_DataSet, "PERSONAL");
+
+                foreach (DataRow LvrPersonal in BM_DataSet.Tables["PERSONAL"].Rows)
                 {
                     DocumentoHtml.AbrirFila();
-                    DocumentoHtml.AgregarCampo(LvrPersonal.RUTID + "-" + LvrPersonal.DIGVER, false);
-                    DocumentoHtml.AgregarCampo(LvrPersonal.APELLIDOS, false);
-                    DocumentoHtml.AgregarCampo(LvrPersonal.NOMBRES, false);
-                    DocumentoHtml.AgregarCampo(LvrPersonal.TELEFONO1, false);
-                    DocumentoHtml.AgregarCampo(LvrPersonal.TELEFONO2, false);
-                    DocumentoHtml.AgregarCampo(LvrPersonal.EMAIL, false);
-                    DocumentoHtml.AgregarCampo(LvrPersonal.AUTORIZACION, false);
-                    DocumentoHtml.AgregarCampo(LvrPersonal.CARGO, false);
-                    DocumentoHtml.AgregarCampo(LvrPersonal.CIUDAD, false);
+                    DocumentoHtml.AgregarCampo(LvrPersonal["RUTID"].ToString() + "-" + LvrPersonal["DIGVER"].ToString(), false);
+                    DocumentoHtml.AgregarCampo(LvrPersonal["APELLIDOS"].ToString(), false);
+                    DocumentoHtml.AgregarCampo(LvrPersonal["NOMBRES"].ToString(), false);
+                    DocumentoHtml.AgregarCampo(LvrPersonal["TELEFONO1"].ToString(), false);
+                    DocumentoHtml.AgregarCampo(LvrPersonal["TELEFONO2"].ToString(), false);
+                    DocumentoHtml.AgregarCampo(LvrPersonal["EMAIL"].ToString(), false);
+                    DocumentoHtml.AgregarCampo(LvrPersonal["AUTORIZACION"].ToString(), false);
+                    DocumentoHtml.AgregarCampo(LvrPersonal["CARGO"].ToString(), false);
+                    DocumentoHtml.AgregarCampo(LvrPersonal["CIUDAD"].ToString(), false);
                     DocumentoHtml.CerrarFila();
                 }
             }
-
+            catch (Exception Ex)
+            {
+                Console.WriteLine(Ex.InnerException.Message);
+                return null;
+            }
             DocumentoHtml.FinDocumento();
             return DocumentoHtml.BufferHtml;
         }
     }
+
+    public class ClasePersonalGrid
+    {
+        public string RUTID { get; set; }
+        public string DIGVER { get; set; }
+        public string APELLIDOS { get; set; }
+        public string NOMBRES { get; set; }
+    }
 }
+
