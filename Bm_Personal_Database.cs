@@ -19,16 +19,6 @@ namespace BikeMessenger
 
         private string BM_CadenaConexion;
 
-
-        private static List<string> BK_Pais;
-        private static List<string> BK_Region;
-        private static List<string> BK_Comuna;
-        private static List<string> BK_Ciudad;
-
-        // Cambio de Operador
-        // Busqueda por Muchos
-
-
         public Bm_Personal_Database()
         {
             BM_TrasferVar = new TransferVar();
@@ -37,7 +27,6 @@ namespace BikeMessenger
             BM_Conexion = new SQLiteConnection("Data Source=" + BM_CadenaConexion + "\\BikeMessenger.db");
             BM_Conexion.Open();
         }
-
 
         // Busqueda por Muchos
         public List<JsonBikeMessengerPersonal> BuscarPersonal()
@@ -57,6 +46,7 @@ namespace BikeMessenger
                 {
                     AcceptChangesDuringFill = false
                 };
+
                 BM_DataSet = new DataSet();
                 BM_Adaptador.Fill(BM_DataSet, "PERSONAL");
 
@@ -159,6 +149,7 @@ namespace BikeMessenger
             DataSet BM_DataSet;
             SQLiteDataAdapter BM_Adaptador;
             SQLiteCommand BM_Comando;
+            SQLiteCommandBuilder BM_Builder;
 
             try
             {
@@ -167,13 +158,14 @@ namespace BikeMessenger
 
                 BM_Adaptador = new SQLiteDataAdapter(BM_Comando)
                 {
-                    AcceptChangesDuringFill = false
+                    AcceptChangesDuringFill = true
                 };
 
                 BM_DataSet = new DataSet();
                 BM_Adaptador.Fill(BM_DataSet, "PERSONAL");
 
                 DataRow LvrPersonal = BM_DataSet.Tables["PERSONAL"].NewRow();
+                BM_Builder = new SQLiteCommandBuilder(BM_Adaptador);
 
                 LvrPersonal["PENTALPHA"] = aBK_Personal.PENTALPHA;
                 LvrPersonal["RUTID"] = aBK_Personal.RUTID;
@@ -197,7 +189,9 @@ namespace BikeMessenger
                 LvrPersonal["OBSERVACIONES"] = aBK_Personal.OBSERVACIONES;
                 LvrPersonal["FOTO"] = aBK_Personal.FOTO;
                 BM_DataSet.Tables["PERSONAL"].Rows.Add(LvrPersonal);
-                BM_Adaptador.Update(BM_DataSet, "PERSONAL");
+                _ = BM_Builder.GetInsertCommand(true);
+                _ = BM_Adaptador.Update(BM_DataSet, "PERSONAL");
+                _ = BM_Adaptador.InsertCommand;
             }
             catch (Exception Ex)
             {
@@ -215,21 +209,26 @@ namespace BikeMessenger
             DataSet BM_DataSet;
             SQLiteDataAdapter BM_Adaptador;
             SQLiteCommand BM_Comando;
+            SQLiteCommandBuilder BM_Builder;
 
             try
             {
                 BM_Comando = BM_Conexion.CreateCommand();
+                BM_Comando.UpdatedRowSource = UpdateRowSource.FirstReturnedRecord;
                 BM_Comando.CommandText = string.Format("SELECT * FROM PERSONAL WHERE PENTALPHA = '" + mBK_Personal.PENTALPHA + "' AND RUTID = '" + mBK_Personal.RUTID + "' AND DIGVER = '" + mBK_Personal.DIGVER + "'");
 
                 BM_Adaptador = new SQLiteDataAdapter(BM_Comando)
                 {
-                    AcceptChangesDuringFill = false
+                    AcceptChangesDuringFill = true
                 };
 
                 BM_DataSet = new DataSet();
-                BM_Adaptador.Fill(BM_DataSet, "PERSONAL");
+                _ = BM_Adaptador.Fill(BM_DataSet, "PERSONAL");
 
-                DataRow LvrPersonal = BM_DataSet.Tables["PERSONAL"].NewRow();
+                DataRow LvrPersonal = BM_DataSet.Tables["PERSONAL"].Rows[0];
+
+                BM_Builder = new SQLiteCommandBuilder(BM_Adaptador);
+
                 LvrPersonal["PENTALPHA"] = mBK_Personal.PENTALPHA;
                 LvrPersonal["RUTID"] = mBK_Personal.RUTID;
                 LvrPersonal["DIGVER"] = mBK_Personal.DIGVER;
@@ -251,8 +250,9 @@ namespace BikeMessenger
                 LvrPersonal["PAIS"] = mBK_Personal.PAIS;
                 LvrPersonal["OBSERVACIONES"] = mBK_Personal.OBSERVACIONES;
                 LvrPersonal["FOTO"] = mBK_Personal.FOTO;
-                BM_DataSet.Tables["PERSONAL"].Rows.Add(LvrPersonal);
-                BM_Adaptador.Update(BM_DataSet, "PERSONAL");
+                _ = BM_Builder.GetUpdateCommand(true);
+                _ = BM_Adaptador.Update(BM_DataSet, "PERSONAL");
+                _ = BM_Adaptador.UpdateCommand;
             }
             catch (Exception Ex)
             {
@@ -272,6 +272,7 @@ namespace BikeMessenger
             {
                 BM_Comando = BM_Conexion.CreateCommand();
                 BM_Comando.CommandText = string.Format("DELETE FROM PERSONAL WHERE PENTALPHA = '" + pPENTALPHA + "' AND RUTID = '" + pRUTID + "' AND DIGVER = '" + pDIGVER + "'");
+                _ = BM_Comando.ExecuteNonQuery();
             }
             catch (Exception Ex)
             {
@@ -293,22 +294,24 @@ namespace BikeMessenger
             try
             {
                 BM_Comando = BM_Conexion.CreateCommand();
-                BM_Comando.CommandText = string.Format("SELECT * FROM CLIENTES");
+                BM_Comando.CommandText = string.Format("SELECT * FROM PERSONAL");
 
                 BM_Adaptador = new SQLiteDataAdapter(BM_Comando)
                 {
                     AcceptChangesDuringFill = false
                 };
                 BM_DataSet = new DataSet();
-                BM_Adaptador.Fill(BM_DataSet, "PERSONAL");
+                _ = BM_Adaptador.Fill(BM_DataSet, "PERSONAL");
 
                 foreach (DataRow LvrPersonal in BM_DataSet.Tables["PERSONAL"].Rows)
                 {
-                    ClasePersonalGrid GridLocalPersonal = new ClasePersonalGrid();
-                    GridLocalPersonal.RUTID = LvrPersonal["RUTID"].ToString();
-                    GridLocalPersonal.DIGVER = LvrPersonal["DIGVER"].ToString();
-                    GridLocalPersonal.APELLIDOS = LvrPersonal["APELLIDOS"].ToString();
-                    GridLocalPersonal.NOMBRES = LvrPersonal["NOMBRES"].ToString();
+                    ClasePersonalGrid GridLocalPersonal = new ClasePersonalGrid
+                    {
+                        RUTID = LvrPersonal["RUTID"].ToString(),
+                        DIGVER = LvrPersonal["DIGVER"].ToString(),
+                        APELLIDOS = LvrPersonal["APELLIDOS"].ToString(),
+                        NOMBRES = LvrPersonal["NOMBRES"].ToString()
+                    };
                     GridLocalPersonalLista.Add(GridLocalPersonal);
                 }
             }
@@ -336,7 +339,7 @@ namespace BikeMessenger
                 BM_AdaptadorPais = new SQLiteDataAdapter(BM_ComandoPais);
 
                 BM_DataSetPais = new DataSet();
-                BM_AdaptadorPais.Fill(BM_DataSetPais, "PAIS");
+                _ = BM_AdaptadorPais.Fill(BM_DataSetPais, "PAIS");
 
                 foreach (DataRow LvrPais in BM_DataSetPais.Tables["PAIS"].Rows)
                 {
@@ -368,7 +371,7 @@ namespace BikeMessenger
                 BM_AdaptadorRegion = new SQLiteDataAdapter(BM_ComandoRegion);
 
                 BM_DataSetRegion = new DataSet();
-                BM_AdaptadorRegion.Fill(BM_DataSetRegion, "ESTADOREGION");
+                _ = BM_AdaptadorRegion.Fill(BM_DataSetRegion, "ESTADOREGION");
 
                 foreach (DataRow LvrRegion in BM_DataSetRegion.Tables["ESTADOREGION"].Rows)
                 {
@@ -400,7 +403,7 @@ namespace BikeMessenger
                 BM_AdaptadorComuna = new SQLiteDataAdapter(BM_ComandoComuna);
 
                 BM_DataSetComuna = new DataSet();
-                BM_AdaptadorComuna.Fill(BM_DataSetComuna, "COMUNA");
+                _ = BM_AdaptadorComuna.Fill(BM_DataSetComuna, "COMUNA");
 
                 foreach (DataRow LvrComuna in BM_DataSetComuna.Tables["COMUNA"].Rows)
                 {
@@ -432,7 +435,7 @@ namespace BikeMessenger
                 BM_AdaptadorRegion = new SQLiteDataAdapter(BM_ComandoRegion);
 
                 BM_DataSetRegion = new DataSet();
-                BM_AdaptadorRegion.Fill(BM_DataSetRegion, "ESTADOREGION");
+                _ = BM_AdaptadorRegion.Fill(BM_DataSetRegion, "ESTADOREGION");
 
                 foreach (DataRow LvrPais in BM_DataSetRegion.Tables["ESTADOREGION"].Rows)
                 {
@@ -482,7 +485,7 @@ namespace BikeMessenger
                     AcceptChangesDuringFill = false
                 };
                 BM_DataSet = new DataSet();
-                BM_Adaptador.Fill(BM_DataSet, "PERSONAL");
+                _ = BM_Adaptador.Fill(BM_DataSet, "PERSONAL");
 
                 foreach (DataRow LvrPersonal in BM_DataSet.Tables["PERSONAL"].Rows)
                 {

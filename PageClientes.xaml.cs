@@ -557,10 +557,10 @@ namespace BikeMessenger
 
         private void LlenarListaClientes()
         {
-            List<JsonBikeMessengerCliente> GridClienteDb = new List<JsonBikeMessengerCliente>();
+            List<ClaseClientesGrid> GridClienteDb = new List<ClaseClientesGrid>();
             List<GridClientesIndividual> GridClienteLista = new List<GridClientesIndividual>();
 
-            if ((GridClienteDb = BM_Database_Cliente.BuscarGridCliente()) != null)
+            if ((GridClienteDb = BM_Database_Cliente.BuscarGridClientes()) != null)
             {
                 for (int i = 0; i < GridClienteDb.Count; i++)
                 {

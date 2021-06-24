@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Data.SQLite;
 
 namespace BikeMessenger
@@ -13,14 +12,14 @@ namespace BikeMessenger
         // Paso de Parametros Sqlite
         // ***************************************
         private static SQLiteConnection BM_Conexion;
-        private TransferVar BM_TrasferVar;
+        private readonly TransferVar BM_TrasferVar;
 
         private static JsonBikeMessengerEmpresa BK_Empresa;
         private static List<JsonBikeMessengerEmpresa> BK_EmpresaLista;
 
         private string BM_CadenaConexion;
 
-        
+
         public Bm_Empresa_Database()
         {
             try
@@ -56,7 +55,7 @@ namespace BikeMessenger
                     AcceptChangesDuringFill = false
                 };
                 BM_DataSet = new DataSet();
-                BM_Adaptador.Fill(BM_DataSet, "EMPRESA");
+                _ = BM_Adaptador.Fill(BM_DataSet, "EMPRESA");
 
                 foreach (DataRow LvrEmpresa in BM_DataSet.Tables["EMPRESA"].Rows)
                 {
@@ -89,7 +88,7 @@ namespace BikeMessenger
                     BK_EmpresaLista.Add(BK_Empresa);
                 }
             }
-            catch (System.Data.SQLite.SQLiteException Ex)
+            catch (Exception Ex)
             {
                 Console.WriteLine(Ex.InnerException.Message);
                 return null;
@@ -115,7 +114,7 @@ namespace BikeMessenger
                     AcceptChangesDuringFill = false
                 };
                 BM_DataSet = new DataSet();
-                BM_Adaptador.Fill(BM_DataSet, "EMPRESA");
+                _ = BM_Adaptador.Fill(BM_DataSet, "EMPRESA");
 
                 foreach (DataRow LvrEmpresa in BM_DataSet.Tables["EMPRESA"].Rows)
                 {
@@ -148,7 +147,7 @@ namespace BikeMessenger
                     BK_EmpresaLista.Add(BK_Empresa);
                 }
             }
-            catch (System.Data.SQLite.SQLiteException Ex)
+            catch (Exception Ex)
             {
                 Console.WriteLine(Ex.InnerException.Message);
                 return null;
@@ -158,9 +157,6 @@ namespace BikeMessenger
 
         public bool AgregarEmpresa(JsonBikeMessengerEmpresa aBK_Empresa)
         {
-            BK_Empresa = new JsonBikeMessengerEmpresa();
-            BK_EmpresaLista = new List<JsonBikeMessengerEmpresa>();
-            
             DataSet BM_DataSet;
             SQLiteDataAdapter BM_Adaptador;
             SQLiteCommand BM_Comando;
@@ -173,10 +169,10 @@ namespace BikeMessenger
 
                 BM_Adaptador = new SQLiteDataAdapter(BM_Comando)
                 {
-                    AcceptChangesDuringFill = false
+                    AcceptChangesDuringFill = true
                 };
                 BM_DataSet = new DataSet();
-                BM_Adaptador.Fill(BM_DataSet, "EMPRESA");
+                _ = BM_Adaptador.Fill(BM_DataSet, "EMPRESA");
 
                 DataRow LvrEmpresa = BM_DataSet.Tables["EMPRESA"].NewRow();
                 BM_Builder = new SQLiteCommandBuilder(BM_Adaptador);
@@ -208,13 +204,9 @@ namespace BikeMessenger
                 LvrEmpresa["OBSERVACIONES"] = aBK_Empresa.OBSERVACIONES;
                 LvrEmpresa["LOGO"] = aBK_Empresa.LOGO;
                 BM_DataSet.Tables["EMPRESA"].Rows.Add(LvrEmpresa);
-                BM_Builder.GetInsertCommand();
-                BM_Adaptador.Update(BM_DataSet, "EMPRESA");
-            }
-            catch (System.Data.SQLite.SQLiteException Ex)
-            {
-                Console.WriteLine(Ex.InnerException.Message);
-                return false;
+                _ = BM_Builder.GetInsertCommand(true);
+                _ = BM_Adaptador.Update(BM_DataSet, "EMPRESA");
+                _ = BM_Adaptador.InsertCommand;
             }
             catch (Exception Ex)
             {
@@ -226,25 +218,28 @@ namespace BikeMessenger
 
         public bool ModificarEmpresa(JsonBikeMessengerEmpresa mBK_Empresa)
         {
-            BK_Empresa = new JsonBikeMessengerEmpresa();
-            BK_EmpresaLista = new List<JsonBikeMessengerEmpresa>();
             DataSet BM_DataSet;
             SQLiteDataAdapter BM_Adaptador;
             SQLiteCommand BM_Comando;
+            SQLiteCommandBuilder BM_Builder;
 
             try
             {
                 BM_Comando = BM_Conexion.CreateCommand();
+                BM_Comando.UpdatedRowSource = UpdateRowSource.FirstReturnedRecord;
                 BM_Comando.CommandText = string.Format("SELECT * FROM EMPRESA WHERE PENTALPHA = '" + mBK_Empresa.PENTALPHA + "'");
 
                 BM_Adaptador = new SQLiteDataAdapter(BM_Comando)
                 {
-                    AcceptChangesDuringFill = false
+                    AcceptChangesDuringUpdate = true,
                 };
-                BM_DataSet = new DataSet();
-                BM_Adaptador.Fill(BM_DataSet, "EMPRESA");
 
-                DataRow LvrEmpresa = BM_DataSet.Tables["EMPRESA"].NewRow();
+                BM_DataSet = new DataSet();
+                _ = BM_Adaptador.Fill(BM_DataSet, "EMPRESA");
+
+                DataRow LvrEmpresa = BM_DataSet.Tables["EMPRESA"].Rows[0];
+
+                BM_Builder = new SQLiteCommandBuilder(BM_Adaptador);
 
                 LvrEmpresa["PENTALPHA"] = mBK_Empresa.PENTALPHA;
                 LvrEmpresa["RUTID"] = mBK_Empresa.RUTID;
@@ -272,10 +267,11 @@ namespace BikeMessenger
                 LvrEmpresa["TELEFONO3"] = mBK_Empresa.TELEFONO3;
                 LvrEmpresa["OBSERVACIONES"] = mBK_Empresa.OBSERVACIONES;
                 LvrEmpresa["LOGO"] = mBK_Empresa.LOGO;
-                BM_DataSet.Tables["EMPRESA"].Rows.Add(LvrEmpresa);
-                BM_Adaptador.Update(BM_DataSet, "EMPRESA");
+                _ = BM_Builder.GetUpdateCommand(true);
+                _ = BM_Adaptador.Update(BM_DataSet, "EMPRESA");
+                _ = BM_Adaptador.UpdateCommand;
             }
-            catch (System.Data.SQLite.SQLiteException Ex)
+            catch (Exception Ex)
             {
                 Console.WriteLine(Ex.InnerException.Message);
                 return false;
@@ -293,8 +289,9 @@ namespace BikeMessenger
             {
                 BM_Comando = BM_Conexion.CreateCommand();
                 BM_Comando.CommandText = string.Format("DELETE FROM EMPRESA WHERE PENTALPHA = '" + pPENTALPHA + "'");
+                _ = BM_Comando.ExecuteNonQuery();
             }
-            catch (System.Data.SQLite.SQLiteException Ex)
+            catch (Exception Ex)
             {
                 Console.WriteLine(Ex.InnerException.Message);
                 return false;
@@ -308,35 +305,27 @@ namespace BikeMessenger
             DataSet BM_DataSetPais;
             SQLiteDataAdapter BM_AdaptadorPais;
             SQLiteCommand BM_ComandoPais;
-            string BK_Pais = "";
-
             try
             {
                 BM_ComandoPais = BM_Conexion.CreateCommand();
                 BM_ComandoPais.CommandText = string.Format("SELECT * FROM PAIS ORDER BY NOMBRE");
-                
+
                 BM_AdaptadorPais = new SQLiteDataAdapter(BM_ComandoPais);
 
                 BM_DataSetPais = new DataSet();
-                BM_AdaptadorPais.Fill(BM_DataSetPais,"PAIS");
+                _ = BM_AdaptadorPais.Fill(BM_DataSetPais, "PAIS");
 
                 foreach (DataRow LvrPais in BM_DataSetPais.Tables["PAIS"].Rows)
                 {
-                    BK_Pais = LvrPais["NOMBRE"].ToString();
+                    string BK_Pais = LvrPais["NOMBRE"].ToString();
                     BK_PaisLista.Add(BK_Pais);
                 }
             }
-            catch (System.NullReferenceException Ex)
+            catch (Exception Ex)
             {
                 Console.WriteLine(Ex.InnerException.Message);
                 return null;
             }
-            catch (System.Data.SQLite.SQLiteException Ex)
-            {
-                Console.WriteLine(Ex.InnerException.Message);
-                return null;
-            }
-
             return BK_PaisLista;
         }
 
@@ -356,7 +345,7 @@ namespace BikeMessenger
                 BM_AdaptadorRegion = new SQLiteDataAdapter(BM_ComandoRegion);
 
                 BM_DataSetRegion = new DataSet();
-                BM_AdaptadorRegion.Fill(BM_DataSetRegion, "ESTADOREGION");
+                _ = BM_AdaptadorRegion.Fill(BM_DataSetRegion, "ESTADOREGION");
 
                 foreach (DataRow LvrRegion in BM_DataSetRegion.Tables["ESTADOREGION"].Rows)
                 {
@@ -364,16 +353,12 @@ namespace BikeMessenger
                     BK_RegionLista.Add(BK_Region);
                 }
             }
-            catch (System.NullReferenceException Ex)
+            catch (Exception Ex)
             {
                 Console.WriteLine(Ex.InnerException.Message);
                 return null;
             }
-            catch (System.Data.SQLite.SQLiteException Ex)
-            {
-                Console.WriteLine(Ex.InnerException.Message);
-                return null;
-            }
+
             return BK_RegionLista;
         }
 
@@ -393,7 +378,7 @@ namespace BikeMessenger
                 BM_AdaptadorComuna = new SQLiteDataAdapter(BM_ComandoComuna);
 
                 BM_DataSetComuna = new DataSet();
-                BM_AdaptadorComuna.Fill(BM_DataSetComuna, "COMUNA");
+                _ = BM_AdaptadorComuna.Fill(BM_DataSetComuna, "COMUNA");
 
                 foreach (DataRow LvrComuna in BM_DataSetComuna.Tables["COMUNA"].Rows)
                 {
@@ -401,12 +386,7 @@ namespace BikeMessenger
                     BK_ComunaLista.Add(BK_Comuna);
                 }
             }
-            catch (System.NullReferenceException Ex)
-            {
-                Console.WriteLine(Ex.InnerException.Message);
-                return null;
-            }
-            catch (System.Data.SQLite.SQLiteException Ex)
+            catch (Exception Ex)
             {
                 Console.WriteLine(Ex.InnerException.Message);
                 return null;
@@ -430,7 +410,7 @@ namespace BikeMessenger
                 BM_AdaptadorRegion = new SQLiteDataAdapter(BM_ComandoCiudad);
 
                 BM_DataSetCiudad = new DataSet();
-                BM_AdaptadorRegion.Fill(BM_DataSetCiudad, "CIUDAD");
+                _ = BM_AdaptadorRegion.Fill(BM_DataSetCiudad, "CIUDAD");
 
                 foreach (DataRow LvrCiudad in BM_DataSetCiudad.Tables["CIUDAD"].Rows)
                 {
@@ -438,12 +418,8 @@ namespace BikeMessenger
                     BK_CiudadLista.Add(BK_Ciudad);
                 }
             }
-            catch (System.NullReferenceException Ex)
-            {
-                Console.WriteLine(Ex.InnerException.Message);
-                return null;
-            }
-            catch (System.Data.SQLite.SQLiteException Ex)
+
+            catch (Exception Ex)
             {
                 Console.WriteLine(Ex.InnerException.Message);
                 return null;

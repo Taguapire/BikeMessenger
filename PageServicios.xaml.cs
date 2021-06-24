@@ -430,51 +430,34 @@ namespace BikeMessenger
                 controlHora.SelectedTime = TimeSpan.Parse(ServicioIO.HORA.ToString());
                 textBoxRutID.Text = ServicioIO.CLIENTERUT;
                 textBoxDigitoVerificador.Text = ServicioIO.CLIENTEDIGVER;
-                textBoxCliente.Text = ServicioIO.CLIENTE;
+                textBoxCliente.Text = ""; // OJO
                 textBoxIdMensajero.Text = ServicioIO.MENSAJERORUT + "-" + ServicioIO.MENSAJERODIGVER;
-                textBoxNombreMensajero.Text = ServicioIO.MENSAJERO;
+                textBoxNombreMensajero.Text = ""; // OJO;
                 textBoxIdRecurso.Text = ServicioIO.RECURSOID;
-                textBoxNombreRecurso.Text = ServicioIO.RECURSO;
+                textBoxNombreRecurso.Text = ""; // OJO;
                 textBoxOrigenDomicilio1.Text = ServicioIO.ODOMICILIO1;
-                //textBoxOrigenDomicilio2.Text = ServicioIO.ODOMICILIO2;
                 textBoxOrigenNumero.Text = ServicioIO.ONUMERO;
                 textBoxOrigenPiso.Text = ServicioIO.OPISO;
                 textBoxOrigenOficina.Text = ServicioIO.OOFICINA;
-                // ServicioIO.OCOORDENADAS = "*";
                 textBoxDestinoDomicilio1.Text = ServicioIO.DDOMICILIO1;
-                // textBoxDestinoDomicilio2.Text = ServicioIO.DDOMICILIO2;
                 textBoxDestinoNumero.Text = ServicioIO.DNUMERO;
                 textBoxDestinoPiso.Text = ServicioIO.DPISO;
                 textBoxDestinoOficina.Text = ServicioIO.DOFICINA;
-                // ServicioIO.DCOORDENADAS = "*";
                 textBoxDescripcion.Text = ServicioIO.DESCRIPCION;
-
                 textBoxFacturas.Text = ServicioIO.FACTURAS.ToString();
                 textBoxBultos.Text = ServicioIO.BULTOS.ToString();
                 textBoxCompras.Text = ServicioIO.COMPRAS.ToString();
                 textBoxCheques.Text = ServicioIO.CHEQUES.ToString();
                 textBoxSobres.Text = ServicioIO.SOBRES.ToString();
                 textBoxOtros.Text = ServicioIO.OTROS.ToString();
-
                 textBoxObservaciones.Text = ServicioIO.OBSERVACIONES;
                 textBoxEntrega.Text = ServicioIO.ENTREGA;
                 textBoxRecepcion.Text = ServicioIO.RECEPCION;
                 textBoxTiempoDeEspera.Text = ServicioIO.TESPERA.ToString();
-
-                // ServicioIO.FECHAENTREGA = DateTime.Now;
-                // ServicioIO.HORAENTREGA = TimeSpan.Zero;
-                // ServicioIO.DISTANCIA = "*";
-                // ServicioIO.PROGRAMADO = "*";
-
-                // Asignaciones que deben revisarse
-                // ServicioIO.FECHA = controlFecha.Date.ToString();
-                // ServicioIO.HORA = controlHora.Time.ToString();
-
                 comboBoxOrigenPais.SelectedValue = ServicioIO.OPAIS;
                 comboBoxOrigenEstado.SelectedValue = ServicioIO.OESTADO;
                 comboBoxOrigenComuna.SelectedValue = ServicioIO.OCOMUNA;
                 comboBoxOrigenCiudad.SelectedValue = ServicioIO.OCIUDAD;
-
                 comboBoxDestinoPais.SelectedValue = ServicioIO.DPAIS;
                 comboBoxDestinoEstado.SelectedValue = ServicioIO.DESTADO;
                 comboBoxDestinoComuna.SelectedValue = ServicioIO.DCOMUNA;
@@ -495,18 +478,14 @@ namespace BikeMessenger
             ServicioIO.HORA = controlHora.Time.ToString();
             ServicioIO.CLIENTERUT = textBoxRutID.Text;
             ServicioIO.CLIENTEDIGVER = textBoxDigitoVerificador.Text;
-            ServicioIO.CLIENTE = textBoxCliente.Text;
-            // Desglosar RUT Mensajero
             string xyRutCompleto = textBoxIdMensajero.Text; ;
             string[] CadenaDividida = xyRutCompleto.Split("-", 2, StringSplitOptions.None);
             ServicioIO.MENSAJERORUT = CadenaDividida[0];
             ServicioIO.MENSAJERODIGVER = CadenaDividida[1];
-            ServicioIO.MENSAJERO = textBoxNombreMensajero.Text;
+            //ServicioIO.MENSAJERO = ""; // OjO
             ServicioIO.RECURSOID = textBoxIdRecurso.Text;
-            ServicioIO.RECURSO = textBoxNombreRecurso.Text;
-            ServicioIO.MENSAJERO = textBoxNombreMensajero.Text;
+            //ServicioIO.RECURSO = ""; // OJO
             ServicioIO.ODOMICILIO1 = textBoxOrigenDomicilio1.Text;
-            // ServicioIO.ODOMICILIO2 = textBoxOrigenDomicilio2.Text;
             ServicioIO.ONUMERO = textBoxOrigenNumero.Text;
             ServicioIO.OPISO = textBoxOrigenPiso.Text;
             ServicioIO.OOFICINA = textBoxOrigenOficina.Text;
@@ -633,19 +612,19 @@ namespace BikeMessenger
 
         private void LlenarListaEnvios()
         {
-            List<JsonBikeMessengerServicio> GridServicioDb = new List<JsonBikeMessengerServicio>();
-            List<GridEnvioIndividualServicios> GridEnviosLista = new List<GridEnvioIndividualServicios>();
+            List<ClaseServicioGrid> GridServicioDb = new List<ClaseServicioGrid>();
+            List<ClaseServicioGrid> GridEnviosLista = new List<ClaseServicioGrid>();
 
-            if ((GridServicioDb = BM_Database_Servicio.BuscarServicio()) != null)
+            if ((GridServicioDb = BM_Database_Servicio.BuscarGridServicios()) != null)
             {
 
                 for (int i = 0; i < GridServicioDb.Count; i++)
                 {
                     GridEnviosLista.Add(
-                        new GridEnvioIndividualServicios
+                        new ClaseServicioGrid
                         {
                             ENVIO = GridServicioDb[i].NROENVIO,
-                            FECHA = GridServicioDb[i].FECHA.ToString(),
+                            FECHA = GridServicioDb[i].FECHA,
                             CLIENTE = GridServicioDb[i].CLIENTE,
                             ENTREGA = GridServicioDb[i].ENTREGA
                         });
@@ -692,10 +671,10 @@ namespace BikeMessenger
 
         private void LlenarListaClientes()
         {
-            List<JsonBikeMessengerCliente> GridClienteDbArray = new List<JsonBikeMessengerCliente>();
+            List<ClaseClientesGrid> GridClienteDbArray = new List<ClaseClientesGrid>();
             List<GridClienteIndividualServicios> GridClientesLista = new List<GridClienteIndividualServicios>();
 
-            if ((GridClienteDbArray = BM_Database_Servicio.BuscarGridCliente()) != null)
+            if ((GridClienteDbArray = BM_Database_Servicio.BuscarGridClientes()) != null)
             {
                 for (int i = 0; i < GridClienteDbArray.Count; i++)
                 {
@@ -781,7 +760,7 @@ namespace BikeMessenger
 
         private void LlenarListaMensajeros()
         {
-            List<JsonBikeMessengerPersonal> GridMensajerosDbArray = new List<JsonBikeMessengerPersonal>();
+            List<ClasePersonalGrid> GridMensajerosDbArray = new List<ClasePersonalGrid>();
             List<GridMensajeroIndividualServicios> GridMensajerosLista = new List<GridMensajeroIndividualServicios>();
 
             if ((GridMensajerosDbArray = BM_Database_Servicio.BuscarGridPersonal()) != null)
@@ -840,7 +819,7 @@ namespace BikeMessenger
 
         private void LlenarListaRecursos()
         {
-            List<JsonBikeMessengerRecurso> GridRecursoDbArray = new List<JsonBikeMessengerRecurso>();
+            List<ClaseRecursoGrid> GridRecursoDbArray = new List<ClaseRecursoGrid>();
             List<GridRecursoIndividualServicios> GridRecursosLista = new List<GridRecursoIndividualServicios>();
 
 
@@ -855,7 +834,7 @@ namespace BikeMessenger
                             TIPO = GridRecursoDbArray[i].TIPO,
                             MARCA = GridRecursoDbArray[i].MARCA,
                             MODELO = GridRecursoDbArray[i].MODELO,
-                            PROPIETARIO = GridRecursoDbArray[i].PROPIETARIO
+                            CIUDAD = GridRecursoDbArray[i].CIUDAD
                         });
                 }
             }
@@ -985,7 +964,7 @@ namespace BikeMessenger
             ServicioIO.HORA = EnviarJsonServicio.HORA;
             ServicioIO.CLIENTERUT = EnviarJsonServicio.CLIENTERUT;
             ServicioIO.CLIENTEDIGVER = EnviarJsonServicio.CLIENTEDIGVER;
-            ServicioIO.CLIENTE = EnviarJsonServicio.CLIENTE;
+            //ServicioIO.CLIENTE = EnviarJsonServicio.CLIENTE;
             ServicioIO.MENSAJERORUT = EnviarJsonServicio.MENSAJERORUT;
             ServicioIO.MENSAJERODIGVER = EnviarJsonServicio.MENSAJERODIGVER;
             ServicioIO.MENSAJERO = EnviarJsonServicio.MENSAJERO;

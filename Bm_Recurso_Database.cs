@@ -17,10 +17,6 @@ namespace BikeMessenger
         private static List<JsonBikeMessengerRecurso> BK_RecursoLista;
 
         private string BM_CadenaConexion;
-        private static List<string> BK_Pais;
-        private static List<string> BK_Region;
-        private static List<string> BK_Comuna;
-        private static List<string> BK_Ciudad;
 
         public Bm_Recurso_Database()
         {
@@ -49,6 +45,7 @@ namespace BikeMessenger
                 {
                     AcceptChangesDuringFill = false
                 };
+
                 BM_DataSet = new DataSet();
                 BM_Adaptador.Fill(BM_DataSet, "RECURSOS");
 
@@ -99,6 +96,7 @@ namespace BikeMessenger
                 {
                     AcceptChangesDuringFill = false
                 };
+
                 BM_DataSet = new DataSet();
                 BM_Adaptador.Fill(BM_DataSet, "RECURSOS");
 
@@ -141,6 +139,7 @@ namespace BikeMessenger
             DataSet BM_DataSet;
             SQLiteDataAdapter BM_Adaptador;
             SQLiteCommand BM_Comando;
+            SQLiteCommandBuilder BM_Builder;
 
             try
             {
@@ -149,13 +148,14 @@ namespace BikeMessenger
 
                 BM_Adaptador = new SQLiteDataAdapter(BM_Comando)
                 {
-                    AcceptChangesDuringFill = false
+                    AcceptChangesDuringFill = true
                 };
 
                 BM_DataSet = new DataSet();
                 BM_Adaptador.Fill(BM_DataSet, "RECURSOS");
 
                 DataRow LvrRecurso = BM_DataSet.Tables["RECURSOS"].NewRow();
+                BM_Builder = new SQLiteCommandBuilder(BM_Adaptador);
 
                 LvrRecurso["PENTALPHA"] = aBK_Recurso.PENTALPHA;
                 LvrRecurso["PATENTE"] = aBK_Recurso.PATENTE;
@@ -175,7 +175,9 @@ namespace BikeMessenger
                 LvrRecurso["OBSERVACIONES"] = aBK_Recurso.OBSERVACIONES;
                 LvrRecurso["FOTO"] = aBK_Recurso.FOTO;
                 BM_DataSet.Tables["RECURSOS"].Rows.Add(LvrRecurso);
-                BM_Adaptador.Update(BM_DataSet, "RECURSOS");
+                _ = BM_Builder.GetInsertCommand(true);
+                _ = BM_Adaptador.Update(BM_DataSet, "RECURSOS");
+                _ = BM_Adaptador.InsertCommand;
             }
             catch (Exception Ex)
             {
@@ -193,21 +195,26 @@ namespace BikeMessenger
             DataSet BM_DataSet;
             SQLiteDataAdapter BM_Adaptador;
             SQLiteCommand BM_Comando;
+            SQLiteCommandBuilder BM_Builder;
 
             try
             {
                 BM_Comando = BM_Conexion.CreateCommand();
+                BM_Comando.UpdatedRowSource = UpdateRowSource.FirstReturnedRecord;
                 BM_Comando.CommandText = string.Format("SELECT * FROM RECURSOS WHERE PENTALPHA = '" + mBK_Recurso.PENTALPHA + "' AND PATENTE = '" + mBK_Recurso.PATENTE + "'");
 
                 BM_Adaptador = new SQLiteDataAdapter(BM_Comando)
                 {
-                    AcceptChangesDuringFill = false
+                    AcceptChangesDuringFill = true
                 };
 
                 BM_DataSet = new DataSet();
                 BM_Adaptador.Fill(BM_DataSet, "RECURSOS");
 
-                DataRow LvrRecurso = BM_DataSet.Tables["RECURSOS"].NewRow();
+                DataRow LvrRecurso = BM_DataSet.Tables["RECURSOS"].Rows[0];
+
+                BM_Builder = new SQLiteCommandBuilder(BM_Adaptador);
+
                 LvrRecurso["PENTALPHA"] = mBK_Recurso.PENTALPHA;
                 LvrRecurso["PATENTE"] = mBK_Recurso.PATENTE;
                 LvrRecurso["RUTID"] = mBK_Recurso.RUTID;
@@ -225,9 +232,10 @@ namespace BikeMessenger
                 LvrRecurso["PAIS"] = mBK_Recurso.PAIS;
                 LvrRecurso["OBSERVACIONES"] = mBK_Recurso.OBSERVACIONES;
                 LvrRecurso["FOTO"] = mBK_Recurso.FOTO;
-                BM_DataSet.Tables["RECURSOS"].Rows.Add(LvrRecurso);
-                BM_Adaptador.Update(BM_DataSet, "RECURSOS");
-             }
+                _ = BM_Builder.GetUpdateCommand(true);
+                _ = BM_Adaptador.Update(BM_DataSet, "RECURSOS");
+                _ = BM_Adaptador.UpdateCommand;
+            }
             catch (Exception Ex)
             {
                 Console.WriteLine(Ex.InnerException.Message);
@@ -246,6 +254,7 @@ namespace BikeMessenger
             {
                 BM_Comando = BM_Conexion.CreateCommand();
                 BM_Comando.CommandText = string.Format("DELETE FROM RECURSOS WHERE PENTALPHA = '" + pPENTALPHA + "' AND PATENTE = '" + pPATENTE + "'");
+                _ = BM_Comando.ExecuteNonQuery();
             }
             catch (Exception Ex)
             {
@@ -273,16 +282,18 @@ namespace BikeMessenger
                     AcceptChangesDuringFill = false
                 };
                 BM_DataSet = new DataSet();
-                BM_Adaptador.Fill(BM_DataSet, "RECURSOS");
+                _ = BM_Adaptador.Fill(BM_DataSet, "RECURSOS");
 
                 foreach (DataRow LvrRecurso in BM_DataSet.Tables["RECURSOS"].Rows)
                 {
-                    GridLocalRecurso = new ClaseRecursoGrid();
-                    GridLocalRecurso.PATENTE = LvrRecurso["PATENTE"].ToString();
-                    GridLocalRecurso.TIPO = LvrRecurso[".TIPO"].ToString();
-                    GridLocalRecurso.MARCA = LvrRecurso[".MARCA"].ToString();
-                    GridLocalRecurso.MODELO = LvrRecurso[".MODELO"].ToString();
-                    GridLocalRecurso.CIUDAD = LvrRecurso[".CIUDAD"].ToString();
+                    GridLocalRecurso = new ClaseRecursoGrid
+                    {
+                        PATENTE = LvrRecurso["PATENTE"].ToString(),
+                        TIPO = LvrRecurso[".TIPO"].ToString(),
+                        MARCA = LvrRecurso[".MARCA"].ToString(),
+                        MODELO = LvrRecurso[".MODELO"].ToString(),
+                        CIUDAD = LvrRecurso[".CIUDAD"].ToString()
+                    };
                     BK_RecursoLista.Add(BK_Recurso);
                 }
             }
@@ -312,15 +323,17 @@ namespace BikeMessenger
                     AcceptChangesDuringFill = false
                 };
                 BM_DataSet = new DataSet();
-                BM_Adaptador.Fill(BM_DataSet, "PERSONAL");
+                _ = BM_Adaptador.Fill(BM_DataSet, "PERSONAL");
 
                 foreach (DataRow LvrPersonal in BM_DataSet.Tables["PERSONAL"].Rows)
                 {
-                    ClasePersonalGrid GridLocalPersonal = new ClasePersonalGrid();
-                    GridLocalPersonal.RUTID = LvrPersonal["RUTID"].ToString();
-                    GridLocalPersonal.DIGVER = LvrPersonal["DIGVER"].ToString();
-                    GridLocalPersonal.APELLIDOS = LvrPersonal["APELLIDOS"].ToString();
-                    GridLocalPersonal.NOMBRES = LvrPersonal["NOMBRES"].ToString();
+                    ClasePersonalGrid GridLocalPersonal = new ClasePersonalGrid
+                    {
+                        RUTID = LvrPersonal["RUTID"].ToString(),
+                        DIGVER = LvrPersonal["DIGVER"].ToString(),
+                        APELLIDOS = LvrPersonal["APELLIDOS"].ToString(),
+                        NOMBRES = LvrPersonal["NOMBRES"].ToString()
+                    };
                     GridLocalPersonalLista.Add(GridLocalPersonal);
                 }
             }
@@ -348,7 +361,7 @@ namespace BikeMessenger
                 BM_AdaptadorPais = new SQLiteDataAdapter(BM_ComandoPais);
 
                 BM_DataSetPais = new DataSet();
-                BM_AdaptadorPais.Fill(BM_DataSetPais, "PAIS");
+                _ = BM_AdaptadorPais.Fill(BM_DataSetPais, "PAIS");
 
                 foreach (DataRow LvrPais in BM_DataSetPais.Tables["PAIS"].Rows)
                 {
@@ -380,7 +393,7 @@ namespace BikeMessenger
                 BM_AdaptadorRegion = new SQLiteDataAdapter(BM_ComandoRegion);
 
                 BM_DataSetRegion = new DataSet();
-                BM_AdaptadorRegion.Fill(BM_DataSetRegion, "ESTADOREGION");
+                _ = BM_AdaptadorRegion.Fill(BM_DataSetRegion, "ESTADOREGION");
 
                 foreach (DataRow LvrRegion in BM_DataSetRegion.Tables["ESTADOREGION"].Rows)
                 {
@@ -412,7 +425,7 @@ namespace BikeMessenger
                 BM_AdaptadorComuna = new SQLiteDataAdapter(BM_ComandoComuna);
 
                 BM_DataSetComuna = new DataSet();
-                BM_AdaptadorComuna.Fill(BM_DataSetComuna, "COMUNA");
+                _ = BM_AdaptadorComuna.Fill(BM_DataSetComuna, "COMUNA");
 
                 foreach (DataRow LvrComuna in BM_DataSetComuna.Tables["COMUNA"].Rows)
                 {
@@ -444,7 +457,7 @@ namespace BikeMessenger
                 BM_AdaptadorRegion = new SQLiteDataAdapter(BM_ComandoRegion);
 
                 BM_DataSetRegion = new DataSet();
-                BM_AdaptadorRegion.Fill(BM_DataSetRegion, "ESTADOREGION");
+                _ = BM_AdaptadorRegion.Fill(BM_DataSetRegion, "ESTADOREGION");
 
                 foreach (DataRow LvrPais in BM_DataSetRegion.Tables["ESTADOREGION"].Rows)
                 {

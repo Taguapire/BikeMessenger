@@ -10,12 +10,9 @@
         public string HORA { get; set; }
         public string CLIENTERUT { get; set; }
         public string CLIENTEDIGVER { get; set; }
-        public string CLIENTE { get; set; }
         public string MENSAJERORUT { get; set; }
         public string MENSAJERODIGVER { get; set; }
-        public string MENSAJERO { get; set; }
         public string RECURSOID { get; set; }
-        public string RECURSO { get; set; }
         public string ODOMICILIO1 { get; set; }
         public string ODOMICILIO2 { get; set; }
         public string ONUMERO { get; set; }
@@ -64,12 +61,9 @@
             HORA = "";
             CLIENTERUT = "";
             CLIENTEDIGVER = "";
-            CLIENTE = "";
             MENSAJERORUT = "";
             MENSAJERODIGVER = "";
-            MENSAJERO = "";
             RECURSOID = "";
-            RECURSO = "";
             ODOMICILIO1 = "";
             ODOMICILIO2 = "";
             ONUMERO = "";

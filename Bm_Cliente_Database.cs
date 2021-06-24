@@ -20,16 +20,6 @@ namespace BikeMessenger
 
         private string BM_CadenaConexion;
 
-
-        private static List<string> BK_Pais;
-        private static List<string> BK_Region;
-        private static List<string> BK_Comuna;
-        private static List<string> BK_Ciudad;
-
-        // Cambio de Operador
-        // Busqueda por Muchos
-
-
         public Bm_Cliente_Database()
         {
             BM_TrasferVar = new TransferVar();
@@ -157,12 +147,10 @@ namespace BikeMessenger
 
         public bool AgregarCliente(JsonBikeMessengerCliente aBK_Cliente)
         {
-            BK_Cliente = new JsonBikeMessengerCliente();
-            BK_ClienteLista = new List<JsonBikeMessengerCliente>();
-
             DataSet BM_DataSet;
             SQLiteDataAdapter BM_Adaptador;
             SQLiteCommand BM_Comando;
+            SQLiteCommandBuilder BM_Builder;
 
             try
             {
@@ -171,13 +159,15 @@ namespace BikeMessenger
 
                 BM_Adaptador = new SQLiteDataAdapter(BM_Comando)
                 {
-                    AcceptChangesDuringFill = false
+                    AcceptChangesDuringFill = true
                 };
 
                 BM_DataSet = new DataSet();
-                BM_Adaptador.Fill(BM_DataSet, "CLIENTES");
+                _ = BM_Adaptador.Fill(BM_DataSet, "CLIENTES");
 
                 DataRow LvrCliente = BM_DataSet.Tables["CLIENTES"].NewRow();
+
+                BM_Builder = new SQLiteCommandBuilder(BM_Adaptador);
 
                 LvrCliente["PENTALPHA"] = aBK_Cliente.PENTALPHA;
                 LvrCliente["RUTID"] = aBK_Cliente.RUTID;
@@ -204,7 +194,9 @@ namespace BikeMessenger
                 LvrCliente["OBSERVACIONES"] = aBK_Cliente.OBSERVACIONES;
                 LvrCliente["FOTO"] = aBK_Cliente.LOGO;
                 BM_DataSet.Tables["CLIENTES"].Rows.Add(LvrCliente);
-                BM_Adaptador.Update(BM_DataSet, "CLIENTES");
+                _ = BM_Builder.GetInsertCommand(true);
+                _ = BM_Adaptador.Update(BM_DataSet, "CLIENTES");
+                _ = BM_Adaptador.InsertCommand;
             }
             catch (Exception Ex)
             {
@@ -217,26 +209,28 @@ namespace BikeMessenger
 
         public bool ModificarCliente(JsonBikeMessengerCliente mBK_Cliente)
         {
-            BK_Cliente = new JsonBikeMessengerCliente();
-            BK_ClienteLista = new List<JsonBikeMessengerCliente>();
             DataSet BM_DataSet;
             SQLiteDataAdapter BM_Adaptador;
             SQLiteCommand BM_Comando;
+            SQLiteCommandBuilder BM_Builder;
 
             try
             {
                 BM_Comando = BM_Conexion.CreateCommand();
+                BM_Comando.UpdatedRowSource = UpdateRowSource.FirstReturnedRecord;
                 BM_Comando.CommandText = string.Format("SELECT * FROM CLIENTES WHERE PENTALPHA = '" + mBK_Cliente.PENTALPHA + "' AND RUTID = '" + mBK_Cliente.RUTID + "' AND DIGVER = '" + mBK_Cliente.DIGVER + "'");
 
                 BM_Adaptador = new SQLiteDataAdapter(BM_Comando)
                 {
-                    AcceptChangesDuringFill = false
+                    AcceptChangesDuringFill = true
                 };
 
                 BM_DataSet = new DataSet();
-                BM_Adaptador.Fill(BM_DataSet, "CLIENTES");
+                _ = BM_Adaptador.Fill(BM_DataSet, "CLIENTES");
 
-                DataRow LvrCliente = BM_DataSet.Tables["CLIENTES"].NewRow();
+                DataRow LvrCliente = BM_DataSet.Tables["CLIENTES"].Rows[0];
+
+                BM_Builder = new SQLiteCommandBuilder(BM_Adaptador);
 
                 LvrCliente["PENTALPHA"] = mBK_Cliente.PENTALPHA;
                 LvrCliente["RUTID"] = mBK_Cliente.RUTID;
@@ -262,8 +256,9 @@ namespace BikeMessenger
                 LvrCliente["PAIS"] = mBK_Cliente.PAIS;
                 LvrCliente["OBSERVACIONES"] = mBK_Cliente.OBSERVACIONES;
                 LvrCliente["FOTO"] = mBK_Cliente.LOGO;
-                BM_DataSet.Tables["CLIENTES"].Rows.Add(LvrCliente);
-                BM_Adaptador.Update(BM_DataSet, "CLIENTES");
+                _ = BM_Builder.GetUpdateCommand(true);
+                _ = BM_Adaptador.Update(BM_DataSet, "CLIENTES");
+                _ = BM_Adaptador.UpdateCommand;
             }
             catch (Exception Ex)
             {
@@ -283,6 +278,7 @@ namespace BikeMessenger
             {
                 BM_Comando = BM_Conexion.CreateCommand();
                 BM_Comando.CommandText = string.Format("DELETE FROM CLIENTES WHERE PENTALPHA = '" + pPENTALPHA + "' AND RUTID = '" + pRUTID + "' AND DIGVER = '" + pDIGVER + "'");
+                _ = BM_Comando.ExecuteNonQuery();
             }
             catch (Exception Ex)
             {
@@ -292,10 +288,10 @@ namespace BikeMessenger
             return true;
         }
 
-        public List<JsonBikeMessengerCliente> BuscarGridCliente()
+        public List<ClaseClientesGrid> BuscarGridClientes()
         {
-            BK_Cliente = new JsonBikeMessengerCliente();
-            BK_ClienteLista = new List<JsonBikeMessengerCliente>();
+            List<ClaseClientesGrid> GridLocalClientesLista = new List<ClaseClientesGrid>();
+
             DataSet BM_DataSet;
             SQLiteDataAdapter BM_Adaptador;
             SQLiteCommand BM_Comando;
@@ -309,15 +305,20 @@ namespace BikeMessenger
                 {
                     AcceptChangesDuringFill = false
                 };
-                BM_DataSet = new DataSet();
-                BM_Adaptador.Fill(BM_DataSet, "CLIENTES");
 
-                foreach (DataRow LvrCliente in BM_DataSet.Tables["CLIENTES"].Rows)
+                BM_DataSet = new DataSet();
+                _ = BM_Adaptador.Fill(BM_DataSet, "CLIENTES");
+
+                foreach (DataRow LvrClientes in BM_DataSet.Tables["CLIENTES"].Rows)
                 {
-                    BK_Cliente.RUTID = LvrCliente["RUTID"].ToString();
-                    BK_Cliente.DIGVER = LvrCliente["DIGVER"].ToString();
-                    BK_Cliente.NOMBRE = LvrCliente["NOMBRE"].ToString();
-                    BK_ClienteLista.Add(BK_Cliente);
+                    ClaseClientesGrid GridLocalClientes = new ClaseClientesGrid
+                    {
+                        RUTID = LvrClientes["RUTID"].ToString(),
+                        DIGVER = LvrClientes["DIGVER"].ToString(),
+                        NOMBRE = LvrClientes["NOMBRES"].ToString()
+                    };
+
+                    GridLocalClientesLista.Add(GridLocalClientes);
                 }
             }
             catch (Exception Ex)
@@ -325,7 +326,7 @@ namespace BikeMessenger
                 Console.WriteLine(Ex.InnerException.Message);
                 return null;
             }
-            return BK_ClienteLista;
+            return GridLocalClientesLista;
         }
 
         public List<string> GetPais()
@@ -518,5 +519,11 @@ namespace BikeMessenger
             DocumentoHtml.FinDocumento();
             return DocumentoHtml.BufferHtml;
         }
+    }
+    public class ClaseClientesGrid
+    {
+        public string RUTID { get; set; }
+        public string DIGVER { get; set; }
+        public string NOMBRE { get; set; }
     }
 }
