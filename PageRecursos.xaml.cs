@@ -23,8 +23,8 @@ namespace BikeMessenger
     /// </summary>
     public sealed partial class PageRecursos : Page
     {
-        private List<JsonBikeMessengerRecurso> RecursoIOArray = null;
-        private JsonBikeMessengerRecurso RecursoIO = null;
+        private List<JsonBikeMessengerRecurso> RecursoIOArray = new List<JsonBikeMessengerRecurso>();
+        private JsonBikeMessengerRecurso RecursoIO = new JsonBikeMessengerRecurso();
         private readonly JsonBikeMessengerRecurso EnviarJsonRecurso = new JsonBikeMessengerRecurso();
         private JsonBikeMessengerRecurso RecibirJsonRecurso = new JsonBikeMessengerRecurso();
         private readonly Bm_Recurso_Database BM_Database_Recurso = new Bm_Recurso_Database();
@@ -91,7 +91,8 @@ namespace BikeMessenger
 
                 if (LvrTransferVar.R_PAT_SER == "")
                 {
-                    if ((RecursoIOArray = BM_Database_Recurso.BuscarRecurso()) != null)
+                    RecursoIOArray = BM_Database_Recurso.BuscarRecurso();
+                    if (RecursoIOArray != null && RecursoIOArray.Count > 0)
                     {
                         RecursoIO = RecursoIOArray[0];
                         LlenarPantallaConDb();
@@ -99,7 +100,8 @@ namespace BikeMessenger
                 }
                 else
                 {
-                    if ((RecursoIOArray = BM_Database_Recurso.BuscarRecurso(LvrTransferVar.R_PENTALPHA, LvrTransferVar.R_PAT_SER)) != null)
+                    RecursoIOArray = BM_Database_Recurso.BuscarRecurso(LvrTransferVar.R_PENTALPHA, LvrTransferVar.R_PAT_SER);
+                    if (RecursoIOArray != null && RecursoIOArray.Count > 0)
                     {
                         RecursoIO = RecursoIOArray[0];
                         LlenarPantallaConDb();
@@ -223,7 +225,6 @@ namespace BikeMessenger
                 LvrTransferVar.R_PAT_SER = RecursoIO.PATENTE;
                 textBoxRut.Text = RecursoIO.RUTID;
                 textBoxDigitoVerificador.Text = RecursoIO.DIGVER;
-                textBoxPropietario.Text = RecursoIO.PROPIETARIO;
                 comboBoxTipo.SelectedValue = RecursoIO.TIPO;
                 textBoxPatenteCodigo.Text = RecursoIO.PATENTE;
                 textBoxMarca.Text = RecursoIO.MARCA;
@@ -279,7 +280,6 @@ namespace BikeMessenger
             LvrTransferVar.R_RUTID = RecursoIO.RUTID;
             LvrTransferVar.R_DIGVER = RecursoIO.DIGVER;
             // ***********************************************************
-            RecursoIO.PROPIETARIO = textBoxPropietario.Text;
             RecursoIO.TIPO = comboBoxTipo.Text;
             RecursoIO.MARCA = textBoxMarca.Text;
             RecursoIO.MODELO = textBoxModelo.Text;
@@ -675,7 +675,6 @@ namespace BikeMessenger
             EnviarJsonRecurso.PATENTE = "";
             EnviarJsonRecurso.RUTID = "";
             EnviarJsonRecurso.DIGVER = "";
-            EnviarJsonRecurso.PROPIETARIO = "";
             EnviarJsonRecurso.TIPO = "";
             EnviarJsonRecurso.MARCA = "";
             EnviarJsonRecurso.MODELO = "";
@@ -697,7 +696,6 @@ namespace BikeMessenger
             EnviarJsonRecurso.PATENTE = RecursoIO.PATENTE;
             EnviarJsonRecurso.RUTID = RecursoIO.RUTID;
             EnviarJsonRecurso.DIGVER = RecursoIO.DIGVER;
-            EnviarJsonRecurso.PROPIETARIO = RecursoIO.PROPIETARIO;
             EnviarJsonRecurso.TIPO = RecursoIO.TIPO;
             EnviarJsonRecurso.MARCA = RecursoIO.MARCA;
             EnviarJsonRecurso.MODELO = RecursoIO.MODELO;
@@ -723,7 +721,6 @@ namespace BikeMessenger
             RecursoIO.PATENTE = EnviarJsonRecurso.PATENTE;
             RecursoIO.RUTID = EnviarJsonRecurso.RUTID;
             RecursoIO.DIGVER = EnviarJsonRecurso.DIGVER;
-            RecursoIO.PROPIETARIO = EnviarJsonRecurso.PROPIETARIO;
             RecursoIO.TIPO = EnviarJsonRecurso.TIPO;
             RecursoIO.MARCA = EnviarJsonRecurso.MARCA;
             RecursoIO.MODELO = EnviarJsonRecurso.MODELO;

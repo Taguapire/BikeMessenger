@@ -85,7 +85,7 @@ namespace BikeMessenger
                 RellenarCombos();
 
                 EmpresaIOArray = BM_Database_Empresa.BuscarEmpresa();
-                if (EmpresaIOArray.Count > 0)
+                if (EmpresaIOArray != null && EmpresaIOArray.Count > 0)
                 {
                     EmpresaIO = EmpresaIOArray[0];
                     LlenarPantallaConDb();
@@ -246,32 +246,44 @@ namespace BikeMessenger
 
             // Llenar Combo Pais
             List<string> ListaPais = BM_Database_Empresa.GetPais();
-            foreach (var LocalLista in ListaPais)
+            if (ListaPais != null)
             {
-                comboBoxPais.Items.Add(LocalLista);
+                foreach (var LocalLista in ListaPais)
+                {
+                    comboBoxPais.Items.Add(LocalLista);
+                }
             }
 
             // Llenar Combo Region
             List<string> ListaEstado = BM_Database_Empresa.GetRegion();
-            foreach (var LocalLista in ListaPais)
+            if (ListaEstado != null)
             {
-                comboBoxEstado.Items.Add(ListaEstado);
+                foreach (var LocalLista in ListaEstado)
+                {
+                    comboBoxEstado.Items.Add(LocalLista);
+                }
             }
 
             // Llenar Combo Comuna
             List<string> ListaComuna = BM_Database_Empresa.GetComuna();
-            foreach (var LocalLista in ListaComuna)
+            if (ListaComuna != null)
             {
-                comboBoxComuna.Items.Add(ListaEstado);
+                foreach (var LocalLista in ListaComuna)
+                {
+                    comboBoxComuna.Items.Add(LocalLista);
+                }
             }
 
             
             // Llenar Combo Ciudad
 
             List<string> ListaCiudad = BM_Database_Empresa.GetCiudad();
-            foreach (var LocalLista in ListaCiudad)
+            if (ListaCiudad != null)
             {
-                comboBoxCiudad.Items.Add(ListaEstado);
+                foreach (var LocalLista in ListaCiudad)
+                {
+                    comboBoxCiudad.Items.Add(LocalLista);
+                }
             }
         }
 

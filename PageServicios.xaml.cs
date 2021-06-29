@@ -612,21 +612,21 @@ namespace BikeMessenger
 
         private void LlenarListaEnvios()
         {
-            List<ClaseServicioGrid> GridServicioDb = new List<ClaseServicioGrid>();
-            List<ClaseServicioGrid> GridEnviosLista = new List<ClaseServicioGrid>();
+            List<ClaseServicioGrid> GridServicioDbArray = new List<ClaseServicioGrid>();
+            List<GridEnvioIndividualServicios> GridEnviosLista = new List<GridEnvioIndividualServicios>();
 
-            if ((GridServicioDb = BM_Database_Servicio.BuscarGridServicios()) != null)
+            if ((GridServicioDbArray = BM_Database_Servicio.BuscarGridServicios()) != null)
             {
 
-                for (int i = 0; i < GridServicioDb.Count; i++)
+                for (int i = 0; i < GridServicioDbArray.Count; i++)
                 {
                     GridEnviosLista.Add(
-                        new ClaseServicioGrid
+                        new GridEnvioIndividualServicios
                         {
-                            ENVIO = GridServicioDb[i].NROENVIO,
-                            FECHA = GridServicioDb[i].FECHA,
-                            CLIENTE = GridServicioDb[i].CLIENTE,
-                            ENTREGA = GridServicioDb[i].ENTREGA
+                            ENVIO = GridServicioDbArray[i].ENVIO,
+                            FECHA = GridServicioDbArray[i].FECHA,
+                            CLIENTE = BM_Database_Servicio.Bm_BuscarNombreCliente(LvrTransferVar.X_PENTALPHA, GridServicioDbArray[i].CLIENTERUT, GridServicioDbArray[i].CLIENTEDIGVER),
+                            ENTREGA = GridServicioDbArray[i].ENTREGA
                         });
                 }
             }
@@ -682,7 +682,7 @@ namespace BikeMessenger
                         new GridClienteIndividualServicios
                         {
                             RUTID = GridClienteDbArray[i].RUTID + "-" + GridClienteDbArray[i].DIGVER,
-                            CLIENTE = GridClienteDbArray[i].NOMBRE
+                            CLIENTE = BM_Database_Servicio.Bm_BuscarNombreCliente(LvrTransferVar.R_PENTALPHA, GridClienteDbArray[i].RUTID, GridClienteDbArray[i].DIGVER)
                         });
                 }
             }
@@ -771,7 +771,7 @@ namespace BikeMessenger
                         new GridMensajeroIndividualServicios
                         {
                             RUTID = GridMensajerosDbArray[i].RUTID + "-" + GridMensajerosDbArray[i].DIGVER,
-                            MENSAJERO = GridMensajerosDbArray[i].NOMBRES
+                            MENSAJERO = BM_Database_Servicio.Bm_BuscarNombreMensajero(LvrTransferVar.P_PENTALPHA, GridMensajerosDbArray[i].RUTID, GridMensajerosDbArray[i].DIGVER)
                         });
                 }
             }
@@ -796,7 +796,7 @@ namespace BikeMessenger
             try
             {
                 DataGrid CeldaSeleccionada = sender as DataGrid;
-                GridRecursoIndividualServicios Recurso = (GridRecursoIndividualServicios)CeldaSeleccionada.SelectedItems[0];
+                ClaseRecursoGrid Recurso = (ClaseRecursoGrid)CeldaSeleccionada.SelectedItems[0];
                 textBoxIdRecurso.Text = Recurso.PATENTE;
                 textBoxNombreRecurso.Text = Recurso.TIPO + " - " + Recurso.MARCA + " - " + Recurso.MODELO;
 
@@ -834,7 +834,7 @@ namespace BikeMessenger
                             TIPO = GridRecursoDbArray[i].TIPO,
                             MARCA = GridRecursoDbArray[i].MARCA,
                             MODELO = GridRecursoDbArray[i].MODELO,
-                            CIUDAD = GridRecursoDbArray[i].CIUDAD
+                            PROPIETARIO = BM_Database_Servicio.Bm_BuscarNombreMensajero(LvrTransferVar.R_PENTALPHA, GridRecursoDbArray[i].RUTID, GridRecursoDbArray[i].DIGVER)
                         });
                 }
             }
@@ -908,12 +908,9 @@ namespace BikeMessenger
             EnviarJsonServicio.HORA = ServicioIO.HORA;
             EnviarJsonServicio.CLIENTERUT = ServicioIO.CLIENTERUT;
             EnviarJsonServicio.CLIENTEDIGVER = ServicioIO.CLIENTEDIGVER;
-            EnviarJsonServicio.CLIENTE = ServicioIO.CLIENTE;
             EnviarJsonServicio.MENSAJERORUT = ServicioIO.MENSAJERORUT;
             EnviarJsonServicio.MENSAJERODIGVER = ServicioIO.MENSAJERODIGVER;
-            EnviarJsonServicio.MENSAJERO = ServicioIO.MENSAJERO;
             EnviarJsonServicio.RECURSOID = ServicioIO.RECURSOID;
-            EnviarJsonServicio.RECURSO = ServicioIO.RECURSO;
             EnviarJsonServicio.ODOMICILIO1 = ServicioIO.ODOMICILIO1;
             EnviarJsonServicio.ODOMICILIO2 = ServicioIO.ODOMICILIO2;
             EnviarJsonServicio.ONUMERO = ServicioIO.ONUMERO;
@@ -964,12 +961,9 @@ namespace BikeMessenger
             ServicioIO.HORA = EnviarJsonServicio.HORA;
             ServicioIO.CLIENTERUT = EnviarJsonServicio.CLIENTERUT;
             ServicioIO.CLIENTEDIGVER = EnviarJsonServicio.CLIENTEDIGVER;
-            //ServicioIO.CLIENTE = EnviarJsonServicio.CLIENTE;
             ServicioIO.MENSAJERORUT = EnviarJsonServicio.MENSAJERORUT;
             ServicioIO.MENSAJERODIGVER = EnviarJsonServicio.MENSAJERODIGVER;
-            ServicioIO.MENSAJERO = EnviarJsonServicio.MENSAJERO;
             ServicioIO.RECURSOID = EnviarJsonServicio.RECURSOID;
-            ServicioIO.RECURSO = EnviarJsonServicio.RECURSO;
             ServicioIO.ODOMICILIO1 = EnviarJsonServicio.ODOMICILIO1;
             ServicioIO.ODOMICILIO2 = EnviarJsonServicio.ODOMICILIO2;
             ServicioIO.ONUMERO = EnviarJsonServicio.ONUMERO;
@@ -1018,6 +1012,8 @@ namespace BikeMessenger
         }
     }
 
+ 
+
     internal class GridEnvioIndividualServicios
     {
         public string ENVIO { get; set; }
@@ -1046,4 +1042,4 @@ namespace BikeMessenger
         public string MODELO { get; set; }
         public string PROPIETARIO { get; set; }
     }
-}
+ }

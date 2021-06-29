@@ -23,8 +23,8 @@ namespace BikeMessenger
     /// </summary>
     public sealed partial class PageClientes : Page
     {
-        private List<JsonBikeMessengerCliente> ClienteIOArray = null;
-        private JsonBikeMessengerCliente ClienteIO = null;
+        private List<JsonBikeMessengerCliente> ClienteIOArray = new List<JsonBikeMessengerCliente>();
+        private JsonBikeMessengerCliente ClienteIO = new JsonBikeMessengerCliente();
         private readonly JsonBikeMessengerCliente EnviarJsonCliente = new JsonBikeMessengerCliente();
         private JsonBikeMessengerCliente RecibirJsonCliente = new JsonBikeMessengerCliente();
         private readonly Bm_Cliente_Database BM_Database_Cliente = new Bm_Cliente_Database();
@@ -83,7 +83,8 @@ namespace BikeMessenger
 
                 if (LvrTransferVar.C_RUTID == "")
                 {
-                    if ((ClienteIOArray = BM_Database_Cliente.BuscarCliente()) != null)
+                    ClienteIOArray = BM_Database_Cliente.BuscarCliente();
+                    if (ClienteIOArray != null && ClienteIOArray.Count > 0)
                     {
                         ClienteIO = ClienteIOArray[0];
                         LlenarPantallaConDb();
@@ -91,7 +92,8 @@ namespace BikeMessenger
                 }
                 else
                 {
-                    if ((ClienteIOArray = BM_Database_Cliente.BuscarCliente(LvrTransferVar.C_PENTALPHA, LvrTransferVar.C_RUTID, LvrTransferVar.C_DIGVER)) != null)
+                    ClienteIOArray = BM_Database_Cliente.BuscarCliente(LvrTransferVar.C_PENTALPHA, LvrTransferVar.C_RUTID, LvrTransferVar.C_DIGVER);
+                    if (ClienteIOArray != null && ClienteIOArray.Count > 0)
                     {
                         ClienteIO = ClienteIOArray[0];
                         LlenarPantallaConDb();
@@ -182,7 +184,7 @@ namespace BikeMessenger
                 textBoxActividad2.Text = ClienteIO.ACTIVIDAD2;
                 textBoxRepresentantes1.Text = ClienteIO.REPRESENTANTE1;
                 textBoxRepresentantes2.Text = ClienteIO.REPRESENTANTE2;
-                textBoxRepresentantes3.Text = ClienteIO.REPRESENTANTE3;
+                textBoxEMail.Text = ClienteIO.EMAIL;
                 textBoxTelefono1.Text = ClienteIO.TELEFONO1;
                 textBoxTelefono2.Text = ClienteIO.TELEFONO2;
                 textBoxDomicilio1.Text = ClienteIO.DOMICILIO1;
@@ -258,7 +260,7 @@ namespace BikeMessenger
             textBoxActividad2.Text = "";
             textBoxRepresentantes1.Text = "";
             textBoxRepresentantes2.Text = "";
-            textBoxRepresentantes3.Text = "";
+            textBoxEMail.Text = "";
             textBoxTelefono1.Text = "";
             textBoxTelefono2.Text = "";
             textBoxDomicilio1.Text = "";
@@ -287,7 +289,7 @@ namespace BikeMessenger
             ClienteIO.ACTIVIDAD2 = textBoxActividad2.Text;
             ClienteIO.REPRESENTANTE1 = textBoxRepresentantes1.Text;
             ClienteIO.REPRESENTANTE2 = textBoxRepresentantes2.Text;
-            ClienteIO.REPRESENTANTE3 = textBoxRepresentantes3.Text;
+            ClienteIO.EMAIL = textBoxEMail.Text;
             ClienteIO.TELEFONO1 = textBoxTelefono1.Text;
             ClienteIO.TELEFONO2 = textBoxTelefono2.Text;
             ClienteIO.DOMICILIO1 = textBoxDomicilio1.Text;
@@ -656,7 +658,7 @@ namespace BikeMessenger
             EnviarJsonCliente.ACTIVIDAD2 = ClienteIO.ACTIVIDAD2;
             EnviarJsonCliente.REPRESENTANTE1 = ClienteIO.REPRESENTANTE1;
             EnviarJsonCliente.REPRESENTANTE2 = ClienteIO.REPRESENTANTE2;
-            EnviarJsonCliente.REPRESENTANTE3 = ClienteIO.REPRESENTANTE3;
+            EnviarJsonCliente.EMAIL = ClienteIO.EMAIL;
             EnviarJsonCliente.DOMICILIO1 = ClienteIO.DOMICILIO1;
             EnviarJsonCliente.DOMICILIO2 = ClienteIO.DOMICILIO2;
             EnviarJsonCliente.NUMERO = ClienteIO.NUMERO;
@@ -687,7 +689,7 @@ namespace BikeMessenger
             ClienteIO.ACTIVIDAD2 = EnviarJsonCliente.ACTIVIDAD2;
             ClienteIO.REPRESENTANTE1 = EnviarJsonCliente.REPRESENTANTE1;
             ClienteIO.REPRESENTANTE2 = EnviarJsonCliente.REPRESENTANTE2;
-            ClienteIO.REPRESENTANTE3 = EnviarJsonCliente.REPRESENTANTE3;
+            ClienteIO.EMAIL = EnviarJsonCliente.EMAIL;
             ClienteIO.DOMICILIO1 = EnviarJsonCliente.DOMICILIO1;
             ClienteIO.DOMICILIO2 = EnviarJsonCliente.DOMICILIO2;
             ClienteIO.NUMERO = EnviarJsonCliente.NUMERO;

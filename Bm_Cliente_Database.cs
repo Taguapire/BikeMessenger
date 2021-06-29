@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SQLite;
+using Microsoft.Data.SqlClient;
 
 
 namespace BikeMessenger
@@ -12,7 +12,7 @@ namespace BikeMessenger
         // public SqliteFactory BM_DB;
         // Paso de Parametros Sqlite
         // ***************************************
-        private static SQLiteConnection BM_Conexion;
+        private static SqlConnection BM_Conexion;
         private TransferVar BM_TrasferVar;
 
         private static JsonBikeMessengerCliente BK_Cliente;
@@ -25,7 +25,7 @@ namespace BikeMessenger
             BM_TrasferVar = new TransferVar();
             BM_TrasferVar.LeerDirectorio();
             BM_CadenaConexion = BM_TrasferVar.Directorio;
-            BM_Conexion = new SQLiteConnection("Data Source=" + BM_CadenaConexion + "\\BikeMessenger.db");
+            BM_Conexion = new SqlConnection("Data Source=VASCON\\SQLEXPRESS;Initial Catalog=bikemessenger;User ID=bikemessenger; Password=Hola1974");
             BM_Conexion.Open();
         }
 
@@ -35,15 +35,15 @@ namespace BikeMessenger
             BK_Cliente = new JsonBikeMessengerCliente();
             BK_ClienteLista = new List<JsonBikeMessengerCliente>();
             DataSet BM_DataSet;
-            SQLiteDataAdapter BM_Adaptador;
-            SQLiteCommand BM_Comando;
+            SqlDataAdapter BM_Adaptador;
+            SqlCommand BM_Comando;
 
             try
             {
                 BM_Comando = BM_Conexion.CreateCommand();
                 BM_Comando.CommandText = string.Format("SELECT * FROM CLIENTES");
 
-                BM_Adaptador = new SQLiteDataAdapter(BM_Comando)
+                BM_Adaptador = new SqlDataAdapter(BM_Comando)
                 {
                     AcceptChangesDuringFill = false
                 };
@@ -62,6 +62,7 @@ namespace BikeMessenger
                     BK_Cliente.ACTIVIDAD2 = LvrCliente["ACTIVIDAD2"].ToString();
                     BK_Cliente.REPRESENTANTE1 = LvrCliente["REPRESENTANTE1"].ToString();
                     BK_Cliente.REPRESENTANTE2 = LvrCliente["REPRESENTANTE2"].ToString();
+                    BK_Cliente.EMAIL = LvrCliente["EMAIL"].ToString();
                     BK_Cliente.TELEFONO1 = LvrCliente["TELEFONO1"].ToString();
                     BK_Cliente.TELEFONO2 = LvrCliente["TELEFONO2"].ToString();
                     BK_Cliente.DOMICILIO1 = LvrCliente["DOMICILIO1"].ToString();
@@ -92,15 +93,15 @@ namespace BikeMessenger
             BK_Cliente = new JsonBikeMessengerCliente();
             BK_ClienteLista = new List<JsonBikeMessengerCliente>();
             DataSet BM_DataSet;
-            SQLiteDataAdapter BM_Adaptador;
-            SQLiteCommand BM_Comando;
+            SqlDataAdapter BM_Adaptador;
+            SqlCommand BM_Comando;
 
             try
             {
                 BM_Comando = BM_Conexion.CreateCommand();
                 BM_Comando.CommandText = string.Format("SELECT * FROM CLIENTES WHERE PENTALPHA = '" + pPENTALPHA + "'  AND RUTID = '" + pRUTID + "' AND DIGVER = '" + pDIGVER + "'");
 
-                BM_Adaptador = new SQLiteDataAdapter(BM_Comando)
+                BM_Adaptador = new SqlDataAdapter(BM_Comando)
                 {
                     AcceptChangesDuringFill = false
                 };
@@ -119,6 +120,7 @@ namespace BikeMessenger
                     BK_Cliente.ACTIVIDAD2 = LvrCliente["ACTIVIDAD2"].ToString();
                     BK_Cliente.REPRESENTANTE1 = LvrCliente["REPRESENTANTE1"].ToString();
                     BK_Cliente.REPRESENTANTE2 = LvrCliente["REPRESENTANTE2"].ToString();
+                    BK_Cliente.EMAIL = LvrCliente["EMAIL"].ToString();
                     BK_Cliente.TELEFONO1 = LvrCliente["TELEFONO1"].ToString();
                     BK_Cliente.TELEFONO2 = LvrCliente["TELEFONO2"].ToString();
                     BK_Cliente.DOMICILIO1 = LvrCliente["DOMICILIO1"].ToString();
@@ -148,16 +150,16 @@ namespace BikeMessenger
         public bool AgregarCliente(JsonBikeMessengerCliente aBK_Cliente)
         {
             DataSet BM_DataSet;
-            SQLiteDataAdapter BM_Adaptador;
-            SQLiteCommand BM_Comando;
-            SQLiteCommandBuilder BM_Builder;
+            SqlDataAdapter BM_Adaptador;
+            SqlCommand BM_Comando;
+            SqlCommandBuilder BM_Builder;
 
             try
             {
                 BM_Comando = BM_Conexion.CreateCommand();
                 BM_Comando.CommandText = string.Format("SELECT * FROM CLIENTES");
 
-                BM_Adaptador = new SQLiteDataAdapter(BM_Comando)
+                BM_Adaptador = new SqlDataAdapter(BM_Comando)
                 {
                     AcceptChangesDuringFill = true
                 };
@@ -167,7 +169,7 @@ namespace BikeMessenger
 
                 DataRow LvrCliente = BM_DataSet.Tables["CLIENTES"].NewRow();
 
-                BM_Builder = new SQLiteCommandBuilder(BM_Adaptador);
+                BM_Builder = new SqlCommandBuilder(BM_Adaptador);
 
                 LvrCliente["PENTALPHA"] = aBK_Cliente.PENTALPHA;
                 LvrCliente["RUTID"] = aBK_Cliente.RUTID;
@@ -179,6 +181,7 @@ namespace BikeMessenger
                 LvrCliente["ACTIVIDAD2"] = aBK_Cliente.ACTIVIDAD2;
                 LvrCliente["REPRESENTANTE1"] = aBK_Cliente.REPRESENTANTE1;
                 LvrCliente["REPRESENTANTE2"] = aBK_Cliente.REPRESENTANTE2;
+                LvrCliente["EMAIL"] = aBK_Cliente.EMAIL;
                 LvrCliente["TELEFONO1"] = aBK_Cliente.TELEFONO1;
                 LvrCliente["TELEFONO2"] = aBK_Cliente.TELEFONO2;
                 LvrCliente["DOMICILIO1"] = aBK_Cliente.DOMICILIO1;
@@ -210,9 +213,9 @@ namespace BikeMessenger
         public bool ModificarCliente(JsonBikeMessengerCliente mBK_Cliente)
         {
             DataSet BM_DataSet;
-            SQLiteDataAdapter BM_Adaptador;
-            SQLiteCommand BM_Comando;
-            SQLiteCommandBuilder BM_Builder;
+            SqlDataAdapter BM_Adaptador;
+            SqlCommand BM_Comando;
+            SqlCommandBuilder BM_Builder;
 
             try
             {
@@ -220,7 +223,7 @@ namespace BikeMessenger
                 BM_Comando.UpdatedRowSource = UpdateRowSource.FirstReturnedRecord;
                 BM_Comando.CommandText = string.Format("SELECT * FROM CLIENTES WHERE PENTALPHA = '" + mBK_Cliente.PENTALPHA + "' AND RUTID = '" + mBK_Cliente.RUTID + "' AND DIGVER = '" + mBK_Cliente.DIGVER + "'");
 
-                BM_Adaptador = new SQLiteDataAdapter(BM_Comando)
+                BM_Adaptador = new SqlDataAdapter(BM_Comando)
                 {
                     AcceptChangesDuringFill = true
                 };
@@ -230,7 +233,7 @@ namespace BikeMessenger
 
                 DataRow LvrCliente = BM_DataSet.Tables["CLIENTES"].Rows[0];
 
-                BM_Builder = new SQLiteCommandBuilder(BM_Adaptador);
+                BM_Builder = new SqlCommandBuilder(BM_Adaptador);
 
                 LvrCliente["PENTALPHA"] = mBK_Cliente.PENTALPHA;
                 LvrCliente["RUTID"] = mBK_Cliente.RUTID;
@@ -242,6 +245,7 @@ namespace BikeMessenger
                 LvrCliente["ACTIVIDAD2"] = mBK_Cliente.ACTIVIDAD2;
                 LvrCliente["REPRESENTANTE1"] = mBK_Cliente.REPRESENTANTE1;
                 LvrCliente["REPRESENTANTE2"] = mBK_Cliente.REPRESENTANTE2;
+                LvrCliente["EMAIL"] = mBK_Cliente.EMAIL;
                 LvrCliente["TELEFONO1"] = mBK_Cliente.TELEFONO1;
                 LvrCliente["TELEFONO2"] = mBK_Cliente.TELEFONO2;
                 LvrCliente["DOMICILIO1"] = mBK_Cliente.DOMICILIO1;
@@ -272,7 +276,7 @@ namespace BikeMessenger
         {
             BK_Cliente = new JsonBikeMessengerCliente();
             BK_ClienteLista = new List<JsonBikeMessengerCliente>();
-            SQLiteCommand BM_Comando;
+            SqlCommand BM_Comando;
 
             try
             {
@@ -293,29 +297,29 @@ namespace BikeMessenger
             List<ClaseClientesGrid> GridLocalClientesLista = new List<ClaseClientesGrid>();
 
             DataSet BM_DataSet;
-            SQLiteDataAdapter BM_Adaptador;
-            SQLiteCommand BM_Comando;
+            SqlDataAdapter BM_Adaptador;
+            SqlCommand BM_Comando;
 
             try
             {
                 BM_Comando = BM_Conexion.CreateCommand();
-                BM_Comando.CommandText = string.Format("SELECT * FROM CLIENTES");
+                BM_Comando.CommandText = string.Format("SELECT * FROM CLIENTES_VISTA_GRID");
 
-                BM_Adaptador = new SQLiteDataAdapter(BM_Comando)
+                BM_Adaptador = new SqlDataAdapter(BM_Comando)
                 {
                     AcceptChangesDuringFill = false
                 };
 
                 BM_DataSet = new DataSet();
-                _ = BM_Adaptador.Fill(BM_DataSet, "CLIENTES");
+                _ = BM_Adaptador.Fill(BM_DataSet, "CLIENTES_VISTA_GRID");
 
-                foreach (DataRow LvrClientes in BM_DataSet.Tables["CLIENTES"].Rows)
+                foreach (DataRowView LvrClientes in BM_DataSet.Tables["CLIENTES_VISTA_GRID"].DefaultView)
                 {
                     ClaseClientesGrid GridLocalClientes = new ClaseClientesGrid
                     {
                         RUTID = LvrClientes["RUTID"].ToString(),
                         DIGVER = LvrClientes["DIGVER"].ToString(),
-                        NOMBRE = LvrClientes["NOMBRES"].ToString()
+                        NOMBRE = LvrClientes["NOMBRE"].ToString()
                     };
 
                     GridLocalClientesLista.Add(GridLocalClientes);
@@ -333,16 +337,16 @@ namespace BikeMessenger
         {
             List<string> BK_PaisLista = new List<string>();
             DataSet BM_DataSetPais;
-            SQLiteDataAdapter BM_AdaptadorPais;
-            SQLiteCommand BM_ComandoPais;
+            SqlDataAdapter BM_AdaptadorPais;
+            SqlCommand BM_ComandoPais;
             string BK_Pais;
 
             try
             {
                 BM_ComandoPais = BM_Conexion.CreateCommand();
-                BM_ComandoPais.CommandText = string.Format("SELECT * FROM PAIS ORDER BY NOMBEW");
+                BM_ComandoPais.CommandText = string.Format("SELECT * FROM PAIS ORDER BY NOMBRE");
 
-                BM_AdaptadorPais = new SQLiteDataAdapter(BM_ComandoPais);
+                BM_AdaptadorPais = new SqlDataAdapter(BM_ComandoPais);
 
                 BM_DataSetPais = new DataSet();
                 BM_AdaptadorPais.Fill(BM_DataSetPais, "PAIS");
@@ -365,8 +369,8 @@ namespace BikeMessenger
         {
             List<string> BK_RegionLista = new List<string>();
             DataSet BM_DataSetRegion;
-            SQLiteDataAdapter BM_AdaptadorRegion;
-            SQLiteCommand BM_ComandoRegion;
+            SqlDataAdapter BM_AdaptadorRegion;
+            SqlCommand BM_ComandoRegion;
             string BK_Region;
 
             try
@@ -374,7 +378,7 @@ namespace BikeMessenger
                 BM_ComandoRegion = BM_Conexion.CreateCommand();
                 BM_ComandoRegion.CommandText = string.Format("SELECT * FROM ESTADOREGION ORDER BY NOMBRE");
 
-                BM_AdaptadorRegion = new SQLiteDataAdapter(BM_ComandoRegion);
+                BM_AdaptadorRegion = new SqlDataAdapter(BM_ComandoRegion);
 
                 BM_DataSetRegion = new DataSet();
                 BM_AdaptadorRegion.Fill(BM_DataSetRegion, "ESTADOREGION");
@@ -397,8 +401,8 @@ namespace BikeMessenger
         {
             List<string> BK_ComunaLista = new List<string>();
             DataSet BM_DataSetComuna;
-            SQLiteDataAdapter BM_AdaptadorComuna;
-            SQLiteCommand BM_ComandoComuna;
+            SqlDataAdapter BM_AdaptadorComuna;
+            SqlCommand BM_ComandoComuna;
             string BK_Comuna;
 
             try
@@ -406,7 +410,7 @@ namespace BikeMessenger
                 BM_ComandoComuna = BM_Conexion.CreateCommand();
                 BM_ComandoComuna.CommandText = string.Format("SELECT * FROM COMUNA ORDER BY NOMBRE");
 
-                BM_AdaptadorComuna = new SQLiteDataAdapter(BM_ComandoComuna);
+                BM_AdaptadorComuna = new SqlDataAdapter(BM_ComandoComuna);
 
                 BM_DataSetComuna = new DataSet();
                 BM_AdaptadorComuna.Fill(BM_DataSetComuna, "COMUNA");
@@ -427,26 +431,26 @@ namespace BikeMessenger
 
         public List<string> GetCiudad()
         {
-            List<string> BK_RegionLista = new List<string>();
-            DataSet BM_DataSetRegion;
-            SQLiteDataAdapter BM_AdaptadorRegion;
-            SQLiteCommand BM_ComandoRegion;
-            string BK_Region;
+            List<string> BK_CiudadLista = new List<string>();
+            DataSet BM_DataSetCiudad;
+            SqlDataAdapter BM_AdaptadorCiudad;
+            SqlCommand BM_ComandoCiudad;
+            string BK_Ciudad;
 
             try
             {
-                BM_ComandoRegion = BM_Conexion.CreateCommand();
-                BM_ComandoRegion.CommandText = string.Format("SELECT * FROM ESTADOREGION ORDER BY NOMBRE");
+                BM_ComandoCiudad = BM_Conexion.CreateCommand();
+                BM_ComandoCiudad.CommandText = string.Format("SELECT * FROM CIUDAD ORDER BY NOMBRE");
 
-                BM_AdaptadorRegion = new SQLiteDataAdapter(BM_ComandoRegion);
+                BM_AdaptadorCiudad = new SqlDataAdapter(BM_ComandoCiudad);
 
-                BM_DataSetRegion = new DataSet();
-                BM_AdaptadorRegion.Fill(BM_DataSetRegion, "ESTADOREGION");
+                BM_DataSetCiudad = new DataSet();
+                BM_AdaptadorCiudad.Fill(BM_DataSetCiudad, "CIUDAD");
 
-                foreach (DataRow LvrPais in BM_DataSetRegion.Tables["ESTADOREGION"].Rows)
+                foreach (DataRow LvrCiudad in BM_DataSetCiudad.Tables["CIUDAD"].Rows)
                 {
-                    BK_Region = LvrPais["NOMBRE"].ToString();
-                    BK_RegionLista.Add(BK_Region);
+                    BK_Ciudad = LvrCiudad["NOMBRE"].ToString();
+                    BK_CiudadLista.Add(BK_Ciudad);
                 }
             }
             catch (Exception Ex)
@@ -454,7 +458,7 @@ namespace BikeMessenger
                 Console.WriteLine(Ex.InnerException.Message);
                 return null;
             }
-            return BK_RegionLista;
+            return BK_CiudadLista;
         }
 
         public string Bm_Cliente_Listado()
@@ -462,8 +466,8 @@ namespace BikeMessenger
             BK_Cliente = new JsonBikeMessengerCliente();
             BK_ClienteLista = new List<JsonBikeMessengerCliente>();
             DataSet BM_DataSet;
-            SQLiteDataAdapter BM_Adaptador;
-            SQLiteCommand BM_Comando;
+            SqlDataAdapter BM_Adaptador;
+            SqlCommand BM_Comando;
             LvrTablaHtml DocumentoHtml = new LvrTablaHtml();
             DocumentoHtml.CrearTexto("CLIENTES");
             DocumentoHtml.InicioDocumento();
@@ -485,23 +489,23 @@ namespace BikeMessenger
             try
             {
                 BM_Comando = BM_Conexion.CreateCommand();
-                BM_Comando.CommandText = string.Format("SELECT * FROM CLIENTES");
+                BM_Comando.CommandText = string.Format("SELECT * FROM CLIENTES_VISTA_LISTADO");
 
-                BM_Adaptador = new SQLiteDataAdapter(BM_Comando)
+                BM_Adaptador = new SqlDataAdapter(BM_Comando)
                 {
                     AcceptChangesDuringFill = false
                 };
                 BM_DataSet = new DataSet();
-                BM_Adaptador.Fill(BM_DataSet, "CLIENTES");
+                BM_Adaptador.Fill(BM_DataSet, "CLIENTES_VISTA_LISTADO");
 
-                foreach (DataRow LvrCliente in BM_DataSet.Tables["CLIENTES"].Rows)
+                foreach (DataRowView LvrCliente in BM_DataSet.Tables["CLIENTES_VISTA_LISTADO"].DefaultView)
                 {
                     DocumentoHtml.AbrirFila();
                     DocumentoHtml.AgregarCampo(LvrCliente["RUTID"].ToString() + "-" + LvrCliente["DIGVER"].ToString(), false);
                     DocumentoHtml.AgregarCampo(LvrCliente["NOMBRE"].ToString(), false);
                     DocumentoHtml.AgregarCampo(LvrCliente["ACTIVIDAD1"].ToString(), false);
                     DocumentoHtml.AgregarCampo(LvrCliente["REPRESENTANTE1"].ToString(), false);
-                    DocumentoHtml.AgregarCampo(LvrCliente["TELEFONO2"].ToString(), false);
+                    DocumentoHtml.AgregarCampo(LvrCliente["TELEFONO1"].ToString(), false);
                     DocumentoHtml.AgregarCampo(LvrCliente["DOMICILIO1"].ToString(), false);
                     DocumentoHtml.AgregarCampo(LvrCliente["NUMERO"].ToString(), false);
                     DocumentoHtml.AgregarCampo(LvrCliente["OFICINA"].ToString(), false);

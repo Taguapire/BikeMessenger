@@ -14,7 +14,7 @@
         public string ACTIVIDAD2 { get; set; }
         public string REPRESENTANTE1 { get; set; }
         public string REPRESENTANTE2 { get; set; }
-        public string REPRESENTANTE3 { get; set; }
+        public string EMAIL { get; set; }
         public string TELEFONO1 { get; set; }
         public string TELEFONO2 { get; set; }
         public string DOMICILIO1 { get; set; }
@@ -45,7 +45,7 @@
             ACTIVIDAD2 = "";
             REPRESENTANTE1 = "";
             REPRESENTANTE2 = "";
-            REPRESENTANTE3 = "";
+            EMAIL = "";
             TELEFONO1 = "";
             TELEFONO2 = "";
             DOMICILIO1 = "";

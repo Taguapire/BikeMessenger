@@ -8,7 +8,6 @@
         public string PATENTE { get; set; }
         public string RUTID { get; set; }
         public string DIGVER { get; set; }
-        public string PROPIETARIO { get; set; }
         public string TIPO { get; set; }
         public string MARCA { get; set; }
         public string MODELO { get; set; }
@@ -31,7 +30,6 @@
             PATENTE = "";
             RUTID = "";
             DIGVER = "";
-            PROPIETARIO = "";
             TIPO = "";
             MARCA = "";
             MODELO = "";

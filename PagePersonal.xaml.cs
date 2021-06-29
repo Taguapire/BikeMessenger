@@ -88,7 +88,7 @@ namespace BikeMessenger
                 if (LvrTransferVar.P_RUTID == "")
                 {
                     PersonalIOArray = BM_Database_Personal.BuscarPersonal();
-                    if (PersonalIOArray != null)
+                    if (PersonalIOArray != null && PersonalIOArray.Count > 0)
                     {
                         PersonalIO = PersonalIOArray[0];
                         LlenarPantallaConDb();
@@ -96,7 +96,8 @@ namespace BikeMessenger
                 }
                 else
                 {
-                    if ((PersonalIOArray = BM_Database_Personal.BuscarPersonal(LvrTransferVar.P_PENTALPHA, LvrTransferVar.P_RUTID, LvrTransferVar.P_DIGVER)) != null)
+                    PersonalIOArray = BM_Database_Personal.BuscarPersonal(LvrTransferVar.P_PENTALPHA, LvrTransferVar.P_RUTID, LvrTransferVar.P_DIGVER);
+                    if (PersonalIOArray != null && PersonalIOArray.Count > 0)
                     {
                         PersonalIO = PersonalIOArray[0];
                         LlenarPantallaConDb();
