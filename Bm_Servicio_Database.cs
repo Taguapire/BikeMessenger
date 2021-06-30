@@ -10,8 +10,8 @@ namespace BikeMessenger
         private static SqlConnection BM_Conexion;
         private TransferVar BM_TrasferVar;
 
-        private static JsonBikeMessengerServicio BK_Servicio;
-        private static List<JsonBikeMessengerServicio> BK_ServicioLista;
+        private static JsonBikeMessengerServicio BK_Servicio = new JsonBikeMessengerServicio();
+        private static List<JsonBikeMessengerServicio> BK_ServicioLista = new List<JsonBikeMessengerServicio>();
 
         private string BM_CadenaConexion;
 
@@ -20,7 +20,7 @@ namespace BikeMessenger
             BM_TrasferVar = new TransferVar();
             BM_TrasferVar.LeerDirectorio();
             BM_CadenaConexion = BM_TrasferVar.Directorio;
-            BM_Conexion = new SqlConnection("Data Source=VASCON\\SQLEXPRESS;Initial Catalog=bikemessenger;User ID=bikemessenger; Password=Hola1974");
+            BM_Conexion = new SqlConnection("Data Source=VASCON\\SQLEXPRESS;Initial Catalog=bikemessenger;MultipleActiveResultSets=true;User ID=bikemessenger; Password=Hola1974");
             BM_Conexion.Open();
         }
 
@@ -447,6 +447,7 @@ namespace BikeMessenger
                         MODELO = LvrRecurso["MODELO"].ToString(),
                         RUTID = LvrRecurso["RUTID"].ToString(),
                         DIGVER = LvrRecurso["DIGVER"].ToString()
+
                     };
                     GridLocalRecursoLista.Add(GridLocalRecurso);
                 }
@@ -528,7 +529,7 @@ namespace BikeMessenger
                     {
                         RUTID = LvrClientes["RUTID"].ToString(),
                         DIGVER = LvrClientes["DIGVER"].ToString(),
-                        NOMBRE = LvrClientes["NOMBRES"].ToString()
+                        NOMBRE = LvrClientes["NOMBRE"].ToString()
                     };
 
                     GridLocalClientesLista.Add(GridLocalClientes);
@@ -544,59 +545,65 @@ namespace BikeMessenger
 
         public string Bm_BuscarNombreCliente(string pPENTALPHA, string pRUT, string pDIGVER)
         {
-            string NombreCliente;
-            SqlCommand BM_Comando;
+            string NombreCliente = "No existe";
+            SqlCommand BM_ComandoLocal;
+            SqlDataReader BM_ReaderLocal;
 
             try
             {
-                BM_Comando = BM_Conexion.CreateCommand();
-                BM_Comando.CommandText = string.Format("SELECT NOMBRE FROM CLIENTES WHERE PENTALPHA = '" + pPENTALPHA + "'  AND RUTID = '" + pRUT + "' AND DIGVER = '" + pDIGVER + "'");
-                NombreCliente = BM_Comando.ExecuteReader(CommandBehavior.SingleResult).ToString();
-                return NombreCliente;
+                BM_ComandoLocal = BM_Conexion.CreateCommand();
+                BM_ComandoLocal.CommandText = string.Format("SELECT NOMBRE FROM CLIENTES WHERE PENTALPHA = '" + pPENTALPHA + "'  AND RUTID = '" + pRUT + "' AND DIGVER = '" + pDIGVER + "'");
+                BM_ReaderLocal = BM_ComandoLocal.ExecuteReader();
+                if (BM_ReaderLocal.Read())
+                    NombreCliente = BM_ReaderLocal.GetString(0);
             }
             catch (Exception Ex)
             {
                 Console.WriteLine(Ex.InnerException.Message);
-                return "No existe";
             }
+            return NombreCliente;
         }
 
         public string Bm_BuscarNombreMensajero(string pPENTALPHA, string pRUT, string pDIGVER)
         {
-            string NombrePersonal;
-            SqlCommand BM_Comando;
+        
+                string NombreMensajero = "No existe";
+                SqlCommand BM_ComandoLocal;
+                SqlDataReader BM_ReaderLocal;
 
-            try
-            {
-                BM_Comando = BM_Conexion.CreateCommand();
-                BM_Comando.CommandText = string.Format("SELECT APELLIDOS ||','|| NOMBRE + FROM PERSONAL WHERE PENTALPHA = '" + pPENTALPHA + "'  AND RUTID = '" + pRUT + "' AND DIGVER = '" + pDIGVER + "'");
-                NombrePersonal = BM_Comando.ExecuteReader(CommandBehavior.SingleResult).ToString();
-                return NombrePersonal;
-            }
-            catch (Exception Ex)
-            {
-                Console.WriteLine(Ex.InnerException.Message);
-                return "No existe";
-            }
+                try
+                {
+                    BM_ComandoLocal = BM_Conexion.CreateCommand();
+                    BM_ComandoLocal.CommandText = string.Format("SELECT APELLIDOS + ', ' + NOMBRES FROM PERSONAL WHERE PENTALPHA = '" + pPENTALPHA + "'  AND RUTID = '" + pRUT + "' AND DIGVER = '" + pDIGVER + "'");
+                    BM_ReaderLocal = BM_ComandoLocal.ExecuteReader();
+                    if (BM_ReaderLocal.Read())
+                    NombreMensajero = BM_ReaderLocal.GetString(0);
+                }
+                catch (Exception Ex)
+                {
+                    Console.WriteLine(Ex.InnerException.Message);
+                }
+                return NombreMensajero;
         }
 
         private string Bm_BuscarNombreRecurso(string pPENTALPHA, string pPATENTE)
         {
-            string NombreRecurso;
-            SqlCommand BM_Comando;
+            string NombreMensajero = "No existe";
+            SqlCommand BM_ComandoLocal;
+            SqlDataReader BM_ReaderLocal;
 
             try
             {
-                BM_Comando = BM_Conexion.CreateCommand();
-                BM_Comando.CommandText = string.Format("SELECT TIPO ||'-'|| MARCA ||'-'|| MODELO FROM RECURSOS WHERE PENTALPHA = '" + pPENTALPHA + "'  AND PATENTE = '" + pPATENTE + "'");
-                NombreRecurso = BM_Comando.ExecuteReader(CommandBehavior.SingleResult).ToString();
-                return NombreRecurso;
+                BM_ComandoLocal = BM_Conexion.CreateCommand();
+                BM_ReaderLocal = BM_ComandoLocal.ExecuteReader();
+                if (BM_ReaderLocal.Read())
+                    NombreMensajero = BM_ReaderLocal.GetString(0);
             }
             catch (Exception Ex)
             {
                 Console.WriteLine(Ex.InnerException.Message);
-                return "No existe";
             }
+            return NombreMensajero;
         }
 
         public List<string> GetPais()

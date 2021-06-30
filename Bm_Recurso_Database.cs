@@ -23,7 +23,7 @@ namespace BikeMessenger
             BM_TrasferVar = new TransferVar();
             BM_TrasferVar.LeerDirectorio();
             BM_CadenaConexion = BM_TrasferVar.Directorio;
-            BM_Conexion = new SqlConnection("Data Source=VASCON\\SQLEXPRESS;Initial Catalog=bikemessenger;User ID=bikemessenger; Password=Hola1974");
+            BM_Conexion = new SqlConnection("Data Source=VASCON\\SQLEXPRESS;Initial Catalog=bikemessenger;MultipleActiveResultSets=true;User ID=bikemessenger; Password=Hola1974");
             BM_Conexion.Open();
         }
 
@@ -274,8 +274,9 @@ namespace BikeMessenger
 
                 BM_Adaptador = new SqlDataAdapter(BM_Comando)
                 {
-                    AcceptChangesDuringFill = false
+                    AcceptChangesDuringFill = true
                 };
+
                 BM_DataSet = new DataSet();
                 _ = BM_Adaptador.Fill(BM_DataSet, "RECURSOS_VISTA_GRID");
 
@@ -288,13 +289,15 @@ namespace BikeMessenger
                         MARCA = LvrRecurso["MARCA"].ToString(),
                         MODELO = LvrRecurso["MODELO"].ToString(),
                         RUTID = LvrRecurso["RUTID"].ToString(),
-                        DIGVER = LvrRecurso["DIGVER"].ToString()
+                        DIGVER = LvrRecurso["DIGVER"].ToString(),
+                        CIUDAD = LvrRecurso["CIUDAD"].ToString()
                     };
                     GridLocalRecursoLista.Add(GridLocalRecurso);
                 }
             }
             catch (Exception Ex)
             {
+                Console.WriteLine(Ex.Message);
                 Console.WriteLine(Ex.InnerException.Message);
                 return null;
             }
@@ -339,6 +342,27 @@ namespace BikeMessenger
                 return null;
             }
             return GridLocalPersonalLista;
+        }
+
+        public string Bm_BuscarNombrePropietario(string pPENTALPHA, string pRUT, string pDIGVER)
+        {
+            string NombrePersonal = "No existe";
+            SqlCommand BM_ComandoLocal;
+            SqlDataReader BM_ReaderLocal;
+
+            try
+            {
+                BM_ComandoLocal = BM_Conexion.CreateCommand();
+                BM_ComandoLocal.CommandText = string.Format("SELECT APELLIDOS + ', ' + NOMBRES FROM PERSONAL WHERE PENTALPHA = '" + pPENTALPHA + "'  AND RUTID = '" + pRUT + "' AND DIGVER = '" + pDIGVER + "'");
+                BM_ReaderLocal = BM_ComandoLocal.ExecuteReader();
+                if (BM_ReaderLocal.Read())
+                    NombrePersonal = BM_ReaderLocal.GetString(0);
+            }
+            catch (Exception Ex)
+            {
+                Console.WriteLine(Ex.InnerException.Message);
+            }
+            return NombrePersonal;
         }
 
         public List<string> GetPais()
@@ -545,5 +569,6 @@ namespace BikeMessenger
         public string MODELO { get; set; }
         public string RUTID { get; set; }
         public string DIGVER { get; set; }
+        public string CIUDAD { get; set; }
     }
 }

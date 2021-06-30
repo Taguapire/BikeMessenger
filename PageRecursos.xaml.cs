@@ -225,6 +225,7 @@ namespace BikeMessenger
                 LvrTransferVar.R_PAT_SER = RecursoIO.PATENTE;
                 textBoxRut.Text = RecursoIO.RUTID;
                 textBoxDigitoVerificador.Text = RecursoIO.DIGVER;
+                textBoxPropietario.Text = BM_Database_Recurso.Bm_BuscarNombrePropietario(LvrTransferVar.R_PENTALPHA, LvrTransferVar.R_RUTID, LvrTransferVar.R_DIGVER);
                 comboBoxTipo.SelectedValue = RecursoIO.TIPO;
                 textBoxPatenteCodigo.Text = RecursoIO.PATENTE;
                 textBoxMarca.Text = RecursoIO.MARCA;
@@ -568,9 +569,9 @@ namespace BikeMessenger
         private void LlenarListaRecursos()
         {
 
-            List<JsonBikeMessengerRecurso> GridRecursoDb = new List<JsonBikeMessengerRecurso>();
+            List<ClaseRecursoGrid> GridRecursoDb = new List<ClaseRecursoGrid>();
             List<GridRecursoIndividual> GridRecursoLista = new List<GridRecursoIndividual>();
-            if ((GridRecursoDb = BM_Database_Recurso.BuscarRecurso()) != null)
+            if ((GridRecursoDb = BM_Database_Recurso.BuscarGridRecurso()) != null)
             {
                 for (int i = 0; i < GridRecursoDb.Count; i++)
                 {

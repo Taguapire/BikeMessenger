@@ -22,11 +22,11 @@ namespace BikeMessenger
     /// </summary>
     public sealed partial class PageServicios : Page
     {
-        private List<JsonBikeMessengerServicio> ServicioIOArray = null;
-        private JsonBikeMessengerServicio ServicioIO = null;
-        private readonly JsonBikeMessengerServicio EnviarJsonServicio = new JsonBikeMessengerServicio();
+        private List<JsonBikeMessengerServicio> ServicioIOArray = new List<JsonBikeMessengerServicio>();
+        private JsonBikeMessengerServicio ServicioIO = new JsonBikeMessengerServicio();
+        private JsonBikeMessengerServicio EnviarJsonServicio = new JsonBikeMessengerServicio();
         private JsonBikeMessengerServicio RecibirJsonServicio = new JsonBikeMessengerServicio();
-        private readonly Bm_Servicio_Database BM_Database_Servicio = new Bm_Servicio_Database();
+        private Bm_Servicio_Database BM_Database_Servicio = new Bm_Servicio_Database();
         private TransferVar LvrTransferVar;
         private bool BorrarSiNo;
 
@@ -83,7 +83,8 @@ namespace BikeMessenger
 
                 if (LvrTransferVar.X_NROENVIO == "")
                 {
-                    if ((ServicioIOArray = BM_Database_Servicio.BuscarServicio()) != null)
+                    ServicioIOArray = BM_Database_Servicio.BuscarServicio();
+                    if (ServicioIOArray != null && ServicioIOArray.Count > 0)
                     {
                         ServicioIO = ServicioIOArray[0];
                         LlenarPantallaConDb();
@@ -91,7 +92,8 @@ namespace BikeMessenger
                 }
                 else
                 {
-                    if ((ServicioIOArray = BM_Database_Servicio.BuscarServicio(LvrTransferVar.R_PENTALPHA, LvrTransferVar.X_NROENVIO)) != null)
+                    ServicioIOArray = BM_Database_Servicio.BuscarServicio(LvrTransferVar.R_PENTALPHA, LvrTransferVar.X_NROENVIO);
+                    if (ServicioIOArray != null && ServicioIOArray.Count > 0)
                     {
                         ServicioIO = ServicioIOArray[0];
                         LlenarPantallaConDb();
@@ -796,7 +798,7 @@ namespace BikeMessenger
             try
             {
                 DataGrid CeldaSeleccionada = sender as DataGrid;
-                ClaseRecursoGrid Recurso = (ClaseRecursoGrid)CeldaSeleccionada.SelectedItems[0];
+                GridRecursoIndividualServicios Recurso = (GridRecursoIndividualServicios)CeldaSeleccionada.SelectedItems[0];
                 textBoxIdRecurso.Text = Recurso.PATENTE;
                 textBoxNombreRecurso.Text = Recurso.TIPO + " - " + Recurso.MARCA + " - " + Recurso.MODELO;
 
@@ -811,9 +813,9 @@ namespace BikeMessenger
                 //    // textBoxNombreEmpresa.Text = "Sin Empresa";
                 //}
             }
-            catch (ArgumentOutOfRangeException)
+            catch (Exception ee)
             {
-                ; // No hacer nada, es un control vacio de error
+                Console.WriteLine(ee.Message);
             }
         }
 
