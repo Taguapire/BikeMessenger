@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Data;
-using Microsoft.Data.SqlClient;
 
 namespace BikeMessenger
 {
@@ -30,7 +30,7 @@ namespace BikeMessenger
                 BM_Conexion = new SqlConnection("Data Source=VASCON\\SQLEXPRESS;Initial Catalog=bikemessenger;MultipleActiveResultSets=true;User ID=bikemessenger; Password=Hola1974");
                 BM_Conexion.Open();
             }
-            catch (Microsoft.Data.SqlClient.SqlException Ex)
+            catch (System.Data.SqlClient.SqlException Ex)
             {
                 Console.WriteLine(Ex.InnerException.Message);
             }
