@@ -170,7 +170,7 @@ namespace BikeMessenger
             }
         }
 
-        private void LvrEnviar(object sender, RoutedEventArgs e)
+        private void LvrAlmacenarEnPendrive(object sender, RoutedEventArgs e)
         {
         }
 

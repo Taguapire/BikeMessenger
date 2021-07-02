@@ -6,7 +6,7 @@
     xmlns:Custom="using:Microsoft.UI.Xaml.Controls"
     x:Name="PantallaEmpresa"
     x:Class="BikeMessenger.PageEmpresa"
-    mc:Ignorable="d" Width="1280" Height="720" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
+    mc:Ignorable="d">
     <Page.Background>
         <AcrylicBrush TintColor="#CCABDAF5"/>
     </Page.Background>

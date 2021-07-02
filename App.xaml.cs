@@ -14,7 +14,7 @@ namespace BikeMessenger
 
     public sealed partial class App : Application
     {
-        private static readonly TransferVar LvrTransferVar = new TransferVar();
+        // OJO private static readonly TransferVar LvrTransferVar = new TransferVar(); OJO
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -31,7 +31,7 @@ namespace BikeMessenger
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
         /// 
-        /**
+        
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
             Frame rootFrame = Window.Current.Content as Frame;
@@ -67,8 +67,9 @@ namespace BikeMessenger
                 Window.Current.Activate();
             }
         }
-        */
+       
 
+        /*
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
             // Do not repeat app initialization when the Window already has content,
@@ -127,7 +128,7 @@ namespace BikeMessenger
             // Ensure the current window is active
             Window.Current.Activate();
         }
-
+        */
         /// <summary>
         /// Invoked when Navigation to a certain page fails
         /// </summary>

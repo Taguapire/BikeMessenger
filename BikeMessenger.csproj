@@ -163,6 +163,9 @@
     <Compile Include="PageAjustes.xaml.cs">
       <DependentUpon>PageAjustes.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PageInicio.xaml.cs">
+      <DependentUpon>PageInicio.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PagePersonal.xaml.cs">
       <DependentUpon>PagePersonal.xaml</DependentUpon>
     </Compile>
@@ -270,6 +273,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="PageInicio.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="PagePersonal.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -306,6 +313,7 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
