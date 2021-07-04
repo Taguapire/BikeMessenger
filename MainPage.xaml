@@ -6,13 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" Width="1280" Height="720">
-    <Page.Background>
-        <AcrylicBrush TintColor="#CCABDAF5"/>
-    </Page.Background>
     <Grid AutomationProperties.AccessibilityView="Content"  RequestedTheme="Default" MinWidth="1280" MinHeight="720" MaxWidth="1280" MaxHeight="720" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
-        <Grid.Background>
-            <AcrylicBrush TintColor="#CCABDAF5"/>
-        </Grid.Background>
         <NavigationView x:Name="BM_NavPag" Header="BikeMessenger" IsTabStop="False" Loaded="BM_NavPag_Loaded" SelectionChanged="BM_NavPag_SelectionChanged" ItemInvoked="BM_NavPag_ItemInvoked" Margin="0,12,0,0" IsSettingsVisible="False">
             <NavigationView.MenuItems>
                 <NavigationViewItem x:Name="MenuNav_Inicio" Content="Inicio" Tag="Inicio_Page">
@@ -45,9 +39,14 @@
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE835;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem x:Name="MenuNav_Configuracion" Content="Configuración" Tag="Configuracion_Page">
+                <NavigationViewItem x:Name="MenuNav_Configuracion" Content="Ajustes" Tag="Ajustes_Page">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE713;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem x:Name="MenuNav_Salir" Content="Salir" Tag="Salir_Page">
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE81B;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.MenuItems>

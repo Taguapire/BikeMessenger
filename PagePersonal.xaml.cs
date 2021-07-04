@@ -85,7 +85,7 @@ namespace BikeMessenger
                 LvrTransferVar = (TransferVar)navigationEvent.Parameter;
                 RellenarCombos();
 
-                if (LvrTransferVar.P_RUTID == "")
+                if (LvrTransferVar.CLI_RUTID == "")
                 {
                     PersonalIOArray = BM_Database_Personal.BuscarPersonal();
                     if (PersonalIOArray != null && PersonalIOArray.Count > 0)
@@ -96,7 +96,7 @@ namespace BikeMessenger
                 }
                 else
                 {
-                    PersonalIOArray = BM_Database_Personal.BuscarPersonal(LvrTransferVar.P_PENTALPHA, LvrTransferVar.P_RUTID, LvrTransferVar.P_DIGVER);
+                    PersonalIOArray = BM_Database_Personal.BuscarPersonal(LvrTransferVar.PER_PENTALPHA, LvrTransferVar.CLI_RUTID, LvrTransferVar.CLI_DIGVER);
                     if (PersonalIOArray != null && PersonalIOArray.Count > 0)
                     {
                         PersonalIO = PersonalIOArray[0];
@@ -175,8 +175,8 @@ namespace BikeMessenger
         {
             try
             {
-                LvrTransferVar.P_RUTID = PersonalIO.RUTID;
-                LvrTransferVar.P_DIGVER = PersonalIO.DIGVER;
+                LvrTransferVar.CLI_RUTID = PersonalIO.RUTID;
+                LvrTransferVar.CLI_DIGVER = PersonalIO.DIGVER;
                 textBoxRut.Text = PersonalIO.RUTID;
                 textBoxDigitoVerificador.Text = PersonalIO.DIGVER;
                 textBoxNombres.Text = PersonalIO.NOMBRES;
@@ -291,9 +291,9 @@ namespace BikeMessenger
 
         private void LimpiarPantalla()
         {
-            // LvrTransferVar.P_PENTALPHA = "";
-            LvrTransferVar.P_RUTID = "";
-            LvrTransferVar.P_DIGVER = "";
+            // LvrTransferVar.PER_PENTALPHA = "";
+            LvrTransferVar.CLI_RUTID = "";
+            LvrTransferVar.CLI_DIGVER = "";
             textBoxRut.Text = "";
             textBoxDigitoVerificador.Text = "";
             textBoxNombres.Text = "";
@@ -318,13 +318,13 @@ namespace BikeMessenger
 
         private async Task LlenarDbConPantallaAsync()
         {
-            PersonalIO.PENTALPHA = LvrTransferVar.P_PENTALPHA;
+            PersonalIO.PENTALPHA = LvrTransferVar.PER_PENTALPHA;
             PersonalIO.RUTID = textBoxRut.Text;
             PersonalIO.DIGVER = textBoxDigitoVerificador.Text;
             // ***********************************************************
             // Agregando Campos de Parametros
-            LvrTransferVar.P_RUTID = PersonalIO.RUTID;
-            LvrTransferVar.P_DIGVER = PersonalIO.DIGVER;
+            LvrTransferVar.CLI_RUTID = PersonalIO.RUTID;
+            LvrTransferVar.CLI_DIGVER = PersonalIO.DIGVER;
             // ***********************************************************
             PersonalIO.APELLIDOS = textBoxApellidos.Text;
             PersonalIO.NOMBRES = textBoxNombres.Text;
@@ -391,8 +391,8 @@ namespace BikeMessenger
                 {
                     await AvisoOperacionPersonalDialogAsync("Agregar Personal", "Personal agregado exitosamente.");
                     LlenarListaPersonal();
-                    LvrTransferVar.P_RUTID = PersonalIO.RUTID;
-                    LvrTransferVar.P_DIGVER = PersonalIO.DIGVER;
+                    LvrTransferVar.CLI_RUTID = PersonalIO.RUTID;
+                    LvrTransferVar.CLI_DIGVER = PersonalIO.DIGVER;
                 }
 
                 else
@@ -436,8 +436,8 @@ namespace BikeMessenger
                 {
                     await AvisoOperacionPersonalDialogAsync("Modificar Personal", "Personal modificada exitosamente.");
                     LlenarListaPersonal();
-                    LvrTransferVar.P_RUTID = PersonalIO.RUTID;
-                    LvrTransferVar.P_DIGVER = PersonalIO.DIGVER;
+                    LvrTransferVar.CLI_RUTID = PersonalIO.RUTID;
+                    LvrTransferVar.CLI_DIGVER = PersonalIO.DIGVER;
                 }
                 else
                 {
@@ -473,7 +473,7 @@ namespace BikeMessenger
 
             bool TransaccionOK = false;
 
-            if (BM_Database_Personal.BorrarPersonal(LvrTransferVar.P_PENTALPHA, PersonalIO.RUTID, PersonalIO.DIGVER))
+            if (BM_Database_Personal.BorrarPersonal(LvrTransferVar.PER_PENTALPHA, PersonalIO.RUTID, PersonalIO.DIGVER))
             {
                 TransaccionOK = true;
 
@@ -493,13 +493,13 @@ namespace BikeMessenger
                     if ((PersonalIOArray = BM_Database_Personal.BuscarPersonal()) != null)
                     {
                         PersonalIO = PersonalIOArray[0];
-                        LvrTransferVar.P_RUTID = PersonalIO.RUTID;
-                        LvrTransferVar.P_DIGVER = PersonalIO.DIGVER;
+                        LvrTransferVar.CLI_RUTID = PersonalIO.RUTID;
+                        LvrTransferVar.CLI_DIGVER = PersonalIO.DIGVER;
                     }
                     else
                     {
-                        LvrTransferVar.P_RUTID = "";
-                        LvrTransferVar.P_DIGVER = "";
+                        LvrTransferVar.CLI_RUTID = "";
+                        LvrTransferVar.CLI_DIGVER = "";
                     }
                     LlenarPantallaConDb();
                     LlenarListaPersonal();
@@ -623,7 +623,7 @@ namespace BikeMessenger
                 GridPersonalIndividual Fila = (GridPersonalIndividual)CeldaSeleccionada.SelectedItems[0];
                 string[] CadenaDividida = Fila.RUT.Split("-", 2, StringSplitOptions.None);
 
-                PersonalIOArray = BM_Database_Personal.BuscarPersonal(LvrTransferVar.P_PENTALPHA, CadenaDividida[0], CadenaDividida[1]);
+                PersonalIOArray = BM_Database_Personal.BuscarPersonal(LvrTransferVar.PER_PENTALPHA, CadenaDividida[0], CadenaDividida[1]);
 
                 if (PersonalIOArray != null)
                 {

@@ -1,4 +1,6 @@
-﻿using Windows.UI.Xaml.Controls;
+﻿using System;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
@@ -27,7 +29,7 @@ namespace BikeMessenger
                     break;
                 }
             }
-            CuadroDeContenido.Navigate(typeof(PageInicio));
+            _ = CuadroDeContenido.Navigate(typeof(PageInicio));
         }
 
         private void BM_NavPag_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
@@ -37,7 +39,51 @@ namespace BikeMessenger
 
         private void BM_NavPag_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
+            string BM_ItemContent = "";
 
+            try
+            {
+                BM_ItemContent = (string) args.InvokedItem;
+
+                if (BM_ItemContent != "" || BM_ItemContent != null)
+                {
+                    switch (BM_ItemContent)
+                    {
+                        case "Inicio":
+                            CuadroDeContenido.Navigate(typeof(PageInicio));
+                            break;
+
+                        case "Empresa":
+                            CuadroDeContenido.Navigate(typeof(PageEmpresa));
+                            break;
+
+                        case "Personal":
+                            CuadroDeContenido.Navigate(typeof(PagePersonal));
+                            break;
+
+                        case "Recursos":
+                            CuadroDeContenido.Navigate(typeof(PageRecursos));
+                            break;
+                        case "Clientes":
+                            CuadroDeContenido.Navigate(typeof(PageClientes));
+                            break;
+                        case "Servicios":
+                            CuadroDeContenido.Navigate(typeof(PageServicios));
+                            break;
+                        case "Ajustes":
+                            CuadroDeContenido.Navigate(typeof(PageAjustes));
+                            break;
+                        case "Salir":
+                            Application.Current.Exit();
+                            break;
+                    }
+                }
+            }
+            catch (Exception ee)
+            {
+                Console.WriteLine(ee.InnerException.Message);
+                Console.WriteLine(ee.Message);
+            }
         }
     }
 }

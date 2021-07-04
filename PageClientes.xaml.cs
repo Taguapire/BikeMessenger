@@ -81,7 +81,7 @@ namespace BikeMessenger
                 LvrTransferVar = (TransferVar)navigationEvent.Parameter;
                 RellenarCombos();
 
-                if (LvrTransferVar.C_RUTID == "")
+                if (LvrTransferVar.CLI_RUTID == "")
                 {
                     ClienteIOArray = BM_Database_Cliente.BuscarCliente();
                     if (ClienteIOArray != null && ClienteIOArray.Count > 0)
@@ -92,7 +92,7 @@ namespace BikeMessenger
                 }
                 else
                 {
-                    ClienteIOArray = BM_Database_Cliente.BuscarCliente(LvrTransferVar.C_PENTALPHA, LvrTransferVar.C_RUTID, LvrTransferVar.C_DIGVER);
+                    ClienteIOArray = BM_Database_Cliente.BuscarCliente(LvrTransferVar.CLI_PENTALPHA, LvrTransferVar.CLI_RUTID, LvrTransferVar.CLI_DIGVER);
                     if (ClienteIOArray != null && ClienteIOArray.Count > 0)
                     {
                         ClienteIO = ClienteIOArray[0];
@@ -174,7 +174,7 @@ namespace BikeMessenger
         {
             try
             {
-                // LvrTransferVar.R_PENTALPHA = BM_Database_Recurso.BK_PENTALPHA;
+                // LvrTransferVar.REC_PENTALPHA = BM_Database_Recurso.BK_PENTALPHA;
                 textBoxRut.Text = ClienteIO.RUTID;
                 textBoxDigitoVerificador.Text = ClienteIO.DIGVER;
                 textBoxNombreCliente.Text = ClienteIO.NOMBRE;
@@ -249,8 +249,8 @@ namespace BikeMessenger
 
         private void LimpiarPantalla()
         {
-            LvrTransferVar.C_RUTID = "";
-            LvrTransferVar.C_DIGVER = "";
+            LvrTransferVar.CLI_RUTID = "";
+            LvrTransferVar.CLI_DIGVER = "";
             textBoxRut.Text = "";
             textBoxDigitoVerificador.Text = "";
             textBoxNombreCliente.Text = "";
@@ -279,7 +279,7 @@ namespace BikeMessenger
 
         private async Task LlenarDbConPantallaAsync()
         {
-            ClienteIO.PENTALPHA = LvrTransferVar.C_PENTALPHA;
+            ClienteIO.PENTALPHA = LvrTransferVar.CLI_PENTALPHA;
             ClienteIO.RUTID = textBoxRut.Text;
             ClienteIO.DIGVER = textBoxDigitoVerificador.Text;
             ClienteIO.NOMBRE = textBoxNombreCliente.Text;
@@ -350,8 +350,8 @@ namespace BikeMessenger
                 {
                     await AvisoOperacionClientesDialogAsync("Agregar Cliente", "Cliente agregado exitosamente.");
                     LlenarListaClientes();
-                    LvrTransferVar.C_RUTID = ClienteIO.RUTID;
-                    LvrTransferVar.C_DIGVER = ClienteIO.DIGVER;
+                    LvrTransferVar.CLI_RUTID = ClienteIO.RUTID;
+                    LvrTransferVar.CLI_DIGVER = ClienteIO.DIGVER;
                 }
 
                 else
@@ -397,8 +397,8 @@ namespace BikeMessenger
                 {
                     await AvisoOperacionClientesDialogAsync("Modificar Personal", "Personal modificada exitosamente.");
                     LlenarListaClientes();
-                    LvrTransferVar.C_RUTID = ClienteIO.RUTID;
-                    LvrTransferVar.C_DIGVER = ClienteIO.DIGVER;
+                    LvrTransferVar.CLI_RUTID = ClienteIO.RUTID;
+                    LvrTransferVar.CLI_DIGVER = ClienteIO.DIGVER;
                 }
                 else
                 {
@@ -434,7 +434,7 @@ namespace BikeMessenger
 
             bool TransaccionOK = false;
 
-            if (BM_Database_Cliente.BorrarCliente(LvrTransferVar.C_PENTALPHA, ClienteIO.RUTID, ClienteIO.DIGVER))
+            if (BM_Database_Cliente.BorrarCliente(LvrTransferVar.CLI_PENTALPHA, ClienteIO.RUTID, ClienteIO.DIGVER))
             {
                 TransaccionOK = true;
 
@@ -454,13 +454,13 @@ namespace BikeMessenger
                     if ((ClienteIOArray = BM_Database_Cliente.BuscarCliente()) != null)
                     {
                         ClienteIO = ClienteIOArray[0];
-                        LvrTransferVar.C_RUTID = ClienteIO.RUTID;
-                        LvrTransferVar.C_DIGVER = ClienteIO.DIGVER;
+                        LvrTransferVar.CLI_RUTID = ClienteIO.RUTID;
+                        LvrTransferVar.CLI_DIGVER = ClienteIO.DIGVER;
                     }
                     else
                     {
-                        LvrTransferVar.C_RUTID = "";
-                        LvrTransferVar.C_DIGVER = "";
+                        LvrTransferVar.CLI_RUTID = "";
+                        LvrTransferVar.CLI_DIGVER = "";
                     }
                     LlenarPantallaConDb();
                     LlenarListaClientes();
@@ -586,7 +586,7 @@ namespace BikeMessenger
                 GridClientesIndividual Fila = (GridClientesIndividual)CeldaSeleccionada.SelectedItems[0];
                 string[] CadenaDividida = Fila.RUT.Split("-", 2, StringSplitOptions.None);
 
-                if ((ClienteIOArray = BM_Database_Cliente.BuscarCliente(LvrTransferVar.C_PENTALPHA, CadenaDividida[0], CadenaDividida[1])) != null)
+                if ((ClienteIOArray = BM_Database_Cliente.BuscarCliente(LvrTransferVar.CLI_PENTALPHA, CadenaDividida[0], CadenaDividida[1])) != null)
                 {
                     ClienteIO = ClienteIOArray[0];
                     LimpiarPantalla();

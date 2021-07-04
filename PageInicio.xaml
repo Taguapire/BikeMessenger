@@ -7,13 +7,7 @@
     x:Name="PantallaEmpresa"
     x:Class="BikeMessenger.PageInicio"
     mc:Ignorable="d">
-    <Page.Background>
-        <AcrylicBrush TintColor="#CCABDAF5"/>
-    </Page.Background>
     <Grid>
-        <Grid.Background>
-            <AcrylicBrush TintColor="#CCABDAF5"/>
-        </Grid.Background>
         <TextBox x:Name="textBox" HorizontalAlignment="Left" Margin="487,273,0,0" Text="Pagina de Inicio" TextWrapping="Wrap" VerticalAlignment="Top" Height="109" Width="359"/>
     </Grid>
 </Page>

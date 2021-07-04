@@ -3,73 +3,155 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-
+using System.Data;
+using System.Data.SqlClient;
 
 namespace BikeMessenger
 {
     internal class TransferVar
     {
+        ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
         // Valores de Base de Datos
 
+        public string ESTADOPARAMETROS { get; set; }        // "NADA/SQLITE/SQLSERVER/WEBPENTALPHA/WEBPROPIO"
+        public string SINCRONIZACIONWEB { get; set; }       // "S/N"
+        //--------------------------------------------------------------------
+        public string DIRECTORIO_ALMACEN { get; set; }      // "ApplicationData.Current.LocalFolder.Path";
+        public string DIRECTORIO_BASE_LOCAL { get; set; }   // "ApplicationData.Current.LocalFolder.Path";
+        public string DIRECTORIO_USB_MEMORIA { get; set; }  // "N";
+        //--------------------------------------------------------------------
+        public string PENTALPHA_ID { get; set; }            // "N";
+        //--------------------------------------------------------------------
+        public string BASEDEDATOSLOCAL { get; set; }        // "N";
+        //--------------------------------------------------------------------
+        public string BDSQLSERVER { get; set; }             // "N";
+        public string BDSQLSERVERINSTANCIA { get; set; }    // "SERVER/INSTANCIA";
+        public string BDSQLSERVERPUERTO { get; set; }       // "PUERTO";
+        public string BDSQLSERVERUSUARIO { get; set; }      // "USUARIO";
+        public string BDSQLSERVERPASSWORD { get; set; }     // "PASSWORD";
+        public string BDSQLSERVERCATALOGO { get; set; }     // "CATALOGO";
+        //--------------------------------------------------------------------
+        public string BDREMOTAPENTALPHA { get; set; }       // "N";
+        //--------------------------------------------------------------------
+        public string BDREMOTACLIENTE { get; set; }         // "N";
+        //--------------------------------------------------------------------
+        public SqlConnectionStringBuilder BM_Sql_String_Builder = new SqlConnectionStringBuilder();
+        //--------------------------------------------------------------------
+
         // Valores de Empresa
-        public string E_PENTALPHA { get; set; }
-        public string E_RUTID { get; set; }
-        public string E_DIGVER { get; set; }
+        public string EMP_PENTALPHA { get; set; }
+        public string EMP_RUTID { get; set; }
+        public string EMCLI_DIGVER { get; set; }
 
         // Valores de Personal
-        public string P_PENTALPHA { get; set; }
-        public string P_RUTID { get; set; }
-        public string P_DIGVER { get; set; }
+        public string PER_PENTALPHA { get; set; }
+        public string PER_RUTID { get; set; }
+        public string PER_DIGVER { get; set; }
 
         // Valores de Recursos
-        public string R_PENTALPHA { get; set; }
-        public string R_RUTID { get; set; }
-        public string R_DIGVER { get; set; }
-        public string R_PAT_SER { get; set; }
+        public string REC_PENTALPHA { get; set; }
+        public string REC_RUTID { get; set; }
+        public string REC_DIGVER { get; set; }
+        public string REC_PAT_SER { get; set; }
 
         // Valores de Clientes
-        public string C_PENTALPHA { get; set; }
-        public string C_RUTID { get; set; }
-        public string C_DIGVER { get; set; }
+        public string CLI_PENTALPHA { get; set; }
+        public string CLI_RUTID { get; set; }
+        public string CLI_DIGVER { get; set; }
 
         // Valores de SERVICIOS
-        public string X_PENTALPHA { get; set; }
-        public string X_NROENVIO { get; set; }
-
-        // Valores Directorio
-        public string Directorio { get; set; }
-        public string DirectorioRespaldos { get; set; }
-
-        public string SincronizarRemoto { get; set; }
-
-        public string SincronizarPropio { get; set; }
+        public string SER_PENTALPHA { get; set; }
+        public string SER_NROENVIO { get; set; }
 
         public string PantallaAnterior { get; set; }
-        // public string TipoDeInforme;
 
         public TransferVar()
         {
-            CrearDirectorio(ApplicationData.Current.LocalFolder.Path);
-            CrearDirectorioRespaldo(ApplicationData.Current.LocalFolder.Path);
- 
-            LeerDirectorio();
-
-            if (!VerificarSincronizarRemoto())
+            localSettings.Values.Remove("PENTALPHA");
+            localSettings.Values.Remove("PENTALPHA_RESPALDOS");
+            localSettings.Values.Remove("PENTALPHA_REMOTO");
+            localSettings.Values.Remove("PENTALPHA_PROPIO");
+            // Se Intenta Leer Estructura de Pentalpha
+            ESTADOPARAMETROS = "";
+            ESTADOPARAMETROS = (string)localSettings.Values["ESTADOPARAMETROS"];
+            if (ESTADOPARAMETROS == null || ESTADOPARAMETROS == "" || ESTADOPARAMETROS == "NADA")
             {
-                CrearSincronizarRemoto("S");
+                ESTADOPARAMETROS = "NADA";
+                SINCRONIZACIONWEB = "N";
+                DIRECTORIO_ALMACEN = ApplicationData.Current.LocalFolder.Path;
+                DIRECTORIO_BASE_LOCAL = ApplicationData.Current.LocalFolder.Path;
+                DIRECTORIO_USB_MEMORIA = "";
+                PENTALPHA_ID = "N";                                 // "N";
+                BASEDEDATOSLOCAL = "N";                             // "N";
+                BDSQLSERVER = "N";                                  // "N";
+                BDSQLSERVERINSTANCIA = "SERVER/INSTANCIA";          // "SERVER/INSTANCIA";
+                BDSQLSERVERPUERTO = "PUERTO";                       // "PUERTO";
+                BDSQLSERVERUSUARIO = "USUARIO";                     // "USUARIO";
+                BDSQLSERVERPASSWORD = "PASSWORD";                   // "PASSWORD";
+                BDSQLSERVERCATALOGO = "BASE DE DATOS";              // "BASE DE DATOS";
+                BDREMOTAPENTALPHA = "https://finanven.ddns.net";    // "N";
+                BDREMOTACLIENTE = "";                               // "N";
+
+                localSettings.Values["ESTADOPARAMETROS"] = ESTADOPARAMETROS;
+                localSettings.Values["SINCRONIZACIONWEB"] = SINCRONIZACIONWEB;
+                localSettings.Values["DIRECTORIO_ALMACEN"] = DIRECTORIO_ALMACEN;
+                localSettings.Values["DIRECTORIO_BASE_LOCAL"] = DIRECTORIO_BASE_LOCAL;
+                localSettings.Values["DIRECTORIO_USB_MEMORIA"] = DIRECTORIO_USB_MEMORIA;
+                localSettings.Values["PENTALPHA_ID"] = PENTALPHA_ID;
+                localSettings.Values["BASEDEDATOSLOCAL"] = BASEDEDATOSLOCAL;
+                localSettings.Values["BDSQLSERVER"] = BDSQLSERVER;
+                localSettings.Values["BDSQLSERVERINSTANCIA"] = BDSQLSERVERINSTANCIA;
+                localSettings.Values["BDSQLSERVERPUERTO"] = BDSQLSERVERPUERTO;
+                localSettings.Values["BDSQLSERVERUSUARIO"] = BDSQLSERVERUSUARIO;
+                localSettings.Values["BDSQLSERVERPASSWORD"] = BDSQLSERVERPASSWORD;
+                localSettings.Values["BDSQLSERVERCATALOGO"] = BDSQLSERVERCATALOGO;
+                localSettings.Values["BDREMOTAPENTALPHA"] = BDREMOTAPENTALPHA;
+                localSettings.Values["BDREMOTACLIENTE"] = BDREMOTACLIENTE;
             }
-
-            LeerSincronizarRemoto();
-
-            if (!VerificarSincronizarPropio())
+            else
             {
-                CrearSincronizarPropio("N");
+                ESTADOPARAMETROS = (string)localSettings.Values["ESTADOPARAMETROS"];
+                SINCRONIZACIONWEB = (string)localSettings.Values["SINCRONIZACIONWEB"];
+                DIRECTORIO_ALMACEN = ApplicationData.Current.LocalFolder.Path;
+                DIRECTORIO_BASE_LOCAL = ApplicationData.Current.LocalFolder.Path;
+                DIRECTORIO_USB_MEMORIA = (string)localSettings.Values["DIRECTORIO_USB_MEMORIA"];
+                PENTALPHA_ID = (string)localSettings.Values["PENTALPHA_ID"];
+                BASEDEDATOSLOCAL = (string)localSettings.Values["BASEDEDATOSLOCAL"];
+                BDSQLSERVER = (string)localSettings.Values["BDSQLSERVER"];
+                BDSQLSERVERINSTANCIA = (string)localSettings.Values["BDSQLSERVERINSTANCIA"];
+                BDSQLSERVERPUERTO = (string)localSettings.Values["BDSQLSERVERPUERTO"];
+                BDSQLSERVERUSUARIO = (string)localSettings.Values["BDSQLSERVERUSUARIO"];
+                BDSQLSERVERPASSWORD = (string)localSettings.Values["BDSQLSERVERPASSWORD"];
+                BDSQLSERVERCATALOGO = (string)localSettings.Values["BDSQLSERVERCATALOGO"];
+                BDREMOTAPENTALPHA = (string)localSettings.Values["BDREMOTAPENTALPHA"];
+                BDREMOTACLIENTE = (string)localSettings.Values["BDREMOTACLIENTE"];
+
+                if (BDSQLSERVER == "S")
+                {
+                    BM_Sql_String_Builder["Data Source"] = @"VASCON\SQLEXPRESS";
+                    BM_Sql_String_Builder["Initial Catalog"] = "bikemessenger";
+                    BM_Sql_String_Builder["MultipleActiveResultSets"] = true;
+                    BM_Sql_String_Builder["User ID"] = "bikemessenger";
+                    BM_Sql_String_Builder["Password"] = "Hola1974";
+                }
             }
-
-            LeerSincronizarPropio();
-
         }
 
+        public bool SincronizarWebRemoto()
+        {
+            return SINCRONIZACIONWEB == "R";
+        }
+
+        public bool SincronizarWebPropio()
+        {
+            return SINCRONIZACIONWEB == "P";
+        }
+
+        public void CrearSincronizarRemoto(string pSINO)
+        {
+            SINCRONIZACIONWEB = pSINO;
+            localSettings.Values["SINCRONIZACIONWEB"] = SINCRONIZACIONWEB;
+        }
 
         private async Task AvisoDeError()
         {
@@ -83,89 +165,5 @@ namespace BikeMessenger
             Application.Current.Exit();
             return;
         }
-
-        public void CrearDirectorio(string pDirectorio)
-        {
-            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
-            localSettings.Values["PENTALPHA"] = pDirectorio;
-            return;
-        }
-
-        public void CrearDirectorioRespaldo(string pDirectorioRespaldos)
-        {
-            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
-
-            localSettings.Values["PENTALPHA_RESPALDOS"] = pDirectorioRespaldos;
-            return;
-        }
-
-        public void LeerDirectorio()
-        {
-            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
-            Directorio = (string)localSettings.Values["PENTALPHA"];
-            DirectorioRespaldos = (string)localSettings.Values["PENTALPHA_RESPALDOS"];
-            return;
-        }
-
-        public bool VerificarSincronizarRemoto()
-        {
-            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
-            SincronizarRemoto = (string)localSettings.Values["PENTALPHA_REMOTO"];
-
-            return SincronizarRemoto != null && SincronizarRemoto != "";
-        }
-
-        public bool VerificarSincronizarPropio()
-        {
-            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
-            SincronizarPropio = (string)localSettings.Values["PENTALPHA_PROPIO"];
-
-            return SincronizarPropio != null && SincronizarPropio != "";
-        }
-
-        public void CrearSincronizarRemoto(string pSincronizarRemoto)
-        {
-            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
-            localSettings.Values["PENTALPHA_REMOTO"] = pSincronizarRemoto;
-            return;
-        }
-
-        public void CrearSincronizarPropio(string pSincronizarPropio)
-        {
-            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
-            localSettings.Values["PENTALPHA_PROPIO"] = pSincronizarPropio;
-            return;
-        }
-
-        public void LeerSincronizarRemoto()
-        {
-            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
-            SincronizarRemoto = (string)localSettings.Values["PENTALPHA_REMOTO"];
-            return;
-        }
-
-        public void LeerSincronizarPropio()
-        {
-            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
-            SincronizarPropio = (string)localSettings.Values["PENTALPHA_PROPIO"];
-            return;
-        }
-
-        public bool SincronizarWebRemoto()
-        {
-            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
-            SincronizarRemoto = (string)localSettings.Values["PENTALPHA_REMOTO"];
-
-            return SincronizarRemoto == "S";
-        }
-
-        public bool SincronizarWebPropio()
-        {
-            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
-            SincronizarPropio = (string)localSettings.Values["PENTALPHA_PROPIO"];
-
-            return SincronizarPropio == "S";
-        }
-
     }
 }

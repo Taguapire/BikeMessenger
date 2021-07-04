@@ -737,15 +737,15 @@ namespace BikeMessenger
         private void LlenarBasePentalpha(string pPentalpha)
         {
             // Valores de Empresa
-            LvrTransferVar.E_PENTALPHA = pPentalpha;
+            LvrTransferVar.EMP_PENTALPHA = pPentalpha;
             // Valores de Personal
-            LvrTransferVar.P_PENTALPHA = pPentalpha;
+            LvrTransferVar.PER_PENTALPHA = pPentalpha;
             // Valores de Recursos
-            LvrTransferVar.R_PENTALPHA = pPentalpha;
+            LvrTransferVar.REC_PENTALPHA = pPentalpha;
             // Valores de Clientes
-            LvrTransferVar.C_PENTALPHA = pPentalpha;
+            LvrTransferVar.CLI_PENTALPHA = pPentalpha;
             // Valores de SERVICIOS
-            LvrTransferVar.X_PENTALPHA = pPentalpha;
+            LvrTransferVar.SER_PENTALPHA = pPentalpha;
         }
     }
 }

@@ -4,7 +4,6 @@ using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
-using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -15,15 +14,19 @@ namespace BikeMessenger
     /// </summary>
     public sealed partial class PageAjustes : Page
     {
-        private TransferVar LvrTransferVar;
+        private TransferVar LvrTransferVar = new TransferVar();
         private bool CopiarBaseDeDatosSiNo;
 
         public PageAjustes()
         {
             InitializeComponent();
-            NavigationCacheMode = NavigationCacheMode.Disabled;
+            // OJO            NavigationCacheMode = NavigationCacheMode.Disabled;
+            checkBoxSincronizacion.IsChecked = LvrTransferVar.SincronizarWebRemoto() ? true : false;
+            textBoxDirectorioActual.Text = LvrTransferVar.DIRECTORIO_BASE_LOCAL;
+            textBoxDirectorioDeRespaldos.Text = LvrTransferVar.DIRECTORIO_USB_MEMORIA;
         }
 
+        /* Ojo
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs navigationEvent)
         {
             // call the original OnNavigatingFrom
@@ -66,10 +69,11 @@ namespace BikeMessenger
             {
                 LvrTransferVar = (TransferVar)navigationEvent.Parameter;
                 checkBoxSincronizacion.IsChecked = LvrTransferVar.SincronizarWebRemoto() ? true : false;
-                textBoxDirectorioActual.Text = LvrTransferVar.Directorio;
-                textBoxDirectorioDeRespaldos.Text = LvrTransferVar.DirectorioRespaldos;
+                textBoxDirectorioActual.Text = LvrTransferVar.DIRECTORIO_BASE_LOCAL;
+                textBoxDirectorioDeRespaldos.Text = LvrTransferVar.DIRECTORIO_USB_MEMORIA;
             }
         }
+        OJO */
 
         private void BtnSeleccionarAjustes(object sender, RoutedEventArgs e)
         {
@@ -217,8 +221,8 @@ namespace BikeMessenger
 
             _ = await BaseDatosOrigen.CopyAsync(FolderDestino, "BikeMessenger.db3", NameCollisionOption.GenerateUniqueName);
 
-            LvrTransferVar.CrearDirectorioRespaldo(DirectorioDestino);
-            LvrTransferVar.LeerDirectorio();
+            //LvrTransferVar.CrearDirectorioRespaldo(DirectorioDestino);
+            //LvrTransferVar.LeerDirectorio();
 
             LvrProgresRing.IsActive = false;
             await Task.Delay(500); // 1 sec delay

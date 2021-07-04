@@ -81,7 +81,7 @@ namespace BikeMessenger
                 LvrTransferVar = (TransferVar)navigationEvent.Parameter;
                 RellenarCombos();
 
-                if (LvrTransferVar.X_NROENVIO == "")
+                if (LvrTransferVar.SER_PENTALPHA == "")
                 {
                     ServicioIOArray = BM_Database_Servicio.BuscarServicio();
                     if (ServicioIOArray != null && ServicioIOArray.Count > 0)
@@ -92,7 +92,7 @@ namespace BikeMessenger
                 }
                 else
                 {
-                    ServicioIOArray = BM_Database_Servicio.BuscarServicio(LvrTransferVar.R_PENTALPHA, LvrTransferVar.X_NROENVIO);
+                    ServicioIOArray = BM_Database_Servicio.BuscarServicio(LvrTransferVar.REC_PENTALPHA, LvrTransferVar.SER_NROENVIO);
                     if (ServicioIOArray != null && ServicioIOArray.Count > 0)
                     {
                         ServicioIO = ServicioIOArray[0];
@@ -212,7 +212,7 @@ namespace BikeMessenger
                 {
                     await AvisoOperacionServiciosDialogAsync("Agregar Servicio", "Servicio agregado exitosamente.");
                     LlenarListaEnvios();
-                    LvrTransferVar.X_NROENVIO = ServicioIO.NROENVIO;
+                    LvrTransferVar.SER_PENTALPHA = ServicioIO.NROENVIO;
                 }
 
                 else
@@ -256,7 +256,7 @@ namespace BikeMessenger
                 if (TransaccionOK)
                 {
                     LlenarListaEnvios();
-                    LvrTransferVar.X_NROENVIO = ServicioIO.NROENVIO;
+                    LvrTransferVar.SER_PENTALPHA = ServicioIO.NROENVIO;
                     await AvisoOperacionServiciosDialogAsync("Modificar Servicio", "Servicio modificado exitosamente.");
                 }
                 else
@@ -292,7 +292,7 @@ namespace BikeMessenger
 
             bool TransaccionOK = false;
 
-            if (BM_Database_Servicio.BorrarServicio(LvrTransferVar.X_PENTALPHA, ServicioIO.NROENVIO))
+            if (BM_Database_Servicio.BorrarServicio(LvrTransferVar.SER_PENTALPHA, ServicioIO.NROENVIO))
             {
                 TransaccionOK = true;
 
@@ -310,11 +310,11 @@ namespace BikeMessenger
                 {
                     if ((ServicioIOArray = BM_Database_Servicio.BuscarServicio()) != null)
                     {
-                        LvrTransferVar.X_NROENVIO = ServicioIO.NROENVIO;
+                        LvrTransferVar.SER_PENTALPHA = ServicioIO.NROENVIO;
                     }
                     else
                     {
-                        LvrTransferVar.X_NROENVIO = "";
+                        LvrTransferVar.SER_PENTALPHA = "";
                     }
                     textBoxNroDeEnvio.IsReadOnly = false;
 
@@ -474,7 +474,7 @@ namespace BikeMessenger
         private void LlenarDbConPantalla()
         {
             ServicioIO.NROENVIO = textBoxNroDeEnvio.Text;
-            ServicioIO.PENTALPHA = LvrTransferVar.X_PENTALPHA;
+            ServicioIO.PENTALPHA = LvrTransferVar.SER_PENTALPHA;
             ServicioIO.GUIADESPACHO = textBoxGuiaDeDespacho.Text;
             ServicioIO.FECHA = controlFecha.Date.Date.ToShortDateString();
             ServicioIO.HORA = controlHora.Time.ToString();
@@ -484,9 +484,7 @@ namespace BikeMessenger
             string[] CadenaDividida = xyRutCompleto.Split("-", 2, StringSplitOptions.None);
             ServicioIO.MENSAJERORUT = CadenaDividida[0];
             ServicioIO.MENSAJERODIGVER = CadenaDividida[1];
-            //ServicioIO.MENSAJERO = ""; // OjO
             ServicioIO.RECURSOID = textBoxIdRecurso.Text;
-            //ServicioIO.RECURSO = ""; // OJO
             ServicioIO.ODOMICILIO1 = textBoxOrigenDomicilio1.Text;
             ServicioIO.ONUMERO = textBoxOrigenNumero.Text;
             ServicioIO.OPISO = textBoxOrigenPiso.Text;
@@ -513,7 +511,6 @@ namespace BikeMessenger
 
             ServicioIO.OCOORDENADAS = "*";
             ServicioIO.DDOMICILIO1 = textBoxDestinoDomicilio1.Text;
-            // ServicioIO.DDOMICILIO2 = textBoxDestinoDomicilio2.Text;
             ServicioIO.DNUMERO = textBoxDestinoNumero.Text;
             ServicioIO.DPISO = textBoxDestinoPiso.Text;
             ServicioIO.DOFICINA = textBoxDestinoOficina.Text;
@@ -627,7 +624,7 @@ namespace BikeMessenger
                         {
                             ENVIO = GridServicioDbArray[i].ENVIO,
                             FECHA = GridServicioDbArray[i].FECHA,
-                            CLIENTE = BM_Database_Servicio.Bm_BuscarNombreCliente(LvrTransferVar.X_PENTALPHA, GridServicioDbArray[i].CLIENTERUT, GridServicioDbArray[i].CLIENTEDIGVER),
+                            CLIENTE = BM_Database_Servicio.Bm_BuscarNombreCliente(LvrTransferVar.SER_PENTALPHA, GridServicioDbArray[i].CLIENTERUT, GridServicioDbArray[i].CLIENTEDIGVER),
                             ENTREGA = GridServicioDbArray[i].ENTREGA
                         });
                 }
@@ -644,10 +641,9 @@ namespace BikeMessenger
                 DataGrid CeldaSeleccionada = sender as DataGrid;
                 GridEnvioIndividualServicios Envio = (GridEnvioIndividualServicios)CeldaSeleccionada.SelectedItems[0];
                 textBoxNroDeEnvio.Text = Envio.ENVIO;
-                if ((ServicioIOArray = BM_Database_Servicio.BuscarServicio(LvrTransferVar.X_PENTALPHA, Envio.ENVIO)) != null)
+                if ((ServicioIOArray = BM_Database_Servicio.BuscarServicio(LvrTransferVar.SER_PENTALPHA, Envio.ENVIO)) != null)
                 {
                     ServicioIO = ServicioIOArray[0];
-                    // LimpiarPantalla();
                     LlenarPantallaConDb();
                 }
             }
@@ -684,7 +680,7 @@ namespace BikeMessenger
                         new GridClienteIndividualServicios
                         {
                             RUTID = GridClienteDbArray[i].RUTID + "-" + GridClienteDbArray[i].DIGVER,
-                            CLIENTE = BM_Database_Servicio.Bm_BuscarNombreCliente(LvrTransferVar.R_PENTALPHA, GridClienteDbArray[i].RUTID, GridClienteDbArray[i].DIGVER)
+                            CLIENTE = BM_Database_Servicio.Bm_BuscarNombreCliente(LvrTransferVar.CLI_PENTALPHA, GridClienteDbArray[i].RUTID, GridClienteDbArray[i].DIGVER)
                         });
                 }
             }
@@ -773,7 +769,7 @@ namespace BikeMessenger
                         new GridMensajeroIndividualServicios
                         {
                             RUTID = GridMensajerosDbArray[i].RUTID + "-" + GridMensajerosDbArray[i].DIGVER,
-                            MENSAJERO = BM_Database_Servicio.Bm_BuscarNombreMensajero(LvrTransferVar.P_PENTALPHA, GridMensajerosDbArray[i].RUTID, GridMensajerosDbArray[i].DIGVER)
+                            MENSAJERO = BM_Database_Servicio.Bm_BuscarNombreMensajero(LvrTransferVar.PER_PENTALPHA, GridMensajerosDbArray[i].RUTID, GridMensajerosDbArray[i].DIGVER)
                         });
                 }
             }
@@ -836,7 +832,7 @@ namespace BikeMessenger
                             TIPO = GridRecursoDbArray[i].TIPO,
                             MARCA = GridRecursoDbArray[i].MARCA,
                             MODELO = GridRecursoDbArray[i].MODELO,
-                            PROPIETARIO = BM_Database_Servicio.Bm_BuscarNombreMensajero(LvrTransferVar.R_PENTALPHA, GridRecursoDbArray[i].RUTID, GridRecursoDbArray[i].DIGVER)
+                            PROPIETARIO = BM_Database_Servicio.Bm_BuscarNombreMensajero(LvrTransferVar.REC_PENTALPHA, GridRecursoDbArray[i].RUTID, GridRecursoDbArray[i].DIGVER)
                         });
                 }
             }

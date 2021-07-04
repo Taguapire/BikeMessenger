@@ -89,7 +89,7 @@ namespace BikeMessenger
                 LvrTransferVar = (TransferVar)navigationEvent.Parameter;
                 RellenarCombos();
 
-                if (LvrTransferVar.R_PAT_SER == "")
+                if (LvrTransferVar.REC_PAT_SER == "")
                 {
                     RecursoIOArray = BM_Database_Recurso.BuscarRecurso();
                     if (RecursoIOArray != null && RecursoIOArray.Count > 0)
@@ -100,7 +100,7 @@ namespace BikeMessenger
                 }
                 else
                 {
-                    RecursoIOArray = BM_Database_Recurso.BuscarRecurso(LvrTransferVar.R_PENTALPHA, LvrTransferVar.R_PAT_SER);
+                    RecursoIOArray = BM_Database_Recurso.BuscarRecurso(LvrTransferVar.REC_PENTALPHA, LvrTransferVar.REC_PAT_SER);
                     if (RecursoIOArray != null && RecursoIOArray.Count > 0)
                     {
                         RecursoIO = RecursoIOArray[0];
@@ -219,13 +219,13 @@ namespace BikeMessenger
         {
             try
             {
-                // LvrTransferVar.R_PENTALPHA = RecursoIO.PENTALPHA;
-                LvrTransferVar.R_RUTID = RecursoIO.RUTID;
-                LvrTransferVar.R_DIGVER = RecursoIO.DIGVER;
-                LvrTransferVar.R_PAT_SER = RecursoIO.PATENTE;
+                // LvrTransferVar.REC_PENTALPHA = RecursoIO.PENTALPHA;
+                LvrTransferVar.REC_RUTID = RecursoIO.RUTID;
+                LvrTransferVar.REC_DIGVER = RecursoIO.DIGVER;
+                LvrTransferVar.REC_PAT_SER = RecursoIO.PATENTE;
                 textBoxRut.Text = RecursoIO.RUTID;
                 textBoxDigitoVerificador.Text = RecursoIO.DIGVER;
-                textBoxPropietario.Text = BM_Database_Recurso.Bm_BuscarNombrePropietario(LvrTransferVar.R_PENTALPHA, LvrTransferVar.R_RUTID, LvrTransferVar.R_DIGVER);
+                textBoxPropietario.Text = BM_Database_Recurso.Bm_BuscarNombrePropietario(LvrTransferVar.REC_PENTALPHA, LvrTransferVar.REC_RUTID, LvrTransferVar.REC_DIGVER);
                 comboBoxTipo.SelectedValue = RecursoIO.TIPO;
                 textBoxPatenteCodigo.Text = RecursoIO.PATENTE;
                 textBoxMarca.Text = RecursoIO.MARCA;
@@ -248,9 +248,9 @@ namespace BikeMessenger
 
         private void LimpiarPantalla()
         {
-            LvrTransferVar.R_RUTID = "";
-            LvrTransferVar.R_DIGVER = "";
-            LvrTransferVar.R_PAT_SER = "";
+            LvrTransferVar.REC_RUTID = "";
+            LvrTransferVar.REC_DIGVER = "";
+            LvrTransferVar.REC_PAT_SER = "";
             textBoxPatenteCodigo.Text = "";
             textBoxRut.Text = "";
             textBoxDigitoVerificador.Text = "";
@@ -271,15 +271,15 @@ namespace BikeMessenger
 
         private async Task LlenarDbConPantallaAsync()
         {
-            RecursoIO.PENTALPHA = LvrTransferVar.R_PENTALPHA;
+            RecursoIO.PENTALPHA = LvrTransferVar.REC_PENTALPHA;
             RecursoIO.PATENTE = textBoxPatenteCodigo.Text;
             RecursoIO.RUTID = textBoxRut.Text;
             RecursoIO.DIGVER = textBoxDigitoVerificador.Text;
             // ***********************************************************
             // Agregando Campos de Parametros
-            LvrTransferVar.R_PAT_SER = RecursoIO.PATENTE;
-            LvrTransferVar.R_RUTID = RecursoIO.RUTID;
-            LvrTransferVar.R_DIGVER = RecursoIO.DIGVER;
+            LvrTransferVar.REC_PAT_SER = RecursoIO.PATENTE;
+            LvrTransferVar.REC_RUTID = RecursoIO.RUTID;
+            LvrTransferVar.REC_DIGVER = RecursoIO.DIGVER;
             // ***********************************************************
             RecursoIO.TIPO = comboBoxTipo.Text;
             RecursoIO.MARCA = textBoxMarca.Text;
@@ -329,9 +329,9 @@ namespace BikeMessenger
                     await AvisoOperacionRecursosDialogAsync("Agregar Recurso", "Recurso agregado exitosamente.");
                     LlenarListaRecursos();
                     LlenarListaPropietarios();
-                    LvrTransferVar.R_RUTID = RecursoIO.RUTID;
-                    LvrTransferVar.R_DIGVER = RecursoIO.DIGVER;
-                    LvrTransferVar.R_PAT_SER = RecursoIO.PATENTE;
+                    LvrTransferVar.REC_RUTID = RecursoIO.RUTID;
+                    LvrTransferVar.REC_DIGVER = RecursoIO.DIGVER;
+                    LvrTransferVar.REC_PAT_SER = RecursoIO.PATENTE;
                 }
 
                 else
@@ -375,9 +375,9 @@ namespace BikeMessenger
                 {
                     LlenarListaRecursos();
                     LlenarListaPropietarios();
-                    LvrTransferVar.R_PAT_SER = RecursoIO.PATENTE;
-                    LvrTransferVar.R_RUTID = RecursoIO.RUTID;
-                    LvrTransferVar.R_DIGVER = RecursoIO.DIGVER;
+                    LvrTransferVar.REC_PAT_SER = RecursoIO.PATENTE;
+                    LvrTransferVar.REC_RUTID = RecursoIO.RUTID;
+                    LvrTransferVar.REC_DIGVER = RecursoIO.DIGVER;
                 }
                 else
                 {
@@ -412,7 +412,7 @@ namespace BikeMessenger
             LvrProgresRing.IsActive = true;
             await Task.Delay(500); // .5 sec delay
 
-            if (BM_Database_Recurso.BorrarRecurso(LvrTransferVar.R_PENTALPHA, RecursoIO.PATENTE))
+            if (BM_Database_Recurso.BorrarRecurso(LvrTransferVar.REC_PENTALPHA, RecursoIO.PATENTE))
             {
                 TransaccionOK = true;
 
@@ -431,15 +431,15 @@ namespace BikeMessenger
                 {
                     if ((RecursoIOArray = BM_Database_Recurso.BuscarRecurso()) != null)
                     {
-                        LvrTransferVar.R_PAT_SER = RecursoIO.PATENTE;
-                        LvrTransferVar.R_RUTID = RecursoIO.RUTID;
-                        LvrTransferVar.R_DIGVER = RecursoIO.DIGVER;
+                        LvrTransferVar.REC_PAT_SER = RecursoIO.PATENTE;
+                        LvrTransferVar.REC_RUTID = RecursoIO.RUTID;
+                        LvrTransferVar.REC_DIGVER = RecursoIO.DIGVER;
                     }
                     else
                     {
-                        LvrTransferVar.R_RUTID = "";
-                        LvrTransferVar.R_DIGVER = "";
-                        LvrTransferVar.R_PAT_SER = "";
+                        LvrTransferVar.REC_RUTID = "";
+                        LvrTransferVar.REC_DIGVER = "";
+                        LvrTransferVar.REC_PAT_SER = "";
                     }
                     LlenarPantallaConDb();
                     LlenarListaRecursos();
@@ -596,7 +596,7 @@ namespace BikeMessenger
             {
                 DataGrid CeldaSeleccionada = sender as DataGrid;
                 GridRecursoIndividual Fila = (GridRecursoIndividual)CeldaSeleccionada.SelectedItems[0];
-                if ((RecursoIOArray = BM_Database_Recurso.BuscarRecurso(LvrTransferVar.R_PENTALPHA, Fila.PATENTE)) != null)
+                if ((RecursoIOArray = BM_Database_Recurso.BuscarRecurso(LvrTransferVar.REC_PENTALPHA, Fila.PATENTE)) != null)
                 {
                     LimpiarPantalla();
                     LlenarPantallaConDb();

@@ -12,7 +12,7 @@ namespace BikeMessenger
         // Paso de Parametros Sqlite
         // ***************************************
         private static SqlConnection BM_Conexion;
-        private readonly TransferVar BM_TrasferVar;
+        private TransferVar BM_TransferVar = new TransferVar();
 
         private static JsonBikeMessengerEmpresa BK_Empresa;
         private static List<JsonBikeMessengerEmpresa> BK_EmpresaLista;
@@ -24,9 +24,9 @@ namespace BikeMessenger
         {
             try
             {
-                BM_TrasferVar = new TransferVar();
-                BM_TrasferVar.LeerDirectorio();
-                BM_CadenaConexion = BM_TrasferVar.Directorio;
+                BM_TransferVar = new TransferVar();
+                
+                BM_CadenaConexion = BM_TransferVar.DIRECTORIO_BASE_LOCAL;
                 BM_Conexion = new SqlConnection("Data Source=VASCON\\SQLEXPRESS;Initial Catalog=bikemessenger;MultipleActiveResultSets=true;User ID=bikemessenger; Password=Hola1974");
                 BM_Conexion.Open();
             }

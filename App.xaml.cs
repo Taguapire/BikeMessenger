@@ -14,7 +14,7 @@ namespace BikeMessenger
 
     public sealed partial class App : Application
     {
-        // OJO private static readonly TransferVar LvrTransferVar = new TransferVar(); OJO
+        private static readonly TransferVar LvrTransferVar = new TransferVar();
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -98,29 +98,29 @@ namespace BikeMessenger
                 // configuring the new page by passing required information as a navigation
                 // parameter
                 // rootFrame.Navigate(typeof(PageEmpresa), e.Arguments);
-                // IniciarBaseDeDatos LvrIniciarBaseDeDatos = new IniciarBaseDeDatos(LvrTransferVar.Directorio);
+                // IniciarBaseDeDatos LvrIniciarBaseDeDatos = new IniciarBaseDeDatos(LvrTransferVar.DIRECTORIO_BASE_LOCAL);
                 // LvrIniciarBaseDeDatos = null;
                 // Empresa
                 // LvrTransferVar.VerificarSQLite();
-                LvrTransferVar.E_PENTALPHA = "";
-                LvrTransferVar.E_RUTID = "";
-                LvrTransferVar.E_DIGVER = "";
+                LvrTransferVar.EMP_PENTALPHA = "";
+                LvrTransferVar.EMP_RUTID = "";
+                LvrTransferVar.EMCLI_DIGVER = "";
                 // Personal
-                LvrTransferVar.P_PENTALPHA = "";
-                LvrTransferVar.P_RUTID = "";
-                LvrTransferVar.P_DIGVER = "";
+                LvrTransferVar.PER_PENTALPHA = "";
+                LvrTransferVar.PER_RUTID = "";
+                LvrTransferVar.PER_DIGVER = "";
                 // Recursos
-                LvrTransferVar.R_PENTALPHA = "";
-                LvrTransferVar.R_RUTID = "";
-                LvrTransferVar.R_DIGVER = "";
-                LvrTransferVar.R_PAT_SER = "";
+                LvrTransferVar.REC_PENTALPHA = "";
+                LvrTransferVar.REC_RUTID = "";
+                LvrTransferVar.REC_DIGVER = "";
+                LvrTransferVar.REC_PAT_SER = "";
                 // Clientes
-                LvrTransferVar.C_PENTALPHA = "";
-                LvrTransferVar.C_RUTID = "";
-                LvrTransferVar.C_DIGVER = "";
+                LvrTransferVar.CLI_PENTALPHA = "";
+                LvrTransferVar.CLI_RUTID = "";
+                LvrTransferVar.CLI_DIGVER = "";
                 // Servicios
-                LvrTransferVar.X_PENTALPHA = "";
-                LvrTransferVar.X_NROENVIO = "";
+                LvrTransferVar.SER_PENTALPHA = "";
+                LvrTransferVar.SER_PENTALPHA = "";
 
                 rootFrame.CacheSize = 0;
                 rootFrame.Navigate(typeof(PageEmpresa), LvrTransferVar, new SuppressNavigationTransitionInfo());
