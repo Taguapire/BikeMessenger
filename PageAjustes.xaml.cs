@@ -21,7 +21,8 @@ namespace BikeMessenger
         {
             InitializeComponent();
             // OJO            NavigationCacheMode = NavigationCacheMode.Disabled;
-            checkBoxSincronizacion.IsChecked = LvrTransferVar.SincronizarWebRemoto() ? true : false;
+            checkBoxActivarSQLServer.IsChecked = LvrTransferVar.SincronizarBaseSQLServer();
+            checkBoxSincronizacionPentalpha.IsChecked = LvrTransferVar.SincronizarWebRemoto() ? true : false;
             textBoxDirectorioActual.Text = LvrTransferVar.DIRECTORIO_BASE_LOCAL;
             textBoxDirectorioDeRespaldos.Text = LvrTransferVar.DIRECTORIO_USB_MEMORIA;
         }

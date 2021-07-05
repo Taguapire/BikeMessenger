@@ -28,7 +28,7 @@ namespace BikeMessenger
         public string BDSQLSERVERINSTANCIA { get; set; }    // "SERVER/INSTANCIA";
         public string BDSQLSERVERPUERTO { get; set; }       // "PUERTO";
         public string BDSQLSERVERUSUARIO { get; set; }      // "USUARIO";
-        public string BDSQLSERVERPASSWORD { get; set; }     // "PASSWORD";
+        public string BDSQLSERVERCLAVE { get; set; }        // "PASSWORD";
         public string BDSQLSERVERCATALOGO { get; set; }     // "CATALOGO";
         //--------------------------------------------------------------------
         public string BDREMOTAPENTALPHA { get; set; }       // "N";
@@ -87,7 +87,7 @@ namespace BikeMessenger
                 BDSQLSERVERINSTANCIA = "SERVER/INSTANCIA";          // "SERVER/INSTANCIA";
                 BDSQLSERVERPUERTO = "PUERTO";                       // "PUERTO";
                 BDSQLSERVERUSUARIO = "USUARIO";                     // "USUARIO";
-                BDSQLSERVERPASSWORD = "PASSWORD";                   // "PASSWORD";
+                BDSQLSERVERCLAVE = "CLAVE";                         // "PASSWORD";
                 BDSQLSERVERCATALOGO = "BASE DE DATOS";              // "BASE DE DATOS";
                 BDREMOTAPENTALPHA = "https://finanven.ddns.net";    // "N";
                 BDREMOTACLIENTE = "";                               // "N";
@@ -103,7 +103,7 @@ namespace BikeMessenger
                 localSettings.Values["BDSQLSERVERINSTANCIA"] = BDSQLSERVERINSTANCIA;
                 localSettings.Values["BDSQLSERVERPUERTO"] = BDSQLSERVERPUERTO;
                 localSettings.Values["BDSQLSERVERUSUARIO"] = BDSQLSERVERUSUARIO;
-                localSettings.Values["BDSQLSERVERPASSWORD"] = BDSQLSERVERPASSWORD;
+                localSettings.Values["BDSQLSERVERCLAVE"] = BDSQLSERVERCLAVE;
                 localSettings.Values["BDSQLSERVERCATALOGO"] = BDSQLSERVERCATALOGO;
                 localSettings.Values["BDREMOTAPENTALPHA"] = BDREMOTAPENTALPHA;
                 localSettings.Values["BDREMOTACLIENTE"] = BDREMOTACLIENTE;
@@ -121,20 +121,68 @@ namespace BikeMessenger
                 BDSQLSERVERINSTANCIA = (string)localSettings.Values["BDSQLSERVERINSTANCIA"];
                 BDSQLSERVERPUERTO = (string)localSettings.Values["BDSQLSERVERPUERTO"];
                 BDSQLSERVERUSUARIO = (string)localSettings.Values["BDSQLSERVERUSUARIO"];
-                BDSQLSERVERPASSWORD = (string)localSettings.Values["BDSQLSERVERPASSWORD"];
+                BDSQLSERVERCLAVE = (string)localSettings.Values["BDSQLSERVERCLAVE"];
                 BDSQLSERVERCATALOGO = (string)localSettings.Values["BDSQLSERVERCATALOGO"];
                 BDREMOTAPENTALPHA = (string)localSettings.Values["BDREMOTAPENTALPHA"];
                 BDREMOTACLIENTE = (string)localSettings.Values["BDREMOTACLIENTE"];
 
                 if (BDSQLSERVER == "S")
                 {
-                    BM_Sql_String_Builder["Data Source"] = @"VASCON\SQLEXPRESS";
-                    BM_Sql_String_Builder["Initial Catalog"] = "bikemessenger";
+                    BM_Sql_String_Builder["Data Source"] = BDSQLSERVERINSTANCIA;
+                    BM_Sql_String_Builder["Initial Catalog"] = BDSQLSERVERCATALOGO;
                     BM_Sql_String_Builder["MultipleActiveResultSets"] = true;
-                    BM_Sql_String_Builder["User ID"] = "bikemessenger";
-                    BM_Sql_String_Builder["Password"] = "Hola1974";
+                    BM_Sql_String_Builder["User ID"] = BDSQLSERVERUSUARIO;
+                    BM_Sql_String_Builder["Password"] = BDSQLSERVERCLAVE;
                 }
             }
+        }
+
+        public void EscribirValoresDeAjustes()
+        {
+            localSettings.Values["ESTADOPARAMETROS"] = ESTADOPARAMETROS;
+            localSettings.Values["SINCRONIZACIONWEB"] = SINCRONIZACIONWEB;
+            localSettings.Values["DIRECTORIO_ALMACEN"] = DIRECTORIO_ALMACEN;
+            localSettings.Values["DIRECTORIO_BASE_LOCAL"] = DIRECTORIO_BASE_LOCAL;
+            localSettings.Values["DIRECTORIO_USB_MEMORIA"] = DIRECTORIO_USB_MEMORIA;
+            localSettings.Values["PENTALPHA_ID"] = PENTALPHA_ID;
+            localSettings.Values["BASEDEDATOSLOCAL"] = BASEDEDATOSLOCAL;
+            localSettings.Values["BDSQLSERVER"] = BDSQLSERVER;
+            localSettings.Values["BDSQLSERVERINSTANCIA"] = BDSQLSERVERINSTANCIA;
+            localSettings.Values["BDSQLSERVERPUERTO"] = BDSQLSERVERPUERTO;
+            localSettings.Values["BDSQLSERVERUSUARIO"] = BDSQLSERVERUSUARIO;
+            localSettings.Values["BDSQLSERVERCLAVE"] = BDSQLSERVERCLAVE;
+            localSettings.Values["BDSQLSERVERCATALOGO"] = BDSQLSERVERCATALOGO;
+            localSettings.Values["BDREMOTAPENTALPHA"] = BDREMOTAPENTALPHA;
+            localSettings.Values["BDREMOTACLIENTE"] = BDREMOTACLIENTE;
+        }
+
+        public void LeerValoresDeAjustes()
+        {
+            ESTADOPARAMETROS = (string)localSettings.Values["ESTADOPARAMETROS"];
+            SINCRONIZACIONWEB = (string)localSettings.Values["SINCRONIZACIONWEB"];
+            DIRECTORIO_ALMACEN = (string)localSettings.Values["DIRECTORIO_ALMACEN"];
+            DIRECTORIO_BASE_LOCAL = (string)localSettings.Values["DIRECTORIO_BASE_LOCAL"];
+            DIRECTORIO_USB_MEMORIA = (string)localSettings.Values["DIRECTORIO_USB_MEMORIA"];
+            PENTALPHA_ID = (string)localSettings.Values["PENTALPHA_ID"];
+            BASEDEDATOSLOCAL = (string)localSettings.Values["BASEDEDATOSLOCAL"];
+            BDSQLSERVER = (string)localSettings.Values["BDSQLSERVER"];
+            BDSQLSERVERINSTANCIA = (string)localSettings.Values["BDSQLSERVERINSTANCIA"];
+            BDSQLSERVERPUERTO = (string)localSettings.Values["BDSQLSERVERPUERTO"];
+            BDSQLSERVERUSUARIO = (string)localSettings.Values["BDSQLSERVERUSUARIO"];
+            BDSQLSERVERCLAVE = (string)localSettings.Values["BDSQLSERVERCLAVE"];
+            BDSQLSERVERCATALOGO = (string)localSettings.Values["BDSQLSERVERCATALOGO"];
+            BDREMOTAPENTALPHA = (string)localSettings.Values["BDREMOTAPENTALPHA"];
+            BDREMOTACLIENTE = (string)localSettings.Values["BDREMOTACLIENTE"];
+        }
+
+        public bool SincronizarBaseLocal()
+        {
+            return BASEDEDATOSLOCAL == "S";
+        }
+
+        public bool SincronizarBaseSQLServer()
+        {
+            return BDSQLSERVER == "S";
         }
 
         public bool SincronizarWebRemoto()
@@ -149,7 +197,7 @@ namespace BikeMessenger
 
         public void CrearSincronizarRemoto(string pSINO)
         {
-            SINCRONIZACIONWEB = pSINO;
+            SINCRONIZACIONWEB = pSINO;djj
             localSettings.Values["SINCRONIZACIONWEB"] = SINCRONIZACIONWEB;
         }
 
