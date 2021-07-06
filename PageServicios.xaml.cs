@@ -27,113 +27,43 @@ namespace BikeMessenger
         private JsonBikeMessengerServicio EnviarJsonServicio = new JsonBikeMessengerServicio();
         private JsonBikeMessengerServicio RecibirJsonServicio = new JsonBikeMessengerServicio();
         private Bm_Servicio_Database BM_Database_Servicio = new Bm_Servicio_Database();
-        private TransferVar LvrTransferVar;
+        private TransferVar LvrTransferVar = new TransferVar();
         private bool BorrarSiNo;
 
         public PageServicios()
         {
             InitializeComponent();
-            NavigationCacheMode = NavigationCacheMode.Disabled;
             mapControlBikeMessenger.MapServiceToken = "kObotinnsvzUnI3k9Smn~hOr - MYZEy_DGqfvj5V0QHQ~AlzXtL5PnD05eblszjnq7bMEEwk4TSFF3szRn_yyu2GaEo9JehDSttrmHwgRFSzi";
             appBarBuscarRuta.IsEnabled = false;
+            InicioPantalla();
         }
 
-        protected override void OnNavigatingFrom(NavigatingCancelEventArgs navigationEvent)
+        void InicioPantalla()
         {
-            // call the original OnNavigatingFrom
-            base.OnNavigatingFrom(navigationEvent);
+            RellenarCombos();
 
-            // when the dialog is removed from navigation stack 
-            if (navigationEvent.NavigationMode == NavigationMode.Back)
+            if (LvrTransferVar.SER_NROENVIO == "")
             {
-                // set the cache mode
-                NavigationCacheMode = NavigationCacheMode.Disabled;
-
-                ResetPageCache();
-            }
-        }
-
-        private void ResetPageCache()
-        {
-            int cacheSize = ((Frame)Parent).CacheSize;
-
-            ((Frame)Parent).CacheSize = 0;
-            ((Frame)Parent).CacheSize = cacheSize;
-        }
-
-        protected override void OnNavigatedTo(NavigationEventArgs navigationEvent)
-        {
-            base.OnNavigatedTo(navigationEvent);
-            // when the dialog displays then we create viewmodel and set the cache mode
-
-            if (navigationEvent.NavigationMode == NavigationMode.New)
-            {
-                // set the cache mode
-                NavigationCacheMode = NavigationCacheMode.Required;
-            }
-
-            if (navigationEvent.Parameter is string @string && !string.IsNullOrWhiteSpace(@string))
-            {
-                //greeting.Text = $"Hi, {e.Parameter.ToString()}";
+                ServicioIOArray = BM_Database_Servicio.BuscarServicio();
+                if (ServicioIOArray != null && ServicioIOArray.Count > 0)
+                {
+                    ServicioIO = ServicioIOArray[0];
+                    LlenarPantallaConDb();
+                }
             }
             else
             {
-                LvrTransferVar = (TransferVar)navigationEvent.Parameter;
-                RellenarCombos();
-
-                if (LvrTransferVar.SER_PENTALPHA == "")
+                ServicioIOArray = BM_Database_Servicio.BuscarServicio(LvrTransferVar.SER_PENTALPHA, LvrTransferVar.SER_NROENVIO);
+                if (ServicioIOArray != null && ServicioIOArray.Count > 0)
                 {
-                    ServicioIOArray = BM_Database_Servicio.BuscarServicio();
-                    if (ServicioIOArray != null && ServicioIOArray.Count > 0)
-                    {
-                        ServicioIO = ServicioIOArray[0];
-                        LlenarPantallaConDb();
-                    }
+                    ServicioIO = ServicioIOArray[0];
+                    LlenarPantallaConDb();
                 }
-                else
-                {
-                    ServicioIOArray = BM_Database_Servicio.BuscarServicio(LvrTransferVar.REC_PENTALPHA, LvrTransferVar.SER_NROENVIO);
-                    if (ServicioIOArray != null && ServicioIOArray.Count > 0)
-                    {
-                        ServicioIO = ServicioIOArray[0];
-                        LlenarPantallaConDb();
-                    }
-                }
-                LlenarListaEnvios();
-                LlenarListaClientes();
-                LlenarListaMensajeros();
-                LlenarListaRecursos();
             }
-        }
-
-        private void BtnSeleccionarAjustes(object sender, RoutedEventArgs e)
-        {
-            _ = Frame.Navigate(typeof(PageAjustes), LvrTransferVar, new SuppressNavigationTransitionInfo());
-        }
-
-        private void BtnSeleccionarServicios(object sender, RoutedEventArgs e)
-        {
-            // _ = Frame.Navigate(typeof(PageServicios), LvrTransferVar, new SuppressNavigationTransitionInfo());
-        }
-
-        private void BtnSeleccionarClientes(object sender, RoutedEventArgs e)
-        {
-            _ = Frame.Navigate(typeof(PageClientes), LvrTransferVar, new SuppressNavigationTransitionInfo());
-        }
-
-        private void BtnSeleccionarRecursos(object sender, RoutedEventArgs e)
-        {
-            _ = Frame.Navigate(typeof(PageRecursos), LvrTransferVar, new SuppressNavigationTransitionInfo());
-        }
-
-        private void BtnSeleccionarEmpresa(object sender, RoutedEventArgs e)
-        {
-            _ = Frame.Navigate(typeof(PageEmpresa), LvrTransferVar, new SuppressNavigationTransitionInfo());
-        }
-
-        private void BtnSeleccionarPersonal(object sender, RoutedEventArgs e)
-        {
-            _ = Frame.Navigate(typeof(PagePersonal), LvrTransferVar, new SuppressNavigationTransitionInfo());
+            LlenarListaEnvios();
+            LlenarListaClientes();
+            LlenarListaMensajeros();
+            LlenarListaRecursos();
         }
 
         private void RellenarCombos()
@@ -184,9 +114,6 @@ namespace BikeMessenger
 
         private async void BtnAgregarServicios(object sender, RoutedEventArgs e)
         {
-            // Muestra de espera
-            bool TransaccionOK = false;
-
             LvrProgresRing.IsActive = true;
 
             await Task.Delay(500);
@@ -196,9 +123,9 @@ namespace BikeMessenger
             if (BM_Database_Servicio.AgregarServicio(ServicioIO))
             {
 
-                TransaccionOK = true;
-
-                if (LvrTransferVar.SincronizarWebRemoto())
+                // Muestra de espera
+                bool TransaccionOK = true;
+                if (LvrTransferVar.SincronizarWebPentalpha())
                 {
                     TransaccionOK = ProRegistroServicio("AGREGAR");
                 }
@@ -212,7 +139,10 @@ namespace BikeMessenger
                 {
                     await AvisoOperacionServiciosDialogAsync("Agregar Servicio", "Servicio agregado exitosamente.");
                     LlenarListaEnvios();
-                    LvrTransferVar.SER_PENTALPHA = ServicioIO.NROENVIO;
+                    LvrTransferVar.SER_PENTALPHA = ServicioIO.PENTALPHA;
+                    LvrTransferVar.SER_NROENVIO = ServicioIO.NROENVIO;
+                    LvrTransferVar.EscribirValoresDeAjustes();
+                    LvrTransferVar.LeerValoresDeAjustes();
                 }
 
                 else
@@ -243,7 +173,7 @@ namespace BikeMessenger
             {
                 TransaccionOK = true;
 
-                if (LvrTransferVar.SincronizarWebRemoto())
+                if (LvrTransferVar.SincronizarWebPentalpha())
                 {
                     TransaccionOK = ProRegistroServicio("MODIFICAR");
                 }
@@ -256,7 +186,10 @@ namespace BikeMessenger
                 if (TransaccionOK)
                 {
                     LlenarListaEnvios();
-                    LvrTransferVar.SER_PENTALPHA = ServicioIO.NROENVIO;
+                    LvrTransferVar.SER_PENTALPHA = ServicioIO.PENTALPHA;
+                    LvrTransferVar.SER_NROENVIO = ServicioIO.NROENVIO;
+                    LvrTransferVar.EscribirValoresDeAjustes();
+                    LvrTransferVar.LeerValoresDeAjustes();
                     await AvisoOperacionServiciosDialogAsync("Modificar Servicio", "Servicio modificado exitosamente.");
                 }
                 else
@@ -296,7 +229,7 @@ namespace BikeMessenger
             {
                 TransaccionOK = true;
 
-                if (LvrTransferVar.SincronizarWebRemoto())
+                if (LvrTransferVar.SincronizarWebPentalpha())
                 {
                     TransaccionOK = ProRegistroServicio("BORRAR");
                 }
@@ -308,15 +241,21 @@ namespace BikeMessenger
 
                 if (TransaccionOK)
                 {
-                    if ((ServicioIOArray = BM_Database_Servicio.BuscarServicio()) != null)
+                    ServicioIOArray = BM_Database_Servicio.BuscarServicio();
+
+                    if (ServicioIOArray != null && ServicioIOArray.Count > 0)
                     {
-                        LvrTransferVar.SER_PENTALPHA = ServicioIO.NROENVIO;
+                        ServicioIO = ServicioIOArray[0];
+                        LvrTransferVar.SER_PENTALPHA = ServicioIO.PENTALPHA;
+                        LvrTransferVar.SER_NROENVIO = ServicioIO.NROENVIO;
                     }
                     else
                     {
-                        LvrTransferVar.SER_PENTALPHA = "";
+                        LvrTransferVar.SER_NROENVIO = "";
                     }
                     textBoxNroDeEnvio.IsReadOnly = false;
+                    LvrTransferVar.EscribirValoresDeAjustes();
+                    LvrTransferVar.LeerValoresDeAjustes();
 
                     LlenarListaEnvios();
                     LlenarPantallaConDb();
@@ -473,8 +412,8 @@ namespace BikeMessenger
 
         private void LlenarDbConPantalla()
         {
-            ServicioIO.NROENVIO = textBoxNroDeEnvio.Text;
             ServicioIO.PENTALPHA = LvrTransferVar.SER_PENTALPHA;
+            ServicioIO.NROENVIO = textBoxNroDeEnvio.Text;
             ServicioIO.GUIADESPACHO = textBoxGuiaDeDespacho.Text;
             ServicioIO.FECHA = controlFecha.Date.Date.ToShortDateString();
             ServicioIO.HORA = controlHora.Time.ToString();
@@ -614,7 +553,8 @@ namespace BikeMessenger
             List<ClaseServicioGrid> GridServicioDbArray = new List<ClaseServicioGrid>();
             List<GridEnvioIndividualServicios> GridEnviosLista = new List<GridEnvioIndividualServicios>();
 
-            if ((GridServicioDbArray = BM_Database_Servicio.BuscarGridServicios()) != null)
+            GridServicioDbArray = BM_Database_Servicio.BuscarGridServicios();
+            if (GridServicioDbArray != null && GridServicioDbArray.Count > 0)
             {
 
                 for (int i = 0; i < GridServicioDbArray.Count; i++)
@@ -641,7 +581,8 @@ namespace BikeMessenger
                 DataGrid CeldaSeleccionada = sender as DataGrid;
                 GridEnvioIndividualServicios Envio = (GridEnvioIndividualServicios)CeldaSeleccionada.SelectedItems[0];
                 textBoxNroDeEnvio.Text = Envio.ENVIO;
-                if ((ServicioIOArray = BM_Database_Servicio.BuscarServicio(LvrTransferVar.SER_PENTALPHA, Envio.ENVIO)) != null)
+                ServicioIOArray = BM_Database_Servicio.BuscarServicio(LvrTransferVar.SER_PENTALPHA, Envio.ENVIO);
+                if (ServicioIOArray != null && ServicioIOArray.Count > 0)
                 {
                     ServicioIO = ServicioIOArray[0];
                     LlenarPantallaConDb();
@@ -672,7 +613,8 @@ namespace BikeMessenger
             List<ClaseClientesGrid> GridClienteDbArray = new List<ClaseClientesGrid>();
             List<GridClienteIndividualServicios> GridClientesLista = new List<GridClienteIndividualServicios>();
 
-            if ((GridClienteDbArray = BM_Database_Servicio.BuscarGridClientes()) != null)
+            GridClienteDbArray = BM_Database_Servicio.BuscarGridClientes();
+            if (GridClienteDbArray != null && GridClienteDbArray.Count > 0)
             {
                 for (int i = 0; i < GridClienteDbArray.Count; i++)
                 {
@@ -761,7 +703,8 @@ namespace BikeMessenger
             List<ClasePersonalGrid> GridMensajerosDbArray = new List<ClasePersonalGrid>();
             List<GridMensajeroIndividualServicios> GridMensajerosLista = new List<GridMensajeroIndividualServicios>();
 
-            if ((GridMensajerosDbArray = BM_Database_Servicio.BuscarGridPersonal()) != null)
+            GridMensajerosDbArray = BM_Database_Servicio.BuscarGridPersonal();
+            if (GridMensajerosDbArray != null && GridMensajerosDbArray.Count > 0)
             {
                 for (int i = 0; i < GridMensajerosDbArray.Count; i++)
                 {
@@ -821,7 +764,8 @@ namespace BikeMessenger
             List<GridRecursoIndividualServicios> GridRecursosLista = new List<GridRecursoIndividualServicios>();
 
 
-            if ((GridRecursoDbArray = BM_Database_Servicio.BuscarGridRecurso()) != null)
+            GridRecursoDbArray = BM_Database_Servicio.BuscarGridRecurso();
+            if (GridRecursoDbArray != null && GridRecursoDbArray.Count > 0)
             {
                 for (int i = 0; i < GridRecursoDbArray.Count; i++)
                 {
@@ -1010,7 +954,7 @@ namespace BikeMessenger
         }
     }
 
- 
+
 
     internal class GridEnvioIndividualServicios
     {
@@ -1040,4 +984,4 @@ namespace BikeMessenger
         public string MODELO { get; set; }
         public string PROPIETARIO { get; set; }
     }
- }
+}

@@ -8,19 +8,14 @@ namespace BikeMessenger
     internal class Bm_Servicio_Database
     {
         private static SqlConnection BM_Conexion;
-        private TransferVar BM_TransferVar;
+        private TransferVar BM_TransferVar = new TransferVar();
 
         private static JsonBikeMessengerServicio BK_Servicio = new JsonBikeMessengerServicio();
         private static List<JsonBikeMessengerServicio> BK_ServicioLista = new List<JsonBikeMessengerServicio>();
 
-        private string BM_CadenaConexion;
-
         public Bm_Servicio_Database()
         {
-            BM_TransferVar = new TransferVar();
-            
-            BM_CadenaConexion = BM_TransferVar.DIRECTORIO_BASE_LOCAL;
-            BM_Conexion = new SqlConnection("Data Source=VASCON\\SQLEXPRESS;Initial Catalog=bikemessenger;MultipleActiveResultSets=true;User ID=bikemessenger; Password=Hola1974");
+            BM_Conexion = new SqlConnection(BM_TransferVar.BM_Sql_String_Builder.ConnectionString);
             BM_Conexion.Open();
         }
 

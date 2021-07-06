@@ -186,7 +186,6 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="SQLite.txt" />
     <None Include="efpt.config.json" />
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Assets\BadgeLogo.scale-100.png" />

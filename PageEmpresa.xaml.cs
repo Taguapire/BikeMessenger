@@ -30,7 +30,7 @@ namespace BikeMessenger
         private JsonBikeMessengerEmpresa EnviarJsonEmpresa = new JsonBikeMessengerEmpresa();
         private JsonBikeMessengerEmpresa RecibirJsonEmpresa = new JsonBikeMessengerEmpresa();
         private Bm_Empresa_Database BM_Database_Empresa = new Bm_Empresa_Database();
-        private TransferVar LvrTransferVar;
+        private TransferVar LvrTransferVar = new TransferVar();
         private PentalphaCripto LvrCrypto = new PentalphaCripto();
         private bool BorrarSiNo;
 
@@ -38,127 +38,44 @@ namespace BikeMessenger
         {
             // this.BM_Connection = BM_Connection;
             InitializeComponent();
-            NavigationCacheMode = NavigationCacheMode.Disabled;
+            InicioPantalla();
         }
 
-        protected override void OnNavigatingFrom(NavigatingCancelEventArgs navigationEvent)
+        private void InicioPantalla()
         {
-            // call the original OnNavigatingFrom
-            base.OnNavigatingFrom(navigationEvent);
+            RellenarCombos();
 
-            // when the dialog is removed from navigation stack 
-            if (navigationEvent.NavigationMode == NavigationMode.Back)
+            EmpresaIOArray = BM_Database_Empresa.BuscarEmpresa();
+
+            if (EmpresaIOArray != null && EmpresaIOArray.Count > 0)
             {
-                // set the cache mode
-                NavigationCacheMode = NavigationCacheMode.Disabled;
+                EmpresaIO = EmpresaIOArray[0];
+                LlenarPantallaConDb();
 
-                ResetPageCache();
-            }
-        }
+                LvrTransferVar.PENTALPHA_ID = EmpresaIO.PENTALPHA;
+                LvrTransferVar.ActualizarPentalphaId();
+                LvrTransferVar.EscribirValoresDeAjustes();
+                LvrTransferVar.LeerValoresDeAjustes();
 
-        private void ResetPageCache()
-        {
-            int cacheSize = ((Frame)Parent).CacheSize;
+                appBarAgregar.IsEnabled = false;
+                appBarModificar.IsEnabled = true;
+                appBarBorrar.IsEnabled = true;
 
-            ((Frame)Parent).CacheSize = 0;
-            ((Frame)Parent).CacheSize = cacheSize;
-        }
-
-        protected override async void OnNavigatedTo(NavigationEventArgs navigationEvent)
-        {
-            base.OnNavigatedTo(navigationEvent);
-            // when the dialog displays then we create viewmodel and set the cache mode
-
-            if (navigationEvent.NavigationMode == NavigationMode.New)
-            {
-                // set the cache mode
-                NavigationCacheMode = NavigationCacheMode.Required;
-            }
-
-            if (navigationEvent.Parameter is string @string && !string.IsNullOrWhiteSpace(@string))
-            {
-                //greeting.Text = $"Hi, {e.Parameter.ToString()}";
+                textBoxRut.IsReadOnly = true;
+                textBoxDigitoVerificador.IsReadOnly = true;
             }
             else
             {
-                LvrTransferVar = (TransferVar)navigationEvent.Parameter;
-                RellenarCombos();
+                appBarAgregar.IsEnabled = true;
+                appBarModificar.IsEnabled = false;
+                appBarBorrar.IsEnabled = false;
 
-                EmpresaIOArray = BM_Database_Empresa.BuscarEmpresa();
-                if (EmpresaIOArray != null && EmpresaIOArray.Count > 0)
-                {
-                    EmpresaIO = EmpresaIOArray[0];
-                    LlenarPantallaConDb();
-
-                    appBarButtonEmpresa.IsEnabled = true;
-                    appBarButtonPersonal.IsEnabled = true;
-                    appBarButtonRecursos.IsEnabled = true;
-                    appBarButtonClientes.IsEnabled = true;
-                    appBarButtonServicios.IsEnabled = true;
-                    appBarButtonAjustes.IsEnabled = true;
-
-                    appBarAgregar.IsEnabled = false;
-                    appBarModificar.IsEnabled = true;
-                    appBarBorrar.IsEnabled = true;
-
-                    textBoxRut.IsReadOnly = true;
-                    textBoxDigitoVerificador.IsReadOnly = true;
-
-                }
-                else
-                {
-                    appBarButtonEmpresa.IsEnabled = true;
-                    appBarButtonPersonal.IsEnabled = false;
-                    appBarButtonRecursos.IsEnabled = false;
-                    appBarButtonClientes.IsEnabled = false;
-                    appBarButtonServicios.IsEnabled = false;
-                    appBarButtonAjustes.IsEnabled = true;
-
-                    appBarAgregar.IsEnabled = true;
-                    appBarModificar.IsEnabled = false;
-                    appBarBorrar.IsEnabled = false;
-
-                    textBoxRut.IsReadOnly = false;
-                    textBoxDigitoVerificador.IsReadOnly = false;
-                    await AvisoOperacionEmpresaDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
-                }
+                textBoxRut.IsReadOnly = false;
+                textBoxDigitoVerificador.IsReadOnly = false;
+                _ = AvisoOperacionEmpresaDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
             }
         }
 
-        private void BtnSeleccionarAjustes(object sender, RoutedEventArgs e)
-        {
-            _ = Frame.Navigate(typeof(PageAjustes), LvrTransferVar, new SuppressNavigationTransitionInfo());
-        }
-
-        private void BtnSeleccionarServicios(object sender, RoutedEventArgs e)
-        {
-            _ = Frame.Navigate(typeof(PageServicios), LvrTransferVar, new SuppressNavigationTransitionInfo());
-        }
-
-        private void BtnSeleccionarClientes(object sender, RoutedEventArgs e)
-        {
-            _ = Frame.Navigate(typeof(PageClientes), LvrTransferVar, new SuppressNavigationTransitionInfo());
-        }
-
-        private void BtnSeleccionarRecursos(object sender, RoutedEventArgs e)
-        {
-            _ = Frame.Navigate(typeof(PageRecursos), LvrTransferVar, new SuppressNavigationTransitionInfo());
-        }
-
-        private void BtnSeleccionarEmpresa(object sender, RoutedEventArgs e)
-        {
-            // this.Frame.Navigate(typeof(PageEmpresa), LvrTransferVar, new SuppressNavigationTransitionInfo());
-        }
-
-        private void BtnSeleccionarPersonal(object sender, RoutedEventArgs e)
-        {
-            _ = Frame.Navigate(typeof(PagePersonal), LvrTransferVar, new SuppressNavigationTransitionInfo());
-        }
-
-        //private void flipView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        //{
-        //
-        //}
 
         private async void BtnEmpresasCargarFoto(object sender, RoutedEventArgs e)
         {
@@ -274,7 +191,7 @@ namespace BikeMessenger
                 }
             }
 
-            
+
             // Llenar Combo Ciudad
 
             List<string> ListaCiudad = BM_Database_Empresa.GetCiudad();
@@ -354,14 +271,13 @@ namespace BikeMessenger
 
             if (BM_Database_Empresa.AgregarEmpresa(EmpresaIO))
             {
-                bool TransaccionOK = true;
-                appBarButtonEmpresa.IsEnabled = true;
-                appBarButtonPersonal.IsEnabled = true;
-                appBarButtonRecursos.IsEnabled = true;
-                appBarButtonClientes.IsEnabled = true;
-                appBarButtonServicios.IsEnabled = true;
-                appBarButtonAjustes.IsEnabled = true;
+                LvrTransferVar.PENTALPHA_ID = EmpresaIO.PENTALPHA;
+                LvrTransferVar.ActualizarPentalphaId();
+                LvrTransferVar.EscribirValoresDeAjustes();
+                LvrTransferVar.LeerValoresDeAjustes();
 
+                bool TransaccionOK = true;
+                
                 appBarAgregar.IsEnabled = false;
                 appBarModificar.IsEnabled = true;
                 appBarBorrar.IsEnabled = true;
@@ -370,7 +286,7 @@ namespace BikeMessenger
                 textBoxRut.IsReadOnly = true;
                 textBoxDigitoVerificador.IsReadOnly = true;
 
-                if (LvrTransferVar.SincronizarWebRemoto())
+                if (LvrTransferVar.SincronizarWebPentalpha())
                 {
                     TransaccionOK = ProRegistroEmpresa("AGREGAR");
                 }
@@ -421,7 +337,12 @@ namespace BikeMessenger
             {
                 bool TransaccionOK = true;
 
-                if (LvrTransferVar.SincronizarWebRemoto())
+                LvrTransferVar.PENTALPHA_ID = EmpresaIO.PENTALPHA;
+                LvrTransferVar.ActualizarPentalphaId();
+                LvrTransferVar.EscribirValoresDeAjustes();
+                LvrTransferVar.LeerValoresDeAjustes();
+
+                if (LvrTransferVar.SincronizarWebPentalpha())
                 {
                     TransaccionOK = ProRegistroEmpresa("MODIFICAR");
                 }
@@ -481,12 +402,10 @@ namespace BikeMessenger
             {
                 bool TransaccionOK = true;
 
-                appBarButtonEmpresa.IsEnabled = true;
-                appBarButtonPersonal.IsEnabled = false;
-                appBarButtonRecursos.IsEnabled = false;
-                appBarButtonClientes.IsEnabled = false;
-                appBarButtonServicios.IsEnabled = false;
-                appBarButtonAjustes.IsEnabled = true;
+                LvrTransferVar.PENTALPHA_ID = EmpresaIO.PENTALPHA;
+                LvrTransferVar.ActualizarPentalphaId();
+                LvrTransferVar.EscribirValoresDeAjustes();
+                LvrTransferVar.LeerValoresDeAjustes();
 
                 appBarAgregar.IsEnabled = true;
                 appBarModificar.IsEnabled = false;
@@ -498,7 +417,7 @@ namespace BikeMessenger
 
                 if (TransaccionOK)
                 {
-                    if (LvrTransferVar.SincronizarWebRemoto())
+                    if (LvrTransferVar.SincronizarWebPentalpha())
                     {
                         TransaccionOK = ProRegistroEmpresa("BORRAR");
                     }
@@ -737,6 +656,7 @@ namespace BikeMessenger
         private void LlenarBasePentalpha(string pPentalpha)
         {
             // Valores de Empresa
+            LvrTransferVar.PENTALPHA_ID = pPentalpha;
             LvrTransferVar.EMP_PENTALPHA = pPentalpha;
             // Valores de Personal
             LvrTransferVar.PER_PENTALPHA = pPentalpha;
@@ -746,6 +666,9 @@ namespace BikeMessenger
             LvrTransferVar.CLI_PENTALPHA = pPentalpha;
             // Valores de SERVICIOS
             LvrTransferVar.SER_PENTALPHA = pPentalpha;
+            
+            LvrTransferVar.EscribirValoresDeAjustes();
+            LvrTransferVar.LeerValoresDeAjustes();
         }
     }
 }

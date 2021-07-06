@@ -12,14 +12,16 @@ namespace BikeMessenger
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        private string BM_Ultimo_Item = "";
+        private TransferVar LvrTransferVar = new TransferVar();
         public MainPage()
         {
-
             InitializeComponent();
         }
 
         private void BM_NavPag_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
+            LvrTransferVar.LeerValoresDeAjustes();
             // set the initial SelectedItem
             foreach (NavigationViewItemBase item in BM_NavPag.MenuItems)
             {
@@ -34,12 +36,13 @@ namespace BikeMessenger
 
         private void BM_NavPag_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
-
+            LvrTransferVar.LeerValoresDeAjustes();
         }
 
         private void BM_NavPag_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
             string BM_ItemContent = "";
+            LvrTransferVar.LeerValoresDeAjustes();
 
             try
             {
@@ -50,28 +53,87 @@ namespace BikeMessenger
                     switch (BM_ItemContent)
                     {
                         case "Inicio":
-                            CuadroDeContenido.Navigate(typeof(PageInicio));
+                            if (BM_Ultimo_Item != BM_ItemContent)
+                            {
+                                BM_Ultimo_Item = BM_ItemContent;
+                                _ = CuadroDeContenido.Navigate(typeof(PageInicio));
+                            }
                             break;
 
                         case "Empresa":
-                            CuadroDeContenido.Navigate(typeof(PageEmpresa));
+                            if (LvrTransferVar.ESTADOPARAMETROS == "NADA")
+                            {
+                                break;
+                            }
+
+                            if (BM_Ultimo_Item != BM_ItemContent)
+                            {
+                                BM_Ultimo_Item = BM_ItemContent;
+                                BM_NavPag.IsBackEnabled = true;
+                                _ = CuadroDeContenido.Navigate(typeof(PageEmpresa));
+                            }
                             break;
 
                         case "Personal":
-                            CuadroDeContenido.Navigate(typeof(PagePersonal));
+                            if (LvrTransferVar.ESTADOPARAMETROS == "NADA")
+                            {
+                                break;
+                            }
+
+                            if (BM_Ultimo_Item != BM_ItemContent)
+                            {
+                                BM_Ultimo_Item = BM_ItemContent;
+                                BM_NavPag.IsBackEnabled = true;
+                                _ = CuadroDeContenido.Navigate(typeof(PagePersonal));
+                            }
                             break;
 
                         case "Recursos":
-                            CuadroDeContenido.Navigate(typeof(PageRecursos));
+                            if (LvrTransferVar.ESTADOPARAMETROS == "NADA")
+                            {
+                                break;
+                            }
+
+                            if (BM_Ultimo_Item != BM_ItemContent)
+                            {
+                                BM_Ultimo_Item = BM_ItemContent;
+                                BM_NavPag.IsBackEnabled = true;
+                                _ = CuadroDeContenido.Navigate(typeof(PageRecursos));
+                            }
                             break;
                         case "Clientes":
-                            CuadroDeContenido.Navigate(typeof(PageClientes));
+                            if (LvrTransferVar.ESTADOPARAMETROS == "NADA")
+                            {
+                                break;
+                            }
+
+                            if (BM_Ultimo_Item != BM_ItemContent)
+                            {
+                                BM_Ultimo_Item = BM_ItemContent;
+                                BM_NavPag.IsBackEnabled = true;
+                                _ = CuadroDeContenido.Navigate(typeof(PageClientes));
+                            }
                             break;
                         case "Servicios":
-                            CuadroDeContenido.Navigate(typeof(PageServicios));
+                            if (LvrTransferVar.ESTADOPARAMETROS == "NADA")
+                            {
+                                break;
+                            }
+
+                            if (BM_Ultimo_Item != BM_ItemContent)
+                            {
+                                BM_Ultimo_Item = BM_ItemContent;
+                                BM_NavPag.IsBackEnabled = true;
+                                _ = CuadroDeContenido.Navigate(typeof(PageServicios));
+                            }
                             break;
                         case "Ajustes":
-                            CuadroDeContenido.Navigate(typeof(PageAjustes));
+                            if (BM_Ultimo_Item != BM_ItemContent)
+                            {
+                                BM_Ultimo_Item = BM_ItemContent;
+                                BM_NavPag.IsBackEnabled = true;
+                                _ = CuadroDeContenido.Navigate(typeof(PageAjustes));
+                            }
                             break;
                         case "Salir":
                             Application.Current.Exit();
@@ -84,6 +146,19 @@ namespace BikeMessenger
                 Console.WriteLine(ee.InnerException.Message);
                 Console.WriteLine(ee.Message);
             }
+        }
+        
+        private void BM_NavPag_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
+        {
+            if (CuadroDeContenido.CanGoBack)
+            {
+                CuadroDeContenido.GoBack();
+            }
+            else
+            {
+                BM_NavPag.IsBackEnabled = false;
+            }
+
         }
     }
 }

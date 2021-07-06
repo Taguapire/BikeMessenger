@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Data;
+using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.UI.Xaml;
@@ -16,15 +18,48 @@ namespace BikeMessenger
     {
         private TransferVar LvrTransferVar = new TransferVar();
         private bool CopiarBaseDeDatosSiNo;
+        private string LvrSQLPuerto = "";
 
         public PageAjustes()
         {
             InitializeComponent();
             // OJO            NavigationCacheMode = NavigationCacheMode.Disabled;
-            checkBoxActivarSQLServer.IsChecked = LvrTransferVar.SincronizarBaseSQLServer();
-            checkBoxSincronizacionPentalpha.IsChecked = LvrTransferVar.SincronizarWebRemoto() ? true : false;
-            textBoxDirectorioActual.Text = LvrTransferVar.DIRECTORIO_BASE_LOCAL;
-            textBoxDirectorioDeRespaldos.Text = LvrTransferVar.DIRECTORIO_USB_MEMORIA;
+            if (LvrTransferVar.SincronizarBaseSQLServer())
+            {
+                checkBoxActivarSQLServer.IsChecked = LvrTransferVar.SincronizarBaseSQLServer();
+                LvrTransferVar.ESTADOPARAMETROS = "S";
+                LvrTransferVar.BDSQLSERVER = "S";
+                textBoxSQLServidorInstancia.Text = LvrTransferVar.BDSQLSERVERINSTANCIA;
+                textBoxSQLPuerto.Text = LvrTransferVar.BDSQLSERVERPUERTO;
+                textBoxSQLUsuario.Text = LvrTransferVar.BDSQLSERVERUSUARIO;
+                passwordBoxSQLClave.Password = LvrTransferVar.BDSQLSERVERCLAVE;
+                textBoxSQLBaseDeDatos.Text = LvrTransferVar.BDSQLSERVERCATALOGO;
+            }
+
+            if (LvrTransferVar.SincronizarBaseLocal()) {
+                checkBoxActivarSQLite.IsChecked = LvrTransferVar.SincronizarBaseLocal();
+                LvrTransferVar.ESTADOPARAMETROS = "S";
+                LvrTransferVar.BASEDEDATOSLOCAL = "S";
+                textBoxDirectorioActual.Text = LvrTransferVar.DIRECTORIO_BASE_LOCAL;
+                textBoxDirectorioDeRespaldos.Text = LvrTransferVar.DIRECTORIO_RESPALDOS;
+                // LvrTransferVar.DIRECTORIO_USB_MEMORIA = textBoxDirectorioDeRespaldos.Text;
+            }
+
+            if (LvrTransferVar.SincronizarWebPentalpha())
+            {
+                checkBoxSincronizacionPentalpha.IsChecked = LvrTransferVar.SincronizarWebPentalpha();
+                LvrTransferVar.ESTADOPARAMETROS = "S";
+                LvrTransferVar.SINCRONIZACIONWEBPENTALPHA = "S";
+            }
+            
+            if (LvrTransferVar.SincronizarWebPropio())
+            {
+                checkBoxSincronizacionPropio.IsChecked = LvrTransferVar.SincronizarWebPropio();
+                LvrTransferVar.ESTADOPARAMETROS = "S";
+                LvrTransferVar.SINCRONIZACIONWEBPROPIO = "S";
+                textBoxServidor.Text = LvrTransferVar.BDREMOTACLIENTE;
+                textBoxServidorPuerto.Text = LvrTransferVar.BDREMOTACLIENTEPUERTO;
+            }
         }
 
         /* Ojo
@@ -69,46 +104,73 @@ namespace BikeMessenger
             else
             {
                 LvrTransferVar = (TransferVar)navigationEvent.Parameter;
-                checkBoxSincronizacion.IsChecked = LvrTransferVar.SincronizarWebRemoto() ? true : false;
+                checkBoxSincronizacion.IsChecked = LvrTransferVar.SincronizarWebPentalpha() ? true : false;
                 textBoxDirectorioActual.Text = LvrTransferVar.DIRECTORIO_BASE_LOCAL;
                 textBoxDirectorioDeRespaldos.Text = LvrTransferVar.DIRECTORIO_USB_MEMORIA;
             }
         }
         OJO */
 
-        private void BtnSeleccionarAjustes(object sender, RoutedEventArgs e)
-        {
-            // _ = Frame.Navigate(typeof(PageAjustes), LvrTransferVar, new SuppressNavigationTransitionInfo());
-        }
-
-        private void BtnSeleccionarServicios(object sender, RoutedEventArgs e)
-        {
-            _ = Frame.Navigate(typeof(PageServicios), LvrTransferVar, new SuppressNavigationTransitionInfo());
-        }
-
-        private void BtnSeleccionarClientes(object sender, RoutedEventArgs e)
-        {
-            _ = Frame.Navigate(typeof(PageClientes), LvrTransferVar, new SuppressNavigationTransitionInfo());
-        }
-
-        private void BtnSeleccionarRecursos(object sender, RoutedEventArgs e)
-        {
-            _ = Frame.Navigate(typeof(PageRecursos), LvrTransferVar, new SuppressNavigationTransitionInfo());
-        }
-
-        private void BtnSeleccionarEmpresa(object sender, RoutedEventArgs e)
-        {
-            _ = Frame.Navigate(typeof(PageEmpresa), LvrTransferVar, new SuppressNavigationTransitionInfo());
-        }
-
-        private void BtnSeleccionarPersonal(object sender, RoutedEventArgs e)
-        {
-            _ = Frame.Navigate(typeof(PagePersonal), LvrTransferVar, new SuppressNavigationTransitionInfo());
-        }
-
         private void BtnSalirAjustes(object sender, RoutedEventArgs e)
         {
             Application.Current.Exit();
+        }
+
+        private void BtnGrabarCambios(object sender, RoutedEventArgs e)
+        {
+            LvrTransferVar.ESTADOPARAMETROS = "NADA";
+
+            if ((bool)checkBoxActivarSQLServer.IsChecked)
+            {
+                LvrTransferVar.ESTADOPARAMETROS = "S";
+                LvrTransferVar.BDSQLSERVER = "S";
+                LvrTransferVar.BDSQLSERVERINSTANCIA = textBoxSQLServidorInstancia.Text;
+                LvrTransferVar.BDSQLSERVERPUERTO = LvrSQLPuerto;
+                LvrTransferVar.BDSQLSERVERUSUARIO = textBoxSQLUsuario.Text;
+                LvrTransferVar.BDSQLSERVERCLAVE = passwordBoxSQLClave.Password;
+                LvrTransferVar.BDSQLSERVERCATALOGO = textBoxSQLBaseDeDatos.Text;
+            }
+            else {
+                LvrTransferVar.BDSQLSERVER = "N";
+            }
+
+            if ((bool)checkBoxActivarSQLite.IsChecked)
+            {
+                LvrTransferVar.ESTADOPARAMETROS = "S";
+                LvrTransferVar.BASEDEDATOSLOCAL = "S";
+                LvrTransferVar.DIRECTORIO_BASE_LOCAL = textBoxDirectorioActual.Text;
+                LvrTransferVar.DIRECTORIO_RESPALDOS = textBoxDirectorioDeRespaldos.Text;
+                LvrTransferVar.DIRECTORIO_USB_MEMORIA = textBoxDirectorioDeRespaldos.Text;
+            }
+            else
+            {
+                LvrTransferVar.BASEDEDATOSLOCAL = "N";
+            }
+
+            if ((bool)checkBoxSincronizacionPentalpha.IsChecked)
+            {
+                LvrTransferVar.ESTADOPARAMETROS = "S";
+                LvrTransferVar.SINCRONIZACIONWEBPENTALPHA = "S";
+                LvrTransferVar.BDREMOTAPENTALPHA = "https://finanven.ddns.net";
+            }
+            else
+            {
+                LvrTransferVar.SINCRONIZACIONWEBPENTALPHA = "N";
+            }
+
+            if ((bool)checkBoxSincronizacionPropio.IsChecked)
+            {
+                LvrTransferVar.ESTADOPARAMETROS = "S";
+                LvrTransferVar.SINCRONIZACIONWEBPROPIO = "S";
+                LvrTransferVar.BDREMOTACLIENTE = textBoxServidor.Text;
+                LvrTransferVar.BDREMOTACLIENTEPUERTO = textBoxServidorPuerto.Text;
+            }
+            else
+            {
+                LvrTransferVar.SINCRONIZACIONWEBPROPIO = "N";
+            }
+
+            LvrTransferVar.EscribirValoresDeAjustes();
         }
 
         private async void BtnEventoBuscarNuevoDirectorio(object sender, RoutedEventArgs e)
@@ -211,8 +273,8 @@ namespace BikeMessenger
         private async Task CopiarBaseDeDatosAsync(string DirectorioOrigen, string DirectorioDestino)
         {
             // Muestra de espera
-            LvrProgresRing.IsActive = true;
-            await Task.Delay(500); // 1 sec delay
+//            LvrProgresRing.IsActive = true;
+//            await Task.Delay(500); // 1 sec delay
 
             StorageFolder FolderOrigen = await StorageFolder.GetFolderFromPathAsync(DirectorioOrigen);
             StorageFile BaseDatosOrigen = await FolderOrigen.GetFileAsync("BikeMessenger.db3");
@@ -225,23 +287,80 @@ namespace BikeMessenger
             //LvrTransferVar.CrearDirectorioRespaldo(DirectorioDestino);
             //LvrTransferVar.LeerDirectorio();
 
-            LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // 1 sec delay
+//            LvrProgresRing.IsActive = false;
+//            await Task.Delay(500); // 1 sec delay
 
             await AvisoCopiaBaseDialogAsync("Cambiar Directorio", "La Copia de la Base se Datos se ha completado. A continuación saldra de la aplicación al presionar continuar.");
 
             Application.Current.Exit();
         }
 
-        private void CambiarModoSincronizacion(object sender, RoutedEventArgs e)
+        private void CambiarModoSincronizacionPentalpha(object sender, RoutedEventArgs e)
         {
-            if ((bool)checkBoxSincronizacion.IsChecked)
+            if ((bool)checkBoxSincronizacionPentalpha.IsChecked)
             {
-                LvrTransferVar.CrearSincronizarRemoto("S");
+                LvrTransferVar.SINCRONIZACIONWEBPENTALPHA = "S";
             }
             else
             {
-                LvrTransferVar.CrearSincronizarRemoto("N");
+                LvrTransferVar.SINCRONIZACIONWEBPENTALPHA = "N";
+            }
+            LvrTransferVar.EscribirValoresDeAjustes();
+        }
+
+        private void CambiarModoSincronizacionPropio(object sender, RoutedEventArgs e)
+        {
+            if ((bool)checkBoxSincronizacionPropio.IsChecked)
+            {
+                LvrTransferVar.SINCRONIZACIONWEBPROPIO = "S";
+            }
+            else
+            {
+                LvrTransferVar.SINCRONIZACIONWEBPROPIO = "N";
+            }
+            LvrTransferVar.EscribirValoresDeAjustes();
+        }
+
+        private void CambiarModoSQLServer(object sender, RoutedEventArgs e)
+        {
+            if ((bool)checkBoxActivarSQLServer.IsChecked)
+            {
+                LvrTransferVar.BDSQLSERVER = "S";
+            }
+            else
+            {
+                LvrTransferVar.BDSQLSERVER = "N";
+            }
+            LvrTransferVar.EscribirValoresDeAjustes();
+        }
+
+        private void ButtonTestSQLServer_Conexion(object sender, RoutedEventArgs e)
+        {
+            bool LvrSQLOK;
+            SqlConnection BM_Conexion;
+            LvrSQLPuerto = textBoxSQLPuerto.Text.Trim();
+            LvrSQLPuerto = LvrSQLPuerto != "" && LvrSQLPuerto != null ? "," + LvrSQLPuerto : "";
+
+            BM_Conexion = new SqlConnection("Data Source=" + textBoxSQLServidorInstancia.Text + LvrSQLPuerto + ";Initial Catalog=" + textBoxSQLBaseDeDatos.Text + "; MultipleActiveResultSets=true;User ID=" + textBoxSQLUsuario.Text + "; Password=" + passwordBoxSQLClave.Password + ";");
+            
+            try
+            {
+                BM_Conexion.Open();
+                LvrSQLOK = true;
+            }
+            catch (Exception)
+            {
+                LvrSQLOK = false;
+            }
+
+            if (LvrSQLOK)
+            {
+                BM_Conexion.Close();
+                _ = AvisoCopiaBaseDialogAsync("Conexion a SQLServer", "La conexión a la Base de Datos SQLServer esta correcta, ahora debe proceser a copiar la estructura BikeMessenger a su base de datos, para ese soporte escriba a contacto@pentalpha.net.");
+            }
+            else
+            {
+                _ = AvisoCopiaBaseDialogAsync("Conexion a SQLServer", "La conexión a la Base de Datos SQLServer esta incorrecta, debe proceser a verificar datos de conexión o solicite soporte a contacto@pentalpha.net.");
             }
         }
     }

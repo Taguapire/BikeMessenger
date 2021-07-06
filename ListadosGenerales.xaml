@@ -9,20 +9,13 @@
     <Page.Background>
         <AcrylicBrush TintColor="#CCABDAF5"/>
     </Page.Background>
-    <Page.TopAppBar>
-        <CommandBar x:Name="CommandBarTopListadosGenerales" DefaultLabelPosition="Right"  Background="#FFC5CCCF" HorizontalAlignment="Center">
-            <CommandBar.Content>
-                <TextBlock Text="BikeMessenger por PENTALPHA EIRL" Margin="12,8"/>
-            </CommandBar.Content>
-            <AppBarButton x:Name="appBarButtonVolver" Icon="Back" Label="Volver" Click="BtnListadoGeneralVolver"/>
-        </CommandBar>
-    </Page.TopAppBar>
     <Page.BottomAppBar>
         <CommandBar x:Name="CommandBarBottonListadosGenerales" DefaultLabelPosition="Right"  Background="#FFC5CCCF" HorizontalAlignment="Center">
             <CommandBar.Content>
                 <TextBlock Text="Listados" Margin="12,8"/>
             </CommandBar.Content>
             <AppBarButton x:Name="appBarImprimir" Icon="SaveLocal" Label="Almacenar en Pendrive" Click="LvrAlmacenarEnPendrive"/>
+            <AppBarButton x:Name="appBarButtonVolver" Icon="Back" Label="Volver" Click="BtnListadoGeneralVolver"/>
         </CommandBar>
     </Page.BottomAppBar>
     <ScrollContentPresenter>

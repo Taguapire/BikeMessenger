@@ -7,51 +7,48 @@
     xmlns:Custom="using:Microsoft.Toolkit.Uwp.UI.Controls" xmlns:Custom1="using:Windows.UI.Xaml.Controls.Maps" x:Name="PantallaAjustes"
     x:Class="BikeMessenger.PageAjustes"
     mc:Ignorable="d">
+    <Page.Background>
+        <AcrylicBrush TintColor="#CC62B8EA"/>
+    </Page.Background>
     <Page.BottomAppBar>
         <CommandBar x:Name="CommandBarBottomAjustes" DefaultLabelPosition="Right"  Background="#FFC5CCCF" HorizontalAlignment="Center">
             <CommandBar.Content>
                 <TextBlock Text="Ajustes" Margin="12,8"/>
             </CommandBar.Content>
-            <AppBarButton x:Name="appBarAgregar" Icon="Add" Label="Agregar"/>
-            <AppBarButton x:Name="appBarModificar" Icon="Edit" Label="Modificar"/>
-            <AppBarButton x:Name="appBarBorrar" Icon="Delete" Label="Borrar"/>
-            <AppBarButton x:Name="appBarImprimir" Icon="Print" Label="Imprimir"/>
+            <AppBarButton x:Name="appBarGrabar" Icon="Edit" Label="Grabar Cambios" Click="BtnGrabarCambios"/>
             <AppBarButton x:Name="appBarSalir" Icon="Go" Label="Salir" Click="BtnSalirAjustes"/>
         </CommandBar>
     </Page.BottomAppBar>
-    <Grid x:Name="GridAjustes" Background="{ThemeResource SystemControlBackgroundAltHighBrush}">
-        <TextBlock x:Name="labelDirectorioActual" HorizontalAlignment="Left" Margin="25,187,0,0" Text="Directorio Actual de Base de Datos" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.92,-0.053" Height="32" Width="254" HorizontalTextAlignment="Right"/>
-        <TextBox x:Name="textBoxDirectorioActual" HorizontalAlignment="Left" Margin="284,187,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="655" HorizontalContentAlignment="Left" VerticalContentAlignment="Bottom" BorderThickness="1,1,1,1" IsReadOnly="True" Height="32"/>
-        <Button x:Name="btnBuscarNuevoDirectorio" Content="Buscar Nuevo Directorio" Height="32" Margin="284,256,0,0" VerticalAlignment="Top" Width="250" Click="BtnEventoBuscarNuevoDirectorio" ClickMode="Press" BorderBrush="#FF1D0404"/>
-        <TextBlock x:Name="labelDirectorioRespaldos" Margin="64,219,1001,0" Text="Directorio de Respaldos" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.92,-0.053" Height="32" HorizontalTextAlignment="Right" />
-        <TextBox x:Name="textBoxDirectorioDeRespaldos" HorizontalAlignment="Left" Margin="284,219,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="655" HorizontalContentAlignment="Left" VerticalContentAlignment="Bottom" BorderThickness="1,1,1,1"/>
-        <Button x:Name="btnCopiarBaseDeDatos" Content="Respaldar Base de Datos" Height="32" Margin="649,256,0,0" VerticalAlignment="Top" Width="290" Click="BtnEventoCopiarBaseDeDatos" ClickMode="Press" BorderBrush="#FF1D0404"/>
-        <TextBlock x:Name="labelDirectorioSqlite" HorizontalAlignment="Left" Margin="25,13,0,0" Text="Configuración de Bases de Datos y Almacenamientos  de Reportes y Archivos" TextWrapping="NoWrap" VerticalAlignment="Top" RenderTransformOrigin="0.92,-0.053" Height="32" Width="934" HorizontalTextAlignment="Center" FontWeight="Bold"/>
-        <TextBlock x:Name="labelSincronizar" HorizontalAlignment="Left" Margin="38,0,0,0" Text="Sincronizar con Pentalpha Server" TextWrapping="Wrap" VerticalAlignment="Center" RenderTransformOrigin="0.92,-0.053" Height="23" Width="241" HorizontalTextAlignment="Right" />
-        <CheckBox x:Name="checkBoxSincronizacionPentalpha" Content="Con esta opción podra recibir via red las solicitudes de servicios y encargos  de sus clientes mediante el software cliente y saber el estado de sus mensajeros a travez de la app Android BikeMessenger." Margin="284,340,0,0" VerticalAlignment="Top" Width="655" Click="CambiarModoSincronizacion"/>
-        <ProgressRing x:Name="LvrProgresRing" HorizontalAlignment="Left" Margin="401,244,0,0" VerticalAlignment="Top" Height="169" Width="179" Visibility="Visible" HighContrastAdjustment="Auto">
-            <ProgressRing.Foreground>
-                <SolidColorBrush Color="{ThemeResource SystemAccentColorDark3}"/>
-            </ProgressRing.Foreground>
-        </ProgressRing>
-        <TextBlock x:Name="labelPentalphaserver" HorizontalAlignment="Left" Margin="29,308,0,0" Text="Habilitación de Almacenamiento remoto en servidor de Pentalpha EIRL" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.92,-0.053" Height="32" Width="910" HorizontalTextAlignment="Left" FontWeight="Bold" />
-        <TextBlock x:Name="labelSincronizarPropia" HorizontalAlignment="Left" Margin="29,446,0,0" Text="Sincronizar con Servidor Propio" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.92,-0.053" Height="23" Width="250" HorizontalTextAlignment="Right"/>
-        <CheckBox x:Name="checkBoxSincronizacionPropio" Content="Requiere de evaluación, instalaión y configuración por parte de Pentalpha EIRL para el servidor. Se requiere tambien personalizar las configuraciones de las aplicaciones Windows de Clientes y App Android de Mensajeros." Margin="284,437,0,0" VerticalAlignment="Top" Width="655" Click="CambiarModoSincronizacion"/>
-        <TextBlock x:Name="labelPentalphaserver_Copy" HorizontalAlignment="Left" Margin="29,405,0,0" Text="Habiltación de Almacenamiento remoto en servidor propio" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.92,-0.053" Height="32" Width="910" HorizontalTextAlignment="Left" FontWeight="Bold" />
-        <TextBlock x:Name="labelSincronizarServidorPropio" HorizontalAlignment="Left" Margin="29,511,0,0" Text="Servidor HTTPS" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.92,-0.053" Height="23" Width="250" HorizontalTextAlignment="End" />
-        <TextBox x:Name="textBoxServidor" HorizontalAlignment="Left" Margin="284,503,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="360" HorizontalContentAlignment="Left" VerticalContentAlignment="Bottom" BorderThickness="1,1,1,1"/>
-        <TextBlock x:Name="labelSincronizarServidorPropioPuerto" HorizontalAlignment="Left" Margin="649,511,0,0" Text="Puerto" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.92,-0.053" Height="23" Width="145" HorizontalTextAlignment="Left" />
-        <TextBox x:Name="textBoxServidorPuerto" HorizontalAlignment="Left" Margin="799,503,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" HorizontalContentAlignment="Left" VerticalContentAlignment="Bottom" BorderThickness="1,1,1,1"/>
-        <CheckBox x:Name="checkBoxActivarSQLServer" Content="Con esta opción usted activa y configura los valores de conexión hacia una Base de Datos SQLServer" Margin="25,37,0,0" VerticalAlignment="Top" Width="932" Click="CambiarModoSincronizacion"/>
-        <TextBlock x:Name="labelSQLServidorInstancia" HorizontalAlignment="Left" Margin="64,80,0,0" Text="Servidor/Instancia" TextWrapping="Wrap" VerticalAlignment="Top" Width="132" HorizontalTextAlignment="Right"/>
-        <TextBlock x:Name="labelSQLPuerto" HorizontalAlignment="Left" Margin="491,69,0,0" Text="Puerto" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="1.707,0.368" HorizontalTextAlignment="Right" Width="121"/>
-        <TextBlock x:Name="labelSQLUsuario" HorizontalAlignment="Left" Margin="64,111,0,0" Text="Usuario" TextWrapping="NoWrap" VerticalAlignment="Top" HorizontalTextAlignment="Right" Width="132"/>
-        <TextBlock x:Name="labelSQLClave" HorizontalAlignment="Left" Margin="491,111,0,0" Text="Clave" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="2.424,0.684" HorizontalTextAlignment="Right" Width="121"/>
-        <TextBlock x:Name="labelSQLBaseDeDatos" HorizontalAlignment="Left" Margin="64,145,0,0" Text="Base de Datos" TextWrapping="Wrap" VerticalAlignment="Top" Width="128" HorizontalTextAlignment="Right"/>
-        <TextBox x:Name="textBoxSQLServidorInstancia" HorizontalAlignment="Left" Margin="205,72,0,0" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="329"/>
-        <TextBox x:Name="textBoxSQLPuerto" HorizontalAlignment="Left" Margin="622,61,0,0" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top"/>
-        <TextBox x:Name="textBoxSQLUsuario" HorizontalAlignment="Left" Margin="205,104,0,0" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top" Width="213"/>
-        <PasswordBox x:Name="passwordBoxSQLClave" HorizontalAlignment="Left" Margin="622,104,0,0" VerticalAlignment="Top" Width="201"/>
-        <TextBox x:Name="textBox3" HorizontalAlignment="Left" Margin="205,136,0,0" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top" Width="213"/>
+    <Grid x:Name="GridAjustes">
+        <Grid.Background>
+            <AcrylicBrush TintColor="#CC62B8EA"/>
+        </Grid.Background>
+        <TextBlock x:Name="labelDirectorioActual" Margin="39,260,0,0" Text="Directorio Base de Datos" TextWrapping="NoWrap" VerticalAlignment="Top" RenderTransformOrigin="0.92,-0.053" Height="28" HorizontalTextAlignment="Right" HorizontalAlignment="Left" Width="161"/>
+        <TextBox x:Name="textBoxDirectorioActual" HorizontalAlignment="Left" Margin="212,253,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" Width="705" HorizontalContentAlignment="Left" VerticalContentAlignment="Bottom" BorderThickness="1,1,1,1" IsReadOnly="True" IsEnabled="False"/>
+        <Button x:Name="btnBuscarNuevoDirectorio" Content="Buscar Nuevo Directorio" Height="32" Margin="212,322,0,0" VerticalAlignment="Top" Width="250" Click="BtnEventoBuscarNuevoDirectorio" ClickMode="Press" BorderBrush="#FF1D0404" IsEnabled="False"/>
+        <TextBox x:Name="textBoxDirectorioDeRespaldos" HorizontalAlignment="Left" Margin="212,285,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" Width="705" HorizontalContentAlignment="Left" VerticalContentAlignment="Bottom" BorderThickness="1,1,1,1" IsReadOnly="True" IsEnabled="False"/>
+        <Button x:Name="btnCopiarBaseDeDatos" Content="Respaldar Base de Datos" Height="32" Margin="549,322,0,0" VerticalAlignment="Top" Width="290" Click="BtnEventoCopiarBaseDeDatos" ClickMode="Press" BorderBrush="#FF1D0404" IsEnabled="False"/>
+        <TextBlock x:Name="labelDirectorioSqlite" HorizontalAlignment="Left" Margin="25,38,0,0" Text="Configuración de Bases de Datos y Almacenamientos  de Reportes y Archivos" TextWrapping="NoWrap" VerticalAlignment="Top" RenderTransformOrigin="0.92,-0.053" Height="32" Width="934" HorizontalTextAlignment="Center" FontWeight="Bold"/>
+        <CheckBox x:Name="checkBoxSincronizacionPentalpha" Content="Activa uso de servidor Web Api de PENTALPHA EIRL. Solicitudes de servicios y encargos  de clientes mediante el software BikeMessenge4Win y saber el estado de los mensajeros a travez de la app Android BikeMessenger. es la opción por defecto." Margin="28,376,0,0" VerticalAlignment="Top" Width="882" Click="CambiarModoSincronizacionPentalpha" Height="66"/>
+        <CheckBox x:Name="checkBoxSincronizacionPropio" Content="Activa un servidor Web Api propio. Requiere de evaluación, instalaión y configuración por parte de Pentalpha EIRL para el servidor. Se requiere tambien personalizar las configiraciones de las aplicaciones Windows de Clientes y App Android de Mensajeros." Margin="28,452,0,0" VerticalAlignment="Top" Width="882" Click="CambiarModoSincronizacionPropio" Height="63"/>
+        <TextBlock x:Name="labelSincronizarServidorPropio" HorizontalAlignment="Left" Margin="57,527,0,0" Text="Servidor HTTPS" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.92,-0.053" Height="23" Width="142" HorizontalTextAlignment="End" />
+        <TextBox x:Name="textBoxServidor" HorizontalAlignment="Left" Margin="212,520,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" Width="402" HorizontalContentAlignment="Left" VerticalContentAlignment="Bottom" BorderThickness="1,1,1,1"/>
+        <TextBlock x:Name="labelSincronizarServidorPropioPuerto" HorizontalAlignment="Left" Margin="674,527,0,0" Text="Puerto" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.92,-0.053" Height="23" Width="69" HorizontalTextAlignment="Left" />
+        <TextBox x:Name="textBoxServidorPuerto" HorizontalAlignment="Left" Margin="761,520,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" Width="78" HorizontalContentAlignment="Left" VerticalContentAlignment="Bottom" BorderThickness="1,1,1,1"/>
+        <CheckBox x:Name="checkBoxActivarSQLServer" Content="Activa y configura los valores de conexión hacia una Base de Datos SQLServer" Margin="28,65,0,0" VerticalAlignment="Top" Width="932" Click="CambiarModoSQLServer"/>
+        <TextBlock x:Name="labelSQLServidorInstancia" HorizontalAlignment="Left" Margin="70,110,0,0" Text="Servidor/Instancia" TextWrapping="Wrap" VerticalAlignment="Top" Width="132" HorizontalTextAlignment="Right"/>
+        <TextBlock x:Name="labelSQLPuerto" HorizontalAlignment="Left" Margin="565,114,0,0" Text="Puerto" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="1.707,0.368" HorizontalTextAlignment="Right" Width="55"/>
+        <TextBlock x:Name="labelSQLUsuario" HorizontalAlignment="Left" Margin="70,141,0,0" Text="Usuario" TextWrapping="NoWrap" VerticalAlignment="Top" HorizontalTextAlignment="Right" Width="132"/>
+        <TextBlock x:Name="labelSQLClave" HorizontalAlignment="Left" Margin="550,141,0,0" Text="Clave" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="2.424,0.684" HorizontalTextAlignment="Right" Width="69"/>
+        <TextBlock x:Name="labelSQLBaseDeDatos" HorizontalAlignment="Left" Margin="70,173,0,0" Text="Base de Datos" TextWrapping="Wrap" VerticalAlignment="Top" Width="131" HorizontalTextAlignment="Right"/>
+        <TextBox x:Name="textBoxSQLServidorInstancia" HorizontalAlignment="Left" Margin="212,102,0,0" Text="SERVIDOR\INSTANCIA" TextWrapping="NoWrap" VerticalAlignment="Top" Height="32" Width="329" BorderThickness="1,1,1,1" />
+        <TextBox x:Name="textBoxSQLPuerto" HorizontalAlignment="Left" Margin="628,102,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" />
+        <TextBox x:Name="textBoxSQLUsuario" HorizontalAlignment="Left" Margin="212,134,0,0" Text="usuario" TextWrapping="NoWrap" VerticalAlignment="Top" Width="213" BorderThickness="1,1,1,1" />
+        <PasswordBox x:Name="passwordBoxSQLClave" HorizontalAlignment="Left" Margin="628,134,0,0" VerticalAlignment="Top" Width="201" Password="bikemessenger" BorderThickness="1,1,1,1" />
+        <TextBox x:Name="textBoxSQLBaseDeDatos" HorizontalAlignment="Left" Margin="212,166,0,0" Text="bikemessenger" TextWrapping="NoWrap" VerticalAlignment="Top" Width="213" BorderThickness="1,1,1,1" />
+        <Button x:Name="buttonTestSQLServer" Content="Prueba de Conexión" Margin="629,166,0,0" VerticalAlignment="Top" Width="200" BorderBrush="#FF1D0404" Click="ButtonTestSQLServer_Conexion"/>
+        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="697,114,0,0" Text="Dejar puerto en blanco para default" TextWrapping="NoWrap" VerticalAlignment="Top" Width="233" Height="20"/>
+        <TextBlock x:Name="labelDirectorioRespaldo" HorizontalAlignment="Left" Margin="39,292,0,0" Text="Directorio de Respaldo" TextWrapping="NoWrap" VerticalAlignment="Top" RenderTransformOrigin="0.92,-0.053" Height="28" Width="162" HorizontalTextAlignment="Right"/>
+        <CheckBox x:Name="checkBoxActivarSQLite" Content="Activa y configura los valores de conexión hacia una Base de Datos SQLite" Margin="28,216,0,0" VerticalAlignment="Top" Width="932" Click="CambiarModoSQLServer" IsEnabled="False"/>
     </Grid>
 </Page>

@@ -28,110 +28,40 @@ namespace BikeMessenger
         private readonly JsonBikeMessengerCliente EnviarJsonCliente = new JsonBikeMessengerCliente();
         private JsonBikeMessengerCliente RecibirJsonCliente = new JsonBikeMessengerCliente();
         private readonly Bm_Cliente_Database BM_Database_Cliente = new Bm_Cliente_Database();
-        private TransferVar LvrTransferVar;
+        private TransferVar LvrTransferVar = new TransferVar();
         private bool BorrarSiNo;
 
         public PageClientes()
         {
             // this.BM_Connection = BM_Connection;
             InitializeComponent();
-            NavigationCacheMode = NavigationCacheMode.Disabled;
+            InicioPantalla();
         }
 
-        protected override void OnNavigatingFrom(NavigatingCancelEventArgs navigationEvent)
+        void InicioPantalla()
         {
-            // call the original OnNavigatingFrom
-            base.OnNavigatingFrom(navigationEvent);
 
-            // when the dialog is removed from navigation stack 
-            if (navigationEvent.NavigationMode == NavigationMode.Back)
+            RellenarCombos();
+
+            if (LvrTransferVar.CLI_RUTID == "")
             {
-                // set the cache mode
-                NavigationCacheMode = NavigationCacheMode.Disabled;
-
-                ResetPageCache();
-            }
-        }
-
-        private void ResetPageCache()
-        {
-            int cacheSize = ((Frame)Parent).CacheSize;
-
-            ((Frame)Parent).CacheSize = 0;
-            ((Frame)Parent).CacheSize = cacheSize;
-        }
-
-        protected override void OnNavigatedTo(NavigationEventArgs navigationEvent)
-        {
-            base.OnNavigatedTo(navigationEvent);
-            // when the dialog displays then we create viewmodel and set the cache mode
-
-            if (navigationEvent.NavigationMode == NavigationMode.New)
-            {
-                // set the cache mode
-                NavigationCacheMode = NavigationCacheMode.Required;
-            }
-
-            if (navigationEvent.Parameter is string @string && !string.IsNullOrWhiteSpace(@string))
-            {
-                //greeting.Text = $"Hi, {e.Parameter.ToString()}";
+                ClienteIOArray = BM_Database_Cliente.BuscarCliente();
+                if (ClienteIOArray != null && ClienteIOArray.Count > 0)
+                {
+                    ClienteIO = ClienteIOArray[0];
+                    LlenarPantallaConDb();
+                }
             }
             else
             {
-                LvrTransferVar = (TransferVar)navigationEvent.Parameter;
-                RellenarCombos();
-
-                if (LvrTransferVar.CLI_RUTID == "")
+                ClienteIOArray = BM_Database_Cliente.BuscarCliente(LvrTransferVar.CLI_PENTALPHA, LvrTransferVar.CLI_RUTID, LvrTransferVar.CLI_DIGVER);
+                if (ClienteIOArray != null && ClienteIOArray.Count > 0)
                 {
-                    ClienteIOArray = BM_Database_Cliente.BuscarCliente();
-                    if (ClienteIOArray != null && ClienteIOArray.Count > 0)
-                    {
-                        ClienteIO = ClienteIOArray[0];
-                        LlenarPantallaConDb();
-                    }
+                    ClienteIO = ClienteIOArray[0];
+                    LlenarPantallaConDb();
                 }
-                else
-                {
-                    ClienteIOArray = BM_Database_Cliente.BuscarCliente(LvrTransferVar.CLI_PENTALPHA, LvrTransferVar.CLI_RUTID, LvrTransferVar.CLI_DIGVER);
-                    if (ClienteIOArray != null && ClienteIOArray.Count > 0)
-                    {
-                        ClienteIO = ClienteIOArray[0];
-                        LlenarPantallaConDb();
-                    }
-                }
-                LlenarListaClientes();
             }
-        }
-
-
-        private void BtnSeleccionarAjustes(object sender, RoutedEventArgs e)
-        {
-            _ = Frame.Navigate(typeof(PageAjustes), LvrTransferVar, new SuppressNavigationTransitionInfo());
-        }
-
-        private void BtnSeleccionarServicios(object sender, RoutedEventArgs e)
-        {
-            _ = Frame.Navigate(typeof(PageServicios), LvrTransferVar, new SuppressNavigationTransitionInfo());
-        }
-
-        private void BtnSeleccionarClientes(object sender, RoutedEventArgs e)
-        {
-            // _ = Frame.Navigate(typeof(PageClientes), LvrTransferVar, new SuppressNavigationTransitionInfo());
-        }
-
-        private void BtnSeleccionarRecursos(object sender, RoutedEventArgs e)
-        {
-            _ = Frame.Navigate(typeof(PageRecursos), LvrTransferVar, new SuppressNavigationTransitionInfo());
-        }
-
-        private void BtnSeleccionarEmpresa(object sender, RoutedEventArgs e)
-        {
-            _ = Frame.Navigate(typeof(PageEmpresa), LvrTransferVar, new SuppressNavigationTransitionInfo());
-        }
-
-        private void BtnSeleccionarPersonal(object sender, RoutedEventArgs e)
-        {
-            _ = Frame.Navigate(typeof(PagePersonal), LvrTransferVar, new SuppressNavigationTransitionInfo());
+            LlenarListaClientes();
         }
 
         private async void BtnClientesCargarFoto(object sender, RoutedEventArgs e)
@@ -336,7 +266,7 @@ namespace BikeMessenger
             {
                 TransaccionOK = true;
 
-                if (LvrTransferVar.SincronizarWebRemoto())
+                if (LvrTransferVar.SincronizarWebPentalpha())
                 {
                     TransaccionOK = ProRegistroCliente("AGREGAR");
                 }
@@ -352,6 +282,8 @@ namespace BikeMessenger
                     LlenarListaClientes();
                     LvrTransferVar.CLI_RUTID = ClienteIO.RUTID;
                     LvrTransferVar.CLI_DIGVER = ClienteIO.DIGVER;
+                    LvrTransferVar.EscribirValoresDeAjustes();
+                    LvrTransferVar.LeerValoresDeAjustes();
                 }
 
                 else
@@ -383,7 +315,7 @@ namespace BikeMessenger
             {
                 TransaccionOK = true;
 
-                if (LvrTransferVar.SincronizarWebRemoto())
+                if (LvrTransferVar.SincronizarWebPentalpha())
                 {
                     TransaccionOK = ProRegistroCliente("MODIFICAR");
                 }
@@ -399,6 +331,8 @@ namespace BikeMessenger
                     LlenarListaClientes();
                     LvrTransferVar.CLI_RUTID = ClienteIO.RUTID;
                     LvrTransferVar.CLI_DIGVER = ClienteIO.DIGVER;
+                    LvrTransferVar.EscribirValoresDeAjustes();
+                    LvrTransferVar.LeerValoresDeAjustes();
                 }
                 else
                 {
@@ -438,7 +372,7 @@ namespace BikeMessenger
             {
                 TransaccionOK = true;
 
-                if (LvrTransferVar.SincronizarWebRemoto())
+                if (LvrTransferVar.SincronizarWebPentalpha())
                 {
                     TransaccionOK = ProRegistroCliente("BORRAR");
                 }
@@ -465,6 +399,8 @@ namespace BikeMessenger
                     LlenarPantallaConDb();
                     LlenarListaClientes();
                     await AvisoOperacionClientesDialogAsync("Borrar Cliente", "Cliente borrado exitosamente.");
+                    LvrTransferVar.EscribirValoresDeAjustes();
+                    LvrTransferVar.LeerValoresDeAjustes();
                 }
                 else
                 {
@@ -586,7 +522,8 @@ namespace BikeMessenger
                 GridClientesIndividual Fila = (GridClientesIndividual)CeldaSeleccionada.SelectedItems[0];
                 string[] CadenaDividida = Fila.RUT.Split("-", 2, StringSplitOptions.None);
 
-                if ((ClienteIOArray = BM_Database_Cliente.BuscarCliente(LvrTransferVar.CLI_PENTALPHA, CadenaDividida[0], CadenaDividida[1])) != null)
+                ClienteIOArray = BM_Database_Cliente.BuscarCliente(LvrTransferVar.CLI_PENTALPHA, CadenaDividida[0], CadenaDividida[1]);
+                if (ClienteIOArray != null && ClienteIOArray.Count > 0)
                 {
                     ClienteIO = ClienteIOArray[0];
                     LimpiarPantalla();

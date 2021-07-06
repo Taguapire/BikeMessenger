@@ -28,7 +28,7 @@ namespace BikeMessenger
         private readonly JsonBikeMessengerPersonal EnviarJsonPersonal = new JsonBikeMessengerPersonal();
         private JsonBikeMessengerPersonal RecibirJsonPersonal = new JsonBikeMessengerPersonal();
         private readonly Bm_Personal_Database BM_Database_Personal = new Bm_Personal_Database();
-        private TransferVar LvrTransferVar;
+        private TransferVar LvrTransferVar = new TransferVar();
         private bool BorrarSiNo;
 
         public PagePersonal()
@@ -39,102 +39,34 @@ namespace BikeMessenger
             comboBoxAutorizacion.Items.Add("COLABORADOR");
             comboBoxAutorizacion.Items.Add("INTERMEDIARIO");
             comboBoxAutorizacion.Items.Add("CLIENTE");
-            NavigationCacheMode = NavigationCacheMode.Disabled;
+            InicioPantalla();
         }
 
-        protected override void OnNavigatingFrom(NavigatingCancelEventArgs navigationEvent)
+        void InicioPantalla()
         {
-            // call the original OnNavigatingFrom
-            base.OnNavigatingFrom(navigationEvent);
 
-            // when the dialog is removed from navigation stack 
-            if (navigationEvent.NavigationMode == NavigationMode.Back)
+            RellenarCombos();
+
+            if (LvrTransferVar.CLI_RUTID == "")
             {
-                // set the cache mode
-                NavigationCacheMode = NavigationCacheMode.Disabled;
-
-                ResetPageCache();
-            }
-        }
-
-        private void ResetPageCache()
-        {
-            int cacheSize = ((Frame)Parent).CacheSize;
-
-            ((Frame)Parent).CacheSize = 0;
-            ((Frame)Parent).CacheSize = cacheSize;
-        }
-
-        protected override void OnNavigatedTo(NavigationEventArgs navigationEvent)
-        {
-            base.OnNavigatedTo(navigationEvent);
-            // when the dialog displays then we create viewmodel and set the cache mode
-
-            if (navigationEvent.NavigationMode == NavigationMode.New)
-            {
-                // set the cache mode
-                NavigationCacheMode = NavigationCacheMode.Required;
-            }
-
-            if (navigationEvent.Parameter is string @string && !string.IsNullOrWhiteSpace(@string))
-            {
-                //greeting.Text = $"Hi, {e.Parameter.ToString()}";
+                PersonalIOArray = BM_Database_Personal.BuscarPersonal();
+                if (PersonalIOArray != null && PersonalIOArray.Count > 0)
+                {
+                    PersonalIO = PersonalIOArray[0];
+                    LlenarPantallaConDb();
+                }
             }
             else
             {
-                LvrTransferVar = (TransferVar)navigationEvent.Parameter;
-                RellenarCombos();
-
-                if (LvrTransferVar.CLI_RUTID == "")
+                PersonalIOArray = BM_Database_Personal.BuscarPersonal(LvrTransferVar.PER_PENTALPHA, LvrTransferVar.CLI_RUTID, LvrTransferVar.CLI_DIGVER);
+                if (PersonalIOArray != null && PersonalIOArray.Count > 0)
                 {
-                    PersonalIOArray = BM_Database_Personal.BuscarPersonal();
-                    if (PersonalIOArray != null && PersonalIOArray.Count > 0)
-                    {
-                        PersonalIO = PersonalIOArray[0];
-                        LlenarPantallaConDb();
-                    }
+                    PersonalIO = PersonalIOArray[0];
+                    LlenarPantallaConDb();
                 }
-                else
-                {
-                    PersonalIOArray = BM_Database_Personal.BuscarPersonal(LvrTransferVar.PER_PENTALPHA, LvrTransferVar.CLI_RUTID, LvrTransferVar.CLI_DIGVER);
-                    if (PersonalIOArray != null && PersonalIOArray.Count > 0)
-                    {
-                        PersonalIO = PersonalIOArray[0];
-                        LlenarPantallaConDb();
-                    }
-                }
-                LlenarListaPersonal();
             }
-        }
+            LlenarListaPersonal();
 
-        private void BtnSeleccionarAjustes(object sender, RoutedEventArgs e)
-        {
-            _ = Frame.Navigate(typeof(PageAjustes), LvrTransferVar, new SuppressNavigationTransitionInfo());
-        }
-
-        private void BtnSeleccionarServicios(object sender, RoutedEventArgs e)
-        {
-            _ = Frame.Navigate(typeof(PageServicios), LvrTransferVar, new SuppressNavigationTransitionInfo());
-        }
-
-        private void BtnSeleccionarClientes(object sender, RoutedEventArgs e)
-        {
-            _ = Frame.Navigate(typeof(PageClientes), LvrTransferVar, new SuppressNavigationTransitionInfo());
-        }
-
-        private void BtnSeleccionarRecursos(object sender, RoutedEventArgs e)
-        {
-            _ = Frame.Navigate(typeof(PageRecursos), LvrTransferVar, new SuppressNavigationTransitionInfo());
-        }
-
-        private void BtnSeleccionarEmpresa(object sender, RoutedEventArgs e)
-        {
-            _ = Frame.Navigate(typeof(PageEmpresa), LvrTransferVar, new SuppressNavigationTransitionInfo());
-        }
-
-        private void BtnSeleccionarPersonal(object sender, RoutedEventArgs e)
-        {
-            // _ = Frame.Navigate(typeof(PagePersonal), LvrTransferVar, new SuppressNavigationTransitionInfo());
         }
 
         private async void BtnPersonalCargarFoto(object sender, RoutedEventArgs e)
@@ -377,7 +309,7 @@ namespace BikeMessenger
             {
                 TransaccionOK = true;
 
-                if (LvrTransferVar.SincronizarWebRemoto())
+                if (LvrTransferVar.SincronizarWebPentalpha())
                 {
                     TransaccionOK = ProRegistroPersonal("AGREGAR");
                 }
@@ -393,6 +325,8 @@ namespace BikeMessenger
                     LlenarListaPersonal();
                     LvrTransferVar.CLI_RUTID = PersonalIO.RUTID;
                     LvrTransferVar.CLI_DIGVER = PersonalIO.DIGVER;
+                    LvrTransferVar.EscribirValoresDeAjustes();
+                    LvrTransferVar.LeerValoresDeAjustes();
                 }
 
                 else
@@ -423,7 +357,7 @@ namespace BikeMessenger
             {
                 TransaccionOK = true;
 
-                if (LvrTransferVar.SincronizarWebRemoto())
+                if (LvrTransferVar.SincronizarWebPentalpha())
                 {
                     TransaccionOK = ProRegistroPersonal("MODIFICAR");
                 }
@@ -438,6 +372,8 @@ namespace BikeMessenger
                     LlenarListaPersonal();
                     LvrTransferVar.CLI_RUTID = PersonalIO.RUTID;
                     LvrTransferVar.CLI_DIGVER = PersonalIO.DIGVER;
+                    LvrTransferVar.EscribirValoresDeAjustes();
+                    LvrTransferVar.LeerValoresDeAjustes();
                 }
                 else
                 {
@@ -477,7 +413,7 @@ namespace BikeMessenger
             {
                 TransaccionOK = true;
 
-                if (LvrTransferVar.SincronizarWebRemoto())
+                if (LvrTransferVar.SincronizarWebPentalpha())
                 {
                     TransaccionOK = ProRegistroPersonal("BORRAR");
                 }
@@ -501,6 +437,8 @@ namespace BikeMessenger
                         LvrTransferVar.CLI_RUTID = "";
                         LvrTransferVar.CLI_DIGVER = "";
                     }
+                    LvrTransferVar.EscribirValoresDeAjustes();
+                    LvrTransferVar.LeerValoresDeAjustes();
                     LlenarPantallaConDb();
                     LlenarListaPersonal();
                     await AvisoOperacionPersonalDialogAsync("Borrar Personal", "Personal borrado exitosamente.");
@@ -625,7 +563,7 @@ namespace BikeMessenger
 
                 PersonalIOArray = BM_Database_Personal.BuscarPersonal(LvrTransferVar.PER_PENTALPHA, CadenaDividida[0], CadenaDividida[1]);
 
-                if (PersonalIOArray != null)
+                if (PersonalIOArray != null && PersonalIOArray.Count > 0)
                 {
                     PersonalIO = PersonalIOArray[0];
                     LimpiarPantalla();

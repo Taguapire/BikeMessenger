@@ -17,17 +17,11 @@ namespace BikeMessenger
         private static JsonBikeMessengerEmpresa BK_Empresa;
         private static List<JsonBikeMessengerEmpresa> BK_EmpresaLista;
 
-        private string BM_CadenaConexion;
-
-
         public Bm_Empresa_Database()
         {
             try
             {
-                BM_TransferVar = new TransferVar();
-                
-                BM_CadenaConexion = BM_TransferVar.DIRECTORIO_BASE_LOCAL;
-                BM_Conexion = new SqlConnection("Data Source=VASCON\\SQLEXPRESS;Initial Catalog=bikemessenger;MultipleActiveResultSets=true;User ID=bikemessenger; Password=Hola1974");
+                BM_Conexion = new SqlConnection(BM_TransferVar.BM_Sql_String_Builder.ConnectionString);
                 BM_Conexion.Open();
             }
             catch (System.Data.SqlClient.SqlException Ex)
