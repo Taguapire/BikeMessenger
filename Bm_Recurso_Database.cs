@@ -18,7 +18,10 @@ namespace BikeMessenger
 
         public Bm_Recurso_Database()
         {
-            BM_TransferVar = new TransferVar();
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return;
+            }
 
             BM_Conexion = new SqlConnection(BM_TransferVar.BM_Sql_String_Builder.ConnectionString);
             BM_Conexion.Open();
@@ -27,6 +30,11 @@ namespace BikeMessenger
         // Busqueda por Muchos
         public List<JsonBikeMessengerRecurso> BuscarRecurso()
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return null;
+            }
+
             BK_Recurso = new JsonBikeMessengerRecurso();
             BK_RecursoLista = new List<JsonBikeMessengerRecurso>();
             DataSet BM_DataSet;
@@ -77,6 +85,11 @@ namespace BikeMessenger
 
         public List<JsonBikeMessengerRecurso> BuscarRecurso(string pPENTALPHA, string pPATENTE)
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return null;
+            }
+
             BK_Recurso = new JsonBikeMessengerRecurso();
             BK_RecursoLista = new List<JsonBikeMessengerRecurso>();
             DataSet BM_DataSet;
@@ -128,6 +141,11 @@ namespace BikeMessenger
 
         public bool AgregarRecurso(JsonBikeMessengerRecurso aBK_Recurso)
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return false;
+            }
+
             BK_Recurso = new JsonBikeMessengerRecurso();
             BK_RecursoLista = new List<JsonBikeMessengerRecurso>();
 
@@ -184,6 +202,11 @@ namespace BikeMessenger
 
         public bool ModificarRecurso(JsonBikeMessengerRecurso mBK_Recurso)
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return false;
+            }
+
             BK_Recurso = new JsonBikeMessengerRecurso();
             BK_RecursoLista = new List<JsonBikeMessengerRecurso>();
             DataSet BM_DataSet;
@@ -239,6 +262,11 @@ namespace BikeMessenger
 
         public bool BorrarRecurso(string pPENTALPHA, string pPATENTE)
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return false;
+            }
+
             BK_Recurso = new JsonBikeMessengerRecurso();
             BK_RecursoLista = new List<JsonBikeMessengerRecurso>();
             SqlCommand BM_Comando;
@@ -259,6 +287,11 @@ namespace BikeMessenger
 
         public List<ClaseRecursoGrid> BuscarGridRecurso()
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return null;
+            }
+
             List<ClaseRecursoGrid> GridLocalRecursoLista = new List<ClaseRecursoGrid>();
             DataSet BM_DataSet;
             SqlDataAdapter BM_Adaptador;
@@ -303,6 +336,11 @@ namespace BikeMessenger
 
         public List<ClasePersonalGrid> BuscarGridPersonal()
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return null;
+            }
+
             List<ClasePersonalGrid> GridLocalPersonalLista = new List<ClasePersonalGrid>();
 
             DataSet BM_DataSet;
@@ -343,6 +381,11 @@ namespace BikeMessenger
 
         public string Bm_BuscarNombrePropietario(string pPENTALPHA, string pRUT, string pDIGVER)
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return null;
+            }
+
             string NombrePersonal = "No existe";
             SqlCommand BM_ComandoLocal;
             SqlDataReader BM_ReaderLocal;
@@ -364,6 +407,11 @@ namespace BikeMessenger
 
         public List<string> GetPais()
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return null;
+            }
+
             List<string> BK_PaisLista = new List<string>();
             DataSet BM_DataSetPais;
             SqlDataAdapter BM_AdaptadorPais;
@@ -396,6 +444,11 @@ namespace BikeMessenger
 
         public List<string> GetRegion()
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return null;
+            }
+
             List<string> BK_RegionLista = new List<string>();
             DataSet BM_DataSetRegion;
             SqlDataAdapter BM_AdaptadorRegion;
@@ -428,6 +481,11 @@ namespace BikeMessenger
 
         public List<string> GetComuna()
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return null;
+            }
+
             List<string> BK_ComunaLista = new List<string>();
             DataSet BM_DataSetComuna;
             SqlDataAdapter BM_AdaptadorComuna;
@@ -460,6 +518,11 @@ namespace BikeMessenger
 
         public List<string> GetCiudad()
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return null;
+            }
+
             List<string> BK_CiudadLista = new List<string>();
             DataSet BM_DataSetCiudad;
             SqlDataAdapter BM_AdaptadorCiudad;
@@ -493,6 +556,10 @@ namespace BikeMessenger
 
         public string Bm_Recurso_Listado()
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return null;
+            }
 
             BK_Recurso = new JsonBikeMessengerRecurso();
             BK_RecursoLista = new List<JsonBikeMessengerRecurso>();

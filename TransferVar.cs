@@ -351,24 +351,25 @@ namespace BikeMessenger
 
         public bool SincronizarBaseLocal()
         {
-            return BASEDEDATOSLOCAL == "S";
+            return (ESTADOPARAMETROS == "S") && (BASEDEDATOSLOCAL == "S");
         }
 
         public bool SincronizarBaseSQLServer()
         {
-            return BDSQLSERVER == "S";
+            return (ESTADOPARAMETROS == "S") && (BDSQLSERVER == "S");
         }
 
         public bool SincronizarWebPentalpha()
         {
-            return SINCRONIZACIONWEBPENTALPHA == "S";
+            return (ESTADOPARAMETROS == "S") && (SINCRONIZACIONWEBPENTALPHA == "S");
         }
 
         public bool SincronizarWebPropio()
         {
-            return SINCRONIZACIONWEBPROPIO == "S";
+            return (ESTADOPARAMETROS == "S") && (SINCRONIZACIONWEBPROPIO == "S");
         }
 
+        /*
         private async Task AvisoDeError()
         {
             ContentDialog AbrirBasedeDatos = new ContentDialog
@@ -381,5 +382,6 @@ namespace BikeMessenger
             Application.Current.Exit();
             return;
         }
+        */
     }
 }

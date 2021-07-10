@@ -19,6 +19,11 @@ namespace BikeMessenger
 
         public Bm_Personal_Database()
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return;
+            }
+
             try
             {
                 BM_Conexion = new SqlConnection(BM_TransferVar.BM_Sql_String_Builder.ConnectionString);
@@ -33,6 +38,11 @@ namespace BikeMessenger
         // Busqueda por Muchos
         public List<JsonBikeMessengerPersonal> BuscarPersonal()
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return null;
+            }
+
             BK_Personal = new JsonBikeMessengerPersonal();
             BK_PersonalLista = new List<JsonBikeMessengerPersonal>();
             DataSet BM_DataSet;
@@ -89,6 +99,11 @@ namespace BikeMessenger
 
         public List<JsonBikeMessengerPersonal> BuscarPersonal(string pPENTALPHA, string pRUTID, string pDIGVER)
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return null;
+            }
+
             BK_Personal = new JsonBikeMessengerPersonal();
             BK_PersonalLista = new List<JsonBikeMessengerPersonal>();
             DataSet BM_DataSet;
@@ -145,6 +160,11 @@ namespace BikeMessenger
 
         public bool AgregarPersonal(JsonBikeMessengerPersonal aBK_Personal)
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return false;
+            }
+
             BK_Personal = new JsonBikeMessengerPersonal();
             BK_PersonalLista = new List<JsonBikeMessengerPersonal>();
 
@@ -206,6 +226,11 @@ namespace BikeMessenger
 
         public bool ModificarPersonal(JsonBikeMessengerPersonal mBK_Personal)
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return false;
+            }
+
             DataSet BM_DataSet;
             SqlDataAdapter BM_Adaptador;
             SqlCommand BM_Comando;
@@ -265,6 +290,11 @@ namespace BikeMessenger
 
         public bool BorrarPersonal(string pPENTALPHA, string pRUTID, string pDIGVER)
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return false;
+            }
+
             BK_Personal = new JsonBikeMessengerPersonal();
             BK_PersonalLista = new List<JsonBikeMessengerPersonal>();
             SqlCommand BM_Comando;
@@ -283,9 +313,13 @@ namespace BikeMessenger
             return true;
         }
 
-
         public List<ClasePersonalGrid> BuscarGridPersonal()
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return null;
+            }
+
             List<ClasePersonalGrid> GridLocalPersonalLista = new List<ClasePersonalGrid>();
 
             DataSet BM_DataSet;
@@ -326,6 +360,11 @@ namespace BikeMessenger
 
         public List<string> GetPais()
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return null;
+            }
+
             List<string> BK_PaisLista = new List<string>();
             DataSet BM_DataSetPais;
             SqlDataAdapter BM_AdaptadorPais;
@@ -358,6 +397,11 @@ namespace BikeMessenger
 
         public List<string> GetRegion()
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return null;
+            }
+
             List<string> BK_RegionLista = new List<string>();
             DataSet BM_DataSetRegion;
             SqlDataAdapter BM_AdaptadorRegion;
@@ -390,6 +434,11 @@ namespace BikeMessenger
 
         public List<string> GetComuna()
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return null;
+            }
+
             List<string> BK_ComunaLista = new List<string>();
             DataSet BM_DataSetComuna;
             SqlDataAdapter BM_AdaptadorComuna;
@@ -422,6 +471,11 @@ namespace BikeMessenger
 
         public List<string> GetCiudad()
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return null;
+            }
+
             List<string> BK_CiudadLista = new List<string>();
             DataSet BM_DataSetCiudad;
             SqlDataAdapter BM_AdaptadorCiudad;
@@ -454,6 +508,11 @@ namespace BikeMessenger
 
         public string Bm_Personal_Listado()
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return null;
+            }
+
             BK_Personal = new JsonBikeMessengerPersonal();
             BK_PersonalLista = new List<JsonBikeMessengerPersonal>();
             DataSet BM_DataSet;

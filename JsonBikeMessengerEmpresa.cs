@@ -1,4 +1,5 @@
-﻿namespace BikeMessenger
+﻿
+namespace BikeMessenger
 {
     internal class JsonBikeMessengerEmpresa
     {

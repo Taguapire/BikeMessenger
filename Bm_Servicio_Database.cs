@@ -15,6 +15,11 @@ namespace BikeMessenger
 
         public Bm_Servicio_Database()
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return;
+            }
+
             BM_Conexion = new SqlConnection(BM_TransferVar.BM_Sql_String_Builder.ConnectionString);
             BM_Conexion.Open();
         }
@@ -22,6 +27,11 @@ namespace BikeMessenger
         // Busqueda por Muchos
         public List<JsonBikeMessengerServicio> BuscarServicio()
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return null;
+            }
+
             BK_Servicio = new JsonBikeMessengerServicio();
             BK_ServicioLista = new List<JsonBikeMessengerServicio>();
             DataSet BM_DataSet;
@@ -104,6 +114,11 @@ namespace BikeMessenger
 
         public List<JsonBikeMessengerServicio> BuscarServicio(string pPENTALPHA, string pNROENVIO)
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return null;
+            }
+
             BK_Servicio = new JsonBikeMessengerServicio();
             BK_ServicioLista = new List<JsonBikeMessengerServicio>();
             DataSet BM_DataSet;
@@ -183,6 +198,11 @@ namespace BikeMessenger
 
         public bool AgregarServicio(JsonBikeMessengerServicio aBK_Servicio)
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return false;
+            }
+
             BK_Servicio = new JsonBikeMessengerServicio();
             BK_ServicioLista = new List<JsonBikeMessengerServicio>();
 
@@ -268,6 +288,11 @@ namespace BikeMessenger
 
         public bool ModificarServicio(JsonBikeMessengerServicio mBK_Servicio)
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return false;
+            }
+
             BK_Servicio = new JsonBikeMessengerServicio();
             BK_ServicioLista = new List<JsonBikeMessengerServicio>();
             DataSet BM_DataSet;
@@ -352,6 +377,11 @@ namespace BikeMessenger
 
         public bool BorrarServicio(string pPENTALPHA, string pNROENVIO)
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return false;
+            }
+
             BK_Servicio = new JsonBikeMessengerServicio();
             BK_ServicioLista = new List<JsonBikeMessengerServicio>();
             SqlCommand BM_Comando;
@@ -374,6 +404,11 @@ namespace BikeMessenger
 
         public List<ClaseServicioGrid> BuscarGridServicios()
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return null;
+            }
+
             List<ClaseServicioGrid> GridLocalServiciosLista = new List<ClaseServicioGrid>();
             DataSet BM_DataSet;
             SqlDataAdapter BM_Adaptador;
@@ -415,6 +450,11 @@ namespace BikeMessenger
 
         public List<ClaseRecursoGrid> BuscarGridRecurso()
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return null;
+            }
+
             List<ClaseRecursoGrid> GridLocalRecursoLista = new List<ClaseRecursoGrid>();
             DataSet BM_DataSet;
             SqlDataAdapter BM_Adaptador;
@@ -458,6 +498,11 @@ namespace BikeMessenger
 
         public List<ClasePersonalGrid> BuscarGridPersonal()
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return null;
+            }
+
             List<ClasePersonalGrid> GridLocalPersonalLista = new List<ClasePersonalGrid>();
 
             DataSet BM_DataSet;
@@ -499,6 +544,11 @@ namespace BikeMessenger
 
         public List<ClaseClientesGrid> BuscarGridClientes()
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return null;
+            }
+
             List<ClaseClientesGrid> GridLocalClientesLista = new List<ClaseClientesGrid>();
 
             DataSet BM_DataSet;
@@ -540,6 +590,11 @@ namespace BikeMessenger
 
         public string Bm_BuscarNombreCliente(string pPENTALPHA, string pRUT, string pDIGVER)
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return null;
+            }
+
             string NombreCliente = "No existe";
             SqlCommand BM_ComandoLocal;
             SqlDataReader BM_ReaderLocal;
@@ -561,28 +616,37 @@ namespace BikeMessenger
 
         public string Bm_BuscarNombreMensajero(string pPENTALPHA, string pRUT, string pDIGVER)
         {
-        
-                string NombreMensajero = "No existe";
-                SqlCommand BM_ComandoLocal;
-                SqlDataReader BM_ReaderLocal;
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return null;
+            }
 
-                try
-                {
-                    BM_ComandoLocal = BM_Conexion.CreateCommand();
-                    BM_ComandoLocal.CommandText = string.Format("SELECT APELLIDOS + ', ' + NOMBRES FROM PERSONAL WHERE PENTALPHA = '" + pPENTALPHA + "'  AND RUTID = '" + pRUT + "' AND DIGVER = '" + pDIGVER + "'");
-                    BM_ReaderLocal = BM_ComandoLocal.ExecuteReader();
-                    if (BM_ReaderLocal.Read())
+            string NombreMensajero = "No existe";
+            SqlCommand BM_ComandoLocal;
+            SqlDataReader BM_ReaderLocal;
+
+            try
+            {
+                BM_ComandoLocal = BM_Conexion.CreateCommand();
+                BM_ComandoLocal.CommandText = string.Format("SELECT APELLIDOS + ', ' + NOMBRES FROM PERSONAL WHERE PENTALPHA = '" + pPENTALPHA + "'  AND RUTID = '" + pRUT + "' AND DIGVER = '" + pDIGVER + "'");
+                BM_ReaderLocal = BM_ComandoLocal.ExecuteReader();
+                if (BM_ReaderLocal.Read())
                     NombreMensajero = BM_ReaderLocal.GetString(0);
-                }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                }
-                return NombreMensajero;
+            }
+            catch (Exception Ex)
+            {
+                Console.WriteLine(Ex.InnerException.Message);
+            }
+            return NombreMensajero;
         }
 
         private string Bm_BuscarNombreRecurso(string pPENTALPHA, string pPATENTE)
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return null;
+            }
+
             string NombreMensajero = "No existe";
             SqlCommand BM_ComandoLocal;
             SqlDataReader BM_ReaderLocal;
@@ -603,6 +667,11 @@ namespace BikeMessenger
 
         public List<string> GetPais()
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return null;
+            }
+
             List<string> BK_PaisLista = new List<string>();
             DataSet BM_DataSetPais;
             SqlDataAdapter BM_AdaptadorPais;
@@ -635,6 +704,11 @@ namespace BikeMessenger
 
         public List<string> GetRegion()
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return null;
+            }
+
             List<string> BK_RegionLista = new List<string>();
             DataSet BM_DataSetRegion;
             SqlDataAdapter BM_AdaptadorRegion;
@@ -667,6 +741,11 @@ namespace BikeMessenger
 
         public List<string> GetComuna()
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return null;
+            }
+
             List<string> BK_ComunaLista = new List<string>();
             DataSet BM_DataSetComuna;
             SqlDataAdapter BM_AdaptadorComuna;
@@ -699,6 +778,11 @@ namespace BikeMessenger
 
         public List<string> GetCiudad()
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return null;
+            }
+
             List<string> BK_CiudadLista = new List<string>();
             DataSet BM_DataSetCiudad;
             SqlDataAdapter BM_AdaptadorCiudad;
@@ -732,6 +816,10 @@ namespace BikeMessenger
 
         public string Bm_Servicio_Listado()
         {
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return null;
+            }
 
             BK_Servicio = new JsonBikeMessengerServicio();
             BK_ServicioLista = new List<JsonBikeMessengerServicio>();
