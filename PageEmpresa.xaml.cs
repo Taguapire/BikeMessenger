@@ -11,7 +11,6 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.Storage.Streams;
 using Windows.Graphics.Imaging;
 using QRCoder;
-using Newtonsoft.Json;
 
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
@@ -25,8 +24,6 @@ namespace BikeMessenger
     {
         private List<JsonBikeMessengerEmpresa> EmpresaIOArray = new List<JsonBikeMessengerEmpresa>();
         private JsonBikeMessengerEmpresa EmpresaIO = new JsonBikeMessengerEmpresa();
-        private JsonBikeMessengerEmpresa EnviarJsonEmpresa = new JsonBikeMessengerEmpresa();
-        private JsonBikeMessengerEmpresa RecibirJsonEmpresa = new JsonBikeMessengerEmpresa();
         private Bm_Empresa_Database BM_Database_Empresa = new Bm_Empresa_Database();
         private TransferVar LvrTransferVar = new TransferVar();
         private PentalphaCripto LvrCrypto = new PentalphaCripto();
@@ -284,16 +281,6 @@ namespace BikeMessenger
                 textBoxRut.IsReadOnly = true;
                 textBoxDigitoVerificador.IsReadOnly = true;
 
-                if (LvrTransferVar.SincronizarWebPentalpha())
-                {
-                    TransaccionOK = ProRegistroEmpresa("AGREGAR");
-                }
-
-                if (LvrTransferVar.SincronizarWebPropio())
-                {
-                    TransaccionOK = ProRegistroEmpresa("AGREGAR");
-                }
-
                 if (TransaccionOK)
                 {
                     await AvisoOperacionEmpresaDialogAsync("Agregar Empresa", "Empresa agregada exitosamente.");
@@ -339,16 +326,6 @@ namespace BikeMessenger
                 LvrTransferVar.ActualizarPentalphaId();
                 LvrTransferVar.EscribirValoresDeAjustes();
                 LvrTransferVar.LeerValoresDeAjustes();
-
-                if (LvrTransferVar.SincronizarWebPentalpha())
-                {
-                    TransaccionOK = ProRegistroEmpresa("MODIFICAR");
-                }
-
-                if (LvrTransferVar.SincronizarWebPropio())
-                {
-                    TransaccionOK = ProRegistroEmpresa("MODIFICAR");
-                }
 
                 if (TransaccionOK)
                 {
@@ -411,20 +388,6 @@ namespace BikeMessenger
 
                 textBoxRut.IsReadOnly = false;
                 textBoxDigitoVerificador.IsReadOnly = false;
-
-
-                if (TransaccionOK)
-                {
-                    if (LvrTransferVar.SincronizarWebPentalpha())
-                    {
-                        TransaccionOK = ProRegistroEmpresa("BORRAR");
-                    }
-                    if (LvrTransferVar.SincronizarWebPropio())
-                    {
-                        TransaccionOK = ProRegistroEmpresa("BORRAR");
-                    }
-                }
-
 
                 if (TransaccionOK)
                 {
@@ -544,117 +507,6 @@ namespace BikeMessenger
             await image.SetSourceAsync(stream);
 
             imageQrEmpresa.Source = image;
-        }
-
-        //**************************************************
-        // Ejecuta operacion de registro de empresa
-        //**************************************************
-        private bool ProRegistroEmpresa(string pTipoOperacion)
-        {
-            string LvrPRecibirServer;
-            string LvrPData;
-            string LvrStringHttp = "https://finanven.ddns.net";
-            string LvrStringPort = "443";
-            string LvrStringController = "/Api/BikeMessengerEmpresa";
-
-            LvrInternet LvrBKInternet = new LvrInternet();
-            string LvrParametros;
-
-            List<JsonBikeMessengerEmpresa> EnviarJsonEmpresaArray = new List<JsonBikeMessengerEmpresa>();
-            List<JsonBikeMessengerEmpresa> RecibirJsonEmpresaArray = new List<JsonBikeMessengerEmpresa>();
-
-            // Llenar estructura Json
-            CopiarMemoriaEnJson(pTipoOperacion);
-
-            // Proceso Serializar
-
-            EnviarJsonEmpresaArray.Add(EnviarJsonEmpresa);
-            LvrPData = JsonConvert.SerializeObject(EnviarJsonEmpresaArray);
-
-            // Preparar Parametros
-            LvrParametros = LvrPData;
-
-            LvrBKInternet.LvrInetPOST(LvrStringHttp, LvrStringPort, LvrStringController, LvrParametros);
-            LvrPRecibirServer = LvrBKInternet.LvrResultadoWeb;
-
-            if (LvrPRecibirServer != "ERROR" && LvrPRecibirServer != "" && LvrPRecibirServer != null)
-            {
-                // Procesar primer servidor
-                RecibirJsonEmpresaArray = JsonConvert.DeserializeObject<List<JsonBikeMessengerEmpresa>>(LvrPRecibirServer); // resp será el string JSON a deserializa
-                RecibirJsonEmpresa = RecibirJsonEmpresaArray[0];
-
-                return RecibirJsonEmpresa.RESOPERACION == "OK";
-
-            }
-            return false;
-        }
-
-        private void CopiarMemoriaEnJson(string pOPERACION)
-        {
-            // Llenar Variables
-            EnviarJsonEmpresa.OPERACION = pOPERACION;
-            EnviarJsonEmpresa.PENTALPHA = EmpresaIO.PENTALPHA;
-            EnviarJsonEmpresa.RUTID = EmpresaIO.RUTID;
-            EnviarJsonEmpresa.DIGVER = EmpresaIO.DIGVER;
-            EnviarJsonEmpresa.NOMBRE = EmpresaIO.NOMBRE;
-            EnviarJsonEmpresa.USUARIO = EmpresaIO.USUARIO;
-            EnviarJsonEmpresa.CLAVE = EmpresaIO.CLAVE;
-            EnviarJsonEmpresa.ACTIVIDAD1 = EmpresaIO.ACTIVIDAD1;
-            EnviarJsonEmpresa.ACTIVIDAD2 = EmpresaIO.ACTIVIDAD2;
-            EnviarJsonEmpresa.REPRESENTANTE1 = EmpresaIO.REPRESENTANTE1;
-            EnviarJsonEmpresa.REPRESENTANTE2 = EmpresaIO.REPRESENTANTE2;
-            EnviarJsonEmpresa.REPRESENTANTE3 = EmpresaIO.REPRESENTANTE3;
-            EnviarJsonEmpresa.DOMICILIO1 = EmpresaIO.DOMICILIO1;
-            EnviarJsonEmpresa.DOMICILIO2 = EmpresaIO.DOMICILIO2;
-            EnviarJsonEmpresa.NUMERO = EmpresaIO.NUMERO;
-            EnviarJsonEmpresa.PISO = EmpresaIO.PISO;
-            EnviarJsonEmpresa.OFICINA = EmpresaIO.OFICINA;
-            EnviarJsonEmpresa.CIUDAD = EmpresaIO.CIUDAD;
-            EnviarJsonEmpresa.COMUNA = EmpresaIO.COMUNA;
-            EnviarJsonEmpresa.ESTADOREGION = EmpresaIO.ESTADOREGION;
-            EnviarJsonEmpresa.CODIGOPOSTAL = EmpresaIO.CODIGOPOSTAL;
-            EnviarJsonEmpresa.PAIS = EmpresaIO.PAIS;
-            EnviarJsonEmpresa.TELEFONO1 = EmpresaIO.TELEFONO1;
-            EnviarJsonEmpresa.TELEFONO2 = EmpresaIO.TELEFONO2;
-            EnviarJsonEmpresa.TELEFONO3 = EmpresaIO.TELEFONO3;
-            EnviarJsonEmpresa.OBSERVACIONES = EmpresaIO.OBSERVACIONES;
-            EnviarJsonEmpresa.LOGO = EmpresaIO.LOGO;
-            EnviarJsonEmpresa.RESOPERACION = "";
-            EnviarJsonEmpresa.RESMENSAJE = "";
-        }
-
-        private void CopiarJsonEnMemoria(string pOPERACION)
-        {
-            // Proceso
-            // RecibirJsonEmpresa.Json_OPERACION = pOPERACION;
-            EmpresaIO.PENTALPHA = RecibirJsonEmpresa.PENTALPHA;
-            EmpresaIO.RUTID = RecibirJsonEmpresa.RUTID;
-            EmpresaIO.DIGVER = RecibirJsonEmpresa.DIGVER;
-            EmpresaIO.NOMBRE = RecibirJsonEmpresa.NOMBRE;
-            EmpresaIO.USUARIO = RecibirJsonEmpresa.USUARIO;
-            EmpresaIO.CLAVE = RecibirJsonEmpresa.CLAVE;
-            EmpresaIO.ACTIVIDAD1 = RecibirJsonEmpresa.ACTIVIDAD1;
-            EmpresaIO.ACTIVIDAD2 = RecibirJsonEmpresa.ACTIVIDAD2;
-            EmpresaIO.REPRESENTANTE1 = RecibirJsonEmpresa.REPRESENTANTE1;
-            EmpresaIO.REPRESENTANTE2 = RecibirJsonEmpresa.REPRESENTANTE2;
-            EmpresaIO.REPRESENTANTE3 = RecibirJsonEmpresa.REPRESENTANTE3;
-            EmpresaIO.DOMICILIO1 = RecibirJsonEmpresa.DOMICILIO1;
-            EmpresaIO.DOMICILIO2 = RecibirJsonEmpresa.DOMICILIO2;
-            EmpresaIO.NUMERO = RecibirJsonEmpresa.NUMERO;
-            EmpresaIO.PISO = RecibirJsonEmpresa.PISO;
-            EmpresaIO.OFICINA = RecibirJsonEmpresa.OFICINA;
-            EmpresaIO.CIUDAD = RecibirJsonEmpresa.CIUDAD;
-            EmpresaIO.COMUNA = RecibirJsonEmpresa.COMUNA;
-            EmpresaIO.ESTADOREGION = RecibirJsonEmpresa.ESTADOREGION;
-            EmpresaIO.CODIGOPOSTAL = RecibirJsonEmpresa.CODIGOPOSTAL;
-            EmpresaIO.PAIS = RecibirJsonEmpresa.PAIS;
-            EmpresaIO.TELEFONO1 = RecibirJsonEmpresa.TELEFONO1;
-            EmpresaIO.TELEFONO2 = RecibirJsonEmpresa.TELEFONO2;
-            EmpresaIO.TELEFONO3 = RecibirJsonEmpresa.TELEFONO3;
-            EmpresaIO.OBSERVACIONES = RecibirJsonEmpresa.OBSERVACIONES;
-            EmpresaIO.LOGO = RecibirJsonEmpresa.LOGO;
-            // BM_Database_Empresa = RecibirJsonEmpresa.Json_Resultado;
-            // BM_Database_Empresa = RecibirJsonEmpresa.Json_ResultadoMsg;
         }
 
         private void LlenarBasePentalpha(string pPentalpha)
