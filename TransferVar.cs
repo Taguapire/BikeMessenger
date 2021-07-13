@@ -69,6 +69,7 @@ namespace BikeMessenger
 
         public TransferVar()
         {
+            // localSettings.Values["PENTALPHA_ID"] = "EF00F8E2DA87E88D591BC033402208CA2C08A849298019366E23AB370A711BA6";
             // Se Intenta Leer Estructura de Pentalpha
             ESTADOPARAMETROS = "";
             ESTADOPARAMETROS = (string)localSettings.Values["ESTADOPARAMETROS"];

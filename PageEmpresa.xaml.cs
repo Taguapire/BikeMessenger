@@ -40,24 +40,38 @@ namespace BikeMessenger
         {
             RellenarCombos();
 
-            EmpresaIOArray = BM_Database_Empresa.BuscarEmpresa();
+            EmpresaIOArray = BM_Database_Empresa.BuscarEmpresa(LvrTransferVar.PENTALPHA_ID);
 
             if (EmpresaIOArray != null && EmpresaIOArray.Count > 0)
             {
                 EmpresaIO = EmpresaIOArray[0];
-                LlenarPantallaConDb();
 
-                LvrTransferVar.PENTALPHA_ID = EmpresaIO.PENTALPHA;
-                LvrTransferVar.ActualizarPentalphaId();
-                LvrTransferVar.EscribirValoresDeAjustes();
-                LvrTransferVar.LeerValoresDeAjustes();
+                if (EmpresaIO.RESOPERACION == "OK")
+                {
+                    LlenarPantallaConDb();
 
-                appBarAgregar.IsEnabled = false;
-                appBarModificar.IsEnabled = true;
-                appBarBorrar.IsEnabled = true;
+                    LvrTransferVar.PENTALPHA_ID = EmpresaIO.PENTALPHA;
+                    LvrTransferVar.ActualizarPentalphaId();
+                    LvrTransferVar.EscribirValoresDeAjustes();
+                    LvrTransferVar.LeerValoresDeAjustes();
 
-                textBoxRut.IsReadOnly = true;
-                textBoxDigitoVerificador.IsReadOnly = true;
+                    appBarAgregar.IsEnabled = false;
+                    appBarModificar.IsEnabled = true;
+                    appBarBorrar.IsEnabled = true;
+
+                    textBoxRut.IsReadOnly = true;
+                    textBoxDigitoVerificador.IsReadOnly = true;
+                }
+                else
+                {
+                    appBarAgregar.IsEnabled = true;
+                    appBarModificar.IsEnabled = false;
+                    appBarBorrar.IsEnabled = false;
+
+                    textBoxRut.IsReadOnly = false;
+                    textBoxDigitoVerificador.IsReadOnly = false;
+                    _ = AvisoOperacionEmpresaDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
+                }
             }
             else
             {

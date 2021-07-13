@@ -56,125 +56,7 @@ namespace BikeMessenger
             }
         }
 
-        // Busqueda por Muchos
-        public List<JsonBikeMessengerEmpresa> BuscarEmpresa()
-        {
-            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
-            {
-                return null;
-            }
-
-            BK_Empresa = new JsonBikeMessengerEmpresa();
-            BK_EmpresaLista = new List<JsonBikeMessengerEmpresa>();
-
-            if (BM_TransferVar.SincronizarBaseLocal())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
-            {
-                DataSet BM_DataSet;
-                SqlDataAdapter BM_Adaptador;
-                SqlCommand BM_Comando;
-
-                try
-                {
-                    BM_Comando = BM_Conexion.CreateCommand();
-                    BM_Comando.CommandText = string.Format("SELECT * FROM EMPRESA");
-
-                    BM_Adaptador = new SqlDataAdapter(BM_Comando)
-                    {
-                        AcceptChangesDuringFill = false
-                    };
-                    BM_DataSet = new DataSet();
-                    _ = BM_Adaptador.Fill(BM_DataSet, "EMPRESA");
-
-                    foreach (DataRow LvrEmpresa in BM_DataSet.Tables["EMPRESA"].Rows)
-                    {
-                        BK_Empresa.PENTALPHA = LvrEmpresa["PENTALPHA"].ToString();
-                        BK_Empresa.RUTID = LvrEmpresa["RUTID"].ToString();
-                        BK_Empresa.DIGVER = LvrEmpresa["DIGVER"].ToString();
-                        BK_Empresa.NOMBRE = LvrEmpresa["NOMBRE"].ToString();
-                        BK_Empresa.USUARIO = LvrEmpresa["USUARIO"].ToString();
-                        BK_Empresa.CLAVE = LvrEmpresa["CLAVE"].ToString();
-                        BK_Empresa.ACTIVIDAD1 = LvrEmpresa["ACTIVIDAD1"].ToString();
-                        BK_Empresa.ACTIVIDAD2 = LvrEmpresa["ACTIVIDAD2"].ToString();
-                        BK_Empresa.REPRESENTANTE1 = LvrEmpresa["REPRESENTANTE1"].ToString();
-                        BK_Empresa.REPRESENTANTE2 = LvrEmpresa["REPRESENTANTE2"].ToString();
-                        BK_Empresa.REPRESENTANTE3 = LvrEmpresa["REPRESENTANTE3"].ToString();
-                        BK_Empresa.DOMICILIO1 = LvrEmpresa["DOMICILIO1"].ToString();
-                        BK_Empresa.DOMICILIO2 = LvrEmpresa["DOMICILIO2"].ToString();
-                        BK_Empresa.NUMERO = LvrEmpresa["NUMERO"].ToString();
-                        BK_Empresa.PISO = LvrEmpresa["PISO"].ToString();
-                        BK_Empresa.OFICINA = LvrEmpresa["OFICINA"].ToString();
-                        BK_Empresa.CIUDAD = LvrEmpresa["CIUDAD"].ToString();
-                        BK_Empresa.COMUNA = LvrEmpresa["COMUNA"].ToString();
-                        BK_Empresa.ESTADOREGION = LvrEmpresa["ESTADOREGION"].ToString();
-                        BK_Empresa.CODIGOPOSTAL = LvrEmpresa["CODIGOPOSTAL"].ToString();
-                        BK_Empresa.PAIS = LvrEmpresa["PAIS"].ToString();
-                        BK_Empresa.TELEFONO1 = LvrEmpresa["TELEFONO1"].ToString();
-                        BK_Empresa.TELEFONO2 = LvrEmpresa["TELEFONO2"].ToString();
-                        BK_Empresa.TELEFONO3 = LvrEmpresa["TELEFONO3"].ToString();
-                        BK_Empresa.OBSERVACIONES = LvrEmpresa["OBSERVACIONES"].ToString();
-                        BK_Empresa.LOGO = LvrEmpresa["LOGO"].ToString();
-                        BK_EmpresaLista.Add(BK_Empresa);
-                    }
-                }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                    return null;
-                }
-                return BK_EmpresaLista;
-            }
-            else if (BM_TransferVar.SincronizarWebPentalpha())
-            {
-                string LvrData;
-
-                BK_Empresa = new JsonBikeMessengerEmpresa
-                {
-                    PENTALPHA = BM_TransferVar.PENTALPHA_ID
-                };
-                
-                BK_EmpresaLista = new List<JsonBikeMessengerEmpresa>
-                {
-                    BK_Empresa
-                };
-                
-                LvrData = JsonConvert.SerializeObject(BK_EmpresaLista);
-                LvrData = ProRegistroEmpresa("BUSCAR", "https://finanven.ddns.net", "443", "/Api/BikeMessengerEmpresa", LvrData);
-                if (LvrData != null)
-                {
-                    BK_EmpresaLista = JsonConvert.DeserializeObject<List<JsonBikeMessengerEmpresa>>(LvrData);
-                    return BK_EmpresaLista;
-                }
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarWebPropio())
-            {
-                string LvrData;
-
-                BK_Empresa = new JsonBikeMessengerEmpresa
-                {
-                    PENTALPHA = BM_TransferVar.PENTALPHA_ID
-                };
-
-                BK_EmpresaLista = new List<JsonBikeMessengerEmpresa>
-                {
-                    BK_Empresa
-                };
-                LvrData = JsonConvert.SerializeObject(BK_EmpresaLista);
-                LvrData = ProRegistroEmpresa("BUSCAR", BM_TransferVar.BDREMOTACLIENTE, BM_TransferVar.BDREMOTACLIENTEPUERTO, "/Api/BikeMessengerEmpresa", LvrData);
-                if (LvrData != null)
-                {
-                    BK_EmpresaLista = JsonConvert.DeserializeObject<List<JsonBikeMessengerEmpresa>>(LvrData);
-                    return BK_EmpresaLista;
-                }
-                return null;
-            }
-            return null;
-        }
-
+        // Busqueda
         public List<JsonBikeMessengerEmpresa> BuscarEmpresa(string pPENTALPHA)
         {
             if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
@@ -198,7 +80,7 @@ namespace BikeMessenger
                 try
                 {
                     BM_Comando = BM_Conexion.CreateCommand();
-                    BM_Comando.CommandText = string.Format("SELECT * FROM EMPRESA WHERE PENTALPHA = '" + "pPENTALPHA" + "'");
+                    BM_Comando.CommandText = string.Format("SELECT * FROM EMPRESA WHERE PENTALPHA = '" + pPENTALPHA + "'");
 
                     BM_Adaptador = new SqlDataAdapter(BM_Comando)
                     {
@@ -209,6 +91,7 @@ namespace BikeMessenger
 
                     foreach (DataRow LvrEmpresa in BM_DataSet.Tables["EMPRESA"].Rows)
                     {
+                        BK_Empresa.OPERACION = "CONSULTAR";
                         BK_Empresa.PENTALPHA = LvrEmpresa["PENTALPHA"].ToString();
                         BK_Empresa.RUTID = LvrEmpresa["RUTID"].ToString();
                         BK_Empresa.DIGVER = LvrEmpresa["DIGVER"].ToString();
@@ -235,6 +118,7 @@ namespace BikeMessenger
                         BK_Empresa.TELEFONO3 = LvrEmpresa["TELEFONO3"].ToString();
                         BK_Empresa.OBSERVACIONES = LvrEmpresa["OBSERVACIONES"].ToString();
                         BK_Empresa.LOGO = LvrEmpresa["LOGO"].ToString();
+                        BK_Empresa.RESOPERACION = "OK";
                         BK_EmpresaLista.Add(BK_Empresa);
                     }
                 }
@@ -247,10 +131,49 @@ namespace BikeMessenger
             }
             else if (BM_TransferVar.SincronizarWebPentalpha())
             {
+                string LvrData;
+
+                BK_Empresa = new JsonBikeMessengerEmpresa
+                {
+                    OPERACION = "CONSULTAR",
+                    PENTALPHA = BM_TransferVar.PENTALPHA_ID
+                };
+                
+                BK_EmpresaLista = new List<JsonBikeMessengerEmpresa>
+                {
+                    BK_Empresa
+                };
+                
+                LvrData = JsonConvert.SerializeObject(BK_EmpresaLista);
+                LvrData = ProRegistroEmpresa("https://finanven.ddns.net", "443", "/Api/BikeMessengerEmpresa", LvrData);
+                if (LvrData != null)
+                {
+                    BK_EmpresaLista = JsonConvert.DeserializeObject<List<JsonBikeMessengerEmpresa>>(LvrData);
+                    return BK_EmpresaLista;
+                }
                 return null;
             }
             else if (BM_TransferVar.SincronizarWebPropio())
             {
+                string LvrData;
+
+                BK_Empresa = new JsonBikeMessengerEmpresa
+                {
+                    OPERACION = "CONSULTAR",
+                    PENTALPHA = BM_TransferVar.PENTALPHA_ID
+                };
+
+                BK_EmpresaLista = new List<JsonBikeMessengerEmpresa>
+                {
+                    BK_Empresa
+                };
+                LvrData = JsonConvert.SerializeObject(BK_EmpresaLista);
+                LvrData = ProRegistroEmpresa(BM_TransferVar.BDREMOTACLIENTE, BM_TransferVar.BDREMOTACLIENTEPUERTO, "/Api/BikeMessengerEmpresa", LvrData);
+                if (LvrData != null)
+                {
+                    BK_EmpresaLista = JsonConvert.DeserializeObject<List<JsonBikeMessengerEmpresa>>(LvrData);
+                    return BK_EmpresaLista;
+                }
                 return null;
             }
             return null;
@@ -329,10 +252,58 @@ namespace BikeMessenger
             }
             else if (BM_TransferVar.SincronizarWebPentalpha())
             {
+                string LvrData;
+
+                aBK_Empresa.OPERACION = "AGREGAR";
+
+                BK_EmpresaLista = new List<JsonBikeMessengerEmpresa>
+                {
+                    aBK_Empresa
+                };
+
+                LvrData = JsonConvert.SerializeObject(BK_EmpresaLista);
+                LvrData = ProRegistroEmpresa("https://finanven.ddns.net", "443", "/Api/BikeMessengerEmpresa", LvrData);
+                if (LvrData != null)
+                {
+                    BK_EmpresaLista = JsonConvert.DeserializeObject<List<JsonBikeMessengerEmpresa>>(LvrData);
+                    if (BK_EmpresaLista != null && BK_EmpresaLista.Count > 0)
+                    {
+                        BK_Empresa = new JsonBikeMessengerEmpresa();
+                        BK_Empresa = BK_EmpresaLista[0];
+                        if (BK_Empresa.RESOPERACION == "OK")
+                        {
+                            return true;
+                        }
+                    }
+                }
                 return false;
             }
             else if (BM_TransferVar.SincronizarWebPropio())
             {
+                string LvrData;
+
+                aBK_Empresa.OPERACION = "AGREGAR";
+
+                BK_EmpresaLista = new List<JsonBikeMessengerEmpresa>
+                {
+                    aBK_Empresa
+                };
+
+                LvrData = JsonConvert.SerializeObject(BK_EmpresaLista);
+                LvrData = ProRegistroEmpresa(BM_TransferVar.BDREMOTACLIENTE, BM_TransferVar.BDREMOTACLIENTEPUERTO, "/Api/BikeMessengerEmpresa", LvrData);
+                if (LvrData != null)
+                {
+                    BK_EmpresaLista = JsonConvert.DeserializeObject<List<JsonBikeMessengerEmpresa>>(LvrData);
+                    if (BK_EmpresaLista != null && BK_EmpresaLista.Count > 0)
+                    {
+                        BK_Empresa = new JsonBikeMessengerEmpresa();
+                        BK_Empresa = BK_EmpresaLista[0];
+                        if (BK_Empresa.RESOPERACION == "OK")
+                        {
+                            return true;
+                        }
+                    }
+                }
                 return false;
             }
             return false;
@@ -413,11 +384,59 @@ namespace BikeMessenger
             }
             else if (BM_TransferVar.SincronizarWebPentalpha())
             {
+                string LvrData;
+
+                mBK_Empresa.OPERACION = "MODIFICAR";
+
+                BK_EmpresaLista = new List<JsonBikeMessengerEmpresa>
+                {
+                    mBK_Empresa
+                };
+
+                LvrData = JsonConvert.SerializeObject(BK_EmpresaLista);
+                LvrData = ProRegistroEmpresa("https://finanven.ddns.net", "443", "/Api/BikeMessengerEmpresa", LvrData);
+                if (LvrData != null)
+                {
+                    BK_EmpresaLista = JsonConvert.DeserializeObject<List<JsonBikeMessengerEmpresa>>(LvrData);
+                    if (BK_EmpresaLista != null && BK_EmpresaLista.Count > 0)
+                    {
+                        BK_Empresa = new JsonBikeMessengerEmpresa();
+                        BK_Empresa = BK_EmpresaLista[0];
+                        if (BK_Empresa.RESOPERACION == "OK")
+                        {
+                            return true;
+                        }
+                    }
+                }
+
                 return false;
             }
             else if (BM_TransferVar.SincronizarWebPropio())
             {
-                return false;
+                string LvrData;
+
+                mBK_Empresa.OPERACION = "MODIFICAR";
+
+                BK_EmpresaLista = new List<JsonBikeMessengerEmpresa>
+                {
+                    mBK_Empresa
+                };
+
+                LvrData = JsonConvert.SerializeObject(BK_EmpresaLista);
+                LvrData = ProRegistroEmpresa(BM_TransferVar.BDREMOTACLIENTE, BM_TransferVar.BDREMOTACLIENTEPUERTO, "/Api/BikeMessengerEmpresa", LvrData);
+                if (LvrData != null)
+                {
+                    BK_EmpresaLista = JsonConvert.DeserializeObject<List<JsonBikeMessengerEmpresa>>(LvrData);
+                    if (BK_EmpresaLista != null && BK_EmpresaLista.Count > 0)
+                    {
+                        BK_Empresa = new JsonBikeMessengerEmpresa();
+                        BK_Empresa = BK_EmpresaLista[0];
+                        if (BK_Empresa.RESOPERACION == "OK")
+                        {
+                            return true;
+                        }
+                    }
+                }
             }
             return false;
         }
@@ -454,10 +473,62 @@ namespace BikeMessenger
             }
             else if (BM_TransferVar.SincronizarWebPentalpha())
             {
+                string LvrData;
+
+                BK_Empresa.OPERACION = "BORRAR";
+                BK_Empresa.PENTALPHA = pPENTALPHA;
+
+                BK_EmpresaLista = new List<JsonBikeMessengerEmpresa>
+                {
+                    BK_Empresa
+                };
+
+                LvrData = JsonConvert.SerializeObject(BK_EmpresaLista);
+                LvrData = ProRegistroEmpresa("https://finanven.ddns.net", "443", "/Api/BikeMessengerEmpresa", LvrData);
+                if (LvrData != null)
+                {
+                    BK_EmpresaLista = JsonConvert.DeserializeObject<List<JsonBikeMessengerEmpresa>>(LvrData);
+                    if (BK_EmpresaLista != null && BK_EmpresaLista.Count > 0)
+                    {
+                        BK_Empresa = new JsonBikeMessengerEmpresa();
+                        BK_Empresa = BK_EmpresaLista[0];
+                        if (BK_Empresa.RESOPERACION == "OK")
+                        {
+                            return true;
+                        }
+                    }
+                }
+
                 return false;
             }
             else if (BM_TransferVar.SincronizarWebPropio())
             {
+                string LvrData;
+
+                BK_Empresa.OPERACION = "BORRAR";
+                BK_Empresa.PENTALPHA = pPENTALPHA;
+
+                BK_EmpresaLista = new List<JsonBikeMessengerEmpresa>
+                {
+                    BK_Empresa
+                };
+
+                LvrData = JsonConvert.SerializeObject(BK_EmpresaLista);
+                LvrData = ProRegistroEmpresa("https://finanven.ddns.net", "443", "/Api/BikeMessengerEmpresa", LvrData);
+                if (LvrData != null)
+                {
+                    BK_EmpresaLista = JsonConvert.DeserializeObject<List<JsonBikeMessengerEmpresa>>(LvrData);
+                    if (BK_EmpresaLista != null && BK_EmpresaLista.Count > 0)
+                    {
+                        BK_Empresa = new JsonBikeMessengerEmpresa();
+                        BK_Empresa = BK_EmpresaLista[0];
+                        if (BK_Empresa.RESOPERACION == "OK")
+                        {
+                            return true;
+                        }
+                    }
+                }
+
                 return false;
             }
             return false;
@@ -682,15 +753,15 @@ namespace BikeMessenger
         //**************************************************
         // Ejecuta operacion de registro de empresa
         //**************************************************
-        private string ProRegistroEmpresa(string pTipoOperacion, string pHttp, string pPort, string pController, string pPData)
+        private string ProRegistroEmpresa(string pHttp, string pPort, string pController, string pPData)
         {
-            string LvrPRecibirServer;
+            string LvrPRecibirServer = "";
             string LvrPData = pPData;
             string LvrStringHttp = pHttp; // "https://finanven.ddns.net";
             string LvrStringPort = pPort; // "443";
             string LvrStringController = pController; // "/Api/BikeMessengerEmpresa";
             string LvrParametros;
-            LvrInternet LvrBKInternet = new LvrInternet();
+            LvrInternet LvrBKInternet;
 
 
             // Llenar estructura Json
@@ -705,8 +776,16 @@ namespace BikeMessenger
             // Preparar Parametros
             LvrParametros = LvrPData;
 
-            LvrBKInternet.LvrInetPOST(LvrStringHttp, LvrStringPort, LvrStringController, LvrParametros);
-            LvrPRecibirServer = LvrBKInternet.LvrResultadoWeb;
+            for (int i = 1; i < 5; i++)
+            {
+                LvrBKInternet = new LvrInternet();
+                LvrBKInternet.LvrInetPOST(LvrStringHttp, LvrStringPort, LvrStringController, LvrParametros);
+                LvrPRecibirServer = LvrBKInternet.LvrResultadoWeb;
+                if (LvrPRecibirServer != "ERROR" && LvrPRecibirServer != "" && LvrPRecibirServer != null)
+                {
+                    break;
+                }
+            }
 
             if (LvrPRecibirServer != "ERROR" && LvrPRecibirServer != "" && LvrPRecibirServer != null)
             {

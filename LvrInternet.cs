@@ -50,12 +50,12 @@ namespace BikeMessenger
             {
                 // Construct the HttpClient and Uri. This endpoint is for test purposes only.
 
-                string httpsCadena;
+                string httpsCadena = "";
+                string httpResponseBody = "";
 
                 HttpClient httpClient = new HttpClient();
-                HttpResponseMessage httpResponseMessage;
-                string httpResponseBody;
-
+                HttpResponseMessage httpResponseMessage = new HttpResponseMessage();
+                
                 httpsCadena = pUrl;
 
                 if (pPort != "")
@@ -75,15 +75,17 @@ namespace BikeMessenger
                 StringContent content = new StringContent(jSon, System.Text.Encoding.UTF8, "application/json");
 
                 // Post the JSON and wait for a response.
-                httpResponseMessage = httpClient.PostAsync(pUrl, content).Result;
+                httpResponseMessage = httpClient.PostAsync(uri, content).Result;
 
                 // Make sure the post succeeded, and write out the response.
                 httpResponseBody = httpResponseMessage.Content.ReadAsStringAsync().Result;
 
                 LvrResultadoWeb = httpResponseBody;
             }
-            catch (Exception)
+            catch (Exception ee)
             {
+                Console.WriteLine(ee.InnerException.Message);
+                Console.WriteLine(ee.Message);
                 LvrResultadoWeb = "ERROR";
             }
         }
