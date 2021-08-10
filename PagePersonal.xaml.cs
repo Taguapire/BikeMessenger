@@ -539,18 +539,21 @@ namespace BikeMessenger
             List<GridPersonalIndividual> GridPersonalLista = new List<GridPersonalIndividual>();
 
             GridPersonalDb = BM_Database_Personal.BuscarGridPersonal();
-            foreach (var LocalPersonal in GridPersonalDb)
+            if (GridPersonalDb != null && GridPersonalDb.Count > 0)
             {
-                GridPersonalLista.Add(
-                    new GridPersonalIndividual
-                    {
-                        RUT = LocalPersonal.RUTID + "-" + LocalPersonal.DIGVER,
-                        APELLIDO = LocalPersonal.APELLIDOS,
-                        NOMBRE = LocalPersonal.NOMBRES
-                    });
+                foreach (var LocalPersonal in GridPersonalDb)
+                {
+                    GridPersonalLista.Add(
+                        new GridPersonalIndividual
+                        {
+                            RUT = LocalPersonal.RUTID + "-" + LocalPersonal.DIGVER,
+                            APELLIDO = LocalPersonal.APELLIDOS,
+                            NOMBRE = LocalPersonal.NOMBRES
+                        });
+                }
+                dataGridPersonal.IsReadOnly = true;
+                dataGridPersonal.ItemsSource = GridPersonalLista;
             }
-            dataGridPersonal.IsReadOnly = true;
-            dataGridPersonal.ItemsSource = GridPersonalLista;
         }
 
         private void DataGridPersonal_Seleccion(object sender, SelectionChangedEventArgs e)

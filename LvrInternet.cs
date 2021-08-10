@@ -82,11 +82,40 @@ namespace BikeMessenger
 
                 LvrResultadoWeb = httpResponseBody;
             }
+            catch (HttpRequestException ee)
+            {
+                Console.WriteLine(ee.InnerException.Message);
+                Console.WriteLine(ee.Message);
+                LvrResultadoWeb = "ERROR";
+                return;
+            }
+            catch (IOException ee)
+            {
+                Console.WriteLine(ee.InnerException.Message);
+                Console.WriteLine(ee.Message);
+                LvrResultadoWeb = "ERROR";
+                return;
+            }
+            catch (OperationCanceledException ee)
+            {
+                Console.WriteLine(ee.InnerException.Message);
+                Console.WriteLine(ee.Message);
+                LvrResultadoWeb = "ERROR";
+                return;
+            }
+            catch (AggregateException ee)
+            {
+                Console.WriteLine(ee.InnerException.Message);
+                Console.WriteLine(ee.Message);
+                LvrResultadoWeb = "ERROR";
+                return;
+            }
             catch (Exception ee)
             {
                 Console.WriteLine(ee.InnerException.Message);
                 Console.WriteLine(ee.Message);
                 LvrResultadoWeb = "ERROR";
+                return;
             }
         }
     }
