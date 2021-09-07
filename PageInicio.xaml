@@ -10,10 +10,10 @@
     <Page.Background>
         <AcrylicBrush TintColor="#CC62B8EA"/>
     </Page.Background>
-    <Grid>
+    <Grid x:Name="GrigPageInicio">
         <Grid.Background>
             <AcrylicBrush TintColor="#CC62B8EA"/>
         </Grid.Background>
-        <TextBox x:Name="textBox" HorizontalAlignment="Left" Margin="487,273,0,0" Text="Pagina de Inicio" TextWrapping="Wrap" VerticalAlignment="Top" Height="109" Width="359"/>
+        <ListView x:Name="listViewServicios"/>
     </Grid>
 </Page>
