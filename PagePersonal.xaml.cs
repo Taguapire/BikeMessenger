@@ -12,7 +12,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -23,11 +22,11 @@ namespace BikeMessenger
     /// </summary>
     public sealed partial class PagePersonal : Page
     {
-        private static List<JsonBikeMessengerPersonal> PersonalIOArray = new List<JsonBikeMessengerPersonal>();
-        private static JsonBikeMessengerPersonal PersonalIO = new JsonBikeMessengerPersonal();
-        private readonly JsonBikeMessengerPersonal EnviarJsonPersonal = new JsonBikeMessengerPersonal();
+        private List<JsonBikeMessengerPersonal> PersonalIOArray = new List<JsonBikeMessengerPersonal>();
+        private JsonBikeMessengerPersonal PersonalIO = new JsonBikeMessengerPersonal();
+        private JsonBikeMessengerPersonal EnviarJsonPersonal = new JsonBikeMessengerPersonal();
         private JsonBikeMessengerPersonal RecibirJsonPersonal = new JsonBikeMessengerPersonal();
-        private readonly Bm_Personal_Database BM_Database_Personal = new Bm_Personal_Database();
+        private Bm_Personal_Database BM_Database_Personal = new Bm_Personal_Database();
         private TransferVar LvrTransferVar = new TransferVar();
         private bool BorrarSiNo;
 
@@ -534,25 +533,24 @@ namespace BikeMessenger
 
         private void LlenarListaPersonal()
         {
-            List<ClasePersonalGrid> GridPersonalDb;
+            List<ClasePersonalGrid> GridPersonalDb = new List<ClasePersonalGrid>();
             List<GridPersonalIndividual> GridPersonalLista = new List<GridPersonalIndividual>();
 
-            GridPersonalDb = BM_Database_Personal.BuscarGridPersonal();
-            if (GridPersonalDb != null && GridPersonalDb.Count > 0)
+            if ((GridPersonalDb = BM_Database_Personal.BuscarGridPersonal()) != null)
             {
-                foreach (var LocalPersonal in GridPersonalDb)
+                for (int i = 0; i < GridPersonalDb.Count; i++)
                 {
                     GridPersonalLista.Add(
                         new GridPersonalIndividual
                         {
-                            RUT = LocalPersonal.RUTID + "-" + LocalPersonal.DIGVER,
-                            APELLIDO = LocalPersonal.APELLIDOS,
-                            NOMBRE = LocalPersonal.NOMBRES
+                            RUT = GridPersonalDb[i].RUTID + "-" + GridPersonalDb[i].DIGVER,
+                            APELLIDO = GridPersonalDb[i].APELLIDOS,
+                            NOMBRE = GridPersonalDb[i].NOMBRES
                         });
                 }
-                dataGridPersonal.IsReadOnly = true;
-                dataGridPersonal.ItemsSource = GridPersonalLista;
             }
+            dataGridPersonal.IsReadOnly = true;
+            dataGridPersonal.ItemsSource = GridPersonalLista;
         }
 
         private void DataGridPersonal_Seleccion(object sender, SelectionChangedEventArgs e)

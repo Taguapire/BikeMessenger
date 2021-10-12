@@ -12,7 +12,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -25,9 +24,9 @@ namespace BikeMessenger
     {
         private List<JsonBikeMessengerCliente> ClienteIOArray = new List<JsonBikeMessengerCliente>();
         private JsonBikeMessengerCliente ClienteIO = new JsonBikeMessengerCliente();
-        private readonly JsonBikeMessengerCliente EnviarJsonCliente = new JsonBikeMessengerCliente();
+        private JsonBikeMessengerCliente EnviarJsonCliente = new JsonBikeMessengerCliente();
         private JsonBikeMessengerCliente RecibirJsonCliente = new JsonBikeMessengerCliente();
-        private readonly Bm_Cliente_Database BM_Database_Cliente = new Bm_Cliente_Database();
+        private Bm_Cliente_Database BM_Database_Cliente = new Bm_Cliente_Database();
         private TransferVar LvrTransferVar = new TransferVar();
         private bool BorrarSiNo;
 

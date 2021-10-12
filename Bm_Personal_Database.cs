@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using SQLite;
+using Newtonsoft.Json;
 
 namespace BikeMessenger
 {
@@ -124,7 +125,28 @@ namespace BikeMessenger
             }
             else if (BM_TransferVar.SincronizarWebPentalpha())
             {
+                string LvrData;
+                BK_Personal = new JsonBikeMessengerPersonal
+
+                {
+                    OPERACION = "CONSULTAR",
+                    PENTALPHA = BM_TransferVar.PENTALPHA_ID
+                };
+
+                BK_PersonalLista = new List<JsonBikeMessengerPersonal>
+                {
+                    BK_Personal
+                };
+
+                LvrData = JsonConvert.SerializeObject(BK_PersonalLista);
+                LvrData = ProRegistroPersonal("https://finanven.ddns.net", "443", "/Api/BikeMessengerPersonal", LvrData);
+                if (LvrData != null)
+                {
+                    BK_PersonalLista = JsonConvert.DeserializeObject<List<JsonBikeMessengerPersonal>>(LvrData);
+                    return BK_PersonalLista;
+                }
                 return null;
+
             }
             else if (BM_TransferVar.SincronizarWebPropio())
             {
@@ -201,10 +223,33 @@ namespace BikeMessenger
             }
             else if (BM_TransferVar.SincronizarWebPentalpha())
             {
+                string LvrData;
+                BK_Personal = new JsonBikeMessengerPersonal
+
+                {
+                    OPERACION = "CONSULTAR",
+                    PENTALPHA = pPENTALPHA,
+                    RUTID = pRUTID,
+                    DIGVER = pDIGVER
+                };
+
+                BK_PersonalLista = new List<JsonBikeMessengerPersonal>
+                {
+                    BK_Personal
+                };
+
+                LvrData = JsonConvert.SerializeObject(BK_PersonalLista);
+                LvrData = ProRegistroPersonal("https://finanven.ddns.net", "443", "/Api/BikeMessengerPersonal", LvrData);
+                if (LvrData != null)
+                {
+                    BK_PersonalLista = JsonConvert.DeserializeObject<List<JsonBikeMessengerPersonal>>(LvrData);
+                    return BK_PersonalLista;
+                }
                 return null;
             }
             else if (BM_TransferVar.SincronizarWebPropio())
             {
+                string LvrData;
                 return null;
             }
             return null;
@@ -243,7 +288,7 @@ namespace BikeMessenger
                     };
 
                     BM_DataSet = new DataSet();
-                    BM_Adaptador.Fill(BM_DataSet, "PERSONAL");
+                    _ = BM_Adaptador.Fill(BM_DataSet, "PERSONAL");
 
                     DataRow LvrPersonal = BM_DataSet.Tables["PERSONAL"].NewRow();
                     BM_Builder = new SqlCommandBuilder(BM_Adaptador);
@@ -283,6 +328,30 @@ namespace BikeMessenger
             }
             else if (BM_TransferVar.SincronizarWebPentalpha())
             {
+                string LvrData;
+
+                aBK_Personal.OPERACION = "AGREGAR";
+
+                BK_PersonalLista = new List<JsonBikeMessengerPersonal>
+                {
+                    aBK_Personal
+                };
+
+                LvrData = JsonConvert.SerializeObject(BK_PersonalLista);
+                LvrData = ProRegistroPersonal("https://finanven.ddns.net", "443", "/Api/BikeMessengerPersonal", LvrData);
+                if (LvrData != null)
+                {
+                    BK_PersonalLista = JsonConvert.DeserializeObject<List<JsonBikeMessengerPersonal>>(LvrData);
+                    if (BK_PersonalLista != null && BK_PersonalLista.Count > 0)
+                    {
+                        BK_Personal = new JsonBikeMessengerPersonal();
+                        BK_Personal = BK_PersonalLista[0];
+                        if (BK_Personal.RESOPERACION == "OK")
+                        {
+                            return true;
+                        }
+                    }
+                }
                 return false;
             }
             else if (BM_TransferVar.SincronizarWebPropio())
@@ -776,6 +845,55 @@ namespace BikeMessenger
 
             DocumentoHtml.FinDocumento();
             return DocumentoHtml.BufferHtml;
+        }
+
+        //**************************************************
+        // Ejecuta operacion de registro de empresa
+        //**************************************************
+        private string ProRegistroPersonal(string pHttp, string pPort, string pController, string pPData)
+        {
+            string LvrPRecibirServer = "";
+            string LvrPData = pPData;
+            string LvrStringHttp = pHttp; // "https://finanven.ddns.net";
+            string LvrStringPort = pPort; // "443";
+            string LvrStringController = pController; // "/Api/BikeMessengerPersonal";
+            string LvrParametros;
+            LvrInternet LvrBKInternet;
+
+
+            // Llenar estructura Json
+            // CopiarMemoriaEnJson(pTipoOperacion);
+
+            // Proceso Serializar
+
+            //EnviarJsonPersonalArray = new List<JsonBikeMessengerPersonal>();
+            //EnviarJsonPersonalArray.Add(EnviarJsonPersonal);
+            //LvrPData = JsonConvert.SerializeObject(EnviarJsonPersonalArray);
+
+            // Preparar Parametros
+            LvrParametros = LvrPData;
+
+            for (int i = 1; i < 5; i++)
+            {
+                LvrBKInternet = new LvrInternet();
+                LvrBKInternet.LvrInetPOST(LvrStringHttp, LvrStringPort, LvrStringController, LvrParametros);
+                LvrPRecibirServer = LvrBKInternet.LvrResultadoWeb;
+                if (LvrPRecibirServer != "ERROR" && LvrPRecibirServer != "" && LvrPRecibirServer != null)
+                {
+                    break;
+                }
+            }
+
+            if (LvrPRecibirServer != "ERROR" && LvrPRecibirServer != "" && LvrPRecibirServer != null)
+            {
+                // Procesar primer servidor
+                //RecibirJsonPersonalArray = JsonConvert.DeserializeObject<List<JsonBikeMessengerPersonal>>(LvrPRecibirServer); // resp será el string JSON a deserializa
+                //RecibirJsonPersonal = RecibirJsonPersonalArray[0];
+
+                return LvrPRecibirServer;
+
+            }
+            return null;
         }
     }
 
