@@ -81,34 +81,78 @@ namespace BikeMessenger
 
             // Llenar Combo Pais
             List<string> ListaPais = BM_Database_Servicio.GetPais();
-            for (int i = 0; i < ListaPais.Count; i++)
+            if (ListaPais != null)
             {
-                comboBoxOrigenPais.Items.Add(ListaPais[i]);
-                comboBoxDestinoPais.Items.Add(ListaPais[i]);
+                try
+                {
+                    for (int i = 0; i < ListaPais.Count; i++)
+                    {
+                        comboBoxOrigenPais.Items.Add(ListaPais[i]);
+                        comboBoxDestinoPais.Items.Add(ListaPais[i]);
+                    }
+                }
+                catch (NullReferenceException)
+                {
+
+                }
             }
 
             // Llenar Combo Region
             List<string> ListaEstado = BM_Database_Servicio.GetRegion();
-            for (int i = 0; i < ListaEstado.Count; i++)
+
+            if (ListaEstado != null)
             {
-                comboBoxOrigenEstado.Items.Add(ListaEstado[i]);
-                comboBoxDestinoEstado.Items.Add(ListaEstado[i]);
+                try
+                {
+                    for (int i = 0; i < ListaEstado.Count; i++)
+                    {
+                        comboBoxOrigenEstado.Items.Add(ListaEstado[i]);
+                        comboBoxDestinoEstado.Items.Add(ListaEstado[i]);
+                    }
+                }
+                catch (NullReferenceException)
+                {
+
+                }
             }
+
 
             // Llenar Combo Comuna
             List<string> ListaComuna = BM_Database_Servicio.GetComuna();
-            for (int i = 0; i < ListaComuna.Count; i++)
+
+            if (ListaComuna != null)
             {
-                comboBoxOrigenComuna.Items.Add(ListaComuna[i]);
-                comboBoxDestinoComuna.Items.Add(ListaComuna[i]);
+                try
+                {
+                    for (int i = 0; i < ListaComuna.Count; i++)
+                    {
+                        comboBoxOrigenComuna.Items.Add(ListaComuna[i]);
+                        comboBoxDestinoComuna.Items.Add(ListaComuna[i]);
+                    }
+                }
+                catch (NullReferenceException)
+                {
+
+                }
             }
 
             // Llenar Combo Ciudad
             List<string> ListaCiudad = BM_Database_Servicio.GetCiudad();
-            for (int i = 0; i < ListaCiudad.Count; i++)
+
+            if (ListaCiudad != null)
             {
-                comboBoxOrigenCiudad.Items.Add(ListaCiudad[i]);
-                comboBoxDestinoCiudad.Items.Add(ListaCiudad[i]);
+                try
+                {
+                    for (int i = 0; i < ListaCiudad.Count; i++)
+                    {
+                        comboBoxOrigenCiudad.Items.Add(ListaCiudad[i]);
+                        comboBoxDestinoCiudad.Items.Add(ListaCiudad[i]);
+                    }
+                }
+                catch (NullReferenceException)
+                {
+
+                }
             }
         }
 

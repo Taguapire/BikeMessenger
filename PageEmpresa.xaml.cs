@@ -172,21 +172,37 @@ namespace BikeMessenger
 
             // Llenar Combo Pais
             List<string> ListaPais = BM_Database_Empresa.GetPais();
+
             if (ListaPais != null)
             {
-                foreach (var LocalLista in ListaPais)
+                try
                 {
-                    comboBoxPais.Items.Add(LocalLista);
+                    for (int i = 0; i < ListaPais.Count; i++)
+                    {
+                        comboBoxPais.Items.Add(ListaPais[i]);
+                    }
+                }
+                catch (NullReferenceException)
+                {
+
                 }
             }
 
             // Llenar Combo Region
             List<string> ListaEstado = BM_Database_Empresa.GetRegion();
+
             if (ListaEstado != null)
             {
-                foreach (var LocalLista in ListaEstado)
+                try
                 {
-                    comboBoxEstado.Items.Add(LocalLista);
+                    for (int i = 0; i < ListaEstado.Count; i++)
+                    {
+                        comboBoxEstado.Items.Add(ListaEstado[i]);
+                    }
+                }
+                catch (NullReferenceException)
+                {
+
                 }
             }
 
@@ -194,21 +210,35 @@ namespace BikeMessenger
             List<string> ListaComuna = BM_Database_Empresa.GetComuna();
             if (ListaComuna != null)
             {
-                foreach (var LocalLista in ListaComuna)
+                try
                 {
-                    comboBoxComuna.Items.Add(LocalLista);
+                    for (int i = 0; i < ListaComuna.Count; i++)
+                    {
+                        comboBoxComuna.Items.Add(ListaComuna[i]);
+                    }
+                }
+                catch (NullReferenceException)
+                {
+
                 }
             }
 
 
             // Llenar Combo Ciudad
-
             List<string> ListaCiudad = BM_Database_Empresa.GetCiudad();
+
             if (ListaCiudad != null)
             {
-                foreach (var LocalLista in ListaCiudad)
+                try
                 {
-                    comboBoxCiudad.Items.Add(LocalLista);
+                    for (int i = 0; i < ListaCiudad.Count; i++)
+                    {
+                        comboBoxCiudad.Items.Add(ListaCiudad[i]);
+                    }
+                }
+                catch (NullReferenceException)
+                {
+
                 }
             }
         }

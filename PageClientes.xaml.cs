@@ -150,30 +150,73 @@ namespace BikeMessenger
 
             // Llenar Combo Pais
             List<string> ListaPais = BM_Database_Cliente.GetPais();
-            for (int i = 0; i < ListaPais.Count; i++)
+            if (ListaPais != null)
             {
-                comboBoxPais.Items.Add(ListaPais[i]);
+                try
+                {
+                    for (int i = 0; i < ListaPais.Count; i++)
+                    {
+                        comboBoxPais.Items.Add(ListaPais[i]);
+                    }
+                }
+                catch (NullReferenceException)
+                {
+
+                }
             }
 
             // Llenar Combo Region
             List<string> ListaEstado = BM_Database_Cliente.GetRegion();
-            for (int i = 0; i < ListaEstado.Count; i++)
+
+            if (ListaEstado != null)
             {
-                comboBoxEstado.Items.Add(ListaEstado[i]);
+                try
+                {
+                    for (int i = 0; i < ListaEstado.Count; i++)
+                    {
+                        comboBoxEstado.Items.Add(ListaEstado[i]);
+                    }
+                }
+                catch (NullReferenceException)
+                {
+
+                }
             }
 
             // Llenar Combo Comuna
             List<string> ListaComuna = BM_Database_Cliente.GetComuna();
-            for (int i = 0; i < ListaComuna.Count; i++)
+
+            if (ListaComuna != null)
             {
-                comboBoxComuna.Items.Add(ListaComuna[i]);
+                try
+                {
+                    for (int i = 0; i < ListaComuna.Count; i++)
+                    {
+                        comboBoxComuna.Items.Add(ListaComuna[i]);
+                    }
+                }
+                catch (NullReferenceException)
+                {
+
+                }
             }
 
             // Llenar Combo Ciudad
             List<string> ListaCiudad = BM_Database_Cliente.GetCiudad();
-            for (int i = 0; i < ListaCiudad.Count; i++)
+
+            if (ListaCiudad != null)
             {
-                comboBoxCiudad.Items.Add(ListaCiudad[i]);
+                try
+                {
+                    for (int i = 0; i < ListaCiudad.Count; i++)
+                    {
+                        comboBoxCiudad.Items.Add(ListaCiudad[i]);
+                    }
+                }
+                catch (NullReferenceException)
+                {
+
+                }
             }
         }
 

@@ -158,7 +158,7 @@ namespace BikeMessenger
                         comboBoxPais.Items.Add(ListaPais[i]);
                     }
                 }
-                catch (System.NullReferenceException)
+                catch (NullReferenceException)
                 {
 
                 }
@@ -176,7 +176,7 @@ namespace BikeMessenger
                         comboBoxRegion.Items.Add(ListaEstado[i]);
                     }
                 }
-                catch (System.NullReferenceException)
+                catch (NullReferenceException)
                 {
 
                 }
@@ -194,7 +194,7 @@ namespace BikeMessenger
                         comboBoxComuna.Items.Add(ListaComuna[i]);
                     }
                 }
-                catch (System.NullReferenceException)
+                catch (NullReferenceException)
                 {
 
                 }
@@ -213,12 +213,11 @@ namespace BikeMessenger
                         comboBoxCiudad.Items.Add(ListaCiudad[i]);
                     }
                 }
-                catch (System.NullReferenceException)
+                catch (NullReferenceException)
                 {
 
                 }
             }
-
         }
 
         private void LimpiarPantalla()
