@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace BikeMessenger
 {
@@ -46,6 +47,11 @@ namespace BikeMessenger
 
         public void LvrInetPOST(string pUrl, string pPort, string pController, string jSon)
         {
+            HttpClient httpClient = new HttpClient(new HttpClientHandler
+            {
+                UseProxy = false
+            });
+
             try
             {
                 // Construct the HttpClient and Uri. This endpoint is for test purposes only.
@@ -53,9 +59,8 @@ namespace BikeMessenger
                 string httpsCadena = "";
                 string httpResponseBody = "";
 
-                HttpClient httpClient = new HttpClient();
                 HttpResponseMessage httpResponseMessage = new HttpResponseMessage();
-                
+
                 httpsCadena = pUrl;
 
                 if (pPort != "")
@@ -81,9 +86,14 @@ namespace BikeMessenger
                 httpResponseBody = httpResponseMessage.Content.ReadAsStringAsync().Result;
 
                 LvrResultadoWeb = httpResponseBody;
+
+                httpClient.CancelPendingRequests();
+                httpClient.Dispose();
             }
             catch (HttpRequestException ee)
             {
+                httpClient.CancelPendingRequests();
+                httpClient.Dispose();
                 Console.WriteLine(ee.InnerException.Message);
                 Console.WriteLine(ee.Message);
                 LvrResultadoWeb = "ERROR";
@@ -91,6 +101,8 @@ namespace BikeMessenger
             }
             catch (IOException ee)
             {
+                httpClient.CancelPendingRequests();
+                httpClient.Dispose();
                 Console.WriteLine(ee.InnerException.Message);
                 Console.WriteLine(ee.Message);
                 LvrResultadoWeb = "ERROR";
@@ -98,6 +110,8 @@ namespace BikeMessenger
             }
             catch (OperationCanceledException ee)
             {
+                httpClient.CancelPendingRequests();
+                httpClient.Dispose();
                 Console.WriteLine(ee.InnerException.Message);
                 Console.WriteLine(ee.Message);
                 LvrResultadoWeb = "ERROR";
@@ -105,6 +119,8 @@ namespace BikeMessenger
             }
             catch (AggregateException ee)
             {
+                httpClient.CancelPendingRequests();
+                httpClient.Dispose();
                 Console.WriteLine(ee.InnerException.Message);
                 Console.WriteLine(ee.Message);
                 LvrResultadoWeb = "ERROR";
@@ -112,6 +128,8 @@ namespace BikeMessenger
             }
             catch (Exception ee)
             {
+                httpClient.CancelPendingRequests();
+                httpClient.Dispose();
                 Console.WriteLine(ee.InnerException.Message);
                 Console.WriteLine(ee.Message);
                 LvrResultadoWeb = "ERROR";

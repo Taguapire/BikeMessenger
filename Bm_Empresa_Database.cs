@@ -761,6 +761,7 @@ namespace BikeMessenger
             string LvrStringPort = pPort; // "443";
             string LvrStringController = pController; // "/Api/BikeMessengerEmpresa";
             string LvrParametros;
+            // LvrInternet LvrBKInternet;
             LvrInternet LvrBKInternet;
 
 
