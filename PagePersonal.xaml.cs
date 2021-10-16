@@ -79,11 +79,8 @@ namespace BikeMessenger
 
             // Filter to include a sample subset of file types.
             openPicker.FileTypeFilter.Clear();
-            openPicker.FileTypeFilter.Add(".bmp");
             openPicker.FileTypeFilter.Add(".png");
-            openPicker.FileTypeFilter.Add(".jpeg");
-            openPicker.FileTypeFilter.Add(".jpg");
-
+            
             // Open the file picker.
             Windows.Storage.StorageFile file = await openPicker.PickSingleFileAsync();
 
@@ -295,7 +292,6 @@ namespace BikeMessenger
         private async void BtnAgregarPersonal(object sender, RoutedEventArgs e)
         {
             // Muestra de espera
-            bool TransaccionOK;
 
             LvrProgresRing.IsActive = true;
             await Task.Delay(500); // .5 sec delay
@@ -305,36 +301,16 @@ namespace BikeMessenger
 
             if (BM_Database_Personal.AgregarPersonal(PersonalIO))
             {
-                TransaccionOK = true;
-
-                if (LvrTransferVar.SincronizarWebPentalpha())
-                {
-                    TransaccionOK = ProRegistroPersonal("AGREGAR");
-                }
-
-                if (LvrTransferVar.SincronizarWebPropio())
-                {
-                    TransaccionOK = ProRegistroPersonal("AGREGAR");
-                }
-
-                if (TransaccionOK)
-                {
-                    await AvisoOperacionPersonalDialogAsync("Agregar Personal", "Personal agregado exitosamente.");
-                    LlenarListaPersonal();
-                    LvrTransferVar.CLI_RUTID = PersonalIO.RUTID;
-                    LvrTransferVar.CLI_DIGVER = PersonalIO.DIGVER;
-                    LvrTransferVar.EscribirValoresDeAjustes();
-                    LvrTransferVar.LeerValoresDeAjustes();
-                }
-
-                else
-                {
-                    await AvisoOperacionPersonalDialogAsync("Agregar Personal", "Error en ingreso de personal. Reintente o escriba a soporte contacto@pentalpha.net");
-                }
+                await AvisoOperacionPersonalDialogAsync("Agregar Personal", "Personal agregado exitosamente.");
+                LlenarListaPersonal();
+                LvrTransferVar.CLI_RUTID = PersonalIO.RUTID;
+                LvrTransferVar.CLI_DIGVER = PersonalIO.DIGVER;
+                LvrTransferVar.EscribirValoresDeAjustes();
+                LvrTransferVar.LeerValoresDeAjustes();
             }
             else
             {
-                await AvisoOperacionPersonalDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de personal.");
+                await AvisoOperacionPersonalDialogAsync("Agregar Personal", "Error en ingreso de personal. Reintente o escriba a soporte contacto@pentalpha.net");
             }
 
             LvrProgresRing.IsActive = false;
@@ -343,9 +319,6 @@ namespace BikeMessenger
 
         private async void BtnModificarPersonal(object sender, RoutedEventArgs e)
         {
-            bool TransaccionOK;
-            // Muestra de espera
-
             LvrProgresRing.IsActive = true;
             await Task.Delay(500); // .5 sec delay
 
@@ -353,34 +326,16 @@ namespace BikeMessenger
 
             if (BM_Database_Personal.ModificarPersonal(PersonalIO))
             {
-                TransaccionOK = true;
-
-                if (LvrTransferVar.SincronizarWebPentalpha())
-                {
-                    TransaccionOK = ProRegistroPersonal("MODIFICAR");
-                }
-                if (LvrTransferVar.SincronizarWebPropio())
-                {
-                    TransaccionOK = ProRegistroPersonal("MODIFICAR");
-                }
-
-                if (TransaccionOK)
-                {
-                    await AvisoOperacionPersonalDialogAsync("Modificar Personal", "Personal modificada exitosamente.");
-                    LlenarListaPersonal();
-                    LvrTransferVar.CLI_RUTID = PersonalIO.RUTID;
-                    LvrTransferVar.CLI_DIGVER = PersonalIO.DIGVER;
-                    LvrTransferVar.EscribirValoresDeAjustes();
-                    LvrTransferVar.LeerValoresDeAjustes();
-                }
-                else
-                {
-                    await AvisoOperacionPersonalDialogAsync("Modificar Personal", "Error en modificación de personal. Reintente o escriba a soporte contacto@pentalpha.net");
-                }
+                await AvisoOperacionPersonalDialogAsync("Modificar Personal", "Personal modificada exitosamente.");
+                LlenarListaPersonal();
+                LvrTransferVar.CLI_RUTID = PersonalIO.RUTID;
+                LvrTransferVar.CLI_DIGVER = PersonalIO.DIGVER;
+                LvrTransferVar.EscribirValoresDeAjustes();
+                LvrTransferVar.LeerValoresDeAjustes();
             }
             else
             {
-                await AvisoOperacionPersonalDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de la personal.");
+                await AvisoOperacionPersonalDialogAsync("Modificar Personal", "Error en modificación de personal. Reintente o escriba a soporte contacto@pentalpha.net");
             }
 
             LvrProgresRing.IsActive = false;
@@ -405,51 +360,35 @@ namespace BikeMessenger
 
             await LlenarDbConPantallaAsync();
 
-            bool TransaccionOK = false;
-
             if (BM_Database_Personal.BorrarPersonal(LvrTransferVar.PER_PENTALPHA, PersonalIO.RUTID, PersonalIO.DIGVER))
             {
-                TransaccionOK = true;
-
-                if (LvrTransferVar.SincronizarWebPentalpha())
+                if ((PersonalIOArray = BM_Database_Personal.BuscarPersonal()) != null)
                 {
-                    TransaccionOK = ProRegistroPersonal("BORRAR");
-                }
-
-                if (LvrTransferVar.SincronizarWebPropio())
-                {
-                    TransaccionOK = ProRegistroPersonal("BORRAR");
-                }
-
-
-                if (TransaccionOK)
-                {
-                    if ((PersonalIOArray = BM_Database_Personal.BuscarPersonal()) != null)
-                    {
-                        PersonalIO = PersonalIOArray[0];
-                        LvrTransferVar.CLI_RUTID = PersonalIO.RUTID;
-                        LvrTransferVar.CLI_DIGVER = PersonalIO.DIGVER;
-                    }
-                    else
-                    {
-                        LvrTransferVar.CLI_RUTID = "";
-                        LvrTransferVar.CLI_DIGVER = "";
-                    }
-                    LvrTransferVar.EscribirValoresDeAjustes();
-                    LvrTransferVar.LeerValoresDeAjustes();
-                    LlenarPantallaConDb();
-                    LlenarListaPersonal();
+                    PersonalIO = PersonalIOArray[0];
+                    LvrTransferVar.CLI_RUTID = PersonalIO.RUTID;
+                    LvrTransferVar.CLI_DIGVER = PersonalIO.DIGVER;
                     await AvisoOperacionPersonalDialogAsync("Borrar Personal", "Personal borrado exitosamente.");
                 }
                 else
                 {
+                    LvrTransferVar.CLI_RUTID = "";
+                    LvrTransferVar.CLI_DIGVER = "";
                     await AvisoOperacionPersonalDialogAsync("Borrar Personal", "Error en borrado de personal. Reintente o escriba a soporte contacto@pentalpha.net");
                 }
+
+                LvrTransferVar.EscribirValoresDeAjustes();
+                LvrTransferVar.LeerValoresDeAjustes();
+
+                LlenarPantallaConDb();
+                LlenarListaPersonal();
+
+                await AvisoOperacionPersonalDialogAsync("Borrar Personal", "Personal borrado exitosamente.");
             }
             else
             {
-                await AvisoOperacionPersonalDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de personal.");
+                await AvisoOperacionPersonalDialogAsync("Borrar Personal", "Error en borrado de personal. Reintente o escriba a soporte contacto@pentalpha.net");
             }
+
             LvrProgresRing.IsActive = false;
             await Task.Delay(500); // 1 sec delay
         }
@@ -579,48 +518,6 @@ namespace BikeMessenger
             {
                 ; // No hacer nada, es un control vacio de error
             }
-        }
-
-        //**************************************************
-        // Ejecuta operacion de registro de personal
-        //**************************************************
-        private bool ProRegistroPersonal(string pTipoOperacion)
-        {
-            string LvrPRecibirServer;
-            string LvrPData;
-            string LvrStringHttp = "https://finanven.ddns.net";
-            string LvrStringPort = "443";
-            string LvrStringController = "/Api/BikeMessengerPersonal";
-
-            LvrInternet LvrBKInternet = new LvrInternet();
-            string LvrParametros;
-
-            List<JsonBikeMessengerPersonal> EnviarJsonPersonalArray = new List<JsonBikeMessengerPersonal>();
-            List<JsonBikeMessengerPersonal> RecibirJsonPersonalArray = new List<JsonBikeMessengerPersonal>();
-
-            // Llenar estructura Json
-            CopiarMemoriaEnJson(pTipoOperacion);
-
-            // Proceso Serializar
-
-            EnviarJsonPersonalArray.Add(EnviarJsonPersonal);
-            LvrPData = JsonConvert.SerializeObject(EnviarJsonPersonalArray);
-
-            // Preparar Parametros
-            LvrParametros = LvrPData;
-
-            LvrBKInternet.LvrInetPOST(LvrStringHttp, LvrStringPort, LvrStringController, LvrParametros);
-            LvrPRecibirServer = LvrBKInternet.LvrResultadoWeb;
-
-            if (LvrPRecibirServer != "ERROR" && LvrPRecibirServer != "" && LvrPRecibirServer != null)
-            {
-                // Procesar primer servidor
-                RecibirJsonPersonalArray = JsonConvert.DeserializeObject<List<JsonBikeMessengerPersonal>>(LvrPRecibirServer); // resp será el string JSON a deserializa
-                RecibirJsonPersonal = RecibirJsonPersonalArray[0];
-
-                return RecibirJsonPersonal.RESOPERACION == "OK";
-            }
-            return false;
         }
 
         private void CopiarMemoriaEnJson(string pOPERACION)

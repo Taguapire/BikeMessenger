@@ -97,11 +97,8 @@ namespace BikeMessenger
 
             // Filter to include a sample subset of file types.
             openPicker.FileTypeFilter.Clear();
-            openPicker.FileTypeFilter.Add(".bmp");
             openPicker.FileTypeFilter.Add(".png");
-            openPicker.FileTypeFilter.Add(".jpeg");
-            openPicker.FileTypeFilter.Add(".jpg");
-
+            
             // Open the file picker.
             Windows.Storage.StorageFile file = await openPicker.PickSingleFileAsync();
 
@@ -315,8 +312,6 @@ namespace BikeMessenger
                 LvrTransferVar.EscribirValoresDeAjustes();
                 LvrTransferVar.LeerValoresDeAjustes();
 
-                bool TransaccionOK = true;
-                
                 appBarAgregar.IsEnabled = false;
                 appBarModificar.IsEnabled = true;
                 appBarBorrar.IsEnabled = true;
@@ -325,18 +320,11 @@ namespace BikeMessenger
                 textBoxRut.IsReadOnly = true;
                 textBoxDigitoVerificador.IsReadOnly = true;
 
-                if (TransaccionOK)
-                {
-                    await AvisoOperacionEmpresaDialogAsync("Agregar Empresa", "Empresa agregada exitosamente.");
-                }
-                else
-                {
-                    await AvisoOperacionEmpresaDialogAsync("Agregar Empresa", "Error en ingreso de la empresa. Reintente o escriba a soporte contacto@pentalpha.net");
-                }
+                await AvisoOperacionEmpresaDialogAsync("Agregar Empresa", "Empresa agregada exitosamente.");
             }
             else
             {
-                await AvisoOperacionEmpresaDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
+                await AvisoOperacionEmpresaDialogAsync("Agregar Empresa", "Error en ingreso de la empresa. Reintente o escriba a soporte contacto@pentalpha.net");
             }
             LvrProgresRing.IsActive = false;
             await Task.Delay(500); // 1 sec delay
@@ -364,25 +352,16 @@ namespace BikeMessenger
 
             if (BM_Database_Empresa.ModificarEmpresa(EmpresaIO))
             {
-                bool TransaccionOK = true;
-
                 LvrTransferVar.PENTALPHA_ID = EmpresaIO.PENTALPHA;
                 LvrTransferVar.ActualizarPentalphaId();
                 LvrTransferVar.EscribirValoresDeAjustes();
                 LvrTransferVar.LeerValoresDeAjustes();
 
-                if (TransaccionOK)
-                {
-                    await AvisoOperacionEmpresaDialogAsync("Modificar Empresa", "Empresa modificada exitosamente.");
-                }
-                else
-                {
-                    await AvisoOperacionEmpresaDialogAsync("Modificar Empresa", "Error en modificación de la empresa. Reintente o escriba a soporte contacto@pentalpha.net");
-                }
+                await AvisoOperacionEmpresaDialogAsync("Modificar Empresa", "Empresa modificada exitosamente.");
             }
             else
             {
-                await AvisoOperacionEmpresaDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
+                await AvisoOperacionEmpresaDialogAsync("Modificar Empresa", "Error en modificación de la empresa. Reintente o escriba a soporte contacto@pentalpha.net");
             }
             LvrProgresRing.IsActive = false;
             await Task.Delay(500); // 1 sec delay
@@ -419,8 +398,6 @@ namespace BikeMessenger
 
             if (BM_Database_Empresa.BorrarEmpresa(EmpresaIO.PENTALPHA))
             {
-                bool TransaccionOK = true;
-
                 LvrTransferVar.PENTALPHA_ID = EmpresaIO.PENTALPHA;
                 LvrTransferVar.ActualizarPentalphaId();
                 LvrTransferVar.EscribirValoresDeAjustes();
@@ -433,18 +410,11 @@ namespace BikeMessenger
                 textBoxRut.IsReadOnly = false;
                 textBoxDigitoVerificador.IsReadOnly = false;
 
-                if (TransaccionOK)
-                {
-                    await AvisoOperacionEmpresaDialogAsync("Borrar Empresa", "Empresa borrada exitosamente.");
-                }
-                else
-                {
-                    await AvisoOperacionEmpresaDialogAsync("Agregar Empresa", "Error en borrado de la empresa. Reintente o escriba a soporte contacto@pentalpha.net");
-                }
+                await AvisoOperacionEmpresaDialogAsync("Borrar Empresa", "Empresa borrada exitosamente.");
             }
             else
             {
-                await AvisoOperacionEmpresaDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
+                await AvisoOperacionEmpresaDialogAsync("Agregar Empresa", "Error en borrado de la empresa. Reintente o escriba a soporte contacto@pentalpha.net");
             }
             LvrProgresRing.IsActive = false;
             await Task.Delay(500); // 1 sec delay
@@ -566,7 +536,7 @@ namespace BikeMessenger
             LvrTransferVar.CLI_PENTALPHA = pPentalpha;
             // Valores de SERVICIOS
             LvrTransferVar.SER_PENTALPHA = pPentalpha;
-            
+
             LvrTransferVar.EscribirValoresDeAjustes();
             LvrTransferVar.LeerValoresDeAjustes();
         }
