@@ -130,7 +130,8 @@ namespace BikeMessenger
 
                 {
                     OPERACION = "CONSULTAR",
-                    PENTALPHA = BM_TransferVar.PENTALPHA_ID
+                    PENTALPHA = BM_TransferVar.PENTALPHA_ID,
+                    FOTO = ""
                 };
 
                 BK_PersonalLista = new List<JsonBikeMessengerPersonal>
@@ -229,7 +230,8 @@ namespace BikeMessenger
                     OPERACION = "CONSULTAR",
                     PENTALPHA = pPENTALPHA,
                     RUTID = pRUTID,
-                    DIGVER = pDIGVER
+                    DIGVER = pDIGVER,
+                    FOTO = ""
                 };
 
                 BK_PersonalLista = new List<JsonBikeMessengerPersonal>
@@ -512,6 +514,7 @@ namespace BikeMessenger
 
                 BK_Personal.OPERACION = "BORRAR";
                 BK_Personal.PENTALPHA = pPENTALPHA;
+                BK_Personal.FOTO = "";
 
                 BK_PersonalLista = new List<JsonBikeMessengerPersonal>
                 {

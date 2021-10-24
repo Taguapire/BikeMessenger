@@ -119,10 +119,27 @@ namespace BikeMessenger
                 textBoxPiso.Text = PersonalIO.PISO;
                 textBoxDepartamento.Text = PersonalIO.DPTO;
                 textBoxCodigoPostal.Text = PersonalIO.CODIGOPOSTAL;
+
+                // Llenado de Pais
+                if (comboBoxPais.Items.Count == 0)
+                    comboBoxPais.Items.Add(PersonalIO.PAIS);
                 comboBoxPais.SelectedValue = PersonalIO.PAIS;
+
+                // Llenado de Estado o Region
+                if (comboBoxRegion.Items.Count == 0)
+                    comboBoxRegion.Items.Add(PersonalIO.REGION);
                 comboBoxRegion.SelectedValue = PersonalIO.REGION;
+
+                // Llenado de Comuna o Municipio
+                if (comboBoxComuna.Items.Count == 0)
+                    comboBoxComuna.Items.Add(PersonalIO.COMUNA);
                 comboBoxComuna.SelectedValue = PersonalIO.COMUNA;
+
+                // Llenado de Cuidad
+                if (comboBoxCiudad.Items.Count == 0)
+                    comboBoxCiudad.Items.Add(PersonalIO.CIUDAD);
                 comboBoxCiudad.SelectedValue = PersonalIO.CIUDAD;
+
                 textBoxObservaciones.Text = PersonalIO.OBSERVACIONES;
 
                 imageFotoPersonal.Source = Base64StringToBitmap(PersonalIO.FOTO);

@@ -139,9 +139,25 @@ namespace BikeMessenger
                 textBoxOficina.Text = EmpresaIO.OFICINA;
                 textBoxCodigoPostal.Text = EmpresaIO.CODIGOPOSTAL;
 
+                // Llenado de Pais
+                if (comboBoxPais.Items.Count == 0)
+                    comboBoxPais.Items.Add(EmpresaIO.PAIS);
                 comboBoxPais.SelectedValue = EmpresaIO.PAIS;
+
+                // Llenado de Estado o Region
+                if (comboBoxEstado.Items.Count == 0)
+                    comboBoxEstado.Items.Add(EmpresaIO.ESTADOREGION);
                 comboBoxEstado.SelectedValue = EmpresaIO.ESTADOREGION;
+
+                // Llenado de Comuna o Municipio
+                if (comboBoxComuna.Items.Count == 0)
+                    comboBoxComuna.Items.Add(EmpresaIO.COMUNA);
                 comboBoxComuna.SelectedValue = EmpresaIO.COMUNA;
+
+
+                // Llenado de Ciudad
+                if (comboBoxCiudad.Items.Count == 0)
+                    comboBoxCiudad.Items.Add(EmpresaIO.CIUDAD);
                 comboBoxCiudad.SelectedValue = EmpresaIO.CIUDAD;
 
                 textBoxTelefono1.Text = EmpresaIO.TELEFONO1;

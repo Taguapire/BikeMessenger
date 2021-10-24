@@ -136,7 +136,8 @@ namespace BikeMessenger
                 BK_Empresa = new JsonBikeMessengerEmpresa
                 {
                     OPERACION = "CONSULTAR",
-                    PENTALPHA = BM_TransferVar.PENTALPHA_ID
+                    PENTALPHA = BM_TransferVar.PENTALPHA_ID,
+                    LOGO = ""
                 };
 
                 BK_EmpresaLista = new List<JsonBikeMessengerEmpresa>
@@ -172,7 +173,8 @@ namespace BikeMessenger
                 BK_Empresa = new JsonBikeMessengerEmpresa
                 {
                     OPERACION = "CONSULTAR",
-                    PENTALPHA = BM_TransferVar.PENTALPHA_ID
+                    PENTALPHA = BM_TransferVar.PENTALPHA_ID,
+                    LOGO = ""
                 };
 
                 BK_EmpresaLista = new List<JsonBikeMessengerEmpresa>
@@ -553,6 +555,7 @@ namespace BikeMessenger
 
                 BK_Empresa.OPERACION = "BORRAR";
                 BK_Empresa.PENTALPHA = pPENTALPHA;
+                BK_Empresa.LOGO = "";
 
                 BK_EmpresaLista = new List<JsonBikeMessengerEmpresa>
                 {
@@ -595,6 +598,7 @@ namespace BikeMessenger
 
                 BK_Empresa.OPERACION = "BORRAR";
                 BK_Empresa.PENTALPHA = pPENTALPHA;
+                BK_Empresa.LOGO = "";
 
                 BK_EmpresaLista = new List<JsonBikeMessengerEmpresa>
                 {
