@@ -1,5 +1,4 @@
 ﻿using Microsoft.Toolkit.Uwp.UI.Controls;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,10 +21,10 @@ namespace BikeMessenger
     /// </summary>
     public sealed partial class PagePersonal : Page
     {
-        private List<JsonBikeMessengerPersonal> PersonalIOArray = new List<JsonBikeMessengerPersonal>();
-        private JsonBikeMessengerPersonal PersonalIO = new JsonBikeMessengerPersonal();
-        private JsonBikeMessengerPersonal EnviarJsonPersonal = new JsonBikeMessengerPersonal();
-        private JsonBikeMessengerPersonal RecibirJsonPersonal = new JsonBikeMessengerPersonal();
+        private List<StructBikeMessengerPersonal> PersonalIOArray = new List<StructBikeMessengerPersonal>();
+        private StructBikeMessengerPersonal PersonalIO = new StructBikeMessengerPersonal();
+        private StructBikeMessengerPersonal EnviarJsonPersonal = new StructBikeMessengerPersonal();
+        private StructBikeMessengerPersonal RecibirJsonPersonal = new StructBikeMessengerPersonal();
         private Bm_Personal_Database BM_Database_Personal = new Bm_Personal_Database();
         private TransferVar LvrTransferVar = new TransferVar();
         private bool BorrarSiNo;

@@ -39,7 +39,7 @@ namespace BikeMessenger
             {
                 try
                 {
-                    BM_Conexion = new SqlConnection(BM_TransferVar.BM_Sql_String_Builder.ConnectionString);
+                    BM_Conexion = new SqlConnection();
                     BM_Conexion.Open();
                 }
                 catch (System.Data.SqlClient.SqlException Ex)

@@ -22,8 +22,8 @@ namespace BikeMessenger
     /// </summary>
     public sealed partial class PageEmpresa : Page
     {
-        private List<JsonBikeMessengerEmpresa> EmpresaIOArray = new List<JsonBikeMessengerEmpresa>();
-        private JsonBikeMessengerEmpresa EmpresaIO = new JsonBikeMessengerEmpresa();
+        private List<StructBikeMessengerEmpresa> EmpresaIOArray = new List<StructBikeMessengerEmpresa>();
+        private StructBikeMessengerEmpresa EmpresaIO = new StructBikeMessengerEmpresa();
         private Bm_Empresa_Database BM_Database_Empresa = new Bm_Empresa_Database();
         private TransferVar LvrTransferVar = new TransferVar();
         private PentalphaCripto LvrCrypto = new PentalphaCripto();

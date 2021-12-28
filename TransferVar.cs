@@ -1,10 +1,5 @@
-﻿using System;
-using System.Threading.Tasks;
-using Windows.Storage;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using System.Data;
-using System.Data.SqlClient;
+﻿using Windows.Storage;
+using SQLite;
 
 namespace BikeMessenger
 {
@@ -37,9 +32,7 @@ namespace BikeMessenger
         public string BDREMOTACLIENTE { get; set; }         // "N";
         public string BDREMOTACLIENTEPUERTO { get; set; }         // "N";
         //--------------------------------------------------------------------
-        public SqlConnectionStringBuilder BM_Sql_String_Builder = new SqlConnectionStringBuilder();
-        //--------------------------------------------------------------------
-
+        
         // Valores de Empresa
         public string EMP_PENTALPHA { get; set; }
         public string EMP_RUTID { get; set; }
@@ -207,11 +200,11 @@ namespace BikeMessenger
 
                 if (BDSQLSERVER == "S")
                 {
-                    BM_Sql_String_Builder["Data Source"] = BDSQLSERVERINSTANCIA;
-                    BM_Sql_String_Builder["Initial Catalog"] = BDSQLSERVERCATALOGO;
-                    BM_Sql_String_Builder["MultipleActiveResultSets"] = true;
-                    BM_Sql_String_Builder["User ID"] = BDSQLSERVERUSUARIO;
-                    BM_Sql_String_Builder["Password"] = BDSQLSERVERCLAVE;
+                    //BM_Sql_String_Builder["Data Source"] = BDSQLSERVERINSTANCIA;
+                    //BM_Sql_String_Builder["Initial Catalog"] = BDSQLSERVERCATALOGO;
+                    //BM_Sql_String_Builder["MultipleActiveResultSets"] = true;
+                    //BM_Sql_String_Builder["User ID"] = BDSQLSERVERUSUARIO;
+                    //BM_Sql_String_Builder["Password"] = BDSQLSERVERCLAVE;
                 }
             }
         }
@@ -269,11 +262,11 @@ namespace BikeMessenger
 
             if (BDSQLSERVER == "S")
             {
-                BM_Sql_String_Builder["Data Source"] = BDSQLSERVERINSTANCIA;
-                BM_Sql_String_Builder["Initial Catalog"] = BDSQLSERVERCATALOGO;
-                BM_Sql_String_Builder["MultipleActiveResultSets"] = true;
-                BM_Sql_String_Builder["User ID"] = BDSQLSERVERUSUARIO;
-                BM_Sql_String_Builder["Password"] = BDSQLSERVERCLAVE;
+                //BM_Sql_String_Builder["Data Source"] = BDSQLSERVERINSTANCIA;
+                //BM_Sql_String_Builder["Initial Catalog"] = BDSQLSERVERCATALOGO;
+                //BM_Sql_String_Builder["MultipleActiveResultSets"] = true;
+                //BM_Sql_String_Builder["User ID"] = BDSQLSERVERUSUARIO;
+                //BM_Sql_String_Builder["Password"] = BDSQLSERVERCLAVE;
             }
         }
 
@@ -324,11 +317,11 @@ namespace BikeMessenger
 
             if (BDSQLSERVER == "S")
             {
-                BM_Sql_String_Builder["Data Source"] = BDSQLSERVERINSTANCIA;
-                BM_Sql_String_Builder["Initial Catalog"] = BDSQLSERVERCATALOGO;
-                BM_Sql_String_Builder["MultipleActiveResultSets"] = true;
-                BM_Sql_String_Builder["User ID"] = BDSQLSERVERUSUARIO;
-                BM_Sql_String_Builder["Password"] = BDSQLSERVERCLAVE;
+                //BM_Sql_String_Builder["Data Source"] = BDSQLSERVERINSTANCIA;
+                //BM_Sql_String_Builder["Initial Catalog"] = BDSQLSERVERCATALOGO;
+                //BM_Sql_String_Builder["MultipleActiveResultSets"] = true;
+                //BM_Sql_String_Builder["User ID"] = BDSQLSERVERUSUARIO;
+                //BM_Sql_String_Builder["Password"] = BDSQLSERVERCLAVE;
             }
         }
 

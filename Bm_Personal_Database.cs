@@ -18,8 +18,8 @@ namespace BikeMessenger
 
         private TransferVar BM_TransferVar = new TransferVar();
 
-        private static JsonBikeMessengerPersonal BK_Personal;
-        private static List<JsonBikeMessengerPersonal> BK_PersonalLista;
+        private static StructBikeMessengerPersonal BK_Personal;
+        private static List<StructBikeMessengerPersonal> BK_PersonalLista;
 
         public Bm_Personal_Database()
         {
@@ -45,7 +45,7 @@ namespace BikeMessenger
             {
                 try
                 {
-                    BM_Conexion = new SqlConnection(BM_TransferVar.BM_Sql_String_Builder.ConnectionString);
+                    BM_Conexion = new SqlConnection();
                     BM_Conexion.Open();
                 }
                 catch (System.Data.SqlClient.SqlException Ex)
@@ -56,15 +56,15 @@ namespace BikeMessenger
         }
 
         // Busqueda por Muchos
-        public List<JsonBikeMessengerPersonal> BuscarPersonal()
+        public List<StructBikeMessengerPersonal> BuscarPersonal()
         {
             if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
             {
                 return null;
             }
 
-            BK_Personal = new JsonBikeMessengerPersonal();
-            BK_PersonalLista = new List<JsonBikeMessengerPersonal>();
+            BK_Personal = new StructBikeMessengerPersonal();
+            BK_PersonalLista = new List<StructBikeMessengerPersonal>();
 
             if (BM_TransferVar.SincronizarBaseLocal())
             {
@@ -91,7 +91,7 @@ namespace BikeMessenger
 
                     foreach (DataRow LvrPersonal in BM_DataSet.Tables["PERSONAL"].Rows)
                     {
-                        BK_Personal = new JsonBikeMessengerPersonal();
+                        BK_Personal = new StructBikeMessengerPersonal();
                         BK_Personal.PENTALPHA = LvrPersonal["PENTALPHA"].ToString();
                         BK_Personal.RUTID = LvrPersonal["RUTID"].ToString();
                         BK_Personal.DIGVER = LvrPersonal["DIGVER"].ToString();
@@ -126,7 +126,7 @@ namespace BikeMessenger
             else if (BM_TransferVar.SincronizarWebPentalpha())
             {
                 string LvrData;
-                BK_Personal = new JsonBikeMessengerPersonal
+                BK_Personal = new StructBikeMessengerPersonal
 
                 {
                     OPERACION = "CONSULTAR",
@@ -134,7 +134,7 @@ namespace BikeMessenger
                     FOTO = ""
                 };
 
-                BK_PersonalLista = new List<JsonBikeMessengerPersonal>
+                BK_PersonalLista = new List<StructBikeMessengerPersonal>
                 {
                     BK_Personal
                 };
@@ -143,7 +143,7 @@ namespace BikeMessenger
                 LvrData = ProRegistroPersonal("https://finanven.ddns.net", "443", "/Api/BikeMessengerPersonal", LvrData);
                 if (LvrData != null)
                 {
-                    BK_PersonalLista = JsonConvert.DeserializeObject<List<JsonBikeMessengerPersonal>>(LvrData);
+                    BK_PersonalLista = JsonConvert.DeserializeObject<List<StructBikeMessengerPersonal>>(LvrData);
                     return BK_PersonalLista;
                 }
                 return null;
@@ -155,15 +155,15 @@ namespace BikeMessenger
             return null;
         }
 
-        public List<JsonBikeMessengerPersonal> BuscarPersonal(string pPENTALPHA, string pRUTID, string pDIGVER)
+        public List<StructBikeMessengerPersonal> BuscarPersonal(string pPENTALPHA, string pRUTID, string pDIGVER)
         {
             if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
             {
                 return null;
             }
 
-            BK_Personal = new JsonBikeMessengerPersonal();
-            BK_PersonalLista = new List<JsonBikeMessengerPersonal>();
+            BK_Personal = new StructBikeMessengerPersonal();
+            BK_PersonalLista = new List<StructBikeMessengerPersonal>();
 
             if (BM_TransferVar.SincronizarBaseLocal())
             {
@@ -189,7 +189,7 @@ namespace BikeMessenger
 
                     foreach (DataRow LvrPersonal in BM_DataSet.Tables["PERSONAL"].Rows)
                     {
-                        BK_Personal = new JsonBikeMessengerPersonal();
+                        BK_Personal = new StructBikeMessengerPersonal();
                         BK_Personal.PENTALPHA = LvrPersonal["PENTALPHA"].ToString();
                         BK_Personal.RUTID = LvrPersonal["RUTID"].ToString();
                         BK_Personal.DIGVER = LvrPersonal["DIGVER"].ToString();
@@ -224,7 +224,7 @@ namespace BikeMessenger
             else if (BM_TransferVar.SincronizarWebPentalpha())
             {
                 string LvrData;
-                BK_Personal = new JsonBikeMessengerPersonal
+                BK_Personal = new StructBikeMessengerPersonal
 
                 {
                     OPERACION = "CONSULTAR",
@@ -234,7 +234,7 @@ namespace BikeMessenger
                     FOTO = ""
                 };
 
-                BK_PersonalLista = new List<JsonBikeMessengerPersonal>
+                BK_PersonalLista = new List<StructBikeMessengerPersonal>
                 {
                     BK_Personal
                 };
@@ -243,7 +243,7 @@ namespace BikeMessenger
                 LvrData = ProRegistroPersonal("https://finanven.ddns.net", "443", "/Api/BikeMessengerPersonal", LvrData);
                 if (LvrData != null)
                 {
-                    BK_PersonalLista = JsonConvert.DeserializeObject<List<JsonBikeMessengerPersonal>>(LvrData);
+                    BK_PersonalLista = JsonConvert.DeserializeObject<List<StructBikeMessengerPersonal>>(LvrData);
                     return BK_PersonalLista;
                 }
                 return null;
@@ -257,15 +257,15 @@ namespace BikeMessenger
         }
 
 
-        public bool AgregarPersonal(JsonBikeMessengerPersonal aBK_Personal)
+        public bool AgregarPersonal(StructBikeMessengerPersonal aBK_Personal)
         {
             if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
             {
                 return false;
             }
 
-            BK_Personal = new JsonBikeMessengerPersonal();
-            BK_PersonalLista = new List<JsonBikeMessengerPersonal>();
+            BK_Personal = new StructBikeMessengerPersonal();
+            BK_PersonalLista = new List<StructBikeMessengerPersonal>();
 
             if (BM_TransferVar.SincronizarBaseLocal())
             {
@@ -333,7 +333,7 @@ namespace BikeMessenger
 
                 aBK_Personal.OPERACION = "AGREGAR";
 
-                BK_PersonalLista = new List<JsonBikeMessengerPersonal>
+                BK_PersonalLista = new List<StructBikeMessengerPersonal>
                 {
                     aBK_Personal
                 };
@@ -344,10 +344,10 @@ namespace BikeMessenger
                     LvrData = ProRegistroPersonal("https://finanven.ddns.net", "443", "/Api/BikeMessengerPersonal", LvrData);
                     if (LvrData != null)
                     {
-                        BK_PersonalLista = JsonConvert.DeserializeObject<List<JsonBikeMessengerPersonal>>(LvrData);
+                        BK_PersonalLista = JsonConvert.DeserializeObject<List<StructBikeMessengerPersonal>>(LvrData);
                         if (BK_PersonalLista != null && BK_PersonalLista.Count > 0)
                         {
-                            BK_Personal = new JsonBikeMessengerPersonal();
+                            BK_Personal = new StructBikeMessengerPersonal();
                             BK_Personal = BK_PersonalLista[0];
                             if (BK_Personal.RESOPERACION == "OK")
                             {
@@ -375,7 +375,7 @@ namespace BikeMessenger
         }
 
 
-        public bool ModificarPersonal(JsonBikeMessengerPersonal mBK_Personal)
+        public bool ModificarPersonal(StructBikeMessengerPersonal mBK_Personal)
         {
             if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
             {
@@ -450,17 +450,17 @@ namespace BikeMessenger
 
                 mBK_Personal.OPERACION = "MODIFICAR";
 
-                BK_PersonalLista = new List<JsonBikeMessengerPersonal>
+                BK_PersonalLista = new List<StructBikeMessengerPersonal>
                 {
                     mBK_Personal
                 };
 
                 LvrData = JsonConvert.SerializeObject(BK_PersonalLista);
                 LvrData = ProRegistroPersonal("https://finanven.ddns.net", "443", "/Api/BikeMessengerPersonal", LvrData);
-                BK_PersonalLista = JsonConvert.DeserializeObject<List<JsonBikeMessengerPersonal>>(LvrData);
+                BK_PersonalLista = JsonConvert.DeserializeObject<List<StructBikeMessengerPersonal>>(LvrData);
                 if (BK_PersonalLista != null && BK_PersonalLista.Count > 0)
                 {
-                    BK_Personal = new JsonBikeMessengerPersonal();
+                    BK_Personal = new StructBikeMessengerPersonal();
                     BK_Personal = BK_PersonalLista[0];
                     if (BK_Personal.RESOPERACION == "OK")
                     {
@@ -483,8 +483,8 @@ namespace BikeMessenger
                 return false;
             }
 
-            BK_Personal = new JsonBikeMessengerPersonal();
-            BK_PersonalLista = new List<JsonBikeMessengerPersonal>();
+            BK_Personal = new StructBikeMessengerPersonal();
+            BK_PersonalLista = new List<StructBikeMessengerPersonal>();
 
             if (BM_TransferVar.SincronizarBaseLocal())
             {
@@ -516,7 +516,7 @@ namespace BikeMessenger
                 BK_Personal.PENTALPHA = pPENTALPHA;
                 BK_Personal.FOTO = "";
 
-                BK_PersonalLista = new List<JsonBikeMessengerPersonal>
+                BK_PersonalLista = new List<StructBikeMessengerPersonal>
                 {
                     BK_Personal
                 };
@@ -525,10 +525,10 @@ namespace BikeMessenger
                 LvrData = ProRegistroPersonal("https://finanven.ddns.net", "443", "/Api/BikeMessengerPersonal", LvrData);
                 if (LvrData != null)
                 {
-                    BK_PersonalLista = JsonConvert.DeserializeObject<List<JsonBikeMessengerPersonal>>(LvrData);
+                    BK_PersonalLista = JsonConvert.DeserializeObject<List<StructBikeMessengerPersonal>>(LvrData);
                     if (BK_PersonalLista != null && BK_PersonalLista.Count > 0)
                     {
-                        BK_Personal = new JsonBikeMessengerPersonal();
+                        BK_Personal = new StructBikeMessengerPersonal();
                         BK_Personal = BK_PersonalLista[0];
                         if (BK_Personal.RESOPERACION == "OK")
                         {
@@ -831,8 +831,8 @@ namespace BikeMessenger
                 return null;
             }
 
-            BK_Personal = new JsonBikeMessengerPersonal();
-            BK_PersonalLista = new List<JsonBikeMessengerPersonal>();
+            BK_Personal = new StructBikeMessengerPersonal();
+            BK_PersonalLista = new List<StructBikeMessengerPersonal>();
 
             LvrTablaHtml DocumentoHtml = new LvrTablaHtml();
 
@@ -927,7 +927,7 @@ namespace BikeMessenger
 
             // Proceso Serializar
 
-            //EnviarJsonPersonalArray = new List<JsonBikeMessengerPersonal>();
+            //EnviarJsonPersonalArray = new List<StructBikeMessengerPersonal>();
             //EnviarJsonPersonalArray.Add(EnviarJsonPersonal);
             //LvrPData = JsonConvert.SerializeObject(EnviarJsonPersonalArray);
 
@@ -948,7 +948,7 @@ namespace BikeMessenger
             if (LvrPRecibirServer != "ERROR" && LvrPRecibirServer != "" && LvrPRecibirServer != null)
             {
                 // Procesar primer servidor
-                //RecibirJsonPersonalArray = JsonConvert.DeserializeObject<List<JsonBikeMessengerPersonal>>(LvrPRecibirServer); // resp será el string JSON a deserializa
+                //RecibirJsonPersonalArray = JsonConvert.DeserializeObject<List<StructBikeMessengerPersonal>>(LvrPRecibirServer); // resp será el string JSON a deserializa
                 //RecibirJsonPersonal = RecibirJsonPersonalArray[0];
 
                 return LvrPRecibirServer;
