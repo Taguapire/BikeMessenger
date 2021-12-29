@@ -1,779 +1,359 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
 using SQLite;
 
 namespace BikeMessenger
 {
     internal class Bm_Recurso_Database
     {
-        // public SqliteFactory BM_DB;
-        // Paso de Parametros Sqlite
-        // ***************************************
-        private static SqlConnection BM_Conexion;
-        private static SQLiteConnection BM_ConexionLite;
-
         private TransferVar BM_TransferVar = new TransferVar();
 
-        private static JsonBikeMessengerRecurso BK_Recurso;
-        private static List<JsonBikeMessengerRecurso> BK_RecursoLista;
+        // Valode de Memoria a Bases de Datos
+
+        private StructBikeMessengerRecurso BK_Recurso;
+        private List<StructBikeMessengerRecurso> BK_RecursoLista;
+
+        private string CompletoNombreBD = "";
 
         public Bm_Recurso_Database()
         {
-            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            try
             {
-                return;
-            }
+                CompletoNombreBD = BM_TransferVar.DIRECTORIO_BASE_LOCAL + "\\BikeMessenger.db";
 
-            if (BM_TransferVar.SincronizarBaseLocal())
-            {
-                try
-                {
-                    BM_ConexionLite = new SQLiteConnection(BM_TransferVar.DIRECTORIO_BASE_LOCAL + "\\BikeMessenger.db");
-                    //BM_ConexionLite.Open();
-                }
-                catch (SQLite.SQLiteException Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                }
+                SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
+
+                _ = BM_ConexionLite.CreateTable<TbBikeMessengerRecurso>();
+
+                BM_ConexionLite.Close();
+                BM_ConexionLite.Dispose();
+                BM_ConexionLite = null;
             }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
+            catch (SQLiteException Ex)
             {
-                try
-                {
-                    BM_Conexion = new SqlConnection();
-                    BM_Conexion.Open();
-                }
-                catch (System.Data.SqlClient.SqlException Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                }
+                Console.WriteLine(Ex.InnerException.Message);
             }
         }
 
         // Busqueda por Muchos
-        public List<JsonBikeMessengerRecurso> BuscarRecurso()
+        public List<StructBikeMessengerRecurso> BuscarRecurso(string pPENTALPHA)
         {
-            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
-            {
-                return null;
-            }
+            BK_RecursoLista = new List<StructBikeMessengerRecurso>();
 
-            BK_Recurso = new JsonBikeMessengerRecurso();
-            BK_RecursoLista = new List<JsonBikeMessengerRecurso>();
+            SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
 
-            if (BM_TransferVar.SincronizarBaseLocal())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
-            {
-                DataSet BM_DataSet;
-                SqlDataAdapter BM_Adaptador;
-                SqlCommand BM_Comando;
+            List<TbBikeMessengerRecurso> results = BM_ConexionLite.Table<TbBikeMessengerRecurso>().Where(t => t.PENTALPHA == pPENTALPHA).ToList();
 
-                try
+            if (results.Count > 0)
+            {
+                for (int i = 0; i < results.Count; i++)
                 {
-                    BM_Comando = BM_Conexion.CreateCommand();
-                    BM_Comando.CommandText = string.Format("SELECT * FROM RECURSOS");
-
-                    BM_Adaptador = new SqlDataAdapter(BM_Comando)
-                    {
-                        AcceptChangesDuringFill = false
-                    };
-
-                    BM_DataSet = new DataSet();
-                    BM_Adaptador.Fill(BM_DataSet, "RECURSOS");
-
-                    foreach (DataRow LvrRecurso in BM_DataSet.Tables["RECURSOS"].Rows)
-                    {
-                        BK_Recurso.PENTALPHA = LvrRecurso["PENTALPHA"].ToString();
-                        BK_Recurso.PATENTE = LvrRecurso["PATENTE"].ToString();
-                        BK_Recurso.RUTID = LvrRecurso["RUTID"].ToString();
-                        BK_Recurso.DIGVER = LvrRecurso["DIGVER"].ToString();
-                        BK_Recurso.TIPO = LvrRecurso["TIPO"].ToString();
-                        BK_Recurso.MARCA = LvrRecurso["MARCA"].ToString();
-                        BK_Recurso.MODELO = LvrRecurso["MODELO"].ToString();
-                        BK_Recurso.VARIANTE = LvrRecurso["VARIANTE"].ToString();
-                        BK_Recurso.ANO = LvrRecurso["ANO"].ToString();
-                        BK_Recurso.COLOR = LvrRecurso["COLOR"].ToString();
-                        BK_Recurso.CIUDAD = LvrRecurso["CIUDAD"].ToString();
-                        BK_Recurso.COMUNA = LvrRecurso["COMUNA"].ToString();
-                        BK_Recurso.REGION = LvrRecurso["REGION"].ToString();
-                        BK_Recurso.PAIS = LvrRecurso["PAIS"].ToString();
-                        BK_Recurso.OBSERVACIONES = LvrRecurso["OBSERVACIONES"].ToString();
-                        BK_Recurso.FOTO = LvrRecurso["FOTO"].ToString();
-                        BK_RecursoLista.Add(BK_Recurso);
-                    }
+                    BK_Recurso = new StructBikeMessengerRecurso();
+                    BK_Recurso.OPERACION = results[i].OPERACION;
+                    BK_Recurso.PKRECURSO = results[i].PKRECURSO;
+                    BK_Recurso.PENTALPHA = results[i].PENTALPHA;
+                    BK_Recurso.PATENTE = results[i].PATENTE;
+                    BK_Recurso.RUTID = results[i].RUTID;
+                    BK_Recurso.DIGVER = results[i].DIGVER;
+                    BK_Recurso.TIPO = results[i].TIPO;
+                    BK_Recurso.MARCA = results[i].MARCA;
+                    BK_Recurso.MODELO = results[i].MODELO;
+                    BK_Recurso.VARIANTE = results[i].VARIANTE;
+                    BK_Recurso.ANO = results[i].ANO;
+                    BK_Recurso.COLOR = results[i].COLOR;
+                    BK_Recurso.CIUDAD = results[i].CIUDAD;
+                    BK_Recurso.COMUNA = results[i].COMUNA;
+                    BK_Recurso.REGION = results[i].REGION;
+                    BK_Recurso.PAIS = results[i].PAIS;
+                    BK_Recurso.OBSERVACIONES = results[i].OBSERVACIONES;
+                    BK_Recurso.FOTO = results[i].FOTO;
+                    BK_Recurso.RESMENSAJE = "OK";
+                    BK_Recurso.RESOPERACION = "OK";
+                    BK_RecursoLista.Add(BK_Recurso);
                 }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                    return null;
-                }
+
+                BM_ConexionLite.Close();
+                BM_ConexionLite.Dispose();
+                BM_ConexionLite = null;
+
                 return BK_RecursoLista;
             }
-            else if (BM_TransferVar.SincronizarWebPentalpha())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarWebPropio())
-            {
-                return null;
-            }
+
+            BM_ConexionLite.Close();
+            BM_ConexionLite.Dispose();
+            BM_ConexionLite = null;
+
             return null;
         }
 
-        public List<JsonBikeMessengerRecurso> BuscarRecurso(string pPENTALPHA, string pPATENTE)
+        public List<StructBikeMessengerRecurso> BuscarRecurso(string pPENTALPHA, string pPATENTE)
         {
-            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
-            {
-                return null;
-            }
+            string VPKRECURSO = pPENTALPHA + pPATENTE;
 
-            BK_Recurso = new JsonBikeMessengerRecurso();
-            BK_RecursoLista = new List<JsonBikeMessengerRecurso>();
+            BK_RecursoLista = new List<StructBikeMessengerRecurso>();
+            BK_Recurso = new StructBikeMessengerRecurso();
 
-            if (BM_TransferVar.SincronizarBaseLocal())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
-            {
-                DataSet BM_DataSet;
-                SqlDataAdapter BM_Adaptador;
-                SqlCommand BM_Comando;
+            SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
 
-                try
+            List<TbBikeMessengerRecurso> results = BM_ConexionLite.Table<TbBikeMessengerRecurso>().Where(t => t.PKRECURSO == VPKRECURSO).ToList();
+
+            if (results.Count > 0)
+            {
+                for (int i = 0; i < results.Count; i++)
                 {
-                    BM_Comando = BM_Conexion.CreateCommand();
-                    BM_Comando.CommandText = string.Format("SELECT * FROM RECURSOS WHERE PENTALPHA = '" + pPENTALPHA + "' AND PATENTE = '" + pPATENTE + "'");
-
-                    BM_Adaptador = new SqlDataAdapter(BM_Comando)
-                    {
-                        AcceptChangesDuringFill = false
-                    };
-
-                    BM_DataSet = new DataSet();
-                    BM_Adaptador.Fill(BM_DataSet, "RECURSOS");
-
-                    foreach (DataRow LvrRecurso in BM_DataSet.Tables["RECURSOS"].Rows)
-                    {
-                        BK_Recurso.PENTALPHA = LvrRecurso["PENTALPHA"].ToString();
-                        BK_Recurso.PATENTE = LvrRecurso["PATENTE"].ToString();
-                        BK_Recurso.RUTID = LvrRecurso["RUTID"].ToString();
-                        BK_Recurso.DIGVER = LvrRecurso["DIGVER"].ToString();
-                        BK_Recurso.TIPO = LvrRecurso["TIPO"].ToString();
-                        BK_Recurso.MARCA = LvrRecurso["MARCA"].ToString();
-                        BK_Recurso.MODELO = LvrRecurso["MODELO"].ToString();
-                        BK_Recurso.VARIANTE = LvrRecurso["VARIANTE"].ToString();
-                        BK_Recurso.ANO = LvrRecurso["ANO"].ToString();
-                        BK_Recurso.COLOR = LvrRecurso["COLOR"].ToString();
-                        BK_Recurso.CIUDAD = LvrRecurso["CIUDAD"].ToString();
-                        BK_Recurso.COMUNA = LvrRecurso["COMUNA"].ToString();
-                        BK_Recurso.REGION = LvrRecurso["REGION"].ToString();
-                        BK_Recurso.PAIS = LvrRecurso["PAIS"].ToString();
-                        BK_Recurso.OBSERVACIONES = LvrRecurso["OBSERVACIONES"].ToString();
-                        BK_Recurso.FOTO = LvrRecurso["FOTO"].ToString();
-                        BK_RecursoLista.Add(BK_Recurso);
-                    }
+                    BK_Recurso = new StructBikeMessengerRecurso();
+                    BK_Recurso.OPERACION = results[i].OPERACION;
+                    BK_Recurso.PKRECURSO = results[i].PKRECURSO;
+                    BK_Recurso.PENTALPHA = results[i].PENTALPHA;
+                    BK_Recurso.PATENTE = results[i].PATENTE;
+                    BK_Recurso.RUTID = results[i].RUTID;
+                    BK_Recurso.DIGVER = results[i].DIGVER;
+                    BK_Recurso.TIPO = results[i].TIPO;
+                    BK_Recurso.MARCA = results[i].MARCA;
+                    BK_Recurso.MODELO = results[i].MODELO;
+                    BK_Recurso.VARIANTE = results[i].VARIANTE;
+                    BK_Recurso.ANO = results[i].ANO;
+                    BK_Recurso.COLOR = results[i].COLOR;
+                    BK_Recurso.CIUDAD = results[i].CIUDAD;
+                    BK_Recurso.COMUNA = results[i].COMUNA;
+                    BK_Recurso.REGION = results[i].REGION;
+                    BK_Recurso.PAIS = results[i].PAIS;
+                    BK_Recurso.OBSERVACIONES = results[i].OBSERVACIONES;
+                    BK_Recurso.FOTO = results[i].FOTO;
+                    BK_Recurso.RESMENSAJE = "OK";
+                    BK_Recurso.RESOPERACION = "OK";
+                    BK_RecursoLista.Add(BK_Recurso);
                 }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                    return null;
-                }
+                BM_ConexionLite.Close();
+                BM_ConexionLite.Dispose();
+                BM_ConexionLite = null;
+
                 return BK_RecursoLista;
             }
-            else if (BM_TransferVar.SincronizarWebPentalpha())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarWebPropio())
-            {
-                return null;
-            }
+
+            BM_ConexionLite.Close();
+            BM_ConexionLite.Dispose();
+            BM_ConexionLite = null;
+
             return null;
         }
 
-        public bool AgregarRecurso(JsonBikeMessengerRecurso aBK_Recurso)
+        public bool AgregarRecurso(StructBikeMessengerRecurso aBK_Recurso)
         {
-            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
-            {
-                return false;
-            }
+            SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
 
-            BK_Recurso = new JsonBikeMessengerRecurso();
-            BK_RecursoLista = new List<JsonBikeMessengerRecurso>();
-
-            if (BM_TransferVar.SincronizarBaseLocal())
+            BM_ConexionLite.RunInTransaction(() =>
             {
-                return false;
-            }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
-            {
-                DataSet BM_DataSet;
-                SqlDataAdapter BM_Adaptador;
-                SqlCommand BM_Comando;
-                SqlCommandBuilder BM_Builder;
-
-                try
+                TbBikeMessengerRecurso record = new TbBikeMessengerRecurso
                 {
-                    BM_Comando = BM_Conexion.CreateCommand();
-                    BM_Comando.CommandText = string.Format("SELECT * FROM RECURSOS");
+                    OPERACION = aBK_Recurso.OPERACION,
+                    PKRECURSO = aBK_Recurso.PKRECURSO,
+                    PENTALPHA = aBK_Recurso.PENTALPHA,
+                    PATENTE = aBK_Recurso.PATENTE,
+                    RUTID = aBK_Recurso.RUTID,
+                    DIGVER = aBK_Recurso.DIGVER,
+                    TIPO = aBK_Recurso.TIPO,
+                    MARCA = aBK_Recurso.MARCA,
+                    MODELO = aBK_Recurso.MODELO,
+                    VARIANTE = aBK_Recurso.VARIANTE,
+                    ANO = aBK_Recurso.ANO,
+                    COLOR = aBK_Recurso.COLOR,
+                    CIUDAD = aBK_Recurso.CIUDAD,
+                    COMUNA = aBK_Recurso.COMUNA,
+                    REGION = aBK_Recurso.REGION,
+                    PAIS = aBK_Recurso.PAIS,
+                    OBSERVACIONES = aBK_Recurso.OBSERVACIONES,
+                    FOTO = aBK_Recurso.FOTO,
+                    RESMENSAJE = "OK",
+                    RESOPERACION = "OK"
+                };
+                _ = BM_ConexionLite.InsertOrReplace(record);
+            });
 
-                    BM_Adaptador = new SqlDataAdapter(BM_Comando)
-                    {
-                        AcceptChangesDuringFill = true
-                    };
+            BM_ConexionLite.Close();
+            BM_ConexionLite.Dispose();
+            BM_ConexionLite = null;
 
-                    BM_DataSet = new DataSet();
-                    BM_Adaptador.Fill(BM_DataSet, "RECURSOS");
-
-                    DataRow LvrRecurso = BM_DataSet.Tables["RECURSOS"].NewRow();
-                    BM_Builder = new SqlCommandBuilder(BM_Adaptador);
-
-                    LvrRecurso["PENTALPHA"] = aBK_Recurso.PENTALPHA;
-                    LvrRecurso["PATENTE"] = aBK_Recurso.PATENTE;
-                    LvrRecurso["RUTID"] = aBK_Recurso.RUTID;
-                    LvrRecurso["DIGVER"] = aBK_Recurso.DIGVER;
-                    LvrRecurso["TIPO"] = aBK_Recurso.TIPO;
-                    LvrRecurso["MARCA"] = aBK_Recurso.MARCA;
-                    LvrRecurso["MODELO"] = aBK_Recurso.MODELO;
-                    LvrRecurso["VARIANTE"] = aBK_Recurso.VARIANTE;
-                    LvrRecurso["ANO"] = aBK_Recurso.ANO;
-                    LvrRecurso["COLOR"] = aBK_Recurso.COLOR;
-                    LvrRecurso["CIUDAD"] = aBK_Recurso.CIUDAD;
-                    LvrRecurso["COMUNA"] = aBK_Recurso.COMUNA;
-                    LvrRecurso["REGION"] = aBK_Recurso.REGION;
-                    LvrRecurso["PAIS"] = aBK_Recurso.PAIS;
-                    LvrRecurso["OBSERVACIONES"] = aBK_Recurso.OBSERVACIONES;
-                    LvrRecurso["FOTO"] = aBK_Recurso.FOTO;
-                    BM_DataSet.Tables["RECURSOS"].Rows.Add(LvrRecurso);
-                    _ = BM_Builder.GetInsertCommand(true);
-                    _ = BM_Adaptador.Update(BM_DataSet, "RECURSOS");
-                    _ = BM_Adaptador.InsertCommand;
-                }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                    return false;
-                }
-                return true;
-            }
-            else if (BM_TransferVar.SincronizarWebPentalpha())
-            {
-                return false;
-            }
-            else if (BM_TransferVar.SincronizarWebPropio())
-            {
-                return false;
-            }
-            return false;
+            return true;
         }
 
 
-        public bool ModificarRecurso(JsonBikeMessengerRecurso mBK_Recurso)
+        public bool ModificarRecurso(StructBikeMessengerRecurso mBK_Recurso)
         {
-            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
-            {
-                return false;
-            }
+            SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
 
-            if (BM_TransferVar.SincronizarBaseLocal())
+            BM_ConexionLite.RunInTransaction(() =>
             {
-                return false;
-            }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
-            {
-                DataSet BM_DataSet;
-                SqlDataAdapter BM_Adaptador;
-                SqlCommand BM_Comando;
-                SqlCommandBuilder BM_Builder;
-
-                try
+                TbBikeMessengerRecurso record = new TbBikeMessengerRecurso
                 {
-                    BM_Comando = BM_Conexion.CreateCommand();
-                    BM_Comando.UpdatedRowSource = UpdateRowSource.FirstReturnedRecord;
-                    BM_Comando.CommandText = string.Format("SELECT * FROM RECURSOS WHERE PENTALPHA = '" + mBK_Recurso.PENTALPHA + "' AND PATENTE = '" + mBK_Recurso.PATENTE + "'");
+                    OPERACION = mBK_Recurso.OPERACION,
+                    PKRECURSO = mBK_Recurso.PKRECURSO,
+                    PENTALPHA = mBK_Recurso.PENTALPHA,
+                    PATENTE = mBK_Recurso.PATENTE,
+                    RUTID = mBK_Recurso.RUTID,
+                    DIGVER = mBK_Recurso.DIGVER,
+                    TIPO = mBK_Recurso.TIPO,
+                    MARCA = mBK_Recurso.MARCA,
+                    MODELO = mBK_Recurso.MODELO,
+                    VARIANTE = mBK_Recurso.VARIANTE,
+                    ANO = mBK_Recurso.ANO,
+                    COLOR = mBK_Recurso.COLOR,
+                    CIUDAD = mBK_Recurso.CIUDAD,
+                    COMUNA = mBK_Recurso.COMUNA,
+                    REGION = mBK_Recurso.REGION,
+                    PAIS = mBK_Recurso.PAIS,
+                    OBSERVACIONES = mBK_Recurso.OBSERVACIONES,
+                    FOTO = mBK_Recurso.FOTO,
+                    RESMENSAJE = "OK",
+                    RESOPERACION = "OK"
+                };
+                _ = BM_ConexionLite.InsertOrReplace(record);
 
-                    BM_Adaptador = new SqlDataAdapter(BM_Comando)
-                    {
-                        AcceptChangesDuringFill = true
-                    };
+            });
 
-                    BM_DataSet = new DataSet();
-                    BM_Adaptador.Fill(BM_DataSet, "RECURSOS");
+            BM_ConexionLite.Close();
+            BM_ConexionLite.Dispose();
+            BM_ConexionLite = null;
 
-                    DataRow LvrRecurso = BM_DataSet.Tables["RECURSOS"].Rows[0];
-
-                    BM_Builder = new SqlCommandBuilder(BM_Adaptador);
-
-                    LvrRecurso["PENTALPHA"] = mBK_Recurso.PENTALPHA;
-                    LvrRecurso["PATENTE"] = mBK_Recurso.PATENTE;
-                    LvrRecurso["RUTID"] = mBK_Recurso.RUTID;
-                    LvrRecurso["DIGVER"] = mBK_Recurso.DIGVER;
-                    LvrRecurso["TIPO"] = mBK_Recurso.TIPO;
-                    LvrRecurso["MARCA"] = mBK_Recurso.MARCA;
-                    LvrRecurso["MODELO"] = mBK_Recurso.MODELO;
-                    LvrRecurso["VARIANTE"] = mBK_Recurso.VARIANTE;
-                    LvrRecurso["ANO"] = mBK_Recurso.ANO;
-                    LvrRecurso["COLOR"] = mBK_Recurso.COLOR;
-                    LvrRecurso["CIUDAD"] = mBK_Recurso.CIUDAD;
-                    LvrRecurso["COMUNA"] = mBK_Recurso.COMUNA;
-                    LvrRecurso["REGION"] = mBK_Recurso.REGION;
-                    LvrRecurso["PAIS"] = mBK_Recurso.PAIS;
-                    LvrRecurso["OBSERVACIONES"] = mBK_Recurso.OBSERVACIONES;
-                    LvrRecurso["FOTO"] = mBK_Recurso.FOTO;
-                    _ = BM_Builder.GetUpdateCommand(true);
-                    _ = BM_Adaptador.Update(BM_DataSet, "RECURSOS");
-                    _ = BM_Adaptador.UpdateCommand;
-                }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                    return false;
-                }
-                return true;
-            }
-            else if (BM_TransferVar.SincronizarWebPentalpha())
-            {
-                return false;
-            }
-            else if (BM_TransferVar.SincronizarWebPropio())
-            {
-                return false;
-            }
-            return false;
+            return true;
         }
 
         public bool BorrarRecurso(string pPENTALPHA, string pPATENTE)
         {
-            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
-            {
-                return false;
-            }
+            string VPKRECURSO = pPENTALPHA + pPATENTE;
 
-            BK_Recurso = new JsonBikeMessengerRecurso();
-            BK_RecursoLista = new List<JsonBikeMessengerRecurso>();
+            SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
 
-            if (BM_TransferVar.SincronizarBaseLocal())
+            BM_ConexionLite.RunInTransaction(() =>
             {
-                return false;
-            }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
-            {
-                SqlCommand BM_Comando;
+                _ = BM_ConexionLite.Delete<TbBikeMessengerRecurso>(VPKRECURSO);
+            });
 
-                try
-                {
-                    BM_Comando = BM_Conexion.CreateCommand();
-                    BM_Comando.CommandText = string.Format("DELETE FROM RECURSOS WHERE PENTALPHA = '" + pPENTALPHA + "' AND PATENTE = '" + pPATENTE + "'");
-                    _ = BM_Comando.ExecuteNonQuery();
-                }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                    return false;
-                }
-                return true;
-            }
-            else if (BM_TransferVar.SincronizarWebPentalpha())
-            {
-                return false;
-            }
-            else if (BM_TransferVar.SincronizarWebPropio())
-            {
-                return false;
-            }
-            return false;
+            BM_ConexionLite.Close();
+            BM_ConexionLite.Dispose();
+            BM_ConexionLite = null;
+
+            return true;
         }
 
-        public List<ClaseRecursoGrid> BuscarGridRecurso()
+        public List<ClaseRecursoGrid> BuscarGridRecurso(string pPENTALPHA)
         {
-            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
-            {
-                return null;
-            }
 
             List<ClaseRecursoGrid> GridLocalRecursoLista = new List<ClaseRecursoGrid>();
+            List<StructBikeMessengerRecurso> ListaLocalRecurso = new List<StructBikeMessengerRecurso>();
 
-            if (BM_TransferVar.SincronizarBaseLocal())
+            ListaLocalRecurso = BuscarRecurso(pPENTALPHA);
+
+            if (ListaLocalRecurso == null)
             {
                 return null;
             }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
+
+            if (ListaLocalRecurso.Count > 0)
             {
-
-                DataSet BM_DataSet;
-                SqlDataAdapter BM_Adaptador;
-                SqlCommand BM_Comando;
-
-                try
+                for (int i = 0; i < ListaLocalRecurso.Count; i++)
                 {
-                    BM_Comando = BM_Conexion.CreateCommand();
-                    BM_Comando.CommandText = string.Format("SELECT * FROM RECURSOS_VISTA_GRID");
-
-                    BM_Adaptador = new SqlDataAdapter(BM_Comando)
+                    ClaseRecursoGrid GridLocalRecurso = new ClaseRecursoGrid
                     {
-                        AcceptChangesDuringFill = true
+                        PATENTE = ListaLocalRecurso[i].PATENTE,
+                        TIPO = ListaLocalRecurso[i].TIPO,
+                        MARCA = ListaLocalRecurso[i].MARCA,
+                        MODELO = ListaLocalRecurso[i].MODELO,
+                        RUTID = ListaLocalRecurso[i].RUTID,
+                        DIGVER = ListaLocalRecurso[i].DIGVER,
+                        CIUDAD = ListaLocalRecurso[i].CIUDAD
                     };
-
-                    BM_DataSet = new DataSet();
-                    _ = BM_Adaptador.Fill(BM_DataSet, "RECURSOS_VISTA_GRID");
-
-                    foreach (DataRowView LvrRecurso in BM_DataSet.Tables["RECURSOS_VISTA_GRID"].DefaultView)
-                    {
-                        ClaseRecursoGrid GridLocalRecurso = new ClaseRecursoGrid
-                        {
-                            PATENTE = LvrRecurso["PATENTE"].ToString(),
-                            TIPO = LvrRecurso["TIPO"].ToString(),
-                            MARCA = LvrRecurso["MARCA"].ToString(),
-                            MODELO = LvrRecurso["MODELO"].ToString(),
-                            RUTID = LvrRecurso["RUTID"].ToString(),
-                            DIGVER = LvrRecurso["DIGVER"].ToString(),
-                            CIUDAD = LvrRecurso["CIUDAD"].ToString()
-                        };
-                        GridLocalRecursoLista.Add(GridLocalRecurso);
-                    }
-                }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.Message);
-                    Console.WriteLine(Ex.InnerException.Message);
-                    return null;
+                    GridLocalRecursoLista.Add(GridLocalRecurso);
                 }
                 return GridLocalRecursoLista;
-            }
-            else if (BM_TransferVar.SincronizarWebPentalpha())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarWebPropio())
-            {
-                return null;
+
             }
             return null;
         }
 
-        public List<ClasePersonalGrid> BuscarGridPersonal()
+        public List<ClasePersonalGrid> BuscarGridPersonal(string pPENTALPHA)
         {
-            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
-            {
-                return null;
-            }
-
             List<ClasePersonalGrid> GridLocalPersonalLista = new List<ClasePersonalGrid>();
+            List<TbBikeMessengerPersonal> ListaLocalPersonal = new List<TbBikeMessengerPersonal>();
 
-            if (BM_TransferVar.SincronizarBaseLocal())
+            SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
+
+            ListaLocalPersonal = BM_ConexionLite.Table<TbBikeMessengerPersonal>().Where(t => t.PENTALPHA == pPENTALPHA).ToList();
+
+            if (ListaLocalPersonal == null)
             {
                 return null;
             }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
+
+            if (ListaLocalPersonal.Count > 0)
             {
-                DataSet BM_DataSet;
-                SqlDataAdapter BM_Adaptador;
-                SqlCommand BM_Comando;
-
-                try
+                for (int i = 0; i < ListaLocalPersonal.Count; i++)
                 {
-                    BM_Comando = BM_Conexion.CreateCommand();
-                    BM_Comando.CommandText = string.Format("SELECT * FROM PERSONAL_VISTA_GRID");
-
-                    BM_Adaptador = new SqlDataAdapter(BM_Comando)
+                    ClasePersonalGrid GridLocalPersonal = new ClasePersonalGrid
                     {
-                        AcceptChangesDuringFill = false
+                        RUTID = ListaLocalPersonal[i].RUTID,
+                        DIGVER = ListaLocalPersonal[i].DIGVER,
+                        APELLIDOS = ListaLocalPersonal[i].APELLIDOS,
+                        NOMBRES = ListaLocalPersonal[i].NOMBRES
                     };
-                    BM_DataSet = new DataSet();
-                    _ = BM_Adaptador.Fill(BM_DataSet, "PERSONAL_VISTA_GRID");
+                    GridLocalPersonalLista.Add(GridLocalPersonal);
+                }
 
-                    foreach (DataRowView LvrPersonal in BM_DataSet.Tables["PERSONAL_VISTA_GRID"].DefaultView)
-                    {
-                        ClasePersonalGrid GridLocalPersonal = new ClasePersonalGrid
-                        {
-                            RUTID = LvrPersonal["RUTID"].ToString(),
-                            DIGVER = LvrPersonal["DIGVER"].ToString(),
-                            APELLIDOS = LvrPersonal["APELLIDOS"].ToString(),
-                            NOMBRES = LvrPersonal["NOMBRES"].ToString()
-                        };
-                        GridLocalPersonalLista.Add(GridLocalPersonal);
-                    }
-                }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                    return null;
-                }
+                BM_ConexionLite.Close();
+                BM_ConexionLite.Dispose();
+                BM_ConexionLite = null;
+
                 return GridLocalPersonalLista;
             }
-            else if (BM_TransferVar.SincronizarWebPentalpha())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarWebPropio())
-            {
-                return null;
-            }
+
+            BM_ConexionLite.Close();
+            BM_ConexionLite.Dispose();
+            BM_ConexionLite = null;
+
             return null;
         }
 
-        public string Bm_BuscarNombrePropietario(string pPENTALPHA, string pRUT, string pDIGVER)
+        public string Bm_BuscarNombrePropietario(string pPENTALPHA, string pRUTID, string pDIGVER)
         {
-            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            string VNOMBRE = null;
+            string VPKPERSONAL = pPENTALPHA + pRUTID + pDIGVER;
+
+            List<StructBikeMessengerPersonal> BK_PersonalLista = new List<StructBikeMessengerPersonal>();
+            StructBikeMessengerPersonal BK_Personal = new StructBikeMessengerPersonal();
+
+            SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
+
+            List<TbBikeMessengerPersonal> results = BM_ConexionLite.Table<TbBikeMessengerPersonal>().Where(t => t.PKPERSONAL == VPKPERSONAL).ToList();
+
+            if (results.Count > 0)
             {
-                return null;
+                VNOMBRE = results[0].APELLIDOS + " " + results[0].NOMBRES;
             }
 
-            string NombrePersonal = "No existe";
+            BM_ConexionLite.Close();
+            BM_ConexionLite.Dispose();
+            BM_ConexionLite = null;
 
-            if (BM_TransferVar.SincronizarBaseLocal())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
-            {
-                SqlCommand BM_ComandoLocal;
-                SqlDataReader BM_ReaderLocal;
-
-                try
-                {
-                    BM_ComandoLocal = BM_Conexion.CreateCommand();
-                    BM_ComandoLocal.CommandText = string.Format("SELECT APELLIDOS + ', ' + NOMBRES FROM PERSONAL WHERE PENTALPHA = '" + pPENTALPHA + "'  AND RUTID = '" + pRUT + "' AND DIGVER = '" + pDIGVER + "'");
-                    BM_ReaderLocal = BM_ComandoLocal.ExecuteReader();
-                    if (BM_ReaderLocal.Read())
-                        NombrePersonal = BM_ReaderLocal.GetString(0);
-                }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                }
-                return NombrePersonal;
-            }
-            else if (BM_TransferVar.SincronizarWebPentalpha())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarWebPropio())
-            {
-                return null;
-            }
-            return null;
+            return VNOMBRE;
         }
 
         public List<string> GetPais()
         {
-            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
-            {
-                return null;
-            }
-
-            List<string> BK_PaisLista = new List<string>();
-
-            if (BM_TransferVar.SincronizarBaseLocal())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
-            {
-                DataSet BM_DataSetPais;
-                SqlDataAdapter BM_AdaptadorPais;
-                SqlCommand BM_ComandoPais;
-                string BK_Pais;
-
-                try
-                {
-                    BM_ComandoPais = BM_Conexion.CreateCommand();
-                    BM_ComandoPais.CommandText = string.Format("SELECT * FROM PAIS ORDER BY NOMBRE");
-
-                    BM_AdaptadorPais = new SqlDataAdapter(BM_ComandoPais);
-
-                    BM_DataSetPais = new DataSet();
-                    _ = BM_AdaptadorPais.Fill(BM_DataSetPais, "PAIS");
-
-                    foreach (DataRow LvrPais in BM_DataSetPais.Tables["PAIS"].Rows)
-                    {
-                        BK_Pais = LvrPais["NOMBRE"].ToString();
-                        BK_PaisLista.Add(BK_Pais);
-                    }
-                }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                    return null;
-                }
-                return BK_PaisLista;
-            }
-            else if (BM_TransferVar.SincronizarWebPentalpha())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarWebPropio())
-            {
-                return null;
-            }
             return null;
         }
 
         public List<string> GetRegion()
         {
-            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
-            {
-                return null;
-            }
-
-            List<string> BK_RegionLista = new List<string>();
-
-            if (BM_TransferVar.SincronizarBaseLocal())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
-            {
-                DataSet BM_DataSetRegion;
-                SqlDataAdapter BM_AdaptadorRegion;
-                SqlCommand BM_ComandoRegion;
-                string BK_Region;
-
-                try
-                {
-                    BM_ComandoRegion = BM_Conexion.CreateCommand();
-                    BM_ComandoRegion.CommandText = string.Format("SELECT * FROM ESTADOREGION ORDER BY NOMBRE");
-
-                    BM_AdaptadorRegion = new SqlDataAdapter(BM_ComandoRegion);
-
-                    BM_DataSetRegion = new DataSet();
-                    _ = BM_AdaptadorRegion.Fill(BM_DataSetRegion, "ESTADOREGION");
-
-                    foreach (DataRow LvrRegion in BM_DataSetRegion.Tables["ESTADOREGION"].Rows)
-                    {
-                        BK_Region = LvrRegion["NOMBRE"].ToString();
-                        BK_RegionLista.Add(BK_Region);
-                    }
-                }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                    return null;
-                }
-                return BK_RegionLista;
-            }
-            else if (BM_TransferVar.SincronizarWebPentalpha())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarWebPropio())
-            {
-                return null;
-            }
             return null;
         }
 
         public List<string> GetComuna()
         {
-            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
-            {
-                return null;
-            }
-
-            List<string> BK_ComunaLista = new List<string>();
-
-            if (BM_TransferVar.SincronizarBaseLocal())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
-            {
-                DataSet BM_DataSetComuna;
-                SqlDataAdapter BM_AdaptadorComuna;
-                SqlCommand BM_ComandoComuna;
-                string BK_Comuna;
-
-                try
-                {
-                    BM_ComandoComuna = BM_Conexion.CreateCommand();
-                    BM_ComandoComuna.CommandText = string.Format("SELECT * FROM COMUNA ORDER BY NOMBRE");
-
-                    BM_AdaptadorComuna = new SqlDataAdapter(BM_ComandoComuna);
-
-                    BM_DataSetComuna = new DataSet();
-                    _ = BM_AdaptadorComuna.Fill(BM_DataSetComuna, "COMUNA");
-
-                    foreach (DataRow LvrComuna in BM_DataSetComuna.Tables["COMUNA"].Rows)
-                    {
-                        BK_Comuna = LvrComuna["NOMBRE"].ToString();
-                        BK_ComunaLista.Add(BK_Comuna);
-                    }
-                }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                    return null;
-                }
-                return BK_ComunaLista;
-            }
-            else if (BM_TransferVar.SincronizarWebPentalpha())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarWebPropio())
-            {
-                return null;
-            }
             return null;
         }
 
         public List<string> GetCiudad()
         {
-            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
-            {
-                return null;
-            }
-
-            List<string> BK_CiudadLista = new List<string>();
-
-            if (BM_TransferVar.SincronizarBaseLocal())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
-            {
-                DataSet BM_DataSetCiudad;
-                SqlDataAdapter BM_AdaptadorCiudad;
-                SqlCommand BM_ComandoCiudad;
-                string BK_Ciudad;
-
-                try
-                {
-                    BM_ComandoCiudad = BM_Conexion.CreateCommand();
-                    BM_ComandoCiudad.CommandText = string.Format("SELECT * FROM CIUDAD ORDER BY NOMBRE");
-
-                    BM_AdaptadorCiudad = new SqlDataAdapter(BM_ComandoCiudad);
-
-                    BM_DataSetCiudad = new DataSet();
-                    _ = BM_AdaptadorCiudad.Fill(BM_DataSetCiudad, "CIUDAD");
-
-                    foreach (DataRow LvrCiudad in BM_DataSetCiudad.Tables["CIUDAD"].Rows)
-                    {
-                        BK_Ciudad = LvrCiudad["NOMBRE"].ToString();
-                        BK_CiudadLista.Add(BK_Ciudad);
-                    }
-                }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                    return null;
-                }
-                return BK_CiudadLista;
-            }
-            else if (BM_TransferVar.SincronizarWebPentalpha())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarWebPropio())
-            {
-                return null;
-            }
             return null;
         }
 
@@ -785,8 +365,8 @@ namespace BikeMessenger
                 return null;
             }
 
-            BK_Recurso = new JsonBikeMessengerRecurso();
-            BK_RecursoLista = new List<JsonBikeMessengerRecurso>();
+            BK_Recurso = new StructBikeMessengerRecurso();
+            BK_RecursoLista = new List<StructBikeMessengerRecurso>();
 
             LvrTablaHtml DocumentoHtml = new LvrTablaHtml();
 
@@ -807,6 +387,7 @@ namespace BikeMessenger
             DocumentoHtml.AgregarEncabezado("PAIS");
             DocumentoHtml.CerrarEncabezado();
 
+            /*
             if (BM_TransferVar.SincronizarBaseLocal())
             {
                 return null;
@@ -860,7 +441,7 @@ namespace BikeMessenger
             {
                 return null;
             }
-
+            */
             DocumentoHtml.FinDocumento();
             return DocumentoHtml.BufferHtml;
         }

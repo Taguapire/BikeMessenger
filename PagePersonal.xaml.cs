@@ -47,7 +47,7 @@ namespace BikeMessenger
 
             if (LvrTransferVar.CLI_RUTID == "")
             {
-                PersonalIOArray = BM_Database_Personal.BuscarPersonal();
+                PersonalIOArray = BM_Database_Personal.BuscarPersonal(LvrTransferVar.EMP_PENTALPHA);
                 if (PersonalIOArray != null && PersonalIOArray.Count > 0)
                 {
                     PersonalIO = PersonalIOArray[0];
@@ -264,6 +264,7 @@ namespace BikeMessenger
             PersonalIO.PENTALPHA = LvrTransferVar.PER_PENTALPHA;
             PersonalIO.RUTID = textBoxRut.Text;
             PersonalIO.DIGVER = textBoxDigitoVerificador.Text;
+            PersonalIO.PKPERSONAL = PersonalIO.PENTALPHA + PersonalIO.RUTID + PersonalIO.DIGVER;
             // ***********************************************************
             // Agregando Campos de Parametros
             LvrTransferVar.CLI_RUTID = PersonalIO.RUTID;
@@ -281,6 +282,7 @@ namespace BikeMessenger
             PersonalIO.PISO = textBoxPiso.Text;
             PersonalIO.DPTO = textBoxDepartamento.Text;
             PersonalIO.CODIGOPOSTAL = textBoxCodigoPostal.Text;
+
             if (comboBoxCiudad.Text != "")
             {
                 PersonalIO.CIUDAD = comboBoxCiudad.Text;
@@ -300,9 +302,16 @@ namespace BikeMessenger
             {
                 PersonalIO.PAIS = comboBoxPais.Text;
             }
-
             PersonalIO.OBSERVACIONES = textBoxObservaciones.Text;
-            PersonalIO.FOTO = await ConvertirImageABase64Async();
+
+            try
+            {
+                PersonalIO.FOTO = await ConvertirImageABase64Async();
+            }
+            catch (ArgumentException) 
+            {
+                PersonalIO.FOTO = "";
+            }
         }
 
         private async void BtnAgregarPersonal(object sender, RoutedEventArgs e)
@@ -314,6 +323,7 @@ namespace BikeMessenger
 
             await LlenarDbConPantallaAsync();
 
+            
 
             if (BM_Database_Personal.AgregarPersonal(PersonalIO))
             {
@@ -378,7 +388,7 @@ namespace BikeMessenger
 
             if (BM_Database_Personal.BorrarPersonal(LvrTransferVar.PER_PENTALPHA, PersonalIO.RUTID, PersonalIO.DIGVER))
             {
-                if ((PersonalIOArray = BM_Database_Personal.BuscarPersonal()) != null)
+                if ((PersonalIOArray = BM_Database_Personal.BuscarPersonal(LvrTransferVar.PER_PENTALPHA)) != null)
                 {
                     PersonalIO = PersonalIOArray[0];
                     LvrTransferVar.CLI_RUTID = PersonalIO.RUTID;
@@ -491,7 +501,7 @@ namespace BikeMessenger
             List<ClasePersonalGrid> GridPersonalDb = new List<ClasePersonalGrid>();
             List<GridPersonalIndividual> GridPersonalLista = new List<GridPersonalIndividual>();
 
-            if ((GridPersonalDb = BM_Database_Personal.BuscarGridPersonal()) != null)
+            if ((GridPersonalDb = BM_Database_Personal.BuscarGridPersonal(LvrTransferVar.EMP_PENTALPHA)) != null)
             {
                 for (int i = 0; i < GridPersonalDb.Count; i++)
                 {
@@ -534,90 +544,6 @@ namespace BikeMessenger
             {
                 ; // No hacer nada, es un control vacio de error
             }
-        }
-
-        private void CopiarMemoriaEnJson(string pOPERACION)
-        {
-            // Limpiar Variables
-            EnviarJsonPersonal.OPERACION = "";
-            EnviarJsonPersonal.PENTALPHA = "";
-            EnviarJsonPersonal.RUTID = "";
-            EnviarJsonPersonal.DIGVER = "";
-            EnviarJsonPersonal.APELLIDOS = "";
-            EnviarJsonPersonal.NOMBRES = "";
-            EnviarJsonPersonal.TELEFONO1 = "";
-            EnviarJsonPersonal.TELEFONO2 = "";
-            EnviarJsonPersonal.EMAIL = "";
-            EnviarJsonPersonal.AUTORIZACION = "";
-            EnviarJsonPersonal.CARGO = "";
-            EnviarJsonPersonal.DOMICILIO = "";
-            EnviarJsonPersonal.NUMERO = "";
-            EnviarJsonPersonal.PISO = "";
-            EnviarJsonPersonal.DPTO = "";
-            EnviarJsonPersonal.CODIGOPOSTAL = "";
-            EnviarJsonPersonal.CIUDAD = "";
-            EnviarJsonPersonal.COMUNA = "";
-            EnviarJsonPersonal.REGION = "";
-            EnviarJsonPersonal.PAIS = "";
-            EnviarJsonPersonal.OBSERVACIONES = "";
-            EnviarJsonPersonal.FOTO = "";
-            EnviarJsonPersonal.RESOPERACION = "";
-            EnviarJsonPersonal.RESMENSAJE = "";
-
-            // Llenar Variables
-            EnviarJsonPersonal.OPERACION = pOPERACION;
-            EnviarJsonPersonal.PENTALPHA = PersonalIO.PENTALPHA;
-            EnviarJsonPersonal.RUTID = PersonalIO.RUTID;
-            EnviarJsonPersonal.DIGVER = PersonalIO.DIGVER;
-            EnviarJsonPersonal.APELLIDOS = PersonalIO.APELLIDOS;
-            EnviarJsonPersonal.NOMBRES = PersonalIO.NOMBRES;
-            EnviarJsonPersonal.TELEFONO1 = PersonalIO.TELEFONO1;
-            EnviarJsonPersonal.TELEFONO2 = PersonalIO.TELEFONO2;
-            EnviarJsonPersonal.EMAIL = PersonalIO.EMAIL;
-            EnviarJsonPersonal.AUTORIZACION = PersonalIO.AUTORIZACION;
-            EnviarJsonPersonal.CARGO = PersonalIO.CARGO;
-            EnviarJsonPersonal.DOMICILIO = PersonalIO.DOMICILIO;
-            EnviarJsonPersonal.NUMERO = PersonalIO.NUMERO;
-            EnviarJsonPersonal.PISO = PersonalIO.PISO;
-            EnviarJsonPersonal.DPTO = PersonalIO.DPTO;
-            EnviarJsonPersonal.CODIGOPOSTAL = PersonalIO.CODIGOPOSTAL;
-            EnviarJsonPersonal.CIUDAD = PersonalIO.CIUDAD;
-            EnviarJsonPersonal.COMUNA = PersonalIO.COMUNA;
-            EnviarJsonPersonal.REGION = PersonalIO.REGION;
-            EnviarJsonPersonal.PAIS = PersonalIO.PAIS;
-            EnviarJsonPersonal.OBSERVACIONES = PersonalIO.OBSERVACIONES;
-            EnviarJsonPersonal.FOTO = PersonalIO.FOTO;
-            EnviarJsonPersonal.RESOPERACION = "";
-            EnviarJsonPersonal.RESMENSAJE = "";
-        }
-
-        private void CopiarJsonEnMemoria(string pOPERACION)
-        {
-            // Proceso
-            // EnviarJsonPersonal.OPERACION = pOPERACION;
-            PersonalIO.PENTALPHA = EnviarJsonPersonal.PENTALPHA;
-            PersonalIO.RUTID = EnviarJsonPersonal.RUTID;
-            PersonalIO.DIGVER = EnviarJsonPersonal.DIGVER;
-            PersonalIO.APELLIDOS = EnviarJsonPersonal.APELLIDOS;
-            PersonalIO.NOMBRES = EnviarJsonPersonal.NOMBRES;
-            PersonalIO.TELEFONO1 = EnviarJsonPersonal.TELEFONO1;
-            PersonalIO.TELEFONO2 = EnviarJsonPersonal.TELEFONO2;
-            PersonalIO.EMAIL = EnviarJsonPersonal.EMAIL;
-            PersonalIO.AUTORIZACION = EnviarJsonPersonal.AUTORIZACION;
-            PersonalIO.CARGO = EnviarJsonPersonal.CARGO;
-            PersonalIO.DOMICILIO = EnviarJsonPersonal.DOMICILIO;
-            PersonalIO.NUMERO = EnviarJsonPersonal.NUMERO;
-            PersonalIO.PISO = EnviarJsonPersonal.PISO;
-            PersonalIO.DPTO = EnviarJsonPersonal.DPTO;
-            PersonalIO.CODIGOPOSTAL = EnviarJsonPersonal.CODIGOPOSTAL;
-            PersonalIO.CIUDAD = EnviarJsonPersonal.CIUDAD;
-            PersonalIO.COMUNA = EnviarJsonPersonal.COMUNA;
-            PersonalIO.REGION = EnviarJsonPersonal.REGION;
-            PersonalIO.PAIS = EnviarJsonPersonal.PAIS;
-            PersonalIO.OBSERVACIONES = EnviarJsonPersonal.OBSERVACIONES;
-            PersonalIO.FOTO = EnviarJsonPersonal.FOTO;
-            // BM_Database_Personal.BK_RESOPERACION = EnviarJsonPersonal.RESOPERACION;
-            // BM_Database_Personal.BK_RESMENSAJE = EnviarJsonPersonal.RESMENSAJE;
         }
     }
 

@@ -1,62 +1,62 @@
-﻿<Page
+﻿<Page x:Name="PaginaPrincipalBikeMessenger"
     x:Class="BikeMessenger.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:BikeMessenger"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" Width="1280" Height="720">
+    mc:Ignorable="d" Width="1280" Height="720" MinHeight="720">
     <Page.Background>
-        <AcrylicBrush x:Name="PaginaBikeMessenger" TintColor="#CC6E808B"/>
+        <AcrylicBrush x:Name="PaginaBikeMessenger" TintColor="#FF357ADE"/>
     </Page.Background>
-    <Grid AutomationProperties.AccessibilityView="Content"  RequestedTheme="Default" MinWidth="1280" MinHeight="720" MaxWidth="1280" MaxHeight="720" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
+    <Grid AutomationProperties.AccessibilityView="Content"  RequestedTheme="Default">
         <Grid.Background>
-            <AcrylicBrush TintColor="#CC6E808B"/>
+            <AcrylicBrush TintColor="#FF357ADE"/>
         </Grid.Background>
-        <NavigationView x:Name="BM_NavPag" Header="BikeMessenger" IsTabStop="False" Loaded="BM_NavPag_Loaded" SelectionChanged="BM_NavPag_SelectionChanged" ItemInvoked="BM_NavPag_ItemInvoked" Margin="0,12,0,0" IsSettingsVisible="False" Foreground="White" IsBackEnabled="False" BackRequested="BM_NavPag_BackRequested">
+        <NavigationView x:Name="BM_NavPag" IsTabStop="False" Loaded="BM_NavPag_Loaded" SelectionChanged="BM_NavPag_SelectionChanged" ItemInvoked="BM_NavPag_ItemInvoked" Margin="0,0,0,12" IsSettingsVisible="False" Foreground="White" IsBackEnabled="False" BackRequested="BM_NavPag_BackRequested" HorizontalAlignment="Left" Width="1200" HorizontalContentAlignment="Left" OpenPaneLength="130" Background="#FF357ADE">
             <NavigationView.MenuItems>
-                <NavigationViewItem x:Name="MenuNav_Inicio" Content="Inicio" Tag="Inicio_Page">
+                <NavigationViewItem x:Name="MenuNav_Inicio" Content="Inicio" Tag="Inicio_Page" HorizontalAlignment="Stretch">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE80F;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem x:Name="MenuNav_Empresa" Content="Empresa" Tag="Empresa_Page">
+                <NavigationViewItem x:Name="MenuNav_Empresa" Content="Empresa" Tag="Empresa_Page" HorizontalAlignment="Stretch">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE731;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem x:Name="MenuNav_Personal" Content="Personal" Tag="Personal_Page">
+                <NavigationViewItem x:Name="MenuNav_Personal" Content="Personal" Tag="Personal_Page" HorizontalAlignment="Stretch">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE748;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem x:Name="MenuNav_Recursos"  Content="Recursos" Tag="Recursos_Page">
+                <NavigationViewItem x:Name="MenuNav_Recursos"  Content="Recursos" Tag="Recursos_Page" HorizontalAlignment="Stretch">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE804;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem x:Name="MenuNav_Clientes"  Content="Clientes" Tag="Clientes_Page">
+                <NavigationViewItem x:Name="MenuNav_Clientes"  Content="Clientes" Tag="Clientes_Page" HorizontalAlignment="Stretch">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE779;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem x:Name="MenuNav_Servicios" Content="Servicios" Tag="Servicios_Page">
+                <NavigationViewItem x:Name="MenuNav_Servicios" Content="Servicios" Tag="Servicios_Page" HorizontalAlignment="Stretch">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE835;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem x:Name="MenuNav_Configuracion" Content="Ajustes" Tag="Ajustes_Page">
+                <NavigationViewItem x:Name="MenuNav_Configuracion" Content="Ajustes" Tag="Ajustes_Page" HorizontalAlignment="Stretch">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE713;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem x:Name="MenuNav_Salir" Content="Salir" Tag="Salir_Page">
+                <NavigationViewItem x:Name="MenuNav_Salir" Content="Salir" Tag="Salir_Page" HorizontalAlignment="Stretch">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE81B;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.MenuItems>
-            <Frame x:Name="CuadroDeContenido" Content="Frame" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="0,10,19,23"/>
+            <Frame x:Name="CuadroDeContenido" Content="Frame"/>
         </NavigationView>
     </Grid>
 </Page>

@@ -9,12 +9,13 @@ namespace BikeMessenger
         private TransferVar BM_TransferVar = new TransferVar();
 
         // Valode de Memoria a Bases de Datos
+
         private StructBikeMessengerEmpresa BK_Empresa;
         private List<StructBikeMessengerEmpresa> BK_EmpresaLista;
+
         private string CompletoNombreBD = "";
 
         public Bm_Empresa_Database()
-
         {
             try
             {
@@ -34,8 +35,9 @@ namespace BikeMessenger
             }
         }
 
+        // Busqueda General
         // Busqueda
-        public List<StructBikeMessengerEmpresa> BuscarEmpresa(string pPENTALPHA)
+        public List<StructBikeMessengerEmpresa> BuscarEmpresa()
         {
             BK_Empresa = new StructBikeMessengerEmpresa();
             BK_EmpresaLista = new List<StructBikeMessengerEmpresa>();
@@ -85,15 +87,64 @@ namespace BikeMessenger
             return null;
         }
 
+        // Busqueda con Clave
+        public List<StructBikeMessengerEmpresa> BuscarEmpresa(string pPENTALPHA)
+        {
+            BK_Empresa = new StructBikeMessengerEmpresa();
+            BK_EmpresaLista = new List<StructBikeMessengerEmpresa>();
+
+            SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
+
+            List<TbBikeMessengerEmpresa> results = BM_ConexionLite.Table<TbBikeMessengerEmpresa>().Where(t => t.PENTALPHA == pPENTALPHA).ToList();
+
+            if (results.Count > 0)
+            {
+                BK_Empresa.OPERACION = "CONSULTAR";
+                BK_Empresa.PENTALPHA = results[0].PENTALPHA;
+                BK_Empresa.RUTID = results[0].RUTID;
+                BK_Empresa.DIGVER = results[0].DIGVER;
+                BK_Empresa.NOMBRE = results[0].NOMBRE;
+                BK_Empresa.USUARIO = results[0].USUARIO;
+                BK_Empresa.CLAVE = results[0].CLAVE;
+                BK_Empresa.ACTIVIDAD1 = results[0].ACTIVIDAD1;
+                BK_Empresa.ACTIVIDAD2 = results[0].ACTIVIDAD2;
+                BK_Empresa.REPRESENTANTE1 = results[0].REPRESENTANTE1;
+                BK_Empresa.REPRESENTANTE2 = results[0].REPRESENTANTE2;
+                BK_Empresa.REPRESENTANTE3 = results[0].REPRESENTANTE3;
+                BK_Empresa.DOMICILIO1 = results[0].DOMICILIO1;
+                BK_Empresa.DOMICILIO2 = results[0].DOMICILIO2;
+                BK_Empresa.NUMERO = results[0].NUMERO;
+                BK_Empresa.PISO = results[0].PISO;
+                BK_Empresa.OFICINA = results[0].OFICINA;
+                BK_Empresa.CIUDAD = results[0].CIUDAD;
+                BK_Empresa.COMUNA = results[0].COMUNA;
+                BK_Empresa.ESTADOREGION = results[0].ESTADOREGION;
+                BK_Empresa.CODIGOPOSTAL = results[0].CODIGOPOSTAL;
+                BK_Empresa.PAIS = results[0].PAIS;
+                BK_Empresa.TELEFONO1 = results[0].TELEFONO1;
+                BK_Empresa.TELEFONO2 = results[0].TELEFONO2;
+                BK_Empresa.TELEFONO3 = results[0].TELEFONO3;
+                BK_Empresa.OBSERVACIONES = results[0].OBSERVACIONES;
+                BK_Empresa.LOGO = results[0].LOGO;
+                BK_Empresa.RESOPERACION = "OK";
+                BK_Empresa.RESMENSAJE = results[0].RESMENSAJE;
+                BK_EmpresaLista.Add(BK_Empresa);
+                return BK_EmpresaLista;
+            }
+
+            BM_ConexionLite.Close();
+            BM_ConexionLite.Dispose();
+
+            return null;
+        }
+
         public bool AgregarEmpresa(StructBikeMessengerEmpresa aBK_Empresa)
         {
-
             SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
 
             BM_ConexionLite.RunInTransaction(() =>
             {
                 _ = BM_ConexionLite.DeleteAll<TbBikeMessengerEmpresa>();
-
 
                 TbBikeMessengerEmpresa record = new TbBikeMessengerEmpresa
                 {
@@ -141,7 +192,6 @@ namespace BikeMessenger
             BM_ConexionLite.RunInTransaction(() =>
             {
                 _ = BM_ConexionLite.DeleteAll<TbBikeMessengerEmpresa>();
-
 
                 TbBikeMessengerEmpresa record = new TbBikeMessengerEmpresa
                 {

@@ -300,7 +300,15 @@ namespace BikeMessenger
             EmpresaIO.TELEFONO3 = textBoxTelefono3.Text;
 
             EmpresaIO.OBSERVACIONES = textBoxObservaciones.Text;
-            EmpresaIO.LOGO = await ConvertirImageABase64Async();
+
+            try
+            {
+                EmpresaIO.LOGO = await ConvertirImageABase64Async();
+            }
+            catch (ArgumentException)
+            {
+                EmpresaIO.LOGO = "";
+            }
         }
 
         private async void BtnAgregarEmpresa(object sender, RoutedEventArgs e)
