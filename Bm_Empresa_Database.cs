@@ -78,13 +78,12 @@ namespace BikeMessenger
                 BK_Empresa.RESOPERACION = "OK";
                 BK_Empresa.RESMENSAJE = results[0].RESMENSAJE;
                 BK_EmpresaLista.Add(BK_Empresa);
-                return BK_EmpresaLista;
             }
 
             BM_ConexionLite.Close();
             BM_ConexionLite.Dispose();
 
-            return null;
+            return BK_EmpresaLista;
         }
 
         // Busqueda con Clave
@@ -129,13 +128,12 @@ namespace BikeMessenger
                 BK_Empresa.RESOPERACION = "OK";
                 BK_Empresa.RESMENSAJE = results[0].RESMENSAJE;
                 BK_EmpresaLista.Add(BK_Empresa);
-                return BK_EmpresaLista;
             }
 
             BM_ConexionLite.Close();
             BM_ConexionLite.Dispose();
 
-            return null;
+            return BK_EmpresaLista;
         }
 
         public bool AgregarEmpresa(StructBikeMessengerEmpresa aBK_Empresa)
@@ -144,8 +142,6 @@ namespace BikeMessenger
 
             BM_ConexionLite.RunInTransaction(() =>
             {
-                _ = BM_ConexionLite.DeleteAll<TbBikeMessengerEmpresa>();
-
                 TbBikeMessengerEmpresa record = new TbBikeMessengerEmpresa
                 {
                     OPERACION = "AGREGAR",
@@ -182,6 +178,9 @@ namespace BikeMessenger
 
             });
 
+            BM_ConexionLite.Close();
+            BM_ConexionLite.Dispose();
+
             return true;
         }
 
@@ -191,8 +190,6 @@ namespace BikeMessenger
 
             BM_ConexionLite.RunInTransaction(() =>
             {
-                _ = BM_ConexionLite.DeleteAll<TbBikeMessengerEmpresa>();
-
                 TbBikeMessengerEmpresa record = new TbBikeMessengerEmpresa
                 {
                     OPERACION = "AGREGAR",
@@ -226,8 +223,10 @@ namespace BikeMessenger
                     RESMENSAJE = mBK_Empresa.RESMENSAJE
                 };
                 _ = BM_ConexionLite.InsertOrReplace(record);
-
             });
+
+            BM_ConexionLite.Close();
+            BM_ConexionLite.Dispose();
 
             return true;
         }

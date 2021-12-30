@@ -401,14 +401,13 @@ namespace BikeMessenger
                 return;
             }
 
-            // Muestra de espera
-            bool TransaccionOK = false;
             LvrProgresRing.IsActive = true;
             await Task.Delay(500); // .5 sec delay
 
             if (BM_Database_Recurso.BorrarRecurso(LvrTransferVar.REC_PENTALPHA, RecursoIO.PATENTE))
             {
-                TransaccionOK = true;
+                // Muestra de espera
+                bool TransaccionOK = true;
 
 
 

@@ -1,168 +1,125 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
 using SQLite;
 
 namespace BikeMessenger
 {
     internal class Bm_Servicio_Database
     {
-        private static SqlConnection BM_Conexion;
-        private static SQLiteConnection BM_ConexionLite;
-
         private TransferVar BM_TransferVar = new TransferVar();
 
-        private static JsonBikeMessengerServicio BK_Servicio = new JsonBikeMessengerServicio();
-        private static List<JsonBikeMessengerServicio> BK_ServicioLista = new List<JsonBikeMessengerServicio>();
+        // Valode de Memoria a Bases de Datos
+
+        private StructBikeMessengerServicio BK_Servicio;
+        private List<StructBikeMessengerServicio> BK_ServicioLista;
+
+        private string CompletoNombreBD = "";
 
         public Bm_Servicio_Database()
         {
-            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            try
             {
-                return;
-            }
+                CompletoNombreBD = BM_TransferVar.DIRECTORIO_BASE_LOCAL + "\\BikeMessenger.db";
 
-            if (BM_TransferVar.SincronizarBaseLocal())
-            {
-                try
-                {
-                    BM_ConexionLite = new SQLiteConnection(BM_TransferVar.DIRECTORIO_BASE_LOCAL + "\\BikeMessenger.db");
-                    //BM_ConexionLite.Open();
-                }
-                catch (SQLite.SQLiteException Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                }
+                SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
+
+                _ = BM_ConexionLite.CreateTable<TbBikeMessengerServicio>();
+
+                BM_ConexionLite.Close();
+                BM_ConexionLite.Dispose();
+                BM_ConexionLite = null;
             }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
+            catch (SQLiteException Ex)
             {
-                try
-                {
-                    BM_Conexion = new SqlConnection();
-                    BM_Conexion.Open();
-                }
-                catch (System.Data.SqlClient.SqlException Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                }
+                Console.WriteLine(Ex.InnerException.Message);
             }
         }
 
         // Busqueda por Muchos
-        public List<JsonBikeMessengerServicio> BuscarServicio()
+        public List<StructBikeMessengerServicio> BuscarServicio(string pPENTALPHA)
         {
-            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
-            {
-                return null;
-            }
+            BK_ServicioLista = new List<StructBikeMessengerServicio>();
 
-            BK_Servicio = new JsonBikeMessengerServicio();
-            BK_ServicioLista = new List<JsonBikeMessengerServicio>();
+            SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
 
-            if (BM_TransferVar.SincronizarBaseLocal())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
-            {
-                DataSet BM_DataSet;
-                SqlDataAdapter BM_Adaptador;
-                SqlCommand BM_Comando;
+            List<TbBikeMessengerServicio> results = BM_ConexionLite.Table<TbBikeMessengerServicio>().Where(t => t.PENTALPHA == pPENTALPHA).ToList();
 
-                try
+            if (results.Count > 0)
+            {
+                for (int i = 0; i < results.Count; i++)
                 {
-                    BM_Comando = BM_Conexion.CreateCommand();
-                    BM_Comando.CommandText = string.Format("SELECT * FROM SERVICIOS");
-
-                    BM_Adaptador = new SqlDataAdapter(BM_Comando)
+                    BK_Servicio = new StructBikeMessengerServicio
                     {
-                        AcceptChangesDuringFill = false
-                    };
-
-                    BM_DataSet = new DataSet();
-                    BM_Adaptador.Fill(BM_DataSet, "SERVICIOS");
-
-                    foreach (DataRow LvrServicio in BM_DataSet.Tables["SERVICIOS"].Rows)
-                    {
-                        BK_Servicio.PENTALPHA = LvrServicio["PENTALPHA"].ToString();
-                        BK_Servicio.NROENVIO = LvrServicio["NROENVIO"].ToString();
-                        BK_Servicio.GUIADESPACHO = LvrServicio["GUIADESPACHO"].ToString();
-                        BK_Servicio.FECHA = LvrServicio["FECHA"].ToString();
-                        BK_Servicio.HORA = LvrServicio["HORA"].ToString();
-                        BK_Servicio.CLIENTERUT = LvrServicio["CLIENTERUT"].ToString();
-                        BK_Servicio.CLIENTEDIGVER = LvrServicio["CLIENTEDIGVER"].ToString();
-                        // BK_Servicio.CLIENTE = LvrServicio["CLIENTE"].ToString();
-                        BK_Servicio.MENSAJERORUT = LvrServicio["MENSAJERORUT"].ToString();
-                        BK_Servicio.MENSAJERODIGVER = LvrServicio["MENSAJERODIGVER"].ToString();
+                        OPERACION = "BUSCAR",
+                        PENTALPHA = LvrServicio["PENTALPHA"].ToString(),
+                        NROENVIO = LvrServicio["NROENVIO"].ToString(),
+                        GUIADESPACHO = LvrServicio["GUIADESPACHO"].ToString(),
+                        FECHA = LvrServicio["FECHA"].ToString(),
+                        HORA = LvrServicio["HORA"].ToString(),
+                        CLIENTERUT = LvrServicio["CLIENTERUT"].ToString(),
+                        CLIENTEDIGVER = LvrServicio["CLIENTEDIGVER"].ToString(),
+                        //BK_Servicio.CLIENTE = LvrServicio["CLIENTE"].ToString();
+                        MENSAJERORUT = LvrServicio["MENSAJERORUT"].ToString(),
+                        MENSAJERODIGVER = LvrServicio["MENSAJERODIGVER"].ToString(),
                         // BK_Servicio.MENSAJERO = LvrServicio["MENSAJERO"].ToString();
-                        BK_Servicio.RECURSOID = LvrServicio["RECURSOID"].ToString();
+                        RECURSOID = LvrServicio["RECURSOID"].ToString(),
                         // BK_Servicio.RECURSO = LvrServicio["RECURSO"].ToString();
-                        BK_Servicio.ODOMICILIO1 = LvrServicio["ODOMICILIO1"].ToString();
-                        BK_Servicio.ODOMICILIO2 = LvrServicio["ODOMICILIO2"].ToString();
-                        BK_Servicio.ONUMERO = LvrServicio["ONUMERO"].ToString();
-                        BK_Servicio.OPISO = LvrServicio["OPISO"].ToString();
-                        BK_Servicio.OOFICINA = LvrServicio["OOFICINA"].ToString();
-                        BK_Servicio.OCIUDAD = LvrServicio["OCIUDAD"].ToString();
-                        BK_Servicio.OCOMUNA = LvrServicio["OCOMUNA"].ToString();
-                        BK_Servicio.OESTADO = LvrServicio["OESTADO"].ToString();
-                        BK_Servicio.OPAIS = LvrServicio["OPAIS"].ToString();
-                        BK_Servicio.OCOORDENADAS = LvrServicio["OCOORDENADAS"].ToString();
-                        BK_Servicio.DDOMICILIO1 = LvrServicio["DDOMICILIO1"].ToString();
-                        BK_Servicio.DDOMICILIO2 = LvrServicio["DDOMICILIO2"].ToString();
-                        BK_Servicio.DNUMERO = LvrServicio["DNUMERO"].ToString();
-                        BK_Servicio.DPISO = LvrServicio["DPISO"].ToString();
-                        BK_Servicio.DOFICINA = LvrServicio["DOFICINA"].ToString();
-                        BK_Servicio.DCIUDAD = LvrServicio["DCIUDAD"].ToString();
-                        BK_Servicio.DCOMUNA = LvrServicio["DCOMUNA"].ToString();
-                        BK_Servicio.DESTADO = LvrServicio["DESTADO"].ToString();
-                        BK_Servicio.DPAIS = LvrServicio["DPAIS"].ToString();
-                        BK_Servicio.DCOORDENADAS = LvrServicio["DCOORDENADAS"].ToString();
-                        BK_Servicio.DESCRIPCION = LvrServicio["DESCRIPCION"].ToString();
-                        BK_Servicio.FACTURAS = LvrServicio["FACTURAS"].ToString();
-                        BK_Servicio.BULTOS = LvrServicio["BULTOS"].ToString();
-                        BK_Servicio.COMPRAS = LvrServicio["COMPRAS"].ToString();
-                        BK_Servicio.CHEQUES = LvrServicio["CHEQUES"].ToString();
-                        BK_Servicio.SOBRES = LvrServicio["SOBRES"].ToString();
-                        BK_Servicio.OTROS = LvrServicio["OTROS"].ToString();
-                        BK_Servicio.OBSERVACIONES = LvrServicio["OBSERVACIONES"].ToString();
-                        BK_Servicio.ENTREGA = LvrServicio["ENTREGA"].ToString();
-                        BK_Servicio.RECEPCION = LvrServicio["RECEPCION"].ToString();
-                        BK_Servicio.TESPERA = LvrServicio["TESPERA"].ToString();
-                        BK_Servicio.FECHAENTREGA = LvrServicio["FECHAENTREGA"].ToString();
-                        BK_Servicio.HORAENTREGA = LvrServicio["HORAENTREGA"].ToString();
-                        BK_Servicio.DISTANCIA = LvrServicio["DISTANCIA"].ToString();
-                        BK_Servicio.PROGRAMADO = LvrServicio["PROGRAMADO"].ToString();
-                        BK_ServicioLista.Add(BK_Servicio);
-                    }
+                        ODOMICILIO1 = LvrServicio["ODOMICILIO1"].ToString(),
+                        ODOMICILIO2 = LvrServicio["ODOMICILIO2"].ToString(),
+                        ONUMERO = LvrServicio["ONUMERO"].ToString(),
+                        OPISO = LvrServicio["OPISO"].ToString(),
+                        OOFICINA = LvrServicio["OOFICINA"].ToString(),
+                        OCIUDAD = LvrServicio["OCIUDAD"].ToString(),
+                        OCOMUNA = LvrServicio["OCOMUNA"].ToString(),
+                        OESTADO = LvrServicio["OESTADO"].ToString(),
+                        OPAIS = LvrServicio["OPAIS"].ToString(),
+                        OCOORDENADAS = LvrServicio["OCOORDENADAS"].ToString(),
+                        DDOMICILIO1 = LvrServicio["DDOMICILIO1"].ToString(),
+                        DDOMICILIO2 = LvrServicio["DDOMICILIO2"].ToString(),
+                        DNUMERO = LvrServicio["DNUMERO"].ToString(),
+                        DPISO = LvrServicio["DPISO"].ToString(),
+                        DOFICINA = LvrServicio["DOFICINA"].ToString(),
+                        DCIUDAD = LvrServicio["DCIUDAD"].ToString(),
+                        DCOMUNA = LvrServicio["DCOMUNA"].ToString(),
+                        DESTADO = LvrServicio["DESTADO"].ToString(),
+                        DPAIS = LvrServicio["DPAIS"].ToString(),
+                        DCOORDENADAS = LvrServicio["DCOORDENADAS"].ToString(),
+                        DESCRIPCION = LvrServicio["DESCRIPCION"].ToString(),
+                        FACTURAS = LvrServicio["FACTURAS"].ToString(),
+                        BULTOS = LvrServicio["BULTOS"].ToString(),
+                        COMPRAS = LvrServicio["COMPRAS"].ToString(),
+                        CHEQUES = LvrServicio["CHEQUES"].ToString(),
+                        SOBRES = LvrServicio["SOBRES"].ToString(),
+                        OTROS = LvrServicio["OTROS"].ToString(),
+                        OBSERVACIONES = LvrServicio["OBSERVACIONES"].ToString(),
+                        ENTREGA = LvrServicio["ENTREGA"].ToString(),
+                        RECEPCION = LvrServicio["RECEPCION"].ToString(),
+                        TESPERA = LvrServicio["TESPERA"].ToString(),
+                        FECHAENTREGA = LvrServicio["FECHAENTREGA"].ToString(),
+                        HORAENTREGA = LvrServicio["HORAENTREGA"].ToString(),
+                        DISTANCIA = LvrServicio["DISTANCIA"].ToString(),
+                        PROGRAMADO = LvrServicio["PROGRAMADO"].ToString(),
+                        RESMENSAJE = "OK",
+                        RESOPERACION = "OK"
+                    };
+                    BK_ServicioLista.Add(BK_Servicio);
                 }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                    return null;
-                }
-                return BK_ServicioLista;
             }
-            else if (BM_TransferVar.SincronizarWebPentalpha())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarWebPropio())
-            {
-                return null;
-            }
-            return null;
+            BM_ConexionLite.Close();
+            BM_ConexionLite.Dispose();
+            BM_ConexionLite = null;
+            return BK_ServicioLista;
         }
 
-        public List<JsonBikeMessengerServicio> BuscarServicio(string pPENTALPHA, string pNROENVIO)
+        public List<StructBikeMessengerServicio> BuscarServicio(string pPENTALPHA, string pNROENVIO)
         {
             if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
             {
                 return null;
             }
 
-            BK_Servicio = new JsonBikeMessengerServicio();
-            BK_ServicioLista = new List<JsonBikeMessengerServicio>();
+            BK_Servicio = new StructBikeMessengerServicio();
+            BK_ServicioLista = new List<StructBikeMessengerServicio>();
 
             if (BM_TransferVar.SincronizarBaseLocal())
             {
@@ -255,7 +212,7 @@ namespace BikeMessenger
             return null;
         }
 
-        public bool AgregarServicio(JsonBikeMessengerServicio aBK_Servicio)
+        public bool AgregarServicio(StructBikeMessengerServicio aBK_Servicio)
         {
             if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
             {
@@ -358,7 +315,7 @@ namespace BikeMessenger
         }
 
 
-        public bool ModificarServicio(JsonBikeMessengerServicio mBK_Servicio)
+        public bool ModificarServicio(StructBikeMessengerServicio mBK_Servicio)
         {
             if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
             {
@@ -629,7 +586,6 @@ namespace BikeMessenger
             }
             return null;
         }
-
 
         public List<ClasePersonalGrid> BuscarGridPersonal()
         {

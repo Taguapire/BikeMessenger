@@ -76,9 +76,12 @@ namespace BikeMessenger
                     BK_Personal.RESOPERACION = "OK";
                     BK_PersonalLista.Add(BK_Personal);
                 }
-                return BK_PersonalLista;
             }
-            return null;
+
+            BM_ConexionLite.Close();
+            BM_ConexionLite.Dispose();
+
+            return BK_PersonalLista;
         }
 
         public List<StructBikeMessengerPersonal> BuscarPersonal(string pPENTALPHA, string pRUTID, string pDIGVER)
@@ -120,9 +123,12 @@ namespace BikeMessenger
                 BK_Personal.RESMENSAJE = "OK";
                 BK_Personal.RESOPERACION = "OK";
                 BK_PersonalLista.Add(BK_Personal);
-                return BK_PersonalLista;
             }
-            return null;
+
+            BM_ConexionLite.Close();
+            BM_ConexionLite.Dispose();
+
+            return BK_PersonalLista;
         }
 
         public bool AgregarPersonal(StructBikeMessengerPersonal aBK_Personal)
@@ -162,6 +168,9 @@ namespace BikeMessenger
                 _ = BM_ConexionLite.InsertOrReplace(record);
 
             });
+
+            BM_ConexionLite.Close();
+            BM_ConexionLite.Dispose();
 
             return true;
         }
@@ -204,6 +213,9 @@ namespace BikeMessenger
                 _ = BM_ConexionLite.InsertOrReplace(record);
 
             });
+
+            BM_ConexionLite.Close();
+            BM_ConexionLite.Dispose();
 
             return true;
         }
@@ -274,12 +286,12 @@ namespace BikeMessenger
             return null;
         }
 
-        public string Bm_Personal_Listado()
+        public string Bm_Personal_Listado(string pPENTALPHA)
         {
             List<StructBikeMessengerPersonal> ListaLocalPersonal = new List<StructBikeMessengerPersonal>();
             LvrTablaHtml DocumentoHtml = new LvrTablaHtml();
 
-            ListaLocalPersonal = BuscarPersonal(BM_TransferVar.PER_PENTALPHA);
+            ListaLocalPersonal = BuscarPersonal(pPENTALPHA);
 
             if (ListaLocalPersonal.Count > 0)
             {

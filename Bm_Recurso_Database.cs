@@ -72,18 +72,12 @@ namespace BikeMessenger
                     BK_RecursoLista.Add(BK_Recurso);
                 }
 
-                BM_ConexionLite.Close();
-                BM_ConexionLite.Dispose();
-                BM_ConexionLite = null;
-
-                return BK_RecursoLista;
             }
 
             BM_ConexionLite.Close();
             BM_ConexionLite.Dispose();
-            BM_ConexionLite = null;
 
-            return null;
+            return BK_RecursoLista;
         }
 
         public List<StructBikeMessengerRecurso> BuscarRecurso(string pPENTALPHA, string pPATENTE)
@@ -124,18 +118,12 @@ namespace BikeMessenger
                     BK_Recurso.RESOPERACION = "OK";
                     BK_RecursoLista.Add(BK_Recurso);
                 }
-                BM_ConexionLite.Close();
-                BM_ConexionLite.Dispose();
-                BM_ConexionLite = null;
-
-                return BK_RecursoLista;
             }
 
             BM_ConexionLite.Close();
             BM_ConexionLite.Dispose();
-            BM_ConexionLite = null;
 
-            return null;
+            return BK_RecursoLista;
         }
 
         public bool AgregarRecurso(StructBikeMessengerRecurso aBK_Recurso)
@@ -172,7 +160,6 @@ namespace BikeMessenger
 
             BM_ConexionLite.Close();
             BM_ConexionLite.Dispose();
-            BM_ConexionLite = null;
 
             return true;
         }
@@ -213,7 +200,6 @@ namespace BikeMessenger
 
             BM_ConexionLite.Close();
             BM_ConexionLite.Dispose();
-            BM_ConexionLite = null;
 
             return true;
         }
@@ -231,7 +217,6 @@ namespace BikeMessenger
 
             BM_ConexionLite.Close();
             BM_ConexionLite.Dispose();
-            BM_ConexionLite = null;
 
             return true;
         }
@@ -299,18 +284,13 @@ namespace BikeMessenger
                     GridLocalPersonalLista.Add(GridLocalPersonal);
                 }
 
-                BM_ConexionLite.Close();
-                BM_ConexionLite.Dispose();
-                BM_ConexionLite = null;
-
-                return GridLocalPersonalLista;
+                
             }
 
             BM_ConexionLite.Close();
             BM_ConexionLite.Dispose();
-            BM_ConexionLite = null;
-
-            return null;
+            
+            return GridLocalPersonalLista;
         }
 
         public string Bm_BuscarNombrePropietario(string pPENTALPHA, string pRUTID, string pDIGVER)
@@ -332,7 +312,6 @@ namespace BikeMessenger
 
             BM_ConexionLite.Close();
             BM_ConexionLite.Dispose();
-            BM_ConexionLite = null;
 
             return VNOMBRE;
         }
@@ -358,7 +337,7 @@ namespace BikeMessenger
         }
 
 
-        public string Bm_Recurso_Listado()
+        public string Bm_Recurso_Listado(string pPENTALPHA)
         {
             if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
             {

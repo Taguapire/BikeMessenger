@@ -22,10 +22,10 @@ namespace BikeMessenger
     /// </summary>
     public sealed partial class PageServicios : Page
     {
-        private List<JsonBikeMessengerServicio> ServicioIOArray = new List<JsonBikeMessengerServicio>();
-        private JsonBikeMessengerServicio ServicioIO = new JsonBikeMessengerServicio();
-        private JsonBikeMessengerServicio EnviarJsonServicio = new JsonBikeMessengerServicio();
-        private JsonBikeMessengerServicio RecibirJsonServicio = new JsonBikeMessengerServicio();
+        private List<StructBikeMessengerServicio> ServicioIOArray = new List<StructBikeMessengerServicio>();
+        private StructBikeMessengerServicio ServicioIO = new StructBikeMessengerServicio();
+        private StructBikeMessengerServicio EnviarJsonServicio = new StructBikeMessengerServicio();
+        private StructBikeMessengerServicio RecibirJsonServicio = new StructBikeMessengerServicio();
         private Bm_Servicio_Database BM_Database_Servicio = new Bm_Servicio_Database();
         private TransferVar LvrTransferVar = new TransferVar();
         private bool BorrarSiNo;
@@ -855,8 +855,8 @@ namespace BikeMessenger
             LvrInternet LvrBKInternet = new LvrInternet();
             string LvrParametros;
 
-            List<JsonBikeMessengerServicio> EnviarJsonServicioArray = new List<JsonBikeMessengerServicio>();
-            List<JsonBikeMessengerServicio> RecibirJsonServicioArray = new List<JsonBikeMessengerServicio>();
+            List<StructBikeMessengerServicio> EnviarJsonServicioArray = new List<StructBikeMessengerServicio>();
+            List<StructBikeMessengerServicio> RecibirJsonServicioArray = new List<StructBikeMessengerServicio>();
 
             // Llenar estructura Json
             CopiarMemoriaEnJson(pTipoOperacion);
@@ -875,7 +875,7 @@ namespace BikeMessenger
             if (LvrPRecibirServer != "ERROR" && LvrPRecibirServer != "" && LvrPRecibirServer != null)
             {
                 // Procesar primer servidor
-                RecibirJsonServicioArray = JsonConvert.DeserializeObject<List<JsonBikeMessengerServicio>>(LvrPRecibirServer); // resp será el string JSON a deserializa
+                RecibirJsonServicioArray = JsonConvert.DeserializeObject<List<StructBikeMessengerServicio>>(LvrPRecibirServer); // resp será el string JSON a deserializa
                 RecibirJsonServicio = RecibirJsonServicioArray[0];
 
                 return RecibirJsonServicio.RESOPERACION == "OK";
