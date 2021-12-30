@@ -66,6 +66,8 @@ namespace BikeMessenger
 
         private void RellenarCombos()
         {
+            BM_CCRP LocalRellenarCombos = new BM_CCRP();
+
             // Limpiar Combo Box
             comboBoxOrigenPais.Items.Clear();
             comboBoxOrigenEstado.Items.Clear();
@@ -78,80 +80,20 @@ namespace BikeMessenger
             comboBoxDestinoCiudad.Items.Clear();
 
             // Llenar Combo Pais
-            List<string> ListaPais = BM_Database_Servicio.GetPais();
-            if (ListaPais != null)
-            {
-                try
-                {
-                    for (int i = 0; i < ListaPais.Count; i++)
-                    {
-                        comboBoxOrigenPais.Items.Add(ListaPais[i]);
-                        comboBoxDestinoPais.Items.Add(ListaPais[i]);
-                    }
-                }
-                catch (NullReferenceException)
-                {
-
-                }
-            }
+            comboBoxOrigenPais.ItemsSource = LocalRellenarCombos.BuscarPais();
+            comboBoxDestinoPais.ItemsSource = comboBoxOrigenPais.ItemsSource;
 
             // Llenar Combo Region
-            List<string> ListaEstado = BM_Database_Servicio.GetRegion();
-
-            if (ListaEstado != null)
-            {
-                try
-                {
-                    for (int i = 0; i < ListaEstado.Count; i++)
-                    {
-                        comboBoxOrigenEstado.Items.Add(ListaEstado[i]);
-                        comboBoxDestinoEstado.Items.Add(ListaEstado[i]);
-                    }
-                }
-                catch (NullReferenceException)
-                {
-
-                }
-            }
-
+            comboBoxOrigenEstado.ItemsSource = LocalRellenarCombos.BuscarRegion();
+            comboBoxDestinoEstado.ItemsSource = comboBoxOrigenEstado.ItemsSource;
 
             // Llenar Combo Comuna
-            List<string> ListaComuna = BM_Database_Servicio.GetComuna();
-
-            if (ListaComuna != null)
-            {
-                try
-                {
-                    for (int i = 0; i < ListaComuna.Count; i++)
-                    {
-                        comboBoxOrigenComuna.Items.Add(ListaComuna[i]);
-                        comboBoxDestinoComuna.Items.Add(ListaComuna[i]);
-                    }
-                }
-                catch (NullReferenceException)
-                {
-
-                }
-            }
+            comboBoxOrigenComuna.ItemsSource = LocalRellenarCombos.BuscarComuna();
+            comboBoxDestinoComuna.ItemsSource = comboBoxOrigenComuna.ItemsSource;
 
             // Llenar Combo Ciudad
-            List<string> ListaCiudad = BM_Database_Servicio.GetCiudad();
-
-            if (ListaCiudad != null)
-            {
-                try
-                {
-                    for (int i = 0; i < ListaCiudad.Count; i++)
-                    {
-                        comboBoxOrigenCiudad.Items.Add(ListaCiudad[i]);
-                        comboBoxDestinoCiudad.Items.Add(ListaCiudad[i]);
-                    }
-                }
-                catch (NullReferenceException)
-                {
-
-                }
-            }
+            comboBoxOrigenCiudad.ItemsSource = LocalRellenarCombos.BuscarCiudad();
+            comboBoxDestinoCiudad.ItemsSource = comboBoxOrigenCiudad.ItemsSource;
         }
 
         private async void BtnAgregarServicios(object sender, RoutedEventArgs e)
@@ -392,13 +334,70 @@ namespace BikeMessenger
                 textBoxEntrega.Text = ServicioIO.ENTREGA;
                 textBoxRecepcion.Text = ServicioIO.RECEPCION;
                 textBoxTiempoDeEspera.Text = ServicioIO.TESPERA.ToString();
+
+                // Llenado de Pais
+                if (comboBoxOrigenPais.Items.Count == 0)
+                {
+                    comboBoxOrigenPais.Items.Add(ServicioIO.OPAIS);
+                }
+
                 comboBoxOrigenPais.SelectedValue = ServicioIO.OPAIS;
+
+                // Llenado de Estado o Region
+                if (comboBoxOrigenEstado.Items.Count == 0)
+                {
+                    comboBoxOrigenEstado.Items.Add(ServicioIO.OESTADO);
+                }
+
                 comboBoxOrigenEstado.SelectedValue = ServicioIO.OESTADO;
+
+                // Llenado de Comuna o Municipio
+                if (comboBoxOrigenComuna.Items.Count == 0)
+                {
+                    comboBoxOrigenComuna.Items.Add(ServicioIO.OCOMUNA);
+                }
+
                 comboBoxOrigenComuna.SelectedValue = ServicioIO.OCOMUNA;
+
+                // Llenado de Cuidad
+                if (comboBoxOrigenCiudad.Items.Count == 0)
+                {
+                    comboBoxOrigenCiudad.Items.Add(ServicioIO.OCIUDAD);
+                }
+
                 comboBoxOrigenCiudad.SelectedValue = ServicioIO.OCIUDAD;
+
+
+                // Llenado de Pais
+                if (comboBoxDestinoPais.Items.Count == 0)
+                {
+                    comboBoxDestinoPais.Items.Add(ServicioIO.DPAIS);
+                }
+
                 comboBoxDestinoPais.SelectedValue = ServicioIO.DPAIS;
+
+                // Llenado de Estado o Region
+                if (comboBoxDestinoEstado.Items.Count == 0)
+                {
+                    comboBoxDestinoEstado.Items.Add(ServicioIO.DESTADO);
+                }
+
                 comboBoxDestinoEstado.SelectedValue = ServicioIO.DESTADO;
+
+                // Llenado de Comuna o Municipio
+                if (comboBoxDestinoComuna.Items.Count == 0)
+                {
+                    comboBoxDestinoComuna.Items.Add(ServicioIO.DCOMUNA);
+                }
+
                 comboBoxDestinoComuna.SelectedValue = ServicioIO.DCOMUNA;
+
+                // Llenado de Cuidad
+                if (comboBoxDestinoCiudad.Items.Count == 0)
+                {
+                    comboBoxDestinoCiudad.Items.Add(ServicioIO.DCIUDAD);
+                }
+
                 comboBoxDestinoCiudad.SelectedValue = ServicioIO.DCIUDAD;
             }
             catch (ArgumentNullException)

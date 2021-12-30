@@ -1,7 +1,7 @@
 ﻿using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-
+using SQLite;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -17,6 +17,7 @@ namespace BikeMessenger
         public MainPage()
         {
             InitializeComponent();
+            InicializarBasesDeDatos();
         }
 
         private void BM_NavPag_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
@@ -132,7 +133,7 @@ namespace BikeMessenger
                             {
                                 BM_Ultimo_Item = BM_ItemContent;
                                 BM_NavPag.IsBackEnabled = true;
-                                _ = CuadroDeContenido.Navigate(typeof(PageAjustes));
+                                //    _ = CuadroDeContenido.Navigate(typeof(PageAjustes));
                             }
                             break;
                         case "Salir":
@@ -158,7 +159,32 @@ namespace BikeMessenger
             {
                 BM_NavPag.IsBackEnabled = false;
             }
+        }
 
+        private void InicializarBasesDeDatos()
+        {
+            try
+            {
+                SQLiteConnection BM_ConexionLite = new SQLiteConnection(LvrTransferVar.DIRECTORIO_BASE_LOCAL + "\\BikeMessenger.db");
+
+                _ = BM_ConexionLite.CreateTable<TbBikeMessengerEmpresa>();
+                _ = BM_ConexionLite.CreateTable<TbBikeMessengerPersonal>();
+                _ = BM_ConexionLite.CreateTable<TbBikeMessengerRecurso>();
+                _ = BM_ConexionLite.CreateTable<TbBikeMessengerCliente>();
+                _ = BM_ConexionLite.CreateTable<TbBikeMessengerServicio>();
+                _ = BM_ConexionLite.CreateTable<TbBikeMessengerComuna>();
+                _ = BM_ConexionLite.CreateTable<TbBikeMessengerCiudad>();
+                _ = BM_ConexionLite.CreateTable<TbBikeMessengerRegion>();
+                _ = BM_ConexionLite.CreateTable<TbBikeMessengerPais>();
+
+                BM_ConexionLite.Close();
+                BM_ConexionLite.Dispose();
+                BM_ConexionLite = null;
+            }
+            catch (SQLiteException Ex)
+            {
+                Console.WriteLine(Ex.InnerException.Message);
+            }
         }
     }
 }

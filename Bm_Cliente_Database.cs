@@ -17,22 +17,7 @@ namespace BikeMessenger
 
         public Bm_Cliente_Database()
         {
-            try
-            {
-                CompletoNombreBD = BM_TransferVar.DIRECTORIO_BASE_LOCAL + "\\BikeMessenger.db";
-
-                SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
-
-                _ = BM_ConexionLite.CreateTable<TbBikeMessengerCliente>();
-
-                BM_ConexionLite.Close();
-                BM_ConexionLite.Dispose();
-                BM_ConexionLite = null;
-            }
-            catch (SQLiteException Ex)
-            {
-                Console.WriteLine(Ex.InnerException.Message);
-            }
+            CompletoNombreBD = BM_TransferVar.DIRECTORIO_BASE_LOCAL + "\\BikeMessenger.db";
         }
 
         public List<StructBikeMessengerCliente> BuscarCliente(string pPENTALPHA)
@@ -286,27 +271,6 @@ namespace BikeMessenger
             }
 
             return GridLocalClientesLista;
-        }
-
-
-        public List<string> GetPais()
-        {
-            return null;
-        }
-
-        public List<string> GetRegion()
-        {
-            return null;
-        }
-
-        public List<string> GetComuna()
-        {
-            return null;
-        }
-
-        public List<string> GetCiudad()
-        {
-            return null;
         }
 
         public string Bm_Cliente_Listado(string pPENTALPHA)

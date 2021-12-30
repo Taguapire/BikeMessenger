@@ -135,12 +135,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BM_Ciudad_Database.cs" />
+    <Compile Include="BM_CCRP.cs" />
     <Compile Include="Bm_Cliente_Database.cs" />
-    <Compile Include="BM_Comuna_Database.cs" />
     <Compile Include="Bm_Empresa_Database.cs" />
-    <Compile Include="BM_EstadoRegion_Database.cs" />
-    <Compile Include="Bm_Pais_Database.cs" />
     <Compile Include="Bm_Personal_Database.cs" />
     <Compile Include="Bm_Recurso_Database.cs" />
     <Compile Include="Bm_Servicio_Database.cs" />
@@ -161,9 +158,6 @@
     </Compile>
     <Compile Include="PageEmpresa.xaml.cs">
       <DependentUpon>PageEmpresa.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="PageAjustes.xaml.cs">
-      <DependentUpon>PageAjustes.xaml</DependentUpon>
     </Compile>
     <Compile Include="PageInicio.xaml.cs">
       <DependentUpon>PageInicio.xaml</DependentUpon>
@@ -267,10 +261,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="PageEmpresa.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="PageAjustes.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
