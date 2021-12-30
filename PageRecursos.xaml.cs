@@ -1,5 +1,4 @@
 ﻿using Microsoft.Toolkit.Uwp.UI.Controls;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,7 +11,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -25,8 +23,6 @@ namespace BikeMessenger
     {
         private List<StructBikeMessengerRecurso> RecursoIOArray = new List<StructBikeMessengerRecurso>();
         private StructBikeMessengerRecurso RecursoIO = new StructBikeMessengerRecurso();
-        private readonly StructBikeMessengerRecurso EnviarJsonRecurso = new StructBikeMessengerRecurso();
-        private StructBikeMessengerRecurso RecibirJsonRecurso = new StructBikeMessengerRecurso();
         private readonly Bm_Recurso_Database BM_Database_Recurso = new Bm_Recurso_Database();
         private TransferVar LvrTransferVar = new TransferVar();
         private bool BorrarSiNo;
@@ -614,52 +610,6 @@ namespace BikeMessenger
                 CloseButtonText = "Continuar"
             };
             _ = await AvisoOperacionPersonalDialog.ShowAsync();
-        }
-
-        private void CopiarMemoriaEnJson(string pOPERACION)
-        {
-            // Limpiar Variables
-
-            EnviarJsonRecurso.OPERACION = "";
-            EnviarJsonRecurso.PENTALPHA = "";
-            EnviarJsonRecurso.PATENTE = "";
-            EnviarJsonRecurso.RUTID = "";
-            EnviarJsonRecurso.DIGVER = "";
-            EnviarJsonRecurso.TIPO = "";
-            EnviarJsonRecurso.MARCA = "";
-            EnviarJsonRecurso.MODELO = "";
-            EnviarJsonRecurso.VARIANTE = "";
-            EnviarJsonRecurso.ANO = "";
-            EnviarJsonRecurso.COLOR = "";
-            EnviarJsonRecurso.CIUDAD = "";
-            EnviarJsonRecurso.COMUNA = "";
-            EnviarJsonRecurso.REGION = "";
-            EnviarJsonRecurso.PAIS = "";
-            EnviarJsonRecurso.OBSERVACIONES = "";
-            EnviarJsonRecurso.FOTO = "";
-            EnviarJsonRecurso.RESOPERACION = "";
-            EnviarJsonRecurso.RESMENSAJE = "";
-
-            // Llenar Variables
-            EnviarJsonRecurso.OPERACION = pOPERACION;
-            EnviarJsonRecurso.PENTALPHA = RecursoIO.PENTALPHA;
-            EnviarJsonRecurso.PATENTE = RecursoIO.PATENTE;
-            EnviarJsonRecurso.RUTID = RecursoIO.RUTID;
-            EnviarJsonRecurso.DIGVER = RecursoIO.DIGVER;
-            EnviarJsonRecurso.TIPO = RecursoIO.TIPO;
-            EnviarJsonRecurso.MARCA = RecursoIO.MARCA;
-            EnviarJsonRecurso.MODELO = RecursoIO.MODELO;
-            EnviarJsonRecurso.VARIANTE = RecursoIO.VARIANTE;
-            EnviarJsonRecurso.ANO = RecursoIO.ANO;
-            EnviarJsonRecurso.COLOR = RecursoIO.COLOR;
-            EnviarJsonRecurso.CIUDAD = RecursoIO.CIUDAD;
-            EnviarJsonRecurso.COMUNA = RecursoIO.COMUNA;
-            EnviarJsonRecurso.REGION = RecursoIO.REGION;
-            EnviarJsonRecurso.PAIS = RecursoIO.PAIS;
-            EnviarJsonRecurso.OBSERVACIONES = RecursoIO.OBSERVACIONES;
-            EnviarJsonRecurso.FOTO = RecursoIO.FOTO;
-            EnviarJsonRecurso.RESOPERACION = "";
-            EnviarJsonRecurso.RESMENSAJE = "";
         }
     }
 
