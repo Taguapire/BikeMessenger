@@ -17,7 +17,13 @@ namespace BikeMessenger
         public MainPage()
         {
             InitializeComponent();
-            InicializarBasesDeDatos();
+            if (LvrTransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                InicializarBasesDeDatos();
+                LvrTransferVar.ESTADOPARAMETROS = "S";
+                LvrTransferVar.BASEDEDATOSLOCAL = "S";
+                LvrTransferVar.EscribirValoresDeAjustes();
+            }
         }
 
         private void BM_NavPag_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
@@ -133,7 +139,7 @@ namespace BikeMessenger
                             {
                                 BM_Ultimo_Item = BM_ItemContent;
                                 BM_NavPag.IsBackEnabled = true;
-                                //    _ = CuadroDeContenido.Navigate(typeof(PageAjustes));
+                                _ = CuadroDeContenido.Navigate(typeof(PageAjustes));
                             }
                             break;
                         case "Salir":

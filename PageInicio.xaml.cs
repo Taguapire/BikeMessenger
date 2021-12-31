@@ -22,12 +22,9 @@ namespace BikeMessenger
             ContinuarSiNo = false;
             if (LvrTransferVar.ESTADOPARAMETROS == "NADA")
             {
-                _ = AvisoIniciarParemetrosDialogAsync();
-
-                if (!ContinuarSiNo)
-                {
-                    return;
-                }
+                LvrTransferVar.ESTADOPARAMETROS = "S";
+                LvrTransferVar.BASEDEDATOSLOCAL = "S";
+                LvrTransferVar.EscribirValoresDeAjustes();
             }
         }
 
@@ -36,8 +33,8 @@ namespace BikeMessenger
             ContentDialog AvisoConfirmacionPersonalDialog = new ContentDialog
             {
                 Title = "Iniciar en Ajuste",
-                Content = "Usted aun no a definido Base de Datos SQLServer o Bases de Datos Remotas. El default sera Base de Datos Remota de Pentalpha EIRL.",
-                PrimaryButtonText = "Aceptar Usar Pentalpha EIRL",
+                Content = "Usted aun no a definido Base de Datos.",
+                PrimaryButtonText = "Aceptar Usar SQLite",
                 CloseButtonText = "Cancelar y definir valores en Ajustes"
             };
 

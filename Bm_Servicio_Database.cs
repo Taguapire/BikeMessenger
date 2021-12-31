@@ -48,7 +48,6 @@ namespace BikeMessenger
                         MENSAJERODIGVER = results[i].MENSAJERODIGVER,
                         RECURSOID = results[i].RECURSOID,
                         ODOMICILIO1 = results[i].ODOMICILIO1,
-                        ODOMICILIO2 = results[i].ODOMICILIO2,
                         ONUMERO = results[i].ONUMERO,
                         OPISO = results[i].OPISO,
                         OOFICINA = results[i].OOFICINA,
@@ -59,7 +58,6 @@ namespace BikeMessenger
                         OLATITUD = results[i].OLATITUD,
                         OLONGITUD = results[i].OLONGITUD,
                         DDOMICILIO1 = results[i].DDOMICILIO1,
-                        DDOMICILIO2 = results[i].DDOMICILIO2,
                         DNUMERO = results[i].DNUMERO,
                         DPISO = results[i].DPISO,
                         DOFICINA = results[i].DOFICINA,
@@ -93,6 +91,7 @@ namespace BikeMessenger
             BM_ConexionLite.Close();
             BM_ConexionLite.Dispose();
             BM_ConexionLite = null;
+
             return BK_ServicioLista;
         }
 
@@ -125,7 +124,6 @@ namespace BikeMessenger
                         MENSAJERODIGVER = results[i].MENSAJERODIGVER,
                         RECURSOID = results[i].RECURSOID,
                         ODOMICILIO1 = results[i].ODOMICILIO1,
-                        ODOMICILIO2 = results[i].ODOMICILIO2,
                         ONUMERO = results[i].ONUMERO,
                         OPISO = results[i].OPISO,
                         OOFICINA = results[i].OOFICINA,
@@ -136,7 +134,6 @@ namespace BikeMessenger
                         OLATITUD = results[i].OLATITUD,
                         OLONGITUD = results[i].OLONGITUD,
                         DDOMICILIO1 = results[i].DDOMICILIO1,
-                        DDOMICILIO2 = results[i].DDOMICILIO2,
                         DNUMERO = results[i].DNUMERO,
                         DPISO = results[i].DPISO,
                         DOFICINA = results[i].DOFICINA,
@@ -170,6 +167,7 @@ namespace BikeMessenger
             BM_ConexionLite.Close();
             BM_ConexionLite.Dispose();
             BM_ConexionLite = null;
+
             return BK_ServicioLista;
         }
 
@@ -194,7 +192,6 @@ namespace BikeMessenger
                     MENSAJERODIGVER = aBK_Servicio.MENSAJERODIGVER,
                     RECURSOID = aBK_Servicio.RECURSOID,
                     ODOMICILIO1 = aBK_Servicio.ODOMICILIO1,
-                    ODOMICILIO2 = aBK_Servicio.ODOMICILIO2,
                     ONUMERO = aBK_Servicio.ONUMERO,
                     OPISO = aBK_Servicio.OPISO,
                     OOFICINA = aBK_Servicio.OOFICINA,
@@ -205,7 +202,6 @@ namespace BikeMessenger
                     OLATITUD = aBK_Servicio.OLATITUD,
                     OLONGITUD = aBK_Servicio.OLONGITUD,
                     DDOMICILIO1 = aBK_Servicio.DDOMICILIO1,
-                    DDOMICILIO2 = aBK_Servicio.DDOMICILIO2,
                     DNUMERO = aBK_Servicio.DNUMERO,
                     DPISO = aBK_Servicio.DPISO,
                     DOFICINA = aBK_Servicio.DOFICINA,
@@ -266,7 +262,6 @@ namespace BikeMessenger
                     MENSAJERODIGVER = mBK_Servicio.MENSAJERODIGVER,
                     RECURSOID = mBK_Servicio.RECURSOID,
                     ODOMICILIO1 = mBK_Servicio.ODOMICILIO1,
-                    ODOMICILIO2 = mBK_Servicio.ODOMICILIO2,
                     ONUMERO = mBK_Servicio.ONUMERO,
                     OPISO = mBK_Servicio.OPISO,
                     OOFICINA = mBK_Servicio.OOFICINA,
@@ -277,7 +272,6 @@ namespace BikeMessenger
                     OLATITUD = mBK_Servicio.OLATITUD,
                     OLONGITUD = mBK_Servicio.OLONGITUD,
                     DDOMICILIO1 = mBK_Servicio.DDOMICILIO1,
-                    DDOMICILIO2 = mBK_Servicio.DDOMICILIO2,
                     DNUMERO = mBK_Servicio.DNUMERO,
                     DPISO = mBK_Servicio.DPISO,
                     DOFICINA = mBK_Servicio.DOFICINA,
@@ -486,7 +480,7 @@ namespace BikeMessenger
 
         public string Bm_BuscarNombreCliente(string pPENTALPHA, string pRUTID, string pDIGVER)
         {
-            string VNOMBRE = null;
+            string VNOMBRE = "";
             string VPKCLIENTE = pPENTALPHA + pRUTID + pDIGVER;
 
             SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
@@ -506,7 +500,7 @@ namespace BikeMessenger
 
         public string Bm_BuscarNombreMensajero(string pPENTALPHA, string pRUTID, string pDIGVER)
         {
-            string VNOMBRE = null;
+            string VNOMBRE = "";
             string VPKMENSAJERO = pPENTALPHA + pRUTID + pDIGVER;
 
             SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
@@ -524,9 +518,9 @@ namespace BikeMessenger
             return VNOMBRE;
         }
 
-        private string Bm_BuscarNombreRecurso(string pPENTALPHA, string pPATENTE)
+        public string Bm_BuscarNombreRecurso(string pPENTALPHA, string pPATENTE)
         {
-            string VNOMBRE = null;
+            string VNOMBRE = "";
             string VPKRECURSO = pPENTALPHA + pPATENTE;
 
             SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);

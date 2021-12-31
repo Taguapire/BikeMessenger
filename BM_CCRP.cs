@@ -161,6 +161,25 @@ namespace BikeMessenger
 
             return VPAIS;
         }
+
+        public bool AgregarPais(string pPais)
+        {
+            SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
+
+            BM_ConexionLite.RunInTransaction(() =>
+            {
+                TbBikeMessengerPais record = new TbBikeMessengerPais
+                {
+                    VALOR = pPais
+                };
+                _ = BM_ConexionLite.InsertOrReplace(record);
+            });
+
+            BM_ConexionLite.Close();
+            BM_ConexionLite.Dispose();
+
+            return true;
+        }
     }
 
     internal class TbBikeMessengerComuna

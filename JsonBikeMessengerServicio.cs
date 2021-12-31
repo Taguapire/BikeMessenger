@@ -17,7 +17,6 @@ namespace BikeMessenger
         public string MENSAJERODIGVER { get; set; }
         public string RECURSOID { get; set; }
         public string ODOMICILIO1 { get; set; }
-        public string ODOMICILIO2 { get; set; }
         public string ONUMERO { get; set; }
         public string OPISO { get; set; }
         public string OOFICINA { get; set; }
@@ -28,7 +27,6 @@ namespace BikeMessenger
         public double OLATITUD { get; set; }
         public double OLONGITUD { get; set; }
         public string DDOMICILIO1 { get; set; }
-        public string DDOMICILIO2 { get; set; }
         public string DNUMERO { get; set; }
         public string DPISO { get; set; }
         public string DOFICINA { get; set; }
@@ -70,7 +68,6 @@ namespace BikeMessenger
             MENSAJERODIGVER = "";
             RECURSOID = "";
             ODOMICILIO1 = "";
-            ODOMICILIO2 = "";
             ONUMERO = "";
             OPISO = "";
             OOFICINA = "";
@@ -81,7 +78,6 @@ namespace BikeMessenger
             OLATITUD = 0;
             OLONGITUD = 0;
             DDOMICILIO1 = "";
-            DDOMICILIO2 = "";
             DNUMERO = "";
             DPISO = "";
             DOFICINA = "";
@@ -140,8 +136,6 @@ namespace BikeMessenger
         public string RECURSOID { get; set; }
         [Column("odomicilio1")]
         public string ODOMICILIO1 { get; set; }
-        [Column("odomicilio2")]
-        public string ODOMICILIO2 { get; set; }
         [Column("onumero")]
         public string ONUMERO { get; set; }
         [Column("opiso")]
@@ -162,8 +156,6 @@ namespace BikeMessenger
         public double OLONGITUD { get; set; }
         [Column("ddomicilio1")]
         public string DDOMICILIO1 { get; set; }
-        [Column("ddomicilio2")]
-        public string DDOMICILIO2 { get; set; }
         [Column("dnumero")]
         public string DNUMERO { get; set; }
         [Column("dpiso")]

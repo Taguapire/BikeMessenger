@@ -48,7 +48,7 @@ namespace BikeMessenger
 
             if (LvrTransferVar.REC_PAT_SER == "")
             {
-                RecursoIOArray = BM_Database_Recurso.BuscarRecurso(LvrTransferVar.PENTALPHA_ID);
+                RecursoIOArray = BM_Database_Recurso.BuscarRecurso(LvrTransferVar.REC_PENTALPHA);
                 if (RecursoIOArray != null && RecursoIOArray.Count > 0)
                 {
                     RecursoIO = RecursoIOArray[0];
@@ -126,6 +126,23 @@ namespace BikeMessenger
             comboBoxCiudad.ItemsSource = LocalRellenarCombos.BuscarCiudad();
         }
 
+        private void ActualizarCombos()
+        {
+            BM_CCRP LocalRellenarCombos = new BM_CCRP();
+
+            // Actualizar Combo Pais
+            _ = LocalRellenarCombos.AgregarPais(RecursoIO.PAIS);
+
+            // Actualizar Combo Region
+            _ = LocalRellenarCombos.AgregarRegion(RecursoIO.REGION);
+
+            // Actualizar Combo Comuna
+            _ = LocalRellenarCombos.AgregarComuna(RecursoIO.COMUNA);
+
+            // Actualizar Combo Ciudad
+            _ = LocalRellenarCombos.AgregarCiudad(RecursoIO.CIUDAD);
+        }
+
         private async void LlenarPantallaConDb()
         {
             try
@@ -146,23 +163,15 @@ namespace BikeMessenger
                 textBoxColor.Text = RecursoIO.COLOR;
 
                 // Llenado de Pais
-                if (comboBoxPais.Items.Count == 0)
-                    comboBoxPais.Items.Add(RecursoIO.PAIS);
                 comboBoxPais.SelectedValue = RecursoIO.PAIS;
 
                 // Llenado de Estado o Region
-                if (comboBoxEstado.Items.Count == 0)
-                    comboBoxEstado.Items.Add(RecursoIO.REGION);
                 comboBoxEstado.SelectedValue = RecursoIO.REGION;
 
                 // Llenado de Comuna o Municipio
-                if (comboBoxComuna.Items.Count == 0)
-                    comboBoxComuna.Items.Add(RecursoIO.COMUNA);
                 comboBoxComuna.SelectedValue = RecursoIO.COMUNA;
 
                 // Llenado de Cuidad
-                if (comboBoxCiudad.Items.Count == 0)
-                    comboBoxCiudad.Items.Add(RecursoIO.CIUDAD);
                 comboBoxCiudad.SelectedValue = RecursoIO.CIUDAD;
 
                 textBoxObservaciones.Text = RecursoIO.OBSERVACIONES;
@@ -199,7 +208,6 @@ namespace BikeMessenger
 
         private async Task LlenarDbConPantallaAsync()
         {
-
             RecursoIO.PENTALPHA = LvrTransferVar.REC_PENTALPHA;
             RecursoIO.PATENTE = textBoxPatenteCodigo.Text;
             RecursoIO.PKRECURSO = RecursoIO.PENTALPHA + RecursoIO.PATENTE;
@@ -252,81 +260,48 @@ namespace BikeMessenger
         private async void BtnAgregarRecursos(object sender, RoutedEventArgs e)
         {
             // Muestra de espera
-            LvrProgresRing.IsActive = true;
-            await Task.Delay(500); // .5 sec delay
 
             await LlenarDbConPantallaAsync();
 
-            bool TransaccionOK = false;
-
             if (BM_Database_Recurso.AgregarRecurso(RecursoIO))
             {
-                TransaccionOK = true;
-
-                if (TransaccionOK)
-                {
-                    await AvisoOperacionRecursosDialogAsync("Agregar Recurso", "Recurso agregado exitosamente.");
-                    LlenarListaRecursos();
-                    LlenarListaPropietarios();
-                    LvrTransferVar.REC_RUTID = RecursoIO.RUTID;
-                    LvrTransferVar.REC_DIGVER = RecursoIO.DIGVER;
-                    LvrTransferVar.REC_PAT_SER = RecursoIO.PATENTE;
-                    LvrTransferVar.EscribirValoresDeAjustes();
-                    LvrTransferVar.LeerValoresDeAjustes();
-                }
-
-                else
-                {
-                    await AvisoOperacionRecursosDialogAsync("Agregar Recurso", "Error en ingreso de Recurso. Reintente o escriba a soporte contacto@pentalpha.net");
-                }
+                await AvisoOperacionRecursosDialogAsync("Agregar Recurso", "Recurso agregado exitosamente.");
+                LlenarListaRecursos();
+                LlenarListaPropietarios();
+                LvrTransferVar.REC_RUTID = RecursoIO.RUTID;
+                LvrTransferVar.REC_DIGVER = RecursoIO.DIGVER;
+                LvrTransferVar.REC_PAT_SER = RecursoIO.PATENTE;
+                LvrTransferVar.EscribirValoresDeAjustes();
+                LvrTransferVar.LeerValoresDeAjustes();
+                ActualizarCombos();
             }
             else
             {
-                await AvisoOperacionRecursosDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de Cliente.");
+                await AvisoOperacionRecursosDialogAsync("Agregar Recurso", "Error en ingreso del Recurso. Reintente o escriba a soporte contacto@pentalpha.net");
             }
-
-            LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // 1 sec delay
         }
 
         private async void BtnModificarRecursos(object sender, RoutedEventArgs e)
         {
-            LvrProgresRing.IsActive = true;
-            await Task.Delay(500); // .5 sec delay
-
             await LlenarDbConPantallaAsync();
 
             if (BM_Database_Recurso.ModificarRecurso(RecursoIO))
             {
-                // Muestra de espera
-                bool TransaccionOK = true;
-
-                if (TransaccionOK)
-                {
-                    await AvisoOperacionRecursosDialogAsync("Modificar Recurso", "Recurso modificado exitosamente.");
-                    LlenarListaRecursos();
-                    LlenarListaPropietarios();
-                    LvrTransferVar.REC_PAT_SER = RecursoIO.PATENTE;
-                    LvrTransferVar.REC_RUTID = RecursoIO.RUTID;
-                    LvrTransferVar.REC_DIGVER = RecursoIO.DIGVER;
-                    LvrTransferVar.EscribirValoresDeAjustes();
-                    LvrTransferVar.LeerValoresDeAjustes();
-                }
-                else
-                {
-                    await AvisoOperacionRecursosDialogAsync("Modificar Recurso", "Error en modificación de recurso. Reintente o escriba a soporte contacto@pentalpha.net");
-                }
+                await AvisoOperacionRecursosDialogAsync("Modificar Recurso", "Recurso modificado exitosamente.");
+                LlenarListaRecursos();
+                LlenarListaPropietarios();
+                LvrTransferVar.REC_PAT_SER = RecursoIO.PATENTE;
+                LvrTransferVar.REC_RUTID = RecursoIO.RUTID;
+                LvrTransferVar.REC_DIGVER = RecursoIO.DIGVER;
+                LvrTransferVar.EscribirValoresDeAjustes();
+                LvrTransferVar.LeerValoresDeAjustes();
+                ActualizarCombos();
             }
             else
             {
-                await AvisoOperacionRecursosDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de recursos.");
+                await AvisoOperacionRecursosDialogAsync("Agregar Recurso", "Error en la Modificación del Recurso. Reintente o escriba a soporte contacto@pentalpha.net");
             }
-
-            LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // 1 sec delay
         }
-
-
 
         private async void BtnBorrarRecursos(object sender, RoutedEventArgs e)
         {
@@ -340,51 +315,34 @@ namespace BikeMessenger
                 return;
             }
 
-            LvrProgresRing.IsActive = true;
-            await Task.Delay(500); // .5 sec delay
-
             if (BM_Database_Recurso.BorrarRecurso(LvrTransferVar.REC_PENTALPHA, RecursoIO.PATENTE))
             {
-                // Muestra de espera
-                bool TransaccionOK = true;
+                RecursoIOArray = BM_Database_Recurso.BuscarRecurso(LvrTransferVar.REC_PENTALPHA);
 
-
-
-                if (TransaccionOK)
+                if (RecursoIOArray != null && RecursoIOArray.Count > 0)
                 {
-                    RecursoIOArray = BM_Database_Recurso.BuscarRecurso(LvrTransferVar.REC_PENTALPHA);
-
-                    if (RecursoIOArray != null && RecursoIOArray.Count > 0)
-                    {
-                        RecursoIO = RecursoIOArray[0];
-                        LvrTransferVar.REC_PAT_SER = RecursoIO.PATENTE;
-                        LvrTransferVar.REC_RUTID = RecursoIO.RUTID;
-                        LvrTransferVar.REC_DIGVER = RecursoIO.DIGVER;
-                    }
-                    else
-                    {
-                        LvrTransferVar.REC_RUTID = "";
-                        LvrTransferVar.REC_DIGVER = "";
-                        LvrTransferVar.REC_PAT_SER = "";
-                    }
-                    LlenarPantallaConDb();
-                    LlenarListaRecursos();
-                    LlenarListaPropietarios();
-                    await AvisoOperacionRecursosDialogAsync("Borrar Recurso", "Recurso borrado exitosamente.");
-                    LvrTransferVar.EscribirValoresDeAjustes();
-                    LvrTransferVar.LeerValoresDeAjustes();
+                    RecursoIO = RecursoIOArray[0];
+                    LvrTransferVar.REC_PAT_SER = RecursoIO.PATENTE;
+                    LvrTransferVar.REC_RUTID = RecursoIO.RUTID;
+                    LvrTransferVar.REC_DIGVER = RecursoIO.DIGVER;
                 }
                 else
                 {
-                    await AvisoOperacionRecursosDialogAsync("Borrar Recurso", "Error en borrado de recurso. Reintente o escriba a soporte contacto@pentalpha.net");
+                    LvrTransferVar.REC_RUTID = "";
+                    LvrTransferVar.REC_DIGVER = "";
+                    LvrTransferVar.REC_PAT_SER = "";
                 }
+                LlenarPantallaConDb();
+                LlenarListaRecursos();
+                LlenarListaPropietarios();
+                await AvisoOperacionRecursosDialogAsync("Borrar Recurso", "Recurso borrado exitosamente.");
+                LvrTransferVar.EscribirValoresDeAjustes();
+                LvrTransferVar.LeerValoresDeAjustes();
             }
             else
             {
-                await AvisoOperacionRecursosDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de recurso.");
+                await AvisoOperacionRecursosDialogAsync("Borrar Recurso", "Error en Borrado de Recurso. Reintente o escriba a soporte contacto@pentalpha.net");
             }
-            LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // 1 sec delay
         }
 
         private void BtnListarRecursos(object sender, RoutedEventArgs e)
@@ -500,7 +458,7 @@ namespace BikeMessenger
 
             List<ClaseRecursoGrid> GridRecursoDb = new List<ClaseRecursoGrid>();
             List<GridRecursoIndividual> GridRecursoLista = new List<GridRecursoIndividual>();
-            if ((GridRecursoDb = BM_Database_Recurso.BuscarGridRecurso(LvrTransferVar.EMP_PENTALPHA)) != null)
+            if ((GridRecursoDb = BM_Database_Recurso.BuscarGridRecurso(LvrTransferVar.REC_PENTALPHA)) != null)
             {
                 for (int i = 0; i < GridRecursoDb.Count; i++)
                 {
@@ -531,7 +489,11 @@ namespace BikeMessenger
                     LimpiarPantalla();
                     RecursoIO = RecursoIOArray[0];
                     LlenarPantallaConDb();
-                    // LlenarListaPersonal();
+                    LvrTransferVar.REC_RUTID = RecursoIO.RUTID;
+                    LvrTransferVar.REC_DIGVER = RecursoIO.DIGVER;
+                    LvrTransferVar.REC_PAT_SER = RecursoIO.PATENTE;
+                    LvrTransferVar.EscribirValoresDeAjustes();
+                    LvrTransferVar.LeerValoresDeAjustes();
                 }
                 else
                 {

@@ -6,7 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Custom="using:Microsoft.Toolkit.Uwp.UI.Controls" x:Name="PantallaRecursos"
     x:Class="BikeMessenger.PageRecursos"
-    mc:Ignorable="d">
+    mc:Ignorable="d" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
     <Page.Background>
         <AcrylicBrush TintColor="#CC62B8EA"/>
     </Page.Background>
@@ -22,53 +22,48 @@
             <AppBarButton x:Name="appBarSalir" Icon="Go" Label="Salir" Click="BtnSalirRecursos"/>
         </CommandBar>
     </Page.BottomAppBar>
-    <Grid x:Name="GridRecursos">
+    <Grid x:Name="GridRecursos" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
         <Grid.Background>
             <AcrylicBrush TintColor="#CC62B8EA"/>
         </Grid.Background>
-        <TextBlock x:Name="labelIDPropietario" HorizontalAlignment="Left" Margin="15,371,0,0" Text="ID Propietario" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.92,-0.053" Height="32" Width="140" HorizontalTextAlignment="Right"/>
-        <TextBlock x:Name="labelPropietario" HorizontalAlignment="Left" Margin="15,403,0,0" Text="Propietario" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="140" HorizontalTextAlignment="Right"/>
-        <TextBlock x:Name="labelTipo" HorizontalAlignment="Left" Margin="319,52,0,0" Text="Tipo" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.492,3.158" Height="32" Width="70" HorizontalTextAlignment="Right"/>
-        <TextBlock x:Name="labelPatenteCodigo" HorizontalAlignment="Left" Margin="15,52,0,0" Text="Patente/Nro Serial" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="140" HorizontalTextAlignment="Right"/>
+        <TextBlock x:Name="labelIDPropietario" HorizontalAlignment="Left" Margin="15,378,0,0" Text="ID Propietario" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.92,-0.053" Height="23" Width="140" HorizontalTextAlignment="Right"/>
+        <TextBlock x:Name="labelPropietario" HorizontalAlignment="Left" Margin="15,410,0,0" Text="Propietario" TextWrapping="Wrap" VerticalAlignment="Top" Height="23" Width="140" HorizontalTextAlignment="Right"/>
+        <TextBlock x:Name="labelTipo" HorizontalAlignment="Left" Margin="319,61,0,0" Text="Tipo" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.492,3.158" Height="23" Width="70" HorizontalTextAlignment="Right"/>
+        <TextBlock x:Name="labelPatenteCodigo" HorizontalAlignment="Left" Margin="15,58,0,0" Text="Patente/Nro Serial" TextWrapping="Wrap" VerticalAlignment="Top" Height="23" Width="140" HorizontalTextAlignment="Right"/>
         <TextBlock x:Name="labelObservaciones" HorizontalAlignment="Left" Margin="15,308,0,0" Text="Observaciones" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="140" HorizontalTextAlignment="Right"/>
-        <TextBlock x:Name="labelMarca" HorizontalAlignment="Left" Margin="15,84,0,0" Text="Marca" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="140" HorizontalTextAlignment="Right"/>
-        <TextBox x:Name="textBoxRut" HorizontalAlignment="Left" Margin="160,371,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" Width="154" HorizontalContentAlignment="Left" VerticalContentAlignment="Bottom" BorderThickness="1,1,1,1" Background="#66C6D7DC" MaxLength="12"/>
-        <TextBox x:Name="textBoxDigitoVerificador" HorizontalAlignment="Left" Margin="319,371,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Background="#6626C7F7" MaxLength="4"/>
-        <TextBox x:Name="textBoxPropietario" HorizontalAlignment="Left" Margin="160,403,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="1.824,0.625" Width="480" BorderThickness="1,1,1,1" AcceptsReturn="True" Background="#66C6D7DC"/>
-        <TextBlock x:Name="labelModelo" HorizontalAlignment="Left" Margin="15,116,0,0" Text="Modelo" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" HorizontalTextAlignment="Right"/>
-        <TextBlock x:Name="labelVariante" HorizontalAlignment="Left" Margin="15,148,0,0" Text="Variante" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="140" HorizontalTextAlignment="Right"/>
-        <TextBox x:Name="textBoxMarca" HorizontalAlignment="Left" Margin="160,84,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="480" BorderThickness="1,1,1,1" Background="#66C6D7DC" MaxLength="50"/>
-        <TextBox x:Name="textBoxModelo" HorizontalAlignment="Left" Margin="160,116,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="480" BorderThickness="1,1,1,1" Background="#66C6D7DC" MaxLength="50"/>
-        <TextBlock x:Name="labelAno" HorizontalAlignment="Left" Margin="275,148,0,0" Text="Año" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="43" HorizontalTextAlignment="Right"/>
-        <TextBlock x:Name="labelColor" HorizontalAlignment="Left" Margin="416,148,0,0" Text="Color" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="53" HorizontalTextAlignment="Right"/>
+        <TextBlock x:Name="labelMarca" HorizontalAlignment="Left" Margin="15,85,0,0" Text="Marca" TextWrapping="Wrap" VerticalAlignment="Top" Height="31" Width="140" HorizontalTextAlignment="Right"/>
+        <TextBox x:Name="textBoxRut" HorizontalAlignment="Left" Margin="160,372,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" Width="154" HorizontalContentAlignment="Left" VerticalContentAlignment="Bottom" BorderThickness="1,1,1,1" Background="#66C6D7DC" MaxLength="12" TabIndex="13"/>
+        <TextBox x:Name="textBoxDigitoVerificador" HorizontalAlignment="Left" Margin="319,372,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Background="#66C6D7DC" MaxLength="4" TabIndex="14"/>
+        <TextBox x:Name="textBoxPropietario" HorizontalAlignment="Left" Margin="160,404,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" RenderTransformOrigin="1.824,0.625" Width="480" BorderThickness="1,1,1,1" Background="#66C6D7DC" TabIndex="15"/>
+        <TextBlock x:Name="labelModelo" HorizontalAlignment="Left" Margin="15,123,0,0" Text="Modelo" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" HorizontalTextAlignment="Right"/>
+        <TextBlock x:Name="labelVariante" HorizontalAlignment="Left" Margin="16,151,0,0" Text="Variante" TextWrapping="Wrap" VerticalAlignment="Top" Height="23" Width="140" HorizontalTextAlignment="Right"/>
+        <TextBox x:Name="textBoxMarca" HorizontalAlignment="Left" Margin="160,84,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="480" BorderThickness="1,1,1,1" Background="#66C6D7DC" MaxLength="50" TabIndex="3"/>
+        <TextBox x:Name="textBoxModelo" HorizontalAlignment="Left" Margin="160,116,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="480" BorderThickness="1,1,1,1" Background="#66C6D7DC" MaxLength="50" TabIndex="4"/>
+        <TextBlock x:Name="labelAno" HorizontalAlignment="Left" Margin="275,157,0,0" Text="Año" TextWrapping="Wrap" VerticalAlignment="Top" Height="23" Width="43" HorizontalTextAlignment="Right"/>
+        <TextBlock x:Name="labelColor" HorizontalAlignment="Left" Margin="416,157,0,0" Text="Color" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="23" Width="53" HorizontalTextAlignment="Right"/>
         <TextBlock x:Name="labelComuna" HorizontalAlignment="Left" Margin="15,212,0,0" Text="Comuna" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="140" HorizontalTextAlignment="Right"/>
-        <TextBox x:Name="textBoxVariante" HorizontalAlignment="Left" Margin="160,148,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Background="#66C6D7DC" Width="98" MaxLength="25"/>
-        <TextBox x:Name="textBoxAno" HorizontalAlignment="Left" Margin="331,148,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Background="#66C6D7DC" Width="69" MaxLength="5"/>
-        <ComboBox x:Name="comboBoxCiudad" Margin="160,180,0,0" Width="480" BorderThickness="1,1,1,1" Background="#66C6D7DC" IsEditable="True"/>
+        <TextBox x:Name="textBoxVariante" HorizontalAlignment="Left" Margin="160,148,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Background="#66C6D7DC" Width="98" MaxLength="25" TabIndex="5"/>
+        <TextBox x:Name="textBoxAno" HorizontalAlignment="Left" Margin="331,148,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Background="#66C6D7DC" Width="69" MaxLength="5" TabIndex="6"/>
+        <ComboBox x:Name="comboBoxCiudad" Margin="160,180,0,0" Width="480" BorderThickness="1,1,1,1" Background="#66C6D7DC" IsEditable="True" TabIndex="8"/>
         <TextBlock x:Name="labelCiudad" HorizontalAlignment="Left" Margin="15,180,0,0" Text="Ciudad" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="140" HorizontalTextAlignment="Right"/>
         <TextBlock x:Name="labelEstado" HorizontalAlignment="Left" Margin="15,244,0,0" Text="Estado/Region" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="140" HorizontalTextAlignment="Right"/>
         <TextBlock x:Name="labelPais" HorizontalAlignment="Left" Margin="15,276,0,0" Text="Pais" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="140" HorizontalTextAlignment="Right"/>
-        <TextBox x:Name="textBoxColor" HorizontalAlignment="Left" Margin="480,148,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Background="#66C6D7DC" Width="160" MaxLength="25"/>
-        <ComboBox x:Name="comboBoxComuna" Margin="160,212,0,0" Width="480" BorderThickness="1,1,1,1" Background="#66C6D7DC" IsEditable="True"/>
-        <ComboBox x:Name="comboBoxEstado" Margin="160,244,0,0" Width="480" BorderThickness="1,1,1,1" Background="#66C6D7DC" IsEditable="True"/>
-        <ComboBox x:Name="comboBoxPais" Margin="160,276,0,0" Width="480" BorderThickness="1,1,1,1" Background="#66C6D7DC" IsEditable="True"/>
-        <TextBox x:Name="textBoxPatenteCodigo" HorizontalAlignment="Left" Margin="160,52,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" RenderTransformOrigin="1.824,0.625" Width="154" BorderThickness="1,1,1,1" AcceptsReturn="True" Background="#66C6D7DC" MaxLength="25"/>
+        <TextBox x:Name="textBoxColor" HorizontalAlignment="Left" Margin="480,148,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Background="#66C6D7DC" Width="160" MaxLength="25" TabIndex="7"/>
+        <ComboBox x:Name="comboBoxComuna" Margin="160,212,0,0" Width="480" BorderThickness="1,1,1,1" Background="#66C6D7DC" IsEditable="True" TabIndex="9"/>
+        <ComboBox x:Name="comboBoxEstado" Margin="160,244,0,0" Width="480" BorderThickness="1,1,1,1" Background="#66C6D7DC" IsEditable="True" TabIndex="10"/>
+        <ComboBox x:Name="comboBoxPais" Margin="160,276,0,0" Width="480" BorderThickness="1,1,1,1" Background="#66C6D7DC" IsEditable="True" TabIndex="11"/>
+        <TextBox x:Name="textBoxPatenteCodigo" HorizontalAlignment="Left" Margin="160,52,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" RenderTransformOrigin="1.824,0.625" Width="154" BorderThickness="1,1,1,1" Background="#66C6D7DC" MaxLength="25" TabIndex="1"/>
         <Image x:Name="imageFotoRecurso" HorizontalAlignment="Left" Height="256" Margin="665,20,0,0" VerticalAlignment="Top" Width="311" Stretch="Fill" RequestedTheme="Default" IsTapEnabled="False" IsDoubleTapEnabled="False" IsHoldingEnabled="False" IsRightTapEnabled="False" AllowFocusOnInteraction="False">
             <Image.FocusVisualSecondaryBrush>
                 <SolidColorBrush/>
             </Image.FocusVisualSecondaryBrush>
         </Image>
         <Button x:Name="btnCargarFoto" Content="Cargar Foto" Height="32" Margin="505,20,0,0" VerticalAlignment="Top" Width="135" Click="BtnRecursosCargarFoto"/>
-        <TextBox x:Name="textBoxObservaciones" HorizontalAlignment="Left" Margin="160,308,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="480" BorderThickness="1,1,1,1" Background="#66C6D7DC" Height="65" AcceptsReturn="True" MaxLength="250"/>
+        <TextBox x:Name="textBoxObservaciones" HorizontalAlignment="Left" Margin="160,308,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="480" BorderThickness="1,1,1,1" Background="#66C6D7DC" Height="65" AcceptsReturn="True" MaxLength="250" TabIndex="12"/>
         <Custom:DataGrid x:Name="dataGridListadoRecursos" HeadersVisibility="Column" AlternatingRowBackground="LightGray" HorizontalAlignment="Left" Margin="15,472,0,0" VerticalAlignment="Top" Height="128" Width="625" BorderThickness="1,1,1,1" BorderBrush="#66000000" Background="#6626C7F7" GridLinesVisibility="All" SelectionChanged="DataGridRecursos_Seleccion" />
         <TextBox x:Name="labelListadoDeRecursos" HorizontalAlignment="Left" Margin="15,440,0,0" Text="Listado de Recursos" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="625" BorderThickness="1,1,1,1" IsReadOnly="True" IsTabStop="False" AllowFocusOnInteraction="False" IsTextPredictionEnabled="False" IsDoubleTapEnabled="False" IsHoldingEnabled="False" IsRightTapEnabled="False" IsTapEnabled="False" ManipulationMode="None" FocusVisualPrimaryThickness="1,1,1,1" HighContrastAdjustment="None"/>
         <TextBox x:Name="labelListadoDePropietarios" HorizontalAlignment="Left" Margin="665,291,0,0" Text="Listado de Propietarios" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="311" BorderThickness="1,1,1,1" IsReadOnly="True" IsTabStop="False" AllowFocusOnInteraction="False" IsTextPredictionEnabled="False" IsDoubleTapEnabled="False" IsHoldingEnabled="False" IsRightTapEnabled="False" IsTapEnabled="False" ManipulationMode="None" FocusVisualPrimaryThickness="1,1,1,1" HighContrastAdjustment="None"/>
         <Custom:DataGrid x:Name="dataGridListadoPropietarios" HeadersVisibility="Column" AlternatingRowBackground="LightGray" HorizontalAlignment="Left" Margin="665,323,0,0" VerticalAlignment="Top" Height="277" Width="311" BorderThickness="1,1,1,1" BorderBrush="#66000000" Background="#6626C7F7" GridLinesVisibility="All" SelectionChanged="DataGridSeleccion_Propietario" />
-        <ComboBox x:Name="comboBoxTipo" Margin="400,52,0,0" Width="240" BorderThickness="1,1,1,1" Background="#66C6D7DC" IsEditable="True"/>
-        <ProgressRing x:Name="LvrProgresRing" HorizontalAlignment="Left" Margin="401,244,0,0" VerticalAlignment="Top" Height="169" Width="179" Visibility="Visible" HighContrastAdjustment="Auto">
-            <ProgressRing.Foreground>
-                <SolidColorBrush Color="{ThemeResource SystemAccentColorDark3}"/>
-            </ProgressRing.Foreground>
-        </ProgressRing>
+        <ComboBox x:Name="comboBoxTipo" Margin="400,52,0,0" Width="240" BorderThickness="1,1,1,1" Background="#66C6D7DC" IsEditable="True" TabIndex="2"/>
     </Grid>
 </Page>

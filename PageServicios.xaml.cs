@@ -1,5 +1,4 @@
 ﻿using Microsoft.Toolkit.Uwp.UI.Controls;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,7 +9,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Maps;
 using Windows.UI.Xaml.Media.Animation;
-using Windows.UI.Xaml.Navigation;
 
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
@@ -42,7 +40,7 @@ namespace BikeMessenger
 
             if (LvrTransferVar.SER_NROENVIO == "")
             {
-                ServicioIOArray = BM_Database_Servicio.BuscarServicio(LvrTransferVar.EMP_PENTALPHA);
+                ServicioIOArray = BM_Database_Servicio.BuscarServicio(LvrTransferVar.SER_PENTALPHA);
                 if (ServicioIOArray != null && ServicioIOArray.Count > 0)
                 {
                     ServicioIO = ServicioIOArray[0];
@@ -58,6 +56,7 @@ namespace BikeMessenger
                     LlenarPantallaConDb();
                 }
             }
+
             LlenarListaEnvios();
             LlenarListaClientes();
             LlenarListaMensajeros();
@@ -96,66 +95,65 @@ namespace BikeMessenger
             comboBoxDestinoCiudad.ItemsSource = comboBoxOrigenCiudad.ItemsSource;
         }
 
+        private void ActualizarCombos()
+        {
+            BM_CCRP LocalRellenarCombos = new BM_CCRP();
+
+            // Actualizar Combo Pais
+            _ = LocalRellenarCombos.AgregarPais(ServicioIO.OPAIS);
+            _ = LocalRellenarCombos.AgregarPais(ServicioIO.DPAIS);
+
+            // Actualizar Combo Region
+            _ = LocalRellenarCombos.AgregarRegion(ServicioIO.OESTADO);
+            _ = LocalRellenarCombos.AgregarRegion(ServicioIO.DESTADO);
+
+            // Actualizar Combo Comuna
+            _ = LocalRellenarCombos.AgregarComuna(ServicioIO.OCOMUNA);
+            _ = LocalRellenarCombos.AgregarComuna(ServicioIO.DCOMUNA);
+
+            // Actualizar Combo Ciudad
+            _ = LocalRellenarCombos.AgregarCiudad(ServicioIO.OCIUDAD);
+            _ = LocalRellenarCombos.AgregarCiudad(ServicioIO.DCIUDAD);
+        }
+
         private async void BtnAgregarServicios(object sender, RoutedEventArgs e)
         {
-            LvrProgresRing.IsActive = true;
-
-            await Task.Delay(500);
-
             LlenarDbConPantalla();
 
             if (BM_Database_Servicio.AgregarServicio(ServicioIO))
             {
-                await AvisoOperacionServiciosDialogAsync("Agregar Servicio", "Servicio agregado exitosamente.");
                 LlenarListaEnvios();
                 LvrTransferVar.SER_PENTALPHA = ServicioIO.PENTALPHA;
                 LvrTransferVar.SER_NROENVIO = ServicioIO.NROENVIO;
                 LvrTransferVar.EscribirValoresDeAjustes();
                 LvrTransferVar.LeerValoresDeAjustes();
+                ActualizarCombos();
+                await AvisoOperacionServiciosDialogAsync("Agregar Servicio", "Servicio agregado exitosamente.");
             }
             else
             {
                 await AvisoOperacionServiciosDialogAsync("Agregar Servicio", "Error en ingreso de servicio. Reintente o escriba a soporte contacto@pentalpha.net");
             }
-
-            LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // 1 sec delay
         }
 
         private async void BtnModificarServicios(object sender, RoutedEventArgs e)
         {
-            LvrProgresRing.IsActive = true;
-            await Task.Delay(500); // .5 sec delay
-
-
             LlenarDbConPantalla();
 
             if (BM_Database_Servicio.ModificarServicio(ServicioIO))
             {
-                // Muestra de espera
-                bool TransaccionOK = true;
-
-                if (TransaccionOK)
-                {
-                    LlenarListaEnvios();
-                    LvrTransferVar.SER_PENTALPHA = ServicioIO.PENTALPHA;
-                    LvrTransferVar.SER_NROENVIO = ServicioIO.NROENVIO;
-                    LvrTransferVar.EscribirValoresDeAjustes();
-                    LvrTransferVar.LeerValoresDeAjustes();
-                    await AvisoOperacionServiciosDialogAsync("Modificar Servicio", "Servicio modificado exitosamente.");
-                }
-                else
-                {
-                    await AvisoOperacionServiciosDialogAsync("Modificar Servicio", "Error en modificación de servicio. Reintente o escriba a soporte contacto@pentalpha.net");
-                }
+                LlenarListaEnvios();
+                LvrTransferVar.SER_PENTALPHA = ServicioIO.PENTALPHA;
+                LvrTransferVar.SER_NROENVIO = ServicioIO.NROENVIO;
+                LvrTransferVar.EscribirValoresDeAjustes();
+                LvrTransferVar.LeerValoresDeAjustes();
+                ActualizarCombos();
+                await AvisoOperacionServiciosDialogAsync("Modificar Servicio", "Servicio modificado exitosamente.");
             }
             else
             {
-                await AvisoOperacionServiciosDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de cliente.");
+                await AvisoOperacionServiciosDialogAsync("Modificar Servicio", "Error en modificación de servicio. Reintente o escriba a soporte contacto@pentalpha.net");
             }
-
-            LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // 1 sec delay
         }
 
         private async void BtnBorrarServicios(object sender, RoutedEventArgs e)
@@ -169,49 +167,35 @@ namespace BikeMessenger
                 return;
             }
 
-            // Muestra de espera
-            LvrProgresRing.IsActive = true;
-            await Task.Delay(500); // .5 sec delay
-
             LlenarDbConPantalla();
 
             if (BM_Database_Servicio.BorrarServicio(LvrTransferVar.SER_PENTALPHA, ServicioIO.NROENVIO))
             {
-                bool TransaccionOK = true;
-                if (TransaccionOK)
+                await AvisoOperacionServiciosDialogAsync("Borrar Servicio", "Servicio borrado exitosamente.");
+
+                ServicioIOArray = BM_Database_Servicio.BuscarServicio(LvrTransferVar.EMP_PENTALPHA);
+
+                if (ServicioIOArray != null && ServicioIOArray.Count > 0)
                 {
-                    ServicioIOArray = BM_Database_Servicio.BuscarServicio(LvrTransferVar.EMP_PENTALPHA);
-
-                    if (ServicioIOArray != null && ServicioIOArray.Count > 0)
-                    {
-                        ServicioIO = ServicioIOArray[0];
-                        LvrTransferVar.SER_PENTALPHA = ServicioIO.PENTALPHA;
-                        LvrTransferVar.SER_NROENVIO = ServicioIO.NROENVIO;
-                    }
-                    else
-                    {
-                        LvrTransferVar.SER_NROENVIO = "";
-                    }
-                    textBoxNroDeEnvio.IsReadOnly = false;
-                    LvrTransferVar.EscribirValoresDeAjustes();
-                    LvrTransferVar.LeerValoresDeAjustes();
-
-                    LlenarListaEnvios();
-                    LlenarPantallaConDb();
-
-                    await AvisoOperacionServiciosDialogAsync("Borrar Servicio", "Servicio borrado exitosamente.");
+                    ServicioIO = ServicioIOArray[0];
+                    LvrTransferVar.SER_PENTALPHA = ServicioIO.PENTALPHA;
+                    LvrTransferVar.SER_NROENVIO = ServicioIO.NROENVIO;
                 }
                 else
                 {
-                    await AvisoOperacionServiciosDialogAsync("Borrar Servicio", "Error en borrado de servicio. Reintente o escriba a soporte contacto@pentalpha.net");
+                    LvrTransferVar.SER_NROENVIO = "";
                 }
+                textBoxNroDeEnvio.IsReadOnly = false;
+                LvrTransferVar.EscribirValoresDeAjustes();
+                LvrTransferVar.LeerValoresDeAjustes();
+
+                LlenarListaEnvios();
+                LlenarPantallaConDb();
             }
             else
             {
-                await AvisoOperacionServiciosDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de cliente.");
+                await AvisoOperacionServiciosDialogAsync("Borrar Servicio", "Error en borrado de servicio. Reintente o escriba a soporte contacto@pentalpha.net");
             }
-            LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // 1 sec delay
         }
 
 
@@ -310,11 +294,11 @@ namespace BikeMessenger
                 controlHora.SelectedTime = TimeSpan.Parse(ServicioIO.HORA.ToString());
                 textBoxRutID.Text = ServicioIO.CLIENTERUT;
                 textBoxDigitoVerificador.Text = ServicioIO.CLIENTEDIGVER;
-                textBoxCliente.Text = ""; // OJO
+                textBoxCliente.Text = BM_Database_Servicio.Bm_BuscarNombreCliente(ServicioIO.PENTALPHA, ServicioIO.CLIENTERUT, ServicioIO.CLIENTEDIGVER);
                 textBoxIdMensajero.Text = ServicioIO.MENSAJERORUT + "-" + ServicioIO.MENSAJERODIGVER;
-                textBoxNombreMensajero.Text = ""; // OJO;
+                textBoxNombreMensajero.Text = BM_Database_Servicio.Bm_BuscarNombreMensajero(ServicioIO.PENTALPHA, ServicioIO.MENSAJERORUT, ServicioIO.MENSAJERODIGVER);
                 textBoxIdRecurso.Text = ServicioIO.RECURSOID;
-                textBoxNombreRecurso.Text = ""; // OJO;
+                textBoxNombreRecurso.Text = BM_Database_Servicio.Bm_BuscarNombreRecurso(ServicioIO.PENTALPHA, ServicioIO.RECURSOID);
                 textBoxOrigenDomicilio1.Text = ServicioIO.ODOMICILIO1;
                 textBoxOrigenNumero.Text = ServicioIO.ONUMERO;
                 textBoxOrigenPiso.Text = ServicioIO.OPISO;
@@ -324,80 +308,40 @@ namespace BikeMessenger
                 textBoxDestinoPiso.Text = ServicioIO.DPISO;
                 textBoxDestinoOficina.Text = ServicioIO.DOFICINA;
                 textBoxDescripcion.Text = ServicioIO.DESCRIPCION;
-                textBoxFacturas.Text = ServicioIO.FACTURAS.ToString();
-                textBoxBultos.Text = ServicioIO.BULTOS.ToString();
-                textBoxCompras.Text = ServicioIO.COMPRAS.ToString();
-                textBoxCheques.Text = ServicioIO.CHEQUES.ToString();
-                textBoxSobres.Text = ServicioIO.SOBRES.ToString();
-                textBoxOtros.Text = ServicioIO.OTROS.ToString();
+                textBoxFacturas.Text = ServicioIO.FACTURAS.ToString() == "0" ? "" : ServicioIO.FACTURAS.ToString();
+                textBoxBultos.Text = ServicioIO.BULTOS.ToString() == "0" ? "" : ServicioIO.BULTOS.ToString();
+                textBoxCompras.Text = ServicioIO.COMPRAS.ToString() == "0" ? "" : ServicioIO.COMPRAS.ToString();
+                textBoxCheques.Text = ServicioIO.CHEQUES.ToString() == "0" ? "" : ServicioIO.CHEQUES.ToString();
+                textBoxSobres.Text = ServicioIO.SOBRES.ToString() == "0" ? "" : ServicioIO.SOBRES.ToString();
+                textBoxOtros.Text = ServicioIO.OTROS.ToString() == "0" ? "" : ServicioIO.OTROS.ToString();
                 textBoxObservaciones.Text = ServicioIO.OBSERVACIONES;
                 textBoxEntrega.Text = ServicioIO.ENTREGA;
                 textBoxRecepcion.Text = ServicioIO.RECEPCION;
                 textBoxTiempoDeEspera.Text = ServicioIO.TESPERA.ToString();
 
                 // Llenado de Pais
-                if (comboBoxOrigenPais.Items.Count == 0)
-                {
-                    comboBoxOrigenPais.Items.Add(ServicioIO.OPAIS);
-                }
-
                 comboBoxOrigenPais.SelectedValue = ServicioIO.OPAIS;
 
                 // Llenado de Estado o Region
-                if (comboBoxOrigenEstado.Items.Count == 0)
-                {
-                    comboBoxOrigenEstado.Items.Add(ServicioIO.OESTADO);
-                }
-
                 comboBoxOrigenEstado.SelectedValue = ServicioIO.OESTADO;
 
                 // Llenado de Comuna o Municipio
-                if (comboBoxOrigenComuna.Items.Count == 0)
-                {
-                    comboBoxOrigenComuna.Items.Add(ServicioIO.OCOMUNA);
-                }
-
                 comboBoxOrigenComuna.SelectedValue = ServicioIO.OCOMUNA;
 
                 // Llenado de Cuidad
-                if (comboBoxOrigenCiudad.Items.Count == 0)
-                {
-                    comboBoxOrigenCiudad.Items.Add(ServicioIO.OCIUDAD);
-                }
-
                 comboBoxOrigenCiudad.SelectedValue = ServicioIO.OCIUDAD;
 
 
                 // Llenado de Pais
-                if (comboBoxDestinoPais.Items.Count == 0)
-                {
-                    comboBoxDestinoPais.Items.Add(ServicioIO.DPAIS);
-                }
-
                 comboBoxDestinoPais.SelectedValue = ServicioIO.DPAIS;
 
                 // Llenado de Estado o Region
-                if (comboBoxDestinoEstado.Items.Count == 0)
-                {
-                    comboBoxDestinoEstado.Items.Add(ServicioIO.DESTADO);
-                }
-
                 comboBoxDestinoEstado.SelectedValue = ServicioIO.DESTADO;
 
                 // Llenado de Comuna o Municipio
-                if (comboBoxDestinoComuna.Items.Count == 0)
-                {
-                    comboBoxDestinoComuna.Items.Add(ServicioIO.DCOMUNA);
-                }
-
                 comboBoxDestinoComuna.SelectedValue = ServicioIO.DCOMUNA;
 
                 // Llenado de Cuidad
-                if (comboBoxDestinoCiudad.Items.Count == 0)
-                {
-                    comboBoxDestinoCiudad.Items.Add(ServicioIO.DCIUDAD);
-                }
-
                 comboBoxDestinoCiudad.SelectedValue = ServicioIO.DCIUDAD;
             }
             catch (ArgumentNullException)
@@ -478,13 +422,12 @@ namespace BikeMessenger
             ServicioIO.DLONGITUD = 0;
 
             ServicioIO.DESCRIPCION = textBoxDescripcion.Text;
-
-            ServicioIO.FACTURAS = int.Parse(textBoxFacturas.Text);
-            ServicioIO.BULTOS = int.Parse(textBoxBultos.Text);
-            ServicioIO.COMPRAS = int.Parse(textBoxCompras.Text);
-            ServicioIO.CHEQUES = int.Parse(textBoxCheques.Text);
-            ServicioIO.SOBRES = int.Parse(textBoxSobres.Text);
-            ServicioIO.OTROS = int.Parse(textBoxOtros.Text);
+            ServicioIO.FACTURAS = int.Parse(textBoxFacturas.Text != "" ? textBoxFacturas.Text : "0");
+            ServicioIO.BULTOS = int.Parse(textBoxBultos.Text != "" ? textBoxBultos.Text : "0");
+            ServicioIO.COMPRAS = int.Parse(textBoxCompras.Text != "" ? textBoxCompras.Text : "0");
+            ServicioIO.CHEQUES = int.Parse(textBoxCheques.Text != "" ? textBoxCheques.Text : "0");
+            ServicioIO.SOBRES = int.Parse(textBoxSobres.Text != "" ? textBoxSobres.Text : "0");
+            ServicioIO.OTROS = int.Parse(textBoxOtros.Text != "" ? textBoxOtros.Text : "0");
 
             ServicioIO.OBSERVACIONES = textBoxObservaciones.Text;
             ServicioIO.ENTREGA = textBoxEntrega.Text;
@@ -588,6 +531,10 @@ namespace BikeMessenger
                 {
                     ServicioIO = ServicioIOArray[0];
                     LlenarPantallaConDb();
+                    LvrTransferVar.SER_PENTALPHA = ServicioIO.PENTALPHA;
+                    LvrTransferVar.SER_NROENVIO = ServicioIO.NROENVIO;
+                    LvrTransferVar.EscribirValoresDeAjustes();
+                    LvrTransferVar.LeerValoresDeAjustes();
                 }
             }
             catch (ArgumentOutOfRangeException)
@@ -804,6 +751,15 @@ namespace BikeMessenger
             {
                 LvrTransferVar.PantallaAnterior = "SERVICIO";
                 _ = Frame.Navigate(typeof(ListadosGenerales), LvrTransferVar, new SuppressNavigationTransitionInfo());
+            }
+        }
+
+        private void ValidarValorNumerico(UIElement sender, Windows.UI.Xaml.Input.CharacterReceivedRoutedEventArgs args)
+        {
+            TextBox Validador = (TextBox)sender;
+            if (!(args.Character >= '0' && args.Character <= '9'))
+            {
+                Validador.Text = "";
             }
         }
     }

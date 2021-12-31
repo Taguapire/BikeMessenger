@@ -174,6 +174,9 @@ namespace BikeMessenger
 
             });
 
+            BM_ConexionLite.Close();
+            BM_ConexionLite.Dispose();
+
             return true;
         }
 

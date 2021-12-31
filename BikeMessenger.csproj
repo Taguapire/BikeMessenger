@@ -153,6 +153,9 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PageAjustes.xaml.cs">
+      <DependentUpon>PageAjustes.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PageClientes.xaml.cs">
       <DependentUpon>PageClientes.xaml</DependentUpon>
     </Compile>
@@ -255,6 +258,10 @@
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="PageAjustes.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="PageClientes.xaml">
       <SubType>Designer</SubType>
