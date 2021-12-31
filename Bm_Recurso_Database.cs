@@ -269,12 +269,12 @@ namespace BikeMessenger
                     GridLocalPersonalLista.Add(GridLocalPersonal);
                 }
 
-                
+
             }
 
             BM_ConexionLite.Close();
             BM_ConexionLite.Dispose();
-            
+
             return GridLocalPersonalLista;
         }
 
@@ -303,6 +303,8 @@ namespace BikeMessenger
 
         public string Bm_Recurso_Listado(string pPENTALPHA)
         {
+            SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
+
             if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
             {
                 return null;
@@ -323,68 +325,33 @@ namespace BikeMessenger
             DocumentoHtml.AgregarEncabezado("MODELO");
             DocumentoHtml.AgregarEncabezado("VARIANTE");
             DocumentoHtml.AgregarEncabezado("AÑO");
-            DocumentoHtml.AgregarEncabezado("PROPIETARIO"); // OJO
+            DocumentoHtml.AgregarEncabezado("PROPIETARIO");
             DocumentoHtml.AgregarEncabezado("CIUDAD");
             DocumentoHtml.AgregarEncabezado("COMUNA");
             DocumentoHtml.AgregarEncabezado("REGION");
             DocumentoHtml.AgregarEncabezado("PAIS");
             DocumentoHtml.CerrarEncabezado();
 
-            /*
-            if (BM_TransferVar.SincronizarBaseLocal())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
-            {
-                DataSet BM_DataSet;
-                SqlDataAdapter BM_Adaptador;
-                SqlCommand BM_Comando;
+            List<TbVistaRecursoPropietario> results = BM_ConexionLite.Query<TbVistaRecursoPropietario>("select * from Vista_Recursos_Propietario");
 
-                try
-                {
-                    BM_Comando = BM_Conexion.CreateCommand();
-                    BM_Comando.CommandText = string.Format("SELECT * FROM RECURSOS_VISTA_LISTADO");
+            for (int i = 0; i < results.Count; i++)
 
-                    BM_Adaptador = new SqlDataAdapter(BM_Comando)
-                    {
-                        AcceptChangesDuringFill = false
-                    };
-                    BM_DataSet = new DataSet();
-                    BM_Adaptador.Fill(BM_DataSet, "RECURSOS_VISTA_LISTADO");
+            {
+                DocumentoHtml.AbrirFila();
+                DocumentoHtml.AgregarCampo(results[i].TIPO, false);
+                DocumentoHtml.AgregarCampo(results[i].PATENTE, false);
+                DocumentoHtml.AgregarCampo(results[i].MARCA, false);
+                DocumentoHtml.AgregarCampo(results[i].MODELO, false);
+                DocumentoHtml.AgregarCampo(results[i].VARIANTE, false);
+                DocumentoHtml.AgregarCampo(results[i].ANO, false);
+                DocumentoHtml.AgregarCampo(results[i].APELLIDOS + ", " + results[i].NOMBRES, false);
+                DocumentoHtml.AgregarCampo(results[i].CIUDAD, false);
+                DocumentoHtml.AgregarCampo(results[i].COMUNA, false);
+                DocumentoHtml.AgregarCampo(results[i].REGION, false);
+                DocumentoHtml.AgregarCampo(results[i].PAIS, false);
+                DocumentoHtml.CerrarFila();
+            }
 
-                    foreach (DataRowView LvrRecurso in BM_DataSet.Tables["RECURSOS_VISTA_LISTADO"].DefaultView)
-                    {
-                        DocumentoHtml.AbrirFila();
-                        DocumentoHtml.AgregarCampo(LvrRecurso["TIPO"].ToString(), false);
-                        DocumentoHtml.AgregarCampo(LvrRecurso["PATENTE"].ToString(), false);
-                        DocumentoHtml.AgregarCampo(LvrRecurso["MARCA"].ToString(), false);
-                        DocumentoHtml.AgregarCampo(LvrRecurso["MODELO"].ToString(), false);
-                        DocumentoHtml.AgregarCampo(LvrRecurso["VARIANTE"].ToString(), false);
-                        DocumentoHtml.AgregarCampo(LvrRecurso["APELLIDOS"].ToString() + ", " + LvrRecurso["NOMBRES"].ToString(), false);
-                        DocumentoHtml.AgregarCampo(LvrRecurso["ANO"].ToString(), false);
-                        DocumentoHtml.AgregarCampo(LvrRecurso["CIUDAD"].ToString(), false);
-                        DocumentoHtml.AgregarCampo(LvrRecurso["COMUNA"].ToString(), false);
-                        DocumentoHtml.AgregarCampo(LvrRecurso["REGION"].ToString(), false);
-                        DocumentoHtml.AgregarCampo(LvrRecurso["PAIS"].ToString(), false);
-                        DocumentoHtml.CerrarFila();
-                    }
-                }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                    return null;
-                }
-            }
-            else if (BM_TransferVar.SincronizarWebPentalpha())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarWebPropio())
-            {
-                return null;
-            }
-            */
             DocumentoHtml.FinDocumento();
             return DocumentoHtml.BufferHtml;
         }

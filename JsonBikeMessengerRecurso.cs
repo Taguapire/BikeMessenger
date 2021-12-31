@@ -78,7 +78,7 @@ namespace BikeMessenger
         public string ANO { get; set; }
         [Column("color")]
         public string COLOR { get; set; }
-        [Column("pkpersonal")]
+        [Column("ciudad")]
         public string CIUDAD { get; set; }
         [Column("comuna")]
         public string COMUNA { get; set; }
@@ -94,5 +94,33 @@ namespace BikeMessenger
         public string RESOPERACION { get; set; }
         [Column("resmensaje")]
         public string RESMENSAJE { get; set; }
+    }
+
+    internal class TbVistaRecursoPropietario
+    {
+        [Column("tipo")]
+        public string TIPO { get; set; }
+        [Column("patente")]
+        public string PATENTE { get; set; }
+        [Column("marca")]
+        public string MARCA { get; set; }
+        [Column("modelo")]
+        public string MODELO { get; set; }
+        [Column("variante")]
+        public string VARIANTE { get; set; }
+        [Column("apellidos")]
+        public string APELLIDOS { get; set; }
+        [Column("nombres")]
+        public string NOMBRES { get; set; }
+        [Column("ano")]
+        public string ANO { get; set; }
+        [Column("ciudad")]
+        public string CIUDAD { get; set; }
+        [Column("comuna")]
+        public string COMUNA { get; set; }
+        [Column("region")]
+        public string REGION { get; set; }
+        [Column("pais")]
+        public string PAIS { get; set; }
     }
 }

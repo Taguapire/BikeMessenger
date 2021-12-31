@@ -41,6 +41,11 @@ namespace BikeMessenger
 
         public bool AgregarComuna(string pComuna)
         {
+            if (pComuna == null || pComuna == "")
+            {
+                return false;
+            }
+
             SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
 
             BM_ConexionLite.RunInTransaction(() =>
@@ -82,6 +87,11 @@ namespace BikeMessenger
 
         public bool AgregarCiudad(string pCiudad)
         {
+            if (pCiudad == null || pCiudad == "")
+            {
+                return false;
+            }
+
             SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
 
             BM_ConexionLite.RunInTransaction(() =>
@@ -123,6 +133,11 @@ namespace BikeMessenger
 
         public bool AgregarRegion(string pRegion)
         {
+            if (pRegion == null || pRegion == "")
+            {
+                return false;
+            }
+
             SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
 
             BM_ConexionLite.RunInTransaction(() =>
@@ -164,6 +179,11 @@ namespace BikeMessenger
 
         public bool AgregarPais(string pPais)
         {
+            if (pPais == null || pPais == "")
+            {
+                return false;
+            }
+
             SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
 
             BM_ConexionLite.RunInTransaction(() =>
