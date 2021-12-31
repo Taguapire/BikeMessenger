@@ -209,4 +209,28 @@ namespace BikeMessenger
         [Column("resmensaje")]
         public string RESMENSAJE { get; set; }
     }
+
+    internal class TbVistaServicioCliMen
+    {
+        [Column("nroenvio")]
+        public string NROENVIO { get; set; }
+        [Column("guiadespacho")]
+        public string GUIADESPACHO { get; set; }
+        [Column("fechaentrega")]
+        public string FECHAENTREGA { get; set; }
+        [Column("horaentrega")]
+        public string HORAENTREGA { get; set; }
+        [Column("nombre")]
+        public string NOMBRE { get; set; }
+        [Column("apellidos")]
+        public string APELLIDOS { get; set; }
+        [Column("nombres")]
+        public string NOMBRES { get; set; }
+        [Column("entrega")]
+        public string ENTREGA { get; set; }
+        [Column("recepcion")]
+        public string RECEPCION { get; set; }
+        [Column("distancia")]
+        public double DISTANCIA { get; set; }
+    }
 }

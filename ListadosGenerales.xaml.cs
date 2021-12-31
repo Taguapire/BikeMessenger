@@ -115,7 +115,14 @@ namespace BikeMessenger
                 case "CLIENTE":
                     Bm_Cliente_Database BM_Database_Cliente = new Bm_Cliente_Database();
                     HtmlImprimir = BM_Database_Cliente.Bm_Cliente_Listado(LvrTransferVar.EMP_PENTALPHA);
-                    VisorWeb.NavigateToString(HtmlImprimir);
+                    try
+                    {
+                        VisorWeb.NavigateToString(HtmlImprimir);
+                    }
+                    catch (ArgumentNullException)
+                    {
+                        ;
+                    }
                     break;
                 case "SERVICIO":
                     Bm_Servicio_Database BM_Database_Servicio = new Bm_Servicio_Database();

@@ -335,7 +335,6 @@ namespace BikeMessenger
             List<TbVistaRecursoPropietario> results = BM_ConexionLite.Query<TbVistaRecursoPropietario>("select * from Vista_Recursos_Propietario");
 
             for (int i = 0; i < results.Count; i++)
-
             {
                 DocumentoHtml.AbrirFila();
                 DocumentoHtml.AgregarCampo(results[i].TIPO, false);

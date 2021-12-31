@@ -314,7 +314,7 @@ namespace BikeMessenger
         public bool BorrarServicio(string pPENTALPHA, string pNROENVIO)
         {
             string VPKSERVICIO = pPENTALPHA + pNROENVIO;
-          
+
             SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
 
             BM_ConexionLite.RunInTransaction(() =>
@@ -540,79 +540,53 @@ namespace BikeMessenger
 
         public string Bm_Servicio_Listado()
         {
+            SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
 
-            return null;
-            /*
-               LvrTablaHtml DocumentoHtml = new LvrTablaHtml();
+            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return null;
+            }
 
-               DocumentoHtml.CrearTexto("SERVICIOS");
-               DocumentoHtml.InicioDocumento();
-               DocumentoHtml.AgregarTituloTabla("Listado de Servicios");
-               DocumentoHtml.AbrirEncabezado();
-               DocumentoHtml.AgregarEncabezado("Nro de Envío");
-               DocumentoHtml.AgregarEncabezado("Guia de Despacho");
-               DocumentoHtml.AgregarEncabezado("Fecha de Ingreso");
-               DocumentoHtml.AgregarEncabezado("Hora de Ingreso");
-               DocumentoHtml.AgregarEncabezado("Cliente");
-               DocumentoHtml.AgregarEncabezado("Mensajero");
-               DocumentoHtml.AgregarEncabezado("Entrega");
-               DocumentoHtml.AgregarEncabezado("Recepción");
-               DocumentoHtml.CerrarEncabezado();
+            BK_Servicio = new StructBikeMessengerServicio();
+            BK_ServicioLista = new List<StructBikeMessengerServicio>();
 
-               if (BM_TransferVar.SincronizarBaseLocal())
-               {
-                   return null;
-               }
-               else if (BM_TransferVar.SincronizarBaseSQLServer())
-               {
-                   DataSet BM_DataSet;
-                   SqlDataAdapter BM_Adaptador;
-                   SqlCommand BM_Comando;
+            LvrTablaHtml DocumentoHtml = new LvrTablaHtml();
 
-                   try
-                   {
-                       BM_Comando = BM_Conexion.CreateCommand();
-                       BM_Comando.CommandText = string.Format("SELECT * FROM SERVICIOS_VISTA_LISTADO");
+            DocumentoHtml.CrearTexto("SERVICIOS");
+            DocumentoHtml.InicioDocumento();
+            DocumentoHtml.AgregarTituloTabla("Listado de Servicios");
+            DocumentoHtml.AbrirEncabezado();
+            DocumentoHtml.AgregarEncabezado("Nro de Envío");
+            DocumentoHtml.AgregarEncabezado("Guia de Despacho");
+            DocumentoHtml.AgregarEncabezado("Fecha de Ingreso");
+            DocumentoHtml.AgregarEncabezado("Hora de Ingreso");
+            DocumentoHtml.AgregarEncabezado("Cliente");
+            DocumentoHtml.AgregarEncabezado("Mensajero");
+            DocumentoHtml.AgregarEncabezado("Entrega");
+            DocumentoHtml.AgregarEncabezado("Recepción");
+            DocumentoHtml.AgregarEncabezado("Distancia");
+            DocumentoHtml.CerrarEncabezado();
 
-                       BM_Adaptador = new SqlDataAdapter(BM_Comando)
-                       {
-                           AcceptChangesDuringFill = false
-                       };
-                       BM_DataSet = new DataSet();
-                       BM_Adaptador.Fill(BM_DataSet, "SERVICIOS_VISTA_LISTADO");
+            List<TbVistaServicioCliMen> results = BM_ConexionLite.Query<TbVistaServicioCliMen>("select * from Vista_Servicio_CliMen");
 
-                       foreach (DataRowView LvrServicio in BM_DataSet.Tables["SERVICIOS_VISTA_LISTADO"].DefaultView)
-                       {
-                           DocumentoHtml.AbrirFila();
-                           DocumentoHtml.AgregarCampo(LvrServicio["NROENVIO"].ToString(), false);
-                           DocumentoHtml.AgregarCampo(LvrServicio["GUIADESPACHO"].ToString(), false);
-                           DocumentoHtml.AgregarCampo(LvrServicio["FECHA"].ToString(), false);
-                           DocumentoHtml.AgregarCampo(LvrServicio["HORA"].ToString(), false);
-                           DocumentoHtml.AgregarCampo(LvrServicio["NOMBRE"].ToString(), false);
-                           DocumentoHtml.AgregarCampo(LvrServicio["APELLIDOS"].ToString() + ", " + LvrServicio["NOMBRES"].ToString(), false);
-                           DocumentoHtml.AgregarCampo(LvrServicio["ENTREGA"].ToString(), false);
-                           DocumentoHtml.AgregarCampo(LvrServicio["RECEPCION"].ToString(), false);
-                           DocumentoHtml.CerrarFila();
-                       }
-                   }
-                   catch (Exception Ex)
-                   {
-                       Console.WriteLine(Ex.InnerException.Message);
-                       return null;
-                   }
-               }
-               else if (BM_TransferVar.SincronizarWebPentalpha())
-               {
-                   return null;
-               }
-               else if (BM_TransferVar.SincronizarWebPropio())
-               {
-                   return null;
-               }
-               DocumentoHtml.FinDocumento();
-               return DocumentoHtml.BufferHtml;
-           }
-            */
+            for (int i = 0; i < results.Count; i++)
+
+            {
+                DocumentoHtml.AbrirFila();
+                DocumentoHtml.AgregarCampo(results[i].NROENVIO, false);
+                DocumentoHtml.AgregarCampo(results[i].GUIADESPACHO, false);
+                DocumentoHtml.AgregarCampo(results[i].FECHAENTREGA, false);
+                DocumentoHtml.AgregarCampo(results[i].HORAENTREGA, false);
+                DocumentoHtml.AgregarCampo(results[i].NOMBRE, false);
+                DocumentoHtml.AgregarCampo(results[i].APELLIDOS + ", " + results[i].NOMBRES, false);
+                DocumentoHtml.AgregarCampo(results[i].ENTREGA, false);
+                DocumentoHtml.AgregarCampo(results[i].RECEPCION, false);
+                DocumentoHtml.AgregarCampo(results[i].DISTANCIA.ToString(), false);
+                DocumentoHtml.CerrarFila();
+            }
+
+            DocumentoHtml.FinDocumento();
+            return DocumentoHtml.BufferHtml;
         }
     }
 
@@ -625,3 +599,4 @@ namespace BikeMessenger
         public string ENTREGA { get; set; }
     }
 }
+
