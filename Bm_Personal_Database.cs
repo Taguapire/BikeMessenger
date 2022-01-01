@@ -33,32 +33,34 @@ namespace BikeMessenger
             {
                 for (int i = 0; i < results.Count; i++)
                 {
-                    BK_Personal = new StructBikeMessengerPersonal();
-                    BK_Personal.OPERACION = "BUSCAR";
-                    BK_Personal.PKPERSONAL = results[i].PKPERSONAL;
-                    BK_Personal.PENTALPHA = results[i].PENTALPHA;
-                    BK_Personal.RUTID = results[i].RUTID;
-                    BK_Personal.DIGVER = results[i].DIGVER;
-                    BK_Personal.APELLIDOS = results[i].APELLIDOS;
-                    BK_Personal.NOMBRES = results[i].NOMBRES;
-                    BK_Personal.TELEFONO1 = results[i].TELEFONO1;
-                    BK_Personal.TELEFONO2 = results[i].TELEFONO2;
-                    BK_Personal.EMAIL = results[i].EMAIL;
-                    BK_Personal.AUTORIZACION = results[i].AUTORIZACION;
-                    BK_Personal.CARGO = results[i].CARGO;
-                    BK_Personal.DOMICILIO = results[i].DOMICILIO;
-                    BK_Personal.NUMERO = results[i].NUMERO;
-                    BK_Personal.PISO = results[i].PISO;
-                    BK_Personal.DPTO = results[i].DPTO;
-                    BK_Personal.CODIGOPOSTAL = results[i].CODIGOPOSTAL;
-                    BK_Personal.CIUDAD = results[i].CIUDAD;
-                    BK_Personal.COMUNA = results[i].COMUNA;
-                    BK_Personal.REGION = results[i].REGION;
-                    BK_Personal.PAIS = results[i].PAIS;
-                    BK_Personal.OBSERVACIONES = results[i].OBSERVACIONES;
-                    BK_Personal.FOTO = results[i].FOTO;
-                    BK_Personal.RESMENSAJE = "OK";
-                    BK_Personal.RESOPERACION = "OK";
+                    BK_Personal = new StructBikeMessengerPersonal
+                    {
+                        OPERACION = "BUSCAR",
+                        PKPERSONAL = results[i].PKPERSONAL,
+                        PENTALPHA = results[i].PENTALPHA,
+                        RUTID = results[i].RUTID,
+                        DIGVER = results[i].DIGVER,
+                        APELLIDOS = results[i].APELLIDOS,
+                        NOMBRES = results[i].NOMBRES,
+                        TELEFONO1 = results[i].TELEFONO1,
+                        TELEFONO2 = results[i].TELEFONO2,
+                        EMAIL = results[i].EMAIL,
+                        AUTORIZACION = results[i].AUTORIZACION,
+                        CARGO = results[i].CARGO,
+                        DOMICILIO = results[i].DOMICILIO,
+                        NUMERO = results[i].NUMERO,
+                        PISO = results[i].PISO,
+                        DPTO = results[i].DPTO,
+                        CODIGOPOSTAL = results[i].CODIGOPOSTAL,
+                        CIUDAD = results[i].CIUDAD,
+                        COMUNA = results[i].COMUNA,
+                        REGION = results[i].REGION,
+                        PAIS = results[i].PAIS,
+                        OBSERVACIONES = results[i].OBSERVACIONES,
+                        FOTO = results[i].FOTO,
+                        RESMENSAJE = "OK",
+                        RESOPERACION = "OK"
+                    };
                     BK_PersonalLista.Add(BK_Personal);
                 }
             }

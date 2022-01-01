@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Toolkit.Uwp.UI.Controls;
+using SQLite;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
@@ -17,7 +19,7 @@ namespace BikeMessenger
 
         public PageInicio()
         {
-            this.InitializeComponent();
+            InitializeComponent();
             InciarlistViewServicios();
             ContinuarSiNo = false;
             if (LvrTransferVar.ESTADOPARAMETROS == "NADA")
@@ -45,35 +47,104 @@ namespace BikeMessenger
 
         private void InciarlistViewServicios()
         {
+
             List<GridListViewServicios> GridServiciosLista = new List<GridListViewServicios>();
-            //listViewServicios.Items.Add("Hola");
-            //listViewServicios.Items.Add("Luis");
-            //listViewServicios.Items.Add("Vasquez");
+
+            string CompletoNombreBD = LvrTransferVar.DIRECTORIO_BASE_LOCAL + "\\BikeMessenger.db";
+
+            SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
+
+            if (LvrTransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                return;
+            }
+
+            List<TbVistaServicioCliMen> results = BM_ConexionLite.Query<TbVistaServicioCliMen>("select * from Vista_Servicio_CliMen");
+
+            for (int i = 0; i < results.Count; i++)
+            {
+                GridServiciosLista.Add(new GridListViewServicios
+                {
+                    NRO_ENVIO = results[i].NROENVIO,
+                    GUIA_DESPACHO = results[i].GUIADESPACHO,
+                    FECHA_ENTREGA = results[i].FECHAENTREGA,
+                    HORA_ENTREGA = results[i].HORAENTREGA,
+                    CLIENTE = results[i].NOMBRE,
+                    MENSAJERO = results[i].APELLIDOS + "," + results[i].NOMBRES,
+                    ENTREGA = results[i].ENTREGA,
+                    RECEPCION = results[i].RECEPCION,
+                    DISTANCIA = results[i].DISTANCIA
+                });
+            }
+
+            DGViewServicios.ItemsSource = GridServiciosLista;
+
+            BM_ConexionLite.Close();
+            BM_ConexionLite.Dispose();
+        }
+
+        private void GeneracionDeColumnas(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+            switch (e.Column.Header.ToString())
+            {
+                case "NRO_ENVIO":
+                    e.Column.Header = "Nro de Envio";
+                    break;
+                case "GUIA_DESPACHO":
+                    e.Column.Header = "Guia de Despacho";
+                    break;
+                case "FECHA_ENTREGA":
+                    e.Column.Header = "Fecha de Entrega";
+                    break;
+                case "HORA_ENTREGA":
+                    e.Column.Header = "Hora de Entrega";
+                    break;
+                case "CLIENTE":
+                    e.Column.Header = "Nombre del Cliente";
+                    break;
+                case "MENSAJERO":
+                    e.Column.Header = "Nombre del Mensajero";
+                    break;
+                case "ENTREGA":
+                    e.Column.Header = "Entregado";
+                    break;
+                case "RECEPCION":
+                    e.Column.Header = "Recibido";
+                    break;
+                case "DISTANCIA":
+                    e.Column.Header = "Distancia";
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
     internal class GridListViewServicios
     {
-        public string NROENVIO;
-        public string GUIADESPACHO;
-        public string FECHA;
-        public string HORA;
-        public string NOMBRE;
-        public string APELLIDOS;
-        public string ENTREGA;
-        public string RECEPCION;
+        public string NRO_ENVIO { get; set; }
+        public string GUIA_DESPACHO { get; set; }
+        public string FECHA_ENTREGA { get; set; }
+        public string HORA_ENTREGA { get; set; }
+        public string CLIENTE { get; set; }
+        public string MENSAJERO { get; set; }
+        public string ENTREGA { get; set; }
+        public string RECEPCION { get; set; }
+        public double DISTANCIA { get; set; }
 
         public GridListViewServicios()
         {
-            NROENVIO = "";
-            GUIADESPACHO = "";
-            FECHA = "";
-            HORA = "";
-            NOMBRE = "";
-            APELLIDOS = "";
+            NRO_ENVIO = "";
+            GUIA_DESPACHO = "";
+            FECHA_ENTREGA = "";
+            HORA_ENTREGA = "";
+            CLIENTE = "";
+            MENSAJERO = "";
             ENTREGA = "";
             RECEPCION = "";
+            DISTANCIA = 0;
         }
     }
 }
+
 

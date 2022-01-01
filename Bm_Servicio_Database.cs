@@ -585,6 +585,10 @@ namespace BikeMessenger
             }
 
             DocumentoHtml.FinDocumento();
+
+            BM_ConexionLite.Close();
+            BM_ConexionLite.Dispose();
+
             return DocumentoHtml.BufferHtml;
         }
     }
