@@ -1,6 +1,8 @@
 ﻿using Microsoft.Toolkit.Uwp.UI.Controls;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.Devices.Geolocation;
 using Windows.Services.Maps;
@@ -25,6 +27,7 @@ namespace BikeMessenger
         private Bm_Servicio_Database BM_Database_Servicio = new Bm_Servicio_Database();
         private TransferVar LvrTransferVar = new TransferVar();
         private bool BorrarSiNo;
+        private double LvrDistanciaRecorrida = 0;
 
         public PageServicios()
         {
@@ -240,24 +243,51 @@ namespace BikeMessenger
             BasicGeoposition startLocation = new BasicGeoposition() { Latitude = lvrlatOrigen, Longitude = lvrlonOrigen };
             BasicGeoposition endLocation = new BasicGeoposition() { Latitude = lvrlatDestino, Longitude = lvrlonDestino };
 
+            MapRouteDrivingOptions OpcionDeConduccion = new MapRouteDrivingOptions
+            {
+                MaxAlternateRouteCount = 2,
+                RouteOptimization = MapRouteOptimization.TimeWithTraffic,
+                RouteRestrictions = MapRouteRestrictions.Highways
+            };
+
             MapRouteFinderResult routeResult =
                 await MapRouteFinder.GetDrivingRouteAsync(
                 new Geopoint(startLocation),
                 new Geopoint(endLocation),
-                MapRouteOptimization.Time,
-                MapRouteRestrictions.None);
+                OpcionDeConduccion);
 
             if (routeResult.Status == MapRouteFinderStatus.Success)
             {
                 // Use the route to initialize a MapRouteView.
+                LvrDistanciaRecorrida = routeResult.Route.LengthInMeters;
+
                 MapRouteView viewOfRoute = new MapRouteView(routeResult.Route)
                 {
-                    RouteColor = Colors.Yellow,
-                    OutlineColor = Colors.Black
+                    RouteColor = Colors.YellowGreen,
+                    OutlineColor = Colors.AliceBlue
+                };
+
+                // Preparacion de Inicio y Final
+
+                var InicioDeRecorrido = new MapIcon
+                {
+                    Location = new Geopoint(startLocation),
+                    ZIndex = 0,
+                    Title = "Partida"
+                };
+
+                var FinDeRecorrido = new MapIcon
+                {
+                    Location = new Geopoint(endLocation),
+                    ZIndex = 0,
+                    Title = "Llegada"
                 };
 
                 // Add the new MapRouteView to the Routes collection
                 // of the MapControl.
+
+                mapControlBikeMessenger.MapElements.Add(InicioDeRecorrido);
+                mapControlBikeMessenger.MapElements.Add(FinDeRecorrido);
                 mapControlBikeMessenger.Routes.Add(viewOfRoute);
 
                 // Fit the MapControl to the route.
@@ -270,7 +300,10 @@ namespace BikeMessenger
 
         private void BtnMapaServicios(object sender, RoutedEventArgs e)
         {
-            mapControlBikeMessenger.Style = MapStyle.Road;
+            mapControlBikeMessenger.Style = MapStyle.Terrain;
+            mapControlBikeMessenger.BusinessLandmarksVisible = true;
+            mapControlBikeMessenger.LandmarksVisible = true;
+
             if (mapControlBikeMessenger.Visibility == Visibility.Visible)
             {
                 mapControlBikeMessenger.Visibility = Visibility.Collapsed;
@@ -290,7 +323,7 @@ namespace BikeMessenger
             {
                 textBoxNroDeEnvio.Text = ServicioIO.NROENVIO;
                 textBoxGuiaDeDespacho.Text = ServicioIO.GUIADESPACHO;
-                controlFecha.SelectedDate = DateTimeOffset.Parse(ServicioIO.FECHA.ToString());
+                BtnFechaServicio.Content = ServicioIO.FECHA;
                 controlHora.SelectedTime = TimeSpan.Parse(ServicioIO.HORA.ToString());
                 textBoxRutID.Text = ServicioIO.CLIENTERUT;
                 textBoxDigitoVerificador.Text = ServicioIO.CLIENTEDIGVER;
@@ -357,7 +390,7 @@ namespace BikeMessenger
             ServicioIO.PKSERVICIO = ServicioIO.PENTALPHA + ServicioIO.NROENVIO;
             ServicioIO.NROENVIO = textBoxNroDeEnvio.Text;
             ServicioIO.GUIADESPACHO = textBoxGuiaDeDespacho.Text;
-            ServicioIO.FECHA = controlFecha.Date.Date.ToShortDateString();
+            ServicioIO.FECHA = (string)BtnFechaServicio.Content;
             ServicioIO.HORA = controlHora.Time.ToString();
             ServicioIO.CLIENTERUT = textBoxRutID.Text;
             ServicioIO.CLIENTEDIGVER = textBoxDigitoVerificador.Text;
@@ -433,9 +466,9 @@ namespace BikeMessenger
             ServicioIO.ENTREGA = textBoxEntrega.Text;
             ServicioIO.RECEPCION = textBoxRecepcion.Text; ;
             ServicioIO.TESPERA = controlHora.Time.ToString();
-            ServicioIO.FECHAENTREGA = controlFecha.Date.Date.ToShortDateString();
+            ServicioIO.FECHAENTREGA = (string)BtnFechaServicio.Content;
             ServicioIO.HORAENTREGA = controlHora.Time.ToString();
-            ServicioIO.DISTANCIA = 0;
+            ServicioIO.DISTANCIA = LvrDistanciaRecorrida;
             ServicioIO.PROGRAMADO = "*";
         }
 
@@ -761,6 +794,25 @@ namespace BikeMessenger
             {
                 Validador.Text = "";
             }
+        }
+
+        private void CambioDeFechaServicio(CalendarView sender, CalendarViewSelectedDatesChangedEventArgs args)
+        {
+            try
+            {
+                DateTimeOffset FechaInicial = args.AddedDates.First();
+                BtnFechaServicio.Content = FechaInicial.DateTime.ToString("d", new CultureInfo("es-ES"));
+                PopUpFechaInicial.IsOpen = false;
+            }
+            catch (Exception e)
+            {
+                Console.Out.WriteLine(e.InnerException);
+            }
+        }
+
+        private void BtnCambioFechaInicial(object sender, RoutedEventArgs e)
+        {
+            PopUpFechaInicial.IsOpen = true;
         }
     }
 

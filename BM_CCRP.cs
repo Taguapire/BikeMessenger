@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using SQLite;
 
 namespace BikeMessenger
@@ -15,6 +16,24 @@ namespace BikeMessenger
         public BM_CCRP()
         {
             CompletoNombreBD = BM_TransferVar.DIRECTORIO_BASE_LOCAL + "\\BikeMessenger.db";
+        }
+
+        // ************************************
+        // Manejo de Fecha
+        // ************************************
+        public string GetFecha()
+        {
+            // sacar el tiempo del sistema en formato DD/MM/YYYY
+            return DateTimeOffset.Now.ToLocalTime().ToString("d", CultureInfo.CreateSpecificCulture("es-ES"));
+        }
+
+        // ************************************
+        // Manejo de Hora
+        // ************************************
+        public string GetHora()
+        {
+            // sacar el tiempo del sistema en formato HH:MM:SS
+            return DateTimeOffset.Now.ToLocalTime().ToString("T", CultureInfo.CreateSpecificCulture("es-ES"));
         }
 
         // ************************************

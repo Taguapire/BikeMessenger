@@ -570,7 +570,6 @@ namespace BikeMessenger
             List<TbVistaServicioCliMen> results = BM_ConexionLite.Query<TbVistaServicioCliMen>("select * from Vista_Servicio_CliMen");
 
             for (int i = 0; i < results.Count; i++)
-
             {
                 DocumentoHtml.AbrirFila();
                 DocumentoHtml.AgregarCampo(results[i].NROENVIO, false);
