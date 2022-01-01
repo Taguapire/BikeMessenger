@@ -103,8 +103,6 @@ namespace BikeMessenger
                 textBoxRut.Text = ClienteIO.RUTID;
                 textBoxDigitoVerificador.Text = ClienteIO.DIGVER;
                 textBoxNombreCliente.Text = ClienteIO.NOMBRE;
-                textBoxUsuario.Text = ClienteIO.USUARIO;
-                passwordClave.Password = ClienteIO.CLAVE;
                 textBoxActividad1.Text = ClienteIO.ACTIVIDAD1;
                 textBoxActividad2.Text = ClienteIO.ACTIVIDAD2;
                 textBoxRepresentantes1.Text = ClienteIO.REPRESENTANTE1;
@@ -195,8 +193,6 @@ namespace BikeMessenger
             textBoxRut.Text = "";
             textBoxDigitoVerificador.Text = "";
             textBoxNombreCliente.Text = "";
-            textBoxUsuario.Text = "";
-            passwordClave.Password = "";
             textBoxActividad1.Text = "";
             textBoxActividad2.Text = "";
             textBoxRepresentantes1.Text = "";
@@ -225,8 +221,6 @@ namespace BikeMessenger
             ClienteIO.DIGVER = textBoxDigitoVerificador.Text;
             ClienteIO.PKCLIENTE = ClienteIO.PENTALPHA + ClienteIO.RUTID + ClienteIO.DIGVER;
             ClienteIO.NOMBRE = textBoxNombreCliente.Text;
-            ClienteIO.USUARIO = textBoxUsuario.Text;
-            ClienteIO.CLAVE = passwordClave.Password;
             ClienteIO.ACTIVIDAD1 = textBoxActividad1.Text;
             ClienteIO.ACTIVIDAD2 = textBoxActividad2.Text;
             ClienteIO.REPRESENTANTE1 = textBoxRepresentantes1.Text;

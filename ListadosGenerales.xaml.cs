@@ -19,10 +19,18 @@ namespace BikeMessenger
     {
         private TransferVar LvrTransferVar;
         private string HtmlImprimir;
+        private WebView VisorWeb;
 
         public ListadosGenerales()
         {
             InitializeComponent();
+            PanelDePresentacion.Height = PaginaDeImpresion.ActualHeight;
+            PanelDePresentacion.Width =PaginaDeImpresion.ActualWidth;
+            VisorWeb = new WebView(WebViewExecutionMode.SameThread)
+            {
+                CanBeScrollAnchor = true
+            };
+            PanelDePresentacion.Children.Add(VisorWeb);
             // PrintMan.PrintTaskRequested += PrintTaskRequested;
         }
 

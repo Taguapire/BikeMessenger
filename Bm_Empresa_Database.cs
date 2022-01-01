@@ -39,8 +39,6 @@ namespace BikeMessenger
                 BK_Empresa.RUTID = results[0].RUTID;
                 BK_Empresa.DIGVER = results[0].DIGVER;
                 BK_Empresa.NOMBRE = results[0].NOMBRE;
-                BK_Empresa.USUARIO = results[0].USUARIO;
-                BK_Empresa.CLAVE = results[0].CLAVE;
                 BK_Empresa.ACTIVIDAD1 = results[0].ACTIVIDAD1;
                 BK_Empresa.ACTIVIDAD2 = results[0].ACTIVIDAD2;
                 BK_Empresa.REPRESENTANTE1 = results[0].REPRESENTANTE1;
@@ -89,8 +87,6 @@ namespace BikeMessenger
                 BK_Empresa.RUTID = results[0].RUTID;
                 BK_Empresa.DIGVER = results[0].DIGVER;
                 BK_Empresa.NOMBRE = results[0].NOMBRE;
-                BK_Empresa.USUARIO = results[0].USUARIO;
-                BK_Empresa.CLAVE = results[0].CLAVE;
                 BK_Empresa.ACTIVIDAD1 = results[0].ACTIVIDAD1;
                 BK_Empresa.ACTIVIDAD2 = results[0].ACTIVIDAD2;
                 BK_Empresa.REPRESENTANTE1 = results[0].REPRESENTANTE1;
@@ -135,8 +131,6 @@ namespace BikeMessenger
                     RUTID = aBK_Empresa.RUTID,
                     DIGVER = aBK_Empresa.DIGVER,
                     NOMBRE = aBK_Empresa.NOMBRE,
-                    USUARIO = aBK_Empresa.USUARIO,
-                    CLAVE = aBK_Empresa.CLAVE,
                     ACTIVIDAD1 = aBK_Empresa.ACTIVIDAD1,
                     ACTIVIDAD2 = aBK_Empresa.ACTIVIDAD2,
                     REPRESENTANTE1 = aBK_Empresa.REPRESENTANTE1,
@@ -183,8 +177,6 @@ namespace BikeMessenger
                     RUTID = mBK_Empresa.RUTID,
                     DIGVER = mBK_Empresa.DIGVER,
                     NOMBRE = mBK_Empresa.NOMBRE,
-                    USUARIO = mBK_Empresa.USUARIO,
-                    CLAVE = mBK_Empresa.CLAVE,
                     ACTIVIDAD1 = mBK_Empresa.ACTIVIDAD1,
                     ACTIVIDAD2 = mBK_Empresa.ACTIVIDAD2,
                     REPRESENTANTE1 = mBK_Empresa.REPRESENTANTE1,

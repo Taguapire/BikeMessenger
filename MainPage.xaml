@@ -56,7 +56,7 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.MenuItems>
-            <Frame x:Name="CuadroDeContenido" Content="Frame"/>
+            <Frame x:Name="CuadroDeContenido" Content="Frame" Background="#CCABDAF5"/>
         </NavigationView>
     </Grid>
 </Page>

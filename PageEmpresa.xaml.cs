@@ -126,8 +126,6 @@ namespace BikeMessenger
                 textBoxRut.Text = EmpresaIO.RUTID;
                 textBoxDigitoVerificador.Text = EmpresaIO.DIGVER;
                 textBoxNombreEmpresa.Text = EmpresaIO.NOMBRE;
-                textBoxUsuario.Text = EmpresaIO.USUARIO;
-                passwordClave.Password = EmpresaIO.CLAVE;
                 textBoxActividad1.Text = EmpresaIO.ACTIVIDAD1;
                 textBoxActividad2.Text = EmpresaIO.ACTIVIDAD2;
                 textBoxRepresentantes1.Text = EmpresaIO.REPRESENTANTE1;
@@ -212,8 +210,6 @@ namespace BikeMessenger
             EmpresaIO.RUTID = textBoxRut.Text;
             EmpresaIO.DIGVER = textBoxDigitoVerificador.Text;
             EmpresaIO.NOMBRE = textBoxNombreEmpresa.Text;
-            EmpresaIO.USUARIO = textBoxUsuario.Text;
-            EmpresaIO.CLAVE = passwordClave.Password;
             EmpresaIO.ACTIVIDAD1 = textBoxActividad1.Text;
             EmpresaIO.ACTIVIDAD2 = textBoxActividad2.Text;
             EmpresaIO.REPRESENTANTE1 = textBoxRepresentantes1.Text;
@@ -264,15 +260,6 @@ namespace BikeMessenger
 
         private async void BtnAgregarEmpresa(object sender, RoutedEventArgs e)
         {
-            // **********************************************************
-            // Verificación de Claves
-            // **********************************************************
-            if (textBoxUsuario.Text == "" || passwordClave.Password == "")
-            {
-                _ = AvisoOperacionEmpresaDialogAsync("Identificación de Usuario", "Debe completar su usuario y clave para el envio de la Orden de Servicio.");
-                return;
-            }
-
             await LlenarDbConPantallaAsync();
 
             if (BM_Database_Empresa.AgregarEmpresa(EmpresaIO))
@@ -302,17 +289,7 @@ namespace BikeMessenger
 
         private async void BtnModificarEmpresa(object sender, RoutedEventArgs e)
         {
-            // **********************************************************
-            // Verificación de Claves
-            // **********************************************************
-            if (textBoxUsuario.Text == "" || passwordClave.Password == "")
-            {
-                _ = AvisoOperacionEmpresaDialogAsync("Identificación de Usuario", "Debe completar su usuario y clave para el envio de la Orden de Servicio.");
-                return;
-            }
-
             await LlenarDbConPantallaAsync();
-
 
             if (BM_Database_Empresa.ModificarEmpresa(EmpresaIO))
             {
@@ -337,15 +314,6 @@ namespace BikeMessenger
 
             if (!BorrarSiNo)
             {
-                return;
-            }
-
-            // **********************************************************
-            // Verificación de Claves
-            // **********************************************************
-            if (textBoxUsuario.Text == "" || passwordClave.Password == "")
-            {
-                _ = AvisoOperacionEmpresaDialogAsync("Identificación de Usuario", "Debe completar su usuario y clave para el envio de la Orden de Servicio.");
                 return;
             }
 

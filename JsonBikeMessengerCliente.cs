@@ -11,8 +11,6 @@ namespace BikeMessenger
         public string RUTID { get; set; }
         public string DIGVER { get; set; }
         public string NOMBRE { get; set; }
-        public string USUARIO { get; set; }
-        public string CLAVE { get; set; }
         public string ACTIVIDAD1 { get; set; }
         public string ACTIVIDAD2 { get; set; }
         public string REPRESENTANTE1 { get; set; }
@@ -43,8 +41,6 @@ namespace BikeMessenger
             RUTID = "";
             DIGVER = "";
             NOMBRE = "";
-            USUARIO = "";
-            CLAVE = "";
             ACTIVIDAD1 = "";
             ACTIVIDAD2 = "";
             REPRESENTANTE1 = "";
@@ -84,10 +80,6 @@ namespace BikeMessenger
         public string DIGVER { get; set; }
         [Column("nombre")]
         public string NOMBRE { get; set; }
-        [Column("usuario")]
-        public string USUARIO { get; set; }
-        [Column("clave")]
-        public string CLAVE { get; set; }
         [Column("actividad1")]
         public string ACTIVIDAD1 { get; set; }
         [Column("actividad2")]
