@@ -206,7 +206,7 @@ namespace BikeMessenger
             DbVistaServicioCliMen += "a.distancia ";
             DbVistaServicioCliMen += "from TbBikeMessengerServicio a ";
             DbVistaServicioCliMen += "left join TbBikeMessengerCliente b ";
-            DbVistaServicioCliMen += "on a.pentalpha = b.pentalpha AND a.mensajerorut = b.rutid AND a.mensajerodigver = b.digver ";
+            DbVistaServicioCliMen += "on a.pentalpha = b.pentalpha AND a.clienterut = b.rutid AND a.clientedigver = b.digver ";
             DbVistaServicioCliMen += "left join TbBikeMessengerPersonal c ";
             DbVistaServicioCliMen += "on a.pentalpha = c.pentalpha AND a.mensajerorut = c.rutid AND a.mensajerodigver = c.digver ";
 

@@ -18,7 +18,8 @@
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WindowsXamlEnableOverview>true</WindowsXamlEnableOverview>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
-    <PackageCertificateThumbprint>7EF07070887F4840D8BD96F996CDB82595FD078E</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>
+    </PackageCertificateThumbprint>
     <PackageCertificateKeyFile>BikeMessenger_TemporaryKey.pfx</PackageCertificateKeyFile>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
@@ -297,9 +298,6 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls.DataGrid">
       <Version>7.1.2</Version>
-    </PackageReference>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>13.0.1</Version>
     </PackageReference>
     <PackageReference Include="QRCoder">
       <Version>1.4.3</Version>

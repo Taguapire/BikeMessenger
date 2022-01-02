@@ -83,7 +83,7 @@ namespace BikeMessenger
             BM_ConexionLite.Dispose();
         }
 
-        private void GeneracionDeColumnas(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        private void GeneracionDeColumnas(object sender, Microsoft.Toolkit.Uwp.UI.Controls.DataGridAutoGeneratingColumnEventArgs e)
         {
             switch (e.Column.Header.ToString())
             {
@@ -146,5 +146,3 @@ namespace BikeMessenger
         }
     }
 }
-
-
