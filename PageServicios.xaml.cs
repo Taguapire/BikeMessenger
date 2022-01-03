@@ -1,7 +1,8 @@
 ﻿using Microsoft.Toolkit.Uwp.UI.Controls;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.Devices.Geolocation;
 using Windows.Services.Maps;
@@ -10,7 +11,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Maps;
 using Windows.UI.Xaml.Media.Animation;
-using Windows.UI.Xaml.Navigation;
 
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
@@ -22,13 +22,12 @@ namespace BikeMessenger
     /// </summary>
     public sealed partial class PageServicios : Page
     {
-        private List<JsonBikeMessengerServicio> ServicioIOArray = new List<JsonBikeMessengerServicio>();
-        private JsonBikeMessengerServicio ServicioIO = new JsonBikeMessengerServicio();
-        private JsonBikeMessengerServicio EnviarJsonServicio = new JsonBikeMessengerServicio();
-        private JsonBikeMessengerServicio RecibirJsonServicio = new JsonBikeMessengerServicio();
+        private List<StructBikeMessengerServicio> ServicioIOArray = new List<StructBikeMessengerServicio>();
+        private StructBikeMessengerServicio ServicioIO = new StructBikeMessengerServicio();
         private Bm_Servicio_Database BM_Database_Servicio = new Bm_Servicio_Database();
         private TransferVar LvrTransferVar = new TransferVar();
         private bool BorrarSiNo;
+        private double LvrDistanciaRecorrida = 0;
 
         public PageServicios()
         {
@@ -44,7 +43,7 @@ namespace BikeMessenger
 
             if (LvrTransferVar.SER_NROENVIO == "")
             {
-                ServicioIOArray = BM_Database_Servicio.BuscarServicio();
+                ServicioIOArray = BM_Database_Servicio.BuscarServicio(LvrTransferVar.SER_PENTALPHA);
                 if (ServicioIOArray != null && ServicioIOArray.Count > 0)
                 {
                     ServicioIO = ServicioIOArray[0];
@@ -60,6 +59,7 @@ namespace BikeMessenger
                     LlenarPantallaConDb();
                 }
             }
+
             LlenarListaEnvios();
             LlenarListaClientes();
             LlenarListaMensajeros();
@@ -68,6 +68,8 @@ namespace BikeMessenger
 
         private void RellenarCombos()
         {
+            BM_CCRP LocalRellenarCombos = new BM_CCRP();
+
             // Limpiar Combo Box
             comboBoxOrigenPais.Items.Clear();
             comboBoxOrigenEstado.Items.Clear();
@@ -80,174 +82,81 @@ namespace BikeMessenger
             comboBoxDestinoCiudad.Items.Clear();
 
             // Llenar Combo Pais
-            List<string> ListaPais = BM_Database_Servicio.GetPais();
-            if (ListaPais != null)
-            {
-                try
-                {
-                    for (int i = 0; i < ListaPais.Count; i++)
-                    {
-                        comboBoxOrigenPais.Items.Add(ListaPais[i]);
-                        comboBoxDestinoPais.Items.Add(ListaPais[i]);
-                    }
-                }
-                catch (NullReferenceException)
-                {
-
-                }
-            }
+            comboBoxOrigenPais.ItemsSource = LocalRellenarCombos.BuscarPais();
+            comboBoxDestinoPais.ItemsSource = comboBoxOrigenPais.ItemsSource;
 
             // Llenar Combo Region
-            List<string> ListaEstado = BM_Database_Servicio.GetRegion();
-
-            if (ListaEstado != null)
-            {
-                try
-                {
-                    for (int i = 0; i < ListaEstado.Count; i++)
-                    {
-                        comboBoxOrigenEstado.Items.Add(ListaEstado[i]);
-                        comboBoxDestinoEstado.Items.Add(ListaEstado[i]);
-                    }
-                }
-                catch (NullReferenceException)
-                {
-
-                }
-            }
-
+            comboBoxOrigenEstado.ItemsSource = LocalRellenarCombos.BuscarRegion();
+            comboBoxDestinoEstado.ItemsSource = comboBoxOrigenEstado.ItemsSource;
 
             // Llenar Combo Comuna
-            List<string> ListaComuna = BM_Database_Servicio.GetComuna();
-
-            if (ListaComuna != null)
-            {
-                try
-                {
-                    for (int i = 0; i < ListaComuna.Count; i++)
-                    {
-                        comboBoxOrigenComuna.Items.Add(ListaComuna[i]);
-                        comboBoxDestinoComuna.Items.Add(ListaComuna[i]);
-                    }
-                }
-                catch (NullReferenceException)
-                {
-
-                }
-            }
+            comboBoxOrigenComuna.ItemsSource = LocalRellenarCombos.BuscarComuna();
+            comboBoxDestinoComuna.ItemsSource = comboBoxOrigenComuna.ItemsSource;
 
             // Llenar Combo Ciudad
-            List<string> ListaCiudad = BM_Database_Servicio.GetCiudad();
+            comboBoxOrigenCiudad.ItemsSource = LocalRellenarCombos.BuscarCiudad();
+            comboBoxDestinoCiudad.ItemsSource = comboBoxOrigenCiudad.ItemsSource;
+        }
 
-            if (ListaCiudad != null)
-            {
-                try
-                {
-                    for (int i = 0; i < ListaCiudad.Count; i++)
-                    {
-                        comboBoxOrigenCiudad.Items.Add(ListaCiudad[i]);
-                        comboBoxDestinoCiudad.Items.Add(ListaCiudad[i]);
-                    }
-                }
-                catch (NullReferenceException)
-                {
+        private void ActualizarCombos()
+        {
+            BM_CCRP LocalRellenarCombos = new BM_CCRP();
 
-                }
-            }
+            // Actualizar Combo Pais
+            _ = LocalRellenarCombos.AgregarPais(ServicioIO.OPAIS);
+            _ = LocalRellenarCombos.AgregarPais(ServicioIO.DPAIS);
+
+            // Actualizar Combo Region
+            _ = LocalRellenarCombos.AgregarRegion(ServicioIO.OESTADO);
+            _ = LocalRellenarCombos.AgregarRegion(ServicioIO.DESTADO);
+
+            // Actualizar Combo Comuna
+            _ = LocalRellenarCombos.AgregarComuna(ServicioIO.OCOMUNA);
+            _ = LocalRellenarCombos.AgregarComuna(ServicioIO.DCOMUNA);
+
+            // Actualizar Combo Ciudad
+            _ = LocalRellenarCombos.AgregarCiudad(ServicioIO.OCIUDAD);
+            _ = LocalRellenarCombos.AgregarCiudad(ServicioIO.DCIUDAD);
         }
 
         private async void BtnAgregarServicios(object sender, RoutedEventArgs e)
         {
-            LvrProgresRing.IsActive = true;
-
-            await Task.Delay(500);
-
             LlenarDbConPantalla();
 
             if (BM_Database_Servicio.AgregarServicio(ServicioIO))
             {
-
-                // Muestra de espera
-                bool TransaccionOK = true;
-                if (LvrTransferVar.SincronizarWebPentalpha())
-                {
-                    TransaccionOK = ProRegistroServicio("AGREGAR");
-                }
-
-                if (LvrTransferVar.SincronizarWebPropio())
-                {
-                    TransaccionOK = ProRegistroServicio("AGREGAR");
-                }
-
-                if (TransaccionOK)
-                {
-                    await AvisoOperacionServiciosDialogAsync("Agregar Servicio", "Servicio agregado exitosamente.");
-                    LlenarListaEnvios();
-                    LvrTransferVar.SER_PENTALPHA = ServicioIO.PENTALPHA;
-                    LvrTransferVar.SER_NROENVIO = ServicioIO.NROENVIO;
-                    LvrTransferVar.EscribirValoresDeAjustes();
-                    LvrTransferVar.LeerValoresDeAjustes();
-                }
-
-                else
-                {
-                    await AvisoOperacionServiciosDialogAsync("Agregar Servicio", "Error en ingreso de servicio. Reintente o escriba a soporte contacto@pentalpha.net");
-                }
+                LlenarListaEnvios();
+                LvrTransferVar.SER_PENTALPHA = ServicioIO.PENTALPHA;
+                LvrTransferVar.SER_NROENVIO = ServicioIO.NROENVIO;
+                LvrTransferVar.EscribirValoresDeAjustes();
+                LvrTransferVar.LeerValoresDeAjustes();
+                ActualizarCombos();
+                await AvisoOperacionServiciosDialogAsync("Agregar Servicio", "Servicio agregado exitosamente.");
             }
             else
             {
-                await AvisoOperacionServiciosDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de cliente.");
+                await AvisoOperacionServiciosDialogAsync("Agregar Servicio", "Error en ingreso de servicio. Reintente o escriba a soporte contacto@pentalpha.net");
             }
-
-            LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // 1 sec delay
         }
 
         private async void BtnModificarServicios(object sender, RoutedEventArgs e)
         {
-            // Muestra de espera
-            bool TransaccionOK = false;
-            LvrProgresRing.IsActive = true;
-            await Task.Delay(500); // .5 sec delay
-
-
             LlenarDbConPantalla();
 
             if (BM_Database_Servicio.ModificarServicio(ServicioIO))
             {
-                TransaccionOK = true;
-
-                if (LvrTransferVar.SincronizarWebPentalpha())
-                {
-                    TransaccionOK = ProRegistroServicio("MODIFICAR");
-                }
-
-                if (LvrTransferVar.SincronizarWebPropio())
-                {
-                    TransaccionOK = ProRegistroServicio("MODIFICAR");
-                }
-
-                if (TransaccionOK)
-                {
-                    LlenarListaEnvios();
-                    LvrTransferVar.SER_PENTALPHA = ServicioIO.PENTALPHA;
-                    LvrTransferVar.SER_NROENVIO = ServicioIO.NROENVIO;
-                    LvrTransferVar.EscribirValoresDeAjustes();
-                    LvrTransferVar.LeerValoresDeAjustes();
-                    await AvisoOperacionServiciosDialogAsync("Modificar Servicio", "Servicio modificado exitosamente.");
-                }
-                else
-                {
-                    await AvisoOperacionServiciosDialogAsync("Modificar Servicio", "Error en modificación de servicio. Reintente o escriba a soporte contacto@pentalpha.net");
-                }
+                LlenarListaEnvios();
+                LvrTransferVar.SER_PENTALPHA = ServicioIO.PENTALPHA;
+                LvrTransferVar.SER_NROENVIO = ServicioIO.NROENVIO;
+                LvrTransferVar.EscribirValoresDeAjustes();
+                LvrTransferVar.LeerValoresDeAjustes();
+                ActualizarCombos();
+                await AvisoOperacionServiciosDialogAsync("Modificar Servicio", "Servicio modificado exitosamente.");
             }
             else
             {
-                await AvisoOperacionServiciosDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de cliente.");
+                await AvisoOperacionServiciosDialogAsync("Modificar Servicio", "Error en modificación de servicio. Reintente o escriba a soporte contacto@pentalpha.net");
             }
-
-            LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // 1 sec delay
         }
 
         private async void BtnBorrarServicios(object sender, RoutedEventArgs e)
@@ -261,62 +170,35 @@ namespace BikeMessenger
                 return;
             }
 
-            // Muestra de espera
-            LvrProgresRing.IsActive = true;
-            await Task.Delay(500); // .5 sec delay
-
             LlenarDbConPantalla();
-
-            bool TransaccionOK = false;
 
             if (BM_Database_Servicio.BorrarServicio(LvrTransferVar.SER_PENTALPHA, ServicioIO.NROENVIO))
             {
-                TransaccionOK = true;
+                await AvisoOperacionServiciosDialogAsync("Borrar Servicio", "Servicio borrado exitosamente.");
 
-                if (LvrTransferVar.SincronizarWebPentalpha())
+                ServicioIOArray = BM_Database_Servicio.BuscarServicio(LvrTransferVar.EMP_PENTALPHA);
+
+                if (ServicioIOArray != null && ServicioIOArray.Count > 0)
                 {
-                    TransaccionOK = ProRegistroServicio("BORRAR");
-                }
-
-                if (LvrTransferVar.SincronizarWebPropio())
-                {
-                    TransaccionOK = ProRegistroServicio("BORRAR");
-                }
-
-                if (TransaccionOK)
-                {
-                    ServicioIOArray = BM_Database_Servicio.BuscarServicio();
-
-                    if (ServicioIOArray != null && ServicioIOArray.Count > 0)
-                    {
-                        ServicioIO = ServicioIOArray[0];
-                        LvrTransferVar.SER_PENTALPHA = ServicioIO.PENTALPHA;
-                        LvrTransferVar.SER_NROENVIO = ServicioIO.NROENVIO;
-                    }
-                    else
-                    {
-                        LvrTransferVar.SER_NROENVIO = "";
-                    }
-                    textBoxNroDeEnvio.IsReadOnly = false;
-                    LvrTransferVar.EscribirValoresDeAjustes();
-                    LvrTransferVar.LeerValoresDeAjustes();
-
-                    LlenarListaEnvios();
-                    LlenarPantallaConDb();
-
-                    await AvisoOperacionServiciosDialogAsync("Borrar Servicio", "Servicio borrado exitosamente.");
+                    ServicioIO = ServicioIOArray[0];
+                    LvrTransferVar.SER_PENTALPHA = ServicioIO.PENTALPHA;
+                    LvrTransferVar.SER_NROENVIO = ServicioIO.NROENVIO;
                 }
                 else
                 {
-                    await AvisoOperacionServiciosDialogAsync("Borrar Servicio", "Error en borrado de servicio. Reintente o escriba a soporte contacto@pentalpha.net");
+                    LvrTransferVar.SER_NROENVIO = "";
                 }
+                textBoxNroDeEnvio.IsReadOnly = false;
+                LvrTransferVar.EscribirValoresDeAjustes();
+                LvrTransferVar.LeerValoresDeAjustes();
+
+                LlenarListaEnvios();
+                LlenarPantallaConDb();
             }
             else
             {
-                await AvisoOperacionServiciosDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de cliente.");
+                await AvisoOperacionServiciosDialogAsync("Borrar Servicio", "Error en borrado de servicio. Reintente o escriba a soporte contacto@pentalpha.net");
             }
-            LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // 1 sec delay
         }
 
 
@@ -361,24 +243,51 @@ namespace BikeMessenger
             BasicGeoposition startLocation = new BasicGeoposition() { Latitude = lvrlatOrigen, Longitude = lvrlonOrigen };
             BasicGeoposition endLocation = new BasicGeoposition() { Latitude = lvrlatDestino, Longitude = lvrlonDestino };
 
+            MapRouteDrivingOptions OpcionDeConduccion = new MapRouteDrivingOptions
+            {
+                MaxAlternateRouteCount = 2,
+                RouteOptimization = MapRouteOptimization.TimeWithTraffic,
+                RouteRestrictions = MapRouteRestrictions.Highways
+            };
+
             MapRouteFinderResult routeResult =
                 await MapRouteFinder.GetDrivingRouteAsync(
                 new Geopoint(startLocation),
                 new Geopoint(endLocation),
-                MapRouteOptimization.Time,
-                MapRouteRestrictions.None);
+                OpcionDeConduccion);
 
             if (routeResult.Status == MapRouteFinderStatus.Success)
             {
                 // Use the route to initialize a MapRouteView.
+                LvrDistanciaRecorrida = routeResult.Route.LengthInMeters;
+
                 MapRouteView viewOfRoute = new MapRouteView(routeResult.Route)
                 {
-                    RouteColor = Colors.Yellow,
-                    OutlineColor = Colors.Black
+                    RouteColor = Colors.YellowGreen,
+                    OutlineColor = Colors.AliceBlue
+                };
+
+                // Preparacion de Inicio y Final
+
+                var InicioDeRecorrido = new MapIcon
+                {
+                    Location = new Geopoint(startLocation),
+                    ZIndex = 0,
+                    Title = "Partida"
+                };
+
+                var FinDeRecorrido = new MapIcon
+                {
+                    Location = new Geopoint(endLocation),
+                    ZIndex = 0,
+                    Title = "Llegada"
                 };
 
                 // Add the new MapRouteView to the Routes collection
                 // of the MapControl.
+
+                mapControlBikeMessenger.MapElements.Add(InicioDeRecorrido);
+                mapControlBikeMessenger.MapElements.Add(FinDeRecorrido);
                 mapControlBikeMessenger.Routes.Add(viewOfRoute);
 
                 // Fit the MapControl to the route.
@@ -391,7 +300,10 @@ namespace BikeMessenger
 
         private void BtnMapaServicios(object sender, RoutedEventArgs e)
         {
-            mapControlBikeMessenger.Style = MapStyle.Road;
+            mapControlBikeMessenger.Style = MapStyle.Terrain;
+            mapControlBikeMessenger.BusinessLandmarksVisible = true;
+            mapControlBikeMessenger.LandmarksVisible = true;
+
             if (mapControlBikeMessenger.Visibility == Visibility.Visible)
             {
                 mapControlBikeMessenger.Visibility = Visibility.Collapsed;
@@ -411,15 +323,15 @@ namespace BikeMessenger
             {
                 textBoxNroDeEnvio.Text = ServicioIO.NROENVIO;
                 textBoxGuiaDeDespacho.Text = ServicioIO.GUIADESPACHO;
-                controlFecha.SelectedDate = DateTimeOffset.Parse(ServicioIO.FECHA.ToString());
+                BtnFechaServicio.Content = ServicioIO.FECHA;
                 controlHora.SelectedTime = TimeSpan.Parse(ServicioIO.HORA.ToString());
                 textBoxRutID.Text = ServicioIO.CLIENTERUT;
                 textBoxDigitoVerificador.Text = ServicioIO.CLIENTEDIGVER;
-                textBoxCliente.Text = ""; // OJO
+                textBoxCliente.Text = BM_Database_Servicio.Bm_BuscarNombreCliente(ServicioIO.PENTALPHA, ServicioIO.CLIENTERUT, ServicioIO.CLIENTEDIGVER);
                 textBoxIdMensajero.Text = ServicioIO.MENSAJERORUT + "-" + ServicioIO.MENSAJERODIGVER;
-                textBoxNombreMensajero.Text = ""; // OJO;
+                textBoxNombreMensajero.Text = BM_Database_Servicio.Bm_BuscarNombreMensajero(ServicioIO.PENTALPHA, ServicioIO.MENSAJERORUT, ServicioIO.MENSAJERODIGVER);
                 textBoxIdRecurso.Text = ServicioIO.RECURSOID;
-                textBoxNombreRecurso.Text = ""; // OJO;
+                textBoxNombreRecurso.Text = BM_Database_Servicio.Bm_BuscarNombreRecurso(ServicioIO.PENTALPHA, ServicioIO.RECURSOID);
                 textBoxOrigenDomicilio1.Text = ServicioIO.ODOMICILIO1;
                 textBoxOrigenNumero.Text = ServicioIO.ONUMERO;
                 textBoxOrigenPiso.Text = ServicioIO.OPISO;
@@ -429,23 +341,40 @@ namespace BikeMessenger
                 textBoxDestinoPiso.Text = ServicioIO.DPISO;
                 textBoxDestinoOficina.Text = ServicioIO.DOFICINA;
                 textBoxDescripcion.Text = ServicioIO.DESCRIPCION;
-                textBoxFacturas.Text = ServicioIO.FACTURAS.ToString();
-                textBoxBultos.Text = ServicioIO.BULTOS.ToString();
-                textBoxCompras.Text = ServicioIO.COMPRAS.ToString();
-                textBoxCheques.Text = ServicioIO.CHEQUES.ToString();
-                textBoxSobres.Text = ServicioIO.SOBRES.ToString();
-                textBoxOtros.Text = ServicioIO.OTROS.ToString();
+                textBoxFacturas.Text = ServicioIO.FACTURAS.ToString() == "0" ? "" : ServicioIO.FACTURAS.ToString();
+                textBoxBultos.Text = ServicioIO.BULTOS.ToString() == "0" ? "" : ServicioIO.BULTOS.ToString();
+                textBoxCompras.Text = ServicioIO.COMPRAS.ToString() == "0" ? "" : ServicioIO.COMPRAS.ToString();
+                textBoxCheques.Text = ServicioIO.CHEQUES.ToString() == "0" ? "" : ServicioIO.CHEQUES.ToString();
+                textBoxSobres.Text = ServicioIO.SOBRES.ToString() == "0" ? "" : ServicioIO.SOBRES.ToString();
+                textBoxOtros.Text = ServicioIO.OTROS.ToString() == "0" ? "" : ServicioIO.OTROS.ToString();
                 textBoxObservaciones.Text = ServicioIO.OBSERVACIONES;
                 textBoxEntrega.Text = ServicioIO.ENTREGA;
                 textBoxRecepcion.Text = ServicioIO.RECEPCION;
                 textBoxTiempoDeEspera.Text = ServicioIO.TESPERA.ToString();
+
+                // Llenado de Pais
                 comboBoxOrigenPais.SelectedValue = ServicioIO.OPAIS;
+
+                // Llenado de Estado o Region
                 comboBoxOrigenEstado.SelectedValue = ServicioIO.OESTADO;
+
+                // Llenado de Comuna o Municipio
                 comboBoxOrigenComuna.SelectedValue = ServicioIO.OCOMUNA;
+
+                // Llenado de Cuidad
                 comboBoxOrigenCiudad.SelectedValue = ServicioIO.OCIUDAD;
+
+
+                // Llenado de Pais
                 comboBoxDestinoPais.SelectedValue = ServicioIO.DPAIS;
+
+                // Llenado de Estado o Region
                 comboBoxDestinoEstado.SelectedValue = ServicioIO.DESTADO;
+
+                // Llenado de Comuna o Municipio
                 comboBoxDestinoComuna.SelectedValue = ServicioIO.DCOMUNA;
+
+                // Llenado de Cuidad
                 comboBoxDestinoCiudad.SelectedValue = ServicioIO.DCIUDAD;
             }
             catch (ArgumentNullException)
@@ -458,8 +387,10 @@ namespace BikeMessenger
         {
             ServicioIO.PENTALPHA = LvrTransferVar.SER_PENTALPHA;
             ServicioIO.NROENVIO = textBoxNroDeEnvio.Text;
+            ServicioIO.PKSERVICIO = ServicioIO.PENTALPHA + ServicioIO.NROENVIO;
+            ServicioIO.NROENVIO = textBoxNroDeEnvio.Text;
             ServicioIO.GUIADESPACHO = textBoxGuiaDeDespacho.Text;
-            ServicioIO.FECHA = controlFecha.Date.Date.ToShortDateString();
+            ServicioIO.FECHA = (string)BtnFechaServicio.Content;
             ServicioIO.HORA = controlHora.Time.ToString();
             ServicioIO.CLIENTERUT = textBoxRutID.Text;
             ServicioIO.CLIENTEDIGVER = textBoxDigitoVerificador.Text;
@@ -492,7 +423,9 @@ namespace BikeMessenger
                 ServicioIO.OPAIS = comboBoxOrigenPais.Text;
             }
 
-            ServicioIO.OCOORDENADAS = "*";
+            ServicioIO.OLATITUD = 0;
+            ServicioIO.OLONGITUD = 0;
+
             ServicioIO.DDOMICILIO1 = textBoxDestinoDomicilio1.Text;
             ServicioIO.DNUMERO = textBoxDestinoNumero.Text;
             ServicioIO.DPISO = textBoxDestinoPiso.Text;
@@ -518,23 +451,24 @@ namespace BikeMessenger
                 ServicioIO.DPAIS = comboBoxDestinoPais.Text;
             }
 
-            ServicioIO.DCOORDENADAS = "*";
-            ServicioIO.DESCRIPCION = textBoxDescripcion.Text;
+            ServicioIO.DLATITUD = 0;
+            ServicioIO.DLONGITUD = 0;
 
-            ServicioIO.FACTURAS = textBoxFacturas.Text;
-            ServicioIO.BULTOS = textBoxBultos.Text;
-            ServicioIO.COMPRAS = textBoxCompras.Text;
-            ServicioIO.CHEQUES = textBoxCheques.Text;
-            ServicioIO.SOBRES = textBoxSobres.Text;
-            ServicioIO.OTROS = textBoxOtros.Text;
+            ServicioIO.DESCRIPCION = textBoxDescripcion.Text;
+            ServicioIO.FACTURAS = int.Parse(textBoxFacturas.Text != "" ? textBoxFacturas.Text : "0");
+            ServicioIO.BULTOS = int.Parse(textBoxBultos.Text != "" ? textBoxBultos.Text : "0");
+            ServicioIO.COMPRAS = int.Parse(textBoxCompras.Text != "" ? textBoxCompras.Text : "0");
+            ServicioIO.CHEQUES = int.Parse(textBoxCheques.Text != "" ? textBoxCheques.Text : "0");
+            ServicioIO.SOBRES = int.Parse(textBoxSobres.Text != "" ? textBoxSobres.Text : "0");
+            ServicioIO.OTROS = int.Parse(textBoxOtros.Text != "" ? textBoxOtros.Text : "0");
 
             ServicioIO.OBSERVACIONES = textBoxObservaciones.Text;
             ServicioIO.ENTREGA = textBoxEntrega.Text;
             ServicioIO.RECEPCION = textBoxRecepcion.Text; ;
             ServicioIO.TESPERA = controlHora.Time.ToString();
-            ServicioIO.FECHAENTREGA = controlFecha.Date.Date.ToShortDateString();
+            ServicioIO.FECHAENTREGA = (string)BtnFechaServicio.Content;
             ServicioIO.HORAENTREGA = controlHora.Time.ToString();
-            ServicioIO.DISTANCIA = "0";
+            ServicioIO.DISTANCIA = LvrDistanciaRecorrida;
             ServicioIO.PROGRAMADO = "*";
         }
 
@@ -597,7 +531,7 @@ namespace BikeMessenger
             List<ClaseServicioGrid> GridServicioDbArray = new List<ClaseServicioGrid>();
             List<GridEnvioIndividualServicios> GridEnviosLista = new List<GridEnvioIndividualServicios>();
 
-            GridServicioDbArray = BM_Database_Servicio.BuscarGridServicios();
+            GridServicioDbArray = BM_Database_Servicio.BuscarGridServicios(LvrTransferVar.EMP_PENTALPHA);
             if (GridServicioDbArray != null && GridServicioDbArray.Count > 0)
             {
 
@@ -630,6 +564,10 @@ namespace BikeMessenger
                 {
                     ServicioIO = ServicioIOArray[0];
                     LlenarPantallaConDb();
+                    LvrTransferVar.SER_PENTALPHA = ServicioIO.PENTALPHA;
+                    LvrTransferVar.SER_NROENVIO = ServicioIO.NROENVIO;
+                    LvrTransferVar.EscribirValoresDeAjustes();
+                    LvrTransferVar.LeerValoresDeAjustes();
                 }
             }
             catch (ArgumentOutOfRangeException)
@@ -657,7 +595,7 @@ namespace BikeMessenger
             List<ClaseClientesGrid> GridClienteDbArray = new List<ClaseClientesGrid>();
             List<GridClienteIndividualServicios> GridClientesLista = new List<GridClienteIndividualServicios>();
 
-            GridClienteDbArray = BM_Database_Servicio.BuscarGridClientes();
+            GridClienteDbArray = BM_Database_Servicio.BuscarGridClientes(LvrTransferVar.EMP_PENTALPHA);
             if (GridClienteDbArray != null && GridClienteDbArray.Count > 0)
             {
                 for (int i = 0; i < GridClienteDbArray.Count; i++)
@@ -747,7 +685,7 @@ namespace BikeMessenger
             List<ClasePersonalGrid> GridMensajerosDbArray = new List<ClasePersonalGrid>();
             List<GridMensajeroIndividualServicios> GridMensajerosLista = new List<GridMensajeroIndividualServicios>();
 
-            GridMensajerosDbArray = BM_Database_Servicio.BuscarGridPersonal();
+            GridMensajerosDbArray = BM_Database_Servicio.BuscarGridPersonal(LvrTransferVar.EMP_PENTALPHA);
             if (GridMensajerosDbArray != null && GridMensajerosDbArray.Count > 0)
             {
                 for (int i = 0; i < GridMensajerosDbArray.Count; i++)
@@ -808,7 +746,7 @@ namespace BikeMessenger
             List<GridRecursoIndividualServicios> GridRecursosLista = new List<GridRecursoIndividualServicios>();
 
 
-            GridRecursoDbArray = BM_Database_Servicio.BuscarGridRecurso();
+            GridRecursoDbArray = BM_Database_Servicio.BuscarGridRecurso(LvrTransferVar.EMP_PENTALPHA);
             if (GridRecursoDbArray != null && GridRecursoDbArray.Count > 0)
             {
                 for (int i = 0; i < GridRecursoDbArray.Count; i++)
@@ -841,160 +779,40 @@ namespace BikeMessenger
             _ = await AvisoOperacionRecursosDialog.ShowAsync();
         }
 
-        //**************************************************
-        // Ejecuta operacion de registro de Servicio
-        //**************************************************
-        private bool ProRegistroServicio(string pTipoOperacion)
-        {
-            string LvrPRecibirServer;
-            string LvrPData;
-            string LvrStringHttp = "https://finanven.ddns.net";
-            string LvrStringPort = "443";
-            string LvrStringController = "/Api/BikeMessengerServicio";
-
-            LvrInternet LvrBKInternet = new LvrInternet();
-            string LvrParametros;
-
-            List<JsonBikeMessengerServicio> EnviarJsonServicioArray = new List<JsonBikeMessengerServicio>();
-            List<JsonBikeMessengerServicio> RecibirJsonServicioArray = new List<JsonBikeMessengerServicio>();
-
-            // Llenar estructura Json
-            CopiarMemoriaEnJson(pTipoOperacion);
-
-            // Proceso Serializar
-
-            EnviarJsonServicioArray.Add(EnviarJsonServicio);
-            LvrPData = JsonConvert.SerializeObject(EnviarJsonServicioArray);
-
-            // Preparar Parametros
-            LvrParametros = LvrPData;
-
-            LvrBKInternet.LvrInetPOST(LvrStringHttp, LvrStringPort, LvrStringController, LvrParametros);
-            LvrPRecibirServer = LvrBKInternet.LvrResultadoWeb;
-
-            if (LvrPRecibirServer != "ERROR" && LvrPRecibirServer != "" && LvrPRecibirServer != null)
-            {
-                // Procesar primer servidor
-                RecibirJsonServicioArray = JsonConvert.DeserializeObject<List<JsonBikeMessengerServicio>>(LvrPRecibirServer); // resp será el string JSON a deserializa
-                RecibirJsonServicio = RecibirJsonServicioArray[0];
-
-                return RecibirJsonServicio.RESOPERACION == "OK";
-            }
-            return false;
-        }
-
-        private void CopiarMemoriaEnJson(string pOPERACION)
-        {
-            // Llenar Variables
-            EnviarJsonServicio.OPERACION = pOPERACION;
-            EnviarJsonServicio.PENTALPHA = ServicioIO.PENTALPHA;
-            EnviarJsonServicio.NROENVIO = ServicioIO.NROENVIO;
-            EnviarJsonServicio.GUIADESPACHO = ServicioIO.GUIADESPACHO;
-            EnviarJsonServicio.FECHA = ServicioIO.FECHA;
-            EnviarJsonServicio.HORA = ServicioIO.HORA;
-            EnviarJsonServicio.CLIENTERUT = ServicioIO.CLIENTERUT;
-            EnviarJsonServicio.CLIENTEDIGVER = ServicioIO.CLIENTEDIGVER;
-            EnviarJsonServicio.MENSAJERORUT = ServicioIO.MENSAJERORUT;
-            EnviarJsonServicio.MENSAJERODIGVER = ServicioIO.MENSAJERODIGVER;
-            EnviarJsonServicio.RECURSOID = ServicioIO.RECURSOID;
-            EnviarJsonServicio.ODOMICILIO1 = ServicioIO.ODOMICILIO1;
-            EnviarJsonServicio.ODOMICILIO2 = ServicioIO.ODOMICILIO2;
-            EnviarJsonServicio.ONUMERO = ServicioIO.ONUMERO;
-            EnviarJsonServicio.OPISO = ServicioIO.OPISO;
-            EnviarJsonServicio.OOFICINA = ServicioIO.OOFICINA;
-            EnviarJsonServicio.OCIUDAD = ServicioIO.OCIUDAD;
-            EnviarJsonServicio.OCOMUNA = ServicioIO.OCOMUNA;
-            EnviarJsonServicio.OESTADO = ServicioIO.OESTADO;
-            EnviarJsonServicio.OPAIS = ServicioIO.OPAIS;
-            EnviarJsonServicio.OCOORDENADAS = ServicioIO.OCOORDENADAS;
-            EnviarJsonServicio.DDOMICILIO1 = ServicioIO.DDOMICILIO1;
-            EnviarJsonServicio.DDOMICILIO2 = ServicioIO.DDOMICILIO2;
-            EnviarJsonServicio.DNUMERO = ServicioIO.DNUMERO;
-            EnviarJsonServicio.DPISO = ServicioIO.DPISO;
-            EnviarJsonServicio.DOFICINA = ServicioIO.DOFICINA;
-            EnviarJsonServicio.DCIUDAD = ServicioIO.DCIUDAD;
-            EnviarJsonServicio.DCOMUNA = ServicioIO.DCOMUNA;
-            EnviarJsonServicio.DESTADO = ServicioIO.DESTADO;
-            EnviarJsonServicio.DPAIS = ServicioIO.DPAIS;
-            EnviarJsonServicio.DCOORDENADAS = ServicioIO.DCOORDENADAS;
-            EnviarJsonServicio.DESCRIPCION = ServicioIO.DESCRIPCION;
-            EnviarJsonServicio.FACTURAS = ServicioIO.FACTURAS;
-            EnviarJsonServicio.BULTOS = ServicioIO.BULTOS;
-            EnviarJsonServicio.COMPRAS = ServicioIO.COMPRAS;
-            EnviarJsonServicio.CHEQUES = ServicioIO.CHEQUES;
-            EnviarJsonServicio.SOBRES = ServicioIO.SOBRES;
-            EnviarJsonServicio.OTROS = ServicioIO.OTROS;
-            EnviarJsonServicio.OBSERVACIONES = ServicioIO.OBSERVACIONES;
-            EnviarJsonServicio.ENTREGA = ServicioIO.ENTREGA;
-            EnviarJsonServicio.RECEPCION = ServicioIO.RECEPCION;
-            EnviarJsonServicio.TESPERA = ServicioIO.TESPERA;
-            EnviarJsonServicio.FECHAENTREGA = ServicioIO.FECHAENTREGA;
-            EnviarJsonServicio.HORAENTREGA = ServicioIO.HORAENTREGA;
-            EnviarJsonServicio.DISTANCIA = ServicioIO.DISTANCIA;
-            EnviarJsonServicio.PROGRAMADO = ServicioIO.PROGRAMADO;
-            EnviarJsonServicio.RESOPERACION = "";
-            EnviarJsonServicio.RESMENSAJE = "";
-        }
-
-        private void CopiarJsonEnMemoria(string pOPERACION)
-        {
-            // Proceso
-            // EnviarJsonServicio.OPERACION = pOPERACION;
-            ServicioIO.PENTALPHA = EnviarJsonServicio.PENTALPHA;
-            ServicioIO.NROENVIO = EnviarJsonServicio.NROENVIO;
-            ServicioIO.GUIADESPACHO = EnviarJsonServicio.GUIADESPACHO;
-            ServicioIO.FECHA = EnviarJsonServicio.FECHA;
-            ServicioIO.HORA = EnviarJsonServicio.HORA;
-            ServicioIO.CLIENTERUT = EnviarJsonServicio.CLIENTERUT;
-            ServicioIO.CLIENTEDIGVER = EnviarJsonServicio.CLIENTEDIGVER;
-            ServicioIO.MENSAJERORUT = EnviarJsonServicio.MENSAJERORUT;
-            ServicioIO.MENSAJERODIGVER = EnviarJsonServicio.MENSAJERODIGVER;
-            ServicioIO.RECURSOID = EnviarJsonServicio.RECURSOID;
-            ServicioIO.ODOMICILIO1 = EnviarJsonServicio.ODOMICILIO1;
-            ServicioIO.ODOMICILIO2 = EnviarJsonServicio.ODOMICILIO2;
-            ServicioIO.ONUMERO = EnviarJsonServicio.ONUMERO;
-            ServicioIO.OPISO = EnviarJsonServicio.OPISO;
-            ServicioIO.OOFICINA = EnviarJsonServicio.OOFICINA;
-            ServicioIO.OCIUDAD = EnviarJsonServicio.OCIUDAD;
-            ServicioIO.OCOMUNA = EnviarJsonServicio.OCOMUNA;
-            ServicioIO.OESTADO = EnviarJsonServicio.OESTADO;
-            ServicioIO.OPAIS = EnviarJsonServicio.OPAIS;
-            ServicioIO.OCOORDENADAS = EnviarJsonServicio.OCOORDENADAS;
-            ServicioIO.DDOMICILIO1 = EnviarJsonServicio.DDOMICILIO1;
-            ServicioIO.DDOMICILIO2 = EnviarJsonServicio.DDOMICILIO2;
-            ServicioIO.DNUMERO = EnviarJsonServicio.DNUMERO;
-            ServicioIO.DPISO = EnviarJsonServicio.DPISO;
-            ServicioIO.DOFICINA = EnviarJsonServicio.DOFICINA;
-            ServicioIO.DCIUDAD = EnviarJsonServicio.DCIUDAD;
-            ServicioIO.DCOMUNA = EnviarJsonServicio.DCOMUNA;
-            ServicioIO.DESTADO = EnviarJsonServicio.DESTADO;
-            ServicioIO.DPAIS = EnviarJsonServicio.DPAIS;
-            ServicioIO.DCOORDENADAS = EnviarJsonServicio.DCOORDENADAS;
-            ServicioIO.DESCRIPCION = EnviarJsonServicio.DESCRIPCION;
-            ServicioIO.FACTURAS = EnviarJsonServicio.FACTURAS;
-            ServicioIO.BULTOS = EnviarJsonServicio.BULTOS;
-            ServicioIO.COMPRAS = EnviarJsonServicio.COMPRAS;
-            ServicioIO.CHEQUES = EnviarJsonServicio.CHEQUES;
-            ServicioIO.SOBRES = EnviarJsonServicio.SOBRES;
-            ServicioIO.OTROS = EnviarJsonServicio.OTROS;
-            ServicioIO.OBSERVACIONES = EnviarJsonServicio.OBSERVACIONES;
-            ServicioIO.ENTREGA = EnviarJsonServicio.ENTREGA;
-            ServicioIO.RECEPCION = EnviarJsonServicio.RECEPCION;
-            ServicioIO.TESPERA = EnviarJsonServicio.TESPERA;
-            ServicioIO.FECHAENTREGA = EnviarJsonServicio.FECHAENTREGA;
-            ServicioIO.HORAENTREGA = EnviarJsonServicio.HORAENTREGA;
-            ServicioIO.DISTANCIA = EnviarJsonServicio.DISTANCIA;
-            ServicioIO.PROGRAMADO = EnviarJsonServicio.PROGRAMADO;
-            // EnviarJsonServicio.RESOPERACION = "";
-            // EnviarJsonServicio.RESMENSAJE = "";
-        }
-
         private void BtnListarServicio(object sender, RoutedEventArgs e)
         {
             {
                 LvrTransferVar.PantallaAnterior = "SERVICIO";
                 _ = Frame.Navigate(typeof(ListadosGenerales), LvrTransferVar, new SuppressNavigationTransitionInfo());
             }
+        }
+
+        private void ValidarValorNumerico(UIElement sender, Windows.UI.Xaml.Input.CharacterReceivedRoutedEventArgs args)
+        {
+            TextBox Validador = (TextBox)sender;
+            if (!(args.Character >= '0' && args.Character <= '9'))
+            {
+                Validador.Text = "";
+            }
+        }
+
+        private void CambioDeFechaServicio(CalendarView sender, CalendarViewSelectedDatesChangedEventArgs args)
+        {
+            try
+            {
+                DateTimeOffset FechaInicial = args.AddedDates.First();
+                BtnFechaServicio.Content = FechaInicial.DateTime.ToString("d", new CultureInfo("es-ES"));
+                PopUpFechaInicial.IsOpen = false;
+            }
+            catch (Exception e)
+            {
+                Console.Out.WriteLine(e.InnerException);
+            }
+        }
+
+        private void BtnCambioFechaInicial(object sender, RoutedEventArgs e)
+        {
+            PopUpFechaInicial.IsOpen = true;
         }
     }
 

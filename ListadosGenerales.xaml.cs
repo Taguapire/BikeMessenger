@@ -19,10 +19,18 @@ namespace BikeMessenger
     {
         private TransferVar LvrTransferVar;
         private string HtmlImprimir;
+        private WebView VisorWeb;
 
         public ListadosGenerales()
         {
             InitializeComponent();
+            PanelDePresentacion.Height = PaginaDeImpresion.ActualHeight;
+            PanelDePresentacion.Width =PaginaDeImpresion.ActualWidth;
+            VisorWeb = new WebView(WebViewExecutionMode.SameThread)
+            {
+                CanBeScrollAnchor = true
+            };
+            PanelDePresentacion.Children.Add(VisorWeb);
             // PrintMan.PrintTaskRequested += PrintTaskRequested;
         }
 
@@ -104,18 +112,25 @@ namespace BikeMessenger
                     break;
                 case "PERSONAL":
                     Bm_Personal_Database BM_Database_Personal = new Bm_Personal_Database();
-                    HtmlImprimir = BM_Database_Personal.Bm_Personal_Listado();
+                    HtmlImprimir = BM_Database_Personal.Bm_Personal_Listado(LvrTransferVar.EMP_PENTALPHA);
                     VisorWeb.NavigateToString(HtmlImprimir);
                     break;
                 case "RECURSO":
                     Bm_Recurso_Database BM_Database_Recurso = new Bm_Recurso_Database();
-                    HtmlImprimir = BM_Database_Recurso.Bm_Recurso_Listado();
+                    HtmlImprimir = BM_Database_Recurso.Bm_Recurso_Listado(LvrTransferVar.EMP_PENTALPHA);
                     VisorWeb.NavigateToString(HtmlImprimir);
                     break;
                 case "CLIENTE":
                     Bm_Cliente_Database BM_Database_Cliente = new Bm_Cliente_Database();
-                    HtmlImprimir = BM_Database_Cliente.Bm_Cliente_Listado();
-                    VisorWeb.NavigateToString(HtmlImprimir);
+                    HtmlImprimir = BM_Database_Cliente.Bm_Cliente_Listado(LvrTransferVar.EMP_PENTALPHA);
+                    try
+                    {
+                        VisorWeb.NavigateToString(HtmlImprimir);
+                    }
+                    catch (ArgumentNullException)
+                    {
+                        ;
+                    }
                     break;
                 case "SERVICIO":
                     Bm_Servicio_Database BM_Database_Servicio = new Bm_Servicio_Database();

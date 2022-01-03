@@ -18,9 +18,9 @@
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WindowsXamlEnableOverview>true</WindowsXamlEnableOverview>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
-    <PackageCertificateThumbprint>9A54D06D337583B95524393E5E4F90A2456DCFC5</PackageCertificateThumbprint>
-    <PackageCertificateKeyFile>
-    </PackageCertificateKeyFile>
+    <PackageCertificateThumbprint>
+    </PackageCertificateThumbprint>
+    <PackageCertificateKeyFile>BikeMessenger_TemporaryKey.pfx</PackageCertificateKeyFile>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
@@ -136,12 +136,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BM_Ciudad_Database.cs" />
+    <Compile Include="BM_CCRP.cs" />
     <Compile Include="Bm_Cliente_Database.cs" />
-    <Compile Include="BM_Comuna_Database.cs" />
     <Compile Include="Bm_Empresa_Database.cs" />
-    <Compile Include="BM_EstadoRegion_Database.cs" />
-    <Compile Include="Bm_Pais_Database.cs" />
     <Compile Include="Bm_Personal_Database.cs" />
     <Compile Include="Bm_Recurso_Database.cs" />
     <Compile Include="Bm_Servicio_Database.cs" />
@@ -153,19 +150,18 @@
     <Compile Include="ListadosGenerales.xaml.cs">
       <DependentUpon>ListadosGenerales.xaml</DependentUpon>
     </Compile>
-    <Compile Include="LvrInternet.cs" />
     <Compile Include="LvrTablaHtml.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PageAjustes.xaml.cs">
+      <DependentUpon>PageAjustes.xaml</DependentUpon>
     </Compile>
     <Compile Include="PageClientes.xaml.cs">
       <DependentUpon>PageClientes.xaml</DependentUpon>
     </Compile>
     <Compile Include="PageEmpresa.xaml.cs">
       <DependentUpon>PageEmpresa.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="PageAjustes.xaml.cs">
-      <DependentUpon>PageAjustes.xaml</DependentUpon>
     </Compile>
     <Compile Include="PageInicio.xaml.cs">
       <DependentUpon>PageInicio.xaml</DependentUpon>
@@ -264,15 +260,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="PageAjustes.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="PageClientes.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="PageEmpresa.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="PageAjustes.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -298,18 +294,18 @@
       <Version>6.2.13</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls">
-      <Version>7.1.1</Version>
+      <Version>7.1.2</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls.DataGrid">
-      <Version>7.1.1</Version>
-    </PackageReference>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>13.0.1</Version>
+      <Version>7.1.2</Version>
     </PackageReference>
     <PackageReference Include="QRCoder">
-      <Version>1.4.1</Version>
+      <Version>1.4.3</Version>
     </PackageReference>
     <PackageReference Include="sqlite-net-pcl">
+      <Version>1.8.116</Version>
+    </PackageReference>
+    <PackageReference Include="sqlite-net-sqlcipher">
       <Version>1.8.116</Version>
     </PackageReference>
     <PackageReference Include="System.Drawing.Common">

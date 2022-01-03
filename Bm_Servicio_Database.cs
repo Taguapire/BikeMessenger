@@ -1,1119 +1,554 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
 using SQLite;
 
 namespace BikeMessenger
 {
     internal class Bm_Servicio_Database
     {
-        private static SqlConnection BM_Conexion;
-        private static SQLiteConnection BM_ConexionLite;
-
         private TransferVar BM_TransferVar = new TransferVar();
 
-        private static JsonBikeMessengerServicio BK_Servicio = new JsonBikeMessengerServicio();
-        private static List<JsonBikeMessengerServicio> BK_ServicioLista = new List<JsonBikeMessengerServicio>();
+        // Valode de Memoria a Bases de Datos
+
+        private StructBikeMessengerServicio BK_Servicio;
+        private List<StructBikeMessengerServicio> BK_ServicioLista;
+
+        private string CompletoNombreBD = "";
 
         public Bm_Servicio_Database()
         {
-            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
-            {
-                return;
-            }
-
-            if (BM_TransferVar.SincronizarBaseLocal())
-            {
-                try
-                {
-                    BM_ConexionLite = new SQLiteConnection(BM_TransferVar.DIRECTORIO_BASE_LOCAL + "\\BikeMessenger.db");
-                    //BM_ConexionLite.Open();
-                }
-                catch (SQLite.SQLiteException Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                }
-            }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
-            {
-                try
-                {
-                    BM_Conexion = new SqlConnection(BM_TransferVar.BM_Sql_String_Builder.ConnectionString);
-                    BM_Conexion.Open();
-                }
-                catch (System.Data.SqlClient.SqlException Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                }
-            }
+            CompletoNombreBD = BM_TransferVar.DIRECTORIO_BASE_LOCAL + "\\BikeMessenger.db";
         }
 
         // Busqueda por Muchos
-        public List<JsonBikeMessengerServicio> BuscarServicio()
+        public List<StructBikeMessengerServicio> BuscarServicio(string pPENTALPHA)
         {
-            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
-            {
-                return null;
-            }
+            BK_ServicioLista = new List<StructBikeMessengerServicio>();
 
-            BK_Servicio = new JsonBikeMessengerServicio();
-            BK_ServicioLista = new List<JsonBikeMessengerServicio>();
+            SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
 
-            if (BM_TransferVar.SincronizarBaseLocal())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
-            {
-                DataSet BM_DataSet;
-                SqlDataAdapter BM_Adaptador;
-                SqlCommand BM_Comando;
+            List<TbBikeMessengerServicio> results = BM_ConexionLite.Table<TbBikeMessengerServicio>().Where(t => t.PENTALPHA == pPENTALPHA).ToList();
 
-                try
+            if (results.Count > 0)
+            {
+                for (int i = 0; i < results.Count; i++)
                 {
-                    BM_Comando = BM_Conexion.CreateCommand();
-                    BM_Comando.CommandText = string.Format("SELECT * FROM SERVICIOS");
-
-                    BM_Adaptador = new SqlDataAdapter(BM_Comando)
+                    BK_Servicio = new StructBikeMessengerServicio
                     {
-                        AcceptChangesDuringFill = false
+                        OPERACION = "BUSCAR",
+                        PKSERVICIO = results[i].PKSERVICIO,
+                        PENTALPHA = results[i].PENTALPHA,
+                        NROENVIO = results[i].NROENVIO,
+                        GUIADESPACHO = results[i].GUIADESPACHO,
+                        FECHA = results[i].FECHA,
+                        HORA = results[i].HORA,
+                        CLIENTERUT = results[i].CLIENTERUT,
+                        CLIENTEDIGVER = results[i].CLIENTEDIGVER,
+                        MENSAJERORUT = results[i].MENSAJERORUT,
+                        MENSAJERODIGVER = results[i].MENSAJERODIGVER,
+                        RECURSOID = results[i].RECURSOID,
+                        ODOMICILIO1 = results[i].ODOMICILIO1,
+                        ONUMERO = results[i].ONUMERO,
+                        OPISO = results[i].OPISO,
+                        OOFICINA = results[i].OOFICINA,
+                        OCIUDAD = results[i].OCIUDAD,
+                        OCOMUNA = results[i].OCOMUNA,
+                        OESTADO = results[i].OESTADO,
+                        OPAIS = results[i].OPAIS,
+                        OLATITUD = results[i].OLATITUD,
+                        OLONGITUD = results[i].OLONGITUD,
+                        DDOMICILIO1 = results[i].DDOMICILIO1,
+                        DNUMERO = results[i].DNUMERO,
+                        DPISO = results[i].DPISO,
+                        DOFICINA = results[i].DOFICINA,
+                        DCIUDAD = results[i].DCIUDAD,
+                        DCOMUNA = results[i].DCOMUNA,
+                        DESTADO = results[i].DESTADO,
+                        DPAIS = results[i].DPAIS,
+                        DLATITUD = results[i].DLATITUD,
+                        DLONGITUD = results[i].DLONGITUD,
+                        DESCRIPCION = results[i].DESCRIPCION,
+                        FACTURAS = results[i].FACTURAS,
+                        BULTOS = results[i].BULTOS,
+                        COMPRAS = results[i].COMPRAS,
+                        CHEQUES = results[i].CHEQUES,
+                        SOBRES = results[i].SOBRES,
+                        OTROS = results[i].OTROS,
+                        OBSERVACIONES = results[i].OBSERVACIONES,
+                        ENTREGA = results[i].ENTREGA,
+                        RECEPCION = results[i].RECEPCION,
+                        TESPERA = results[i].TESPERA,
+                        FECHAENTREGA = results[i].FECHAENTREGA,
+                        HORAENTREGA = results[i].HORAENTREGA,
+                        DISTANCIA = results[i].DISTANCIA,
+                        PROGRAMADO = results[i].PROGRAMADO,
+                        RESMENSAJE = "OK",
+                        RESOPERACION = "OK"
                     };
-
-                    BM_DataSet = new DataSet();
-                    BM_Adaptador.Fill(BM_DataSet, "SERVICIOS");
-
-                    foreach (DataRow LvrServicio in BM_DataSet.Tables["SERVICIOS"].Rows)
-                    {
-                        BK_Servicio.PENTALPHA = LvrServicio["PENTALPHA"].ToString();
-                        BK_Servicio.NROENVIO = LvrServicio["NROENVIO"].ToString();
-                        BK_Servicio.GUIADESPACHO = LvrServicio["GUIADESPACHO"].ToString();
-                        BK_Servicio.FECHA = LvrServicio["FECHA"].ToString();
-                        BK_Servicio.HORA = LvrServicio["HORA"].ToString();
-                        BK_Servicio.CLIENTERUT = LvrServicio["CLIENTERUT"].ToString();
-                        BK_Servicio.CLIENTEDIGVER = LvrServicio["CLIENTEDIGVER"].ToString();
-                        // BK_Servicio.CLIENTE = LvrServicio["CLIENTE"].ToString();
-                        BK_Servicio.MENSAJERORUT = LvrServicio["MENSAJERORUT"].ToString();
-                        BK_Servicio.MENSAJERODIGVER = LvrServicio["MENSAJERODIGVER"].ToString();
-                        // BK_Servicio.MENSAJERO = LvrServicio["MENSAJERO"].ToString();
-                        BK_Servicio.RECURSOID = LvrServicio["RECURSOID"].ToString();
-                        // BK_Servicio.RECURSO = LvrServicio["RECURSO"].ToString();
-                        BK_Servicio.ODOMICILIO1 = LvrServicio["ODOMICILIO1"].ToString();
-                        BK_Servicio.ODOMICILIO2 = LvrServicio["ODOMICILIO2"].ToString();
-                        BK_Servicio.ONUMERO = LvrServicio["ONUMERO"].ToString();
-                        BK_Servicio.OPISO = LvrServicio["OPISO"].ToString();
-                        BK_Servicio.OOFICINA = LvrServicio["OOFICINA"].ToString();
-                        BK_Servicio.OCIUDAD = LvrServicio["OCIUDAD"].ToString();
-                        BK_Servicio.OCOMUNA = LvrServicio["OCOMUNA"].ToString();
-                        BK_Servicio.OESTADO = LvrServicio["OESTADO"].ToString();
-                        BK_Servicio.OPAIS = LvrServicio["OPAIS"].ToString();
-                        BK_Servicio.OCOORDENADAS = LvrServicio["OCOORDENADAS"].ToString();
-                        BK_Servicio.DDOMICILIO1 = LvrServicio["DDOMICILIO1"].ToString();
-                        BK_Servicio.DDOMICILIO2 = LvrServicio["DDOMICILIO2"].ToString();
-                        BK_Servicio.DNUMERO = LvrServicio["DNUMERO"].ToString();
-                        BK_Servicio.DPISO = LvrServicio["DPISO"].ToString();
-                        BK_Servicio.DOFICINA = LvrServicio["DOFICINA"].ToString();
-                        BK_Servicio.DCIUDAD = LvrServicio["DCIUDAD"].ToString();
-                        BK_Servicio.DCOMUNA = LvrServicio["DCOMUNA"].ToString();
-                        BK_Servicio.DESTADO = LvrServicio["DESTADO"].ToString();
-                        BK_Servicio.DPAIS = LvrServicio["DPAIS"].ToString();
-                        BK_Servicio.DCOORDENADAS = LvrServicio["DCOORDENADAS"].ToString();
-                        BK_Servicio.DESCRIPCION = LvrServicio["DESCRIPCION"].ToString();
-                        BK_Servicio.FACTURAS = LvrServicio["FACTURAS"].ToString();
-                        BK_Servicio.BULTOS = LvrServicio["BULTOS"].ToString();
-                        BK_Servicio.COMPRAS = LvrServicio["COMPRAS"].ToString();
-                        BK_Servicio.CHEQUES = LvrServicio["CHEQUES"].ToString();
-                        BK_Servicio.SOBRES = LvrServicio["SOBRES"].ToString();
-                        BK_Servicio.OTROS = LvrServicio["OTROS"].ToString();
-                        BK_Servicio.OBSERVACIONES = LvrServicio["OBSERVACIONES"].ToString();
-                        BK_Servicio.ENTREGA = LvrServicio["ENTREGA"].ToString();
-                        BK_Servicio.RECEPCION = LvrServicio["RECEPCION"].ToString();
-                        BK_Servicio.TESPERA = LvrServicio["TESPERA"].ToString();
-                        BK_Servicio.FECHAENTREGA = LvrServicio["FECHAENTREGA"].ToString();
-                        BK_Servicio.HORAENTREGA = LvrServicio["HORAENTREGA"].ToString();
-                        BK_Servicio.DISTANCIA = LvrServicio["DISTANCIA"].ToString();
-                        BK_Servicio.PROGRAMADO = LvrServicio["PROGRAMADO"].ToString();
-                        BK_ServicioLista.Add(BK_Servicio);
-                    }
+                    BK_ServicioLista.Add(BK_Servicio);
                 }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                    return null;
-                }
-                return BK_ServicioLista;
             }
-            else if (BM_TransferVar.SincronizarWebPentalpha())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarWebPropio())
-            {
-                return null;
-            }
-            return null;
+            BM_ConexionLite.Close();
+            BM_ConexionLite.Dispose();
+            BM_ConexionLite = null;
+
+            return BK_ServicioLista;
         }
 
-        public List<JsonBikeMessengerServicio> BuscarServicio(string pPENTALPHA, string pNROENVIO)
+        public List<StructBikeMessengerServicio> BuscarServicio(string pPENTALPHA, string pNROENVIO)
         {
-            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
-            {
-                return null;
-            }
+            string VPKSERVICIO = pPENTALPHA + pNROENVIO;
 
-            BK_Servicio = new JsonBikeMessengerServicio();
-            BK_ServicioLista = new List<JsonBikeMessengerServicio>();
+            BK_ServicioLista = new List<StructBikeMessengerServicio>();
 
-            if (BM_TransferVar.SincronizarBaseLocal())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
-            {
-                DataSet BM_DataSet;
-                SqlDataAdapter BM_Adaptador;
-                SqlCommand BM_Comando;
+            SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
 
-                try
+            List<TbBikeMessengerServicio> results = BM_ConexionLite.Table<TbBikeMessengerServicio>().Where(t => t.PKSERVICIO == VPKSERVICIO).ToList();
+
+            if (results.Count > 0)
+            {
+                for (int i = 0; i < results.Count; i++)
                 {
-                    BM_Comando = BM_Conexion.CreateCommand();
-                    BM_Comando.CommandText = string.Format("SELECT * FROM SERVICIOS WHERE PENTALPHA = '" + pPENTALPHA + "' AND NROENVIO = '" + pNROENVIO + "'");
-
-                    BM_Adaptador = new SqlDataAdapter(BM_Comando)
+                    BK_Servicio = new StructBikeMessengerServicio
                     {
-                        AcceptChangesDuringFill = false
+                        OPERACION = "BUSCAR",
+                        PKSERVICIO = results[i].PKSERVICIO,
+                        PENTALPHA = results[i].PENTALPHA,
+                        NROENVIO = results[i].NROENVIO,
+                        GUIADESPACHO = results[i].GUIADESPACHO,
+                        FECHA = results[i].FECHA,
+                        HORA = results[i].HORA,
+                        CLIENTERUT = results[i].CLIENTERUT,
+                        CLIENTEDIGVER = results[i].CLIENTEDIGVER,
+                        MENSAJERORUT = results[i].MENSAJERORUT,
+                        MENSAJERODIGVER = results[i].MENSAJERODIGVER,
+                        RECURSOID = results[i].RECURSOID,
+                        ODOMICILIO1 = results[i].ODOMICILIO1,
+                        ONUMERO = results[i].ONUMERO,
+                        OPISO = results[i].OPISO,
+                        OOFICINA = results[i].OOFICINA,
+                        OCIUDAD = results[i].OCIUDAD,
+                        OCOMUNA = results[i].OCOMUNA,
+                        OESTADO = results[i].OESTADO,
+                        OPAIS = results[i].OPAIS,
+                        OLATITUD = results[i].OLATITUD,
+                        OLONGITUD = results[i].OLONGITUD,
+                        DDOMICILIO1 = results[i].DDOMICILIO1,
+                        DNUMERO = results[i].DNUMERO,
+                        DPISO = results[i].DPISO,
+                        DOFICINA = results[i].DOFICINA,
+                        DCIUDAD = results[i].DCIUDAD,
+                        DCOMUNA = results[i].DCOMUNA,
+                        DESTADO = results[i].DESTADO,
+                        DPAIS = results[i].DPAIS,
+                        DLATITUD = results[i].DLATITUD,
+                        DLONGITUD = results[i].DLONGITUD,
+                        DESCRIPCION = results[i].DESCRIPCION,
+                        FACTURAS = results[i].FACTURAS,
+                        BULTOS = results[i].BULTOS,
+                        COMPRAS = results[i].COMPRAS,
+                        CHEQUES = results[i].CHEQUES,
+                        SOBRES = results[i].SOBRES,
+                        OTROS = results[i].OTROS,
+                        OBSERVACIONES = results[i].OBSERVACIONES,
+                        ENTREGA = results[i].ENTREGA,
+                        RECEPCION = results[i].RECEPCION,
+                        TESPERA = results[i].TESPERA,
+                        FECHAENTREGA = results[i].FECHAENTREGA,
+                        HORAENTREGA = results[i].HORAENTREGA,
+                        DISTANCIA = results[i].DISTANCIA,
+                        PROGRAMADO = results[i].PROGRAMADO,
+                        RESMENSAJE = "OK",
+                        RESOPERACION = "OK"
                     };
-
-                    BM_DataSet = new DataSet();
-                    BM_Adaptador.Fill(BM_DataSet, "SERVICIOS");
-
-                    foreach (DataRow LvrServicio in BM_DataSet.Tables["SERVICIOS"].Rows)
-                    {
-                        BK_Servicio.PENTALPHA = LvrServicio["PENTALPHA"].ToString();
-                        BK_Servicio.NROENVIO = LvrServicio["NROENVIO"].ToString();
-                        BK_Servicio.GUIADESPACHO = LvrServicio["GUIADESPACHO"].ToString();
-                        BK_Servicio.FECHA = LvrServicio["FECHA"].ToString();
-                        BK_Servicio.HORA = LvrServicio["HORA"].ToString();
-                        BK_Servicio.CLIENTERUT = LvrServicio["CLIENTERUT"].ToString();
-                        BK_Servicio.CLIENTEDIGVER = LvrServicio["CLIENTEDIGVER"].ToString();
-                        BK_Servicio.MENSAJERORUT = LvrServicio["MENSAJERORUT"].ToString();
-                        BK_Servicio.MENSAJERODIGVER = LvrServicio["MENSAJERODIGVER"].ToString();
-                        BK_Servicio.RECURSOID = LvrServicio["RECURSOID"].ToString();
-                        BK_Servicio.ODOMICILIO1 = LvrServicio["ODOMICILIO1"].ToString();
-                        BK_Servicio.ODOMICILIO2 = LvrServicio["ODOMICILIO2"].ToString();
-                        BK_Servicio.ONUMERO = LvrServicio["ONUMERO"].ToString();
-                        BK_Servicio.OPISO = LvrServicio["OPISO"].ToString();
-                        BK_Servicio.OOFICINA = LvrServicio["OOFICINA"].ToString();
-                        BK_Servicio.OCIUDAD = LvrServicio["OCIUDAD"].ToString();
-                        BK_Servicio.OCOMUNA = LvrServicio["OCOMUNA"].ToString();
-                        BK_Servicio.OESTADO = LvrServicio["OESTADO"].ToString();
-                        BK_Servicio.OPAIS = LvrServicio["OPAIS"].ToString();
-                        BK_Servicio.OCOORDENADAS = LvrServicio["OCOORDENADAS"].ToString();
-                        BK_Servicio.DDOMICILIO1 = LvrServicio["DDOMICILIO1"].ToString();
-                        BK_Servicio.DDOMICILIO2 = LvrServicio["DDOMICILIO2"].ToString();
-                        BK_Servicio.DNUMERO = LvrServicio["DNUMERO"].ToString();
-                        BK_Servicio.DPISO = LvrServicio["DPISO"].ToString();
-                        BK_Servicio.DOFICINA = LvrServicio["DOFICINA"].ToString();
-                        BK_Servicio.DCIUDAD = LvrServicio["DCIUDAD"].ToString();
-                        BK_Servicio.DCOMUNA = LvrServicio["DCOMUNA"].ToString();
-                        BK_Servicio.DESTADO = LvrServicio["DESTADO"].ToString();
-                        BK_Servicio.DPAIS = LvrServicio["DPAIS"].ToString();
-                        BK_Servicio.DCOORDENADAS = LvrServicio["DCOORDENADAS"].ToString();
-                        BK_Servicio.DESCRIPCION = LvrServicio["DESCRIPCION"].ToString();
-                        BK_Servicio.FACTURAS = LvrServicio["FACTURAS"].ToString();
-                        BK_Servicio.BULTOS = LvrServicio["BULTOS"].ToString();
-                        BK_Servicio.COMPRAS = LvrServicio["COMPRAS"].ToString();
-                        BK_Servicio.CHEQUES = LvrServicio["CHEQUES"].ToString();
-                        BK_Servicio.SOBRES = LvrServicio["SOBRES"].ToString();
-                        BK_Servicio.OTROS = LvrServicio["OTROS"].ToString();
-                        BK_Servicio.OBSERVACIONES = LvrServicio["OBSERVACIONES"].ToString();
-                        BK_Servicio.ENTREGA = LvrServicio["ENTREGA"].ToString();
-                        BK_Servicio.RECEPCION = LvrServicio["RECEPCION"].ToString();
-                        BK_Servicio.TESPERA = LvrServicio["TESPERA"].ToString();
-                        BK_Servicio.FECHAENTREGA = LvrServicio["FECHAENTREGA"].ToString();
-                        BK_Servicio.HORAENTREGA = LvrServicio["HORAENTREGA"].ToString();
-                        BK_Servicio.DISTANCIA = LvrServicio["DISTANCIA"].ToString();
-                        BK_Servicio.PROGRAMADO = LvrServicio["PROGRAMADO"].ToString();
-                        BK_ServicioLista.Add(BK_Servicio);
-                    }
+                    BK_ServicioLista.Add(BK_Servicio);
                 }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                    return null;
-                }
-                return BK_ServicioLista;
             }
-            else if (BM_TransferVar.SincronizarWebPentalpha())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarWebPropio())
-            {
-                return null;
-            }
-            return null;
+            BM_ConexionLite.Close();
+            BM_ConexionLite.Dispose();
+            BM_ConexionLite = null;
+
+            return BK_ServicioLista;
         }
 
-        public bool AgregarServicio(JsonBikeMessengerServicio aBK_Servicio)
+        public bool AgregarServicio(StructBikeMessengerServicio aBK_Servicio)
         {
-            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
-            {
-                return false;
-            }
+            SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
 
-            if (BM_TransferVar.SincronizarBaseLocal())
+            BM_ConexionLite.RunInTransaction(() =>
             {
-                return false;
-            }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
-            {
-                DataSet BM_DataSet;
-                SqlDataAdapter BM_Adaptador;
-                SqlCommand BM_Comando;
-                SqlCommandBuilder BM_Builder;
-
-                try
+                TbBikeMessengerServicio record = new TbBikeMessengerServicio
                 {
-                    BM_Comando = BM_Conexion.CreateCommand();
-                    BM_Comando.CommandText = string.Format("SELECT * FROM SERVICIOS");
+                    OPERACION = "AGREGAR",
+                    PKSERVICIO = aBK_Servicio.PKSERVICIO,
+                    PENTALPHA = aBK_Servicio.PENTALPHA,
+                    NROENVIO = aBK_Servicio.NROENVIO,
+                    GUIADESPACHO = aBK_Servicio.GUIADESPACHO,
+                    FECHA = aBK_Servicio.FECHA,
+                    HORA = aBK_Servicio.HORA,
+                    CLIENTERUT = aBK_Servicio.CLIENTERUT,
+                    CLIENTEDIGVER = aBK_Servicio.CLIENTEDIGVER,
+                    MENSAJERORUT = aBK_Servicio.MENSAJERORUT,
+                    MENSAJERODIGVER = aBK_Servicio.MENSAJERODIGVER,
+                    RECURSOID = aBK_Servicio.RECURSOID,
+                    ODOMICILIO1 = aBK_Servicio.ODOMICILIO1,
+                    ONUMERO = aBK_Servicio.ONUMERO,
+                    OPISO = aBK_Servicio.OPISO,
+                    OOFICINA = aBK_Servicio.OOFICINA,
+                    OCIUDAD = aBK_Servicio.OCIUDAD,
+                    OCOMUNA = aBK_Servicio.OCOMUNA,
+                    OESTADO = aBK_Servicio.OESTADO,
+                    OPAIS = aBK_Servicio.OPAIS,
+                    OLATITUD = aBK_Servicio.OLATITUD,
+                    OLONGITUD = aBK_Servicio.OLONGITUD,
+                    DDOMICILIO1 = aBK_Servicio.DDOMICILIO1,
+                    DNUMERO = aBK_Servicio.DNUMERO,
+                    DPISO = aBK_Servicio.DPISO,
+                    DOFICINA = aBK_Servicio.DOFICINA,
+                    DCIUDAD = aBK_Servicio.DCIUDAD,
+                    DCOMUNA = aBK_Servicio.DCOMUNA,
+                    DESTADO = aBK_Servicio.DESTADO,
+                    DPAIS = aBK_Servicio.DPAIS,
+                    DLATITUD = aBK_Servicio.DLATITUD,
+                    DLONGITUD = aBK_Servicio.DLONGITUD,
+                    DESCRIPCION = aBK_Servicio.DESCRIPCION,
+                    FACTURAS = aBK_Servicio.FACTURAS,
+                    BULTOS = aBK_Servicio.BULTOS,
+                    COMPRAS = aBK_Servicio.COMPRAS,
+                    CHEQUES = aBK_Servicio.CHEQUES,
+                    SOBRES = aBK_Servicio.SOBRES,
+                    OTROS = aBK_Servicio.OTROS,
+                    OBSERVACIONES = aBK_Servicio.OBSERVACIONES,
+                    ENTREGA = aBK_Servicio.ENTREGA,
+                    RECEPCION = aBK_Servicio.RECEPCION,
+                    TESPERA = aBK_Servicio.TESPERA,
+                    FECHAENTREGA = aBK_Servicio.FECHAENTREGA,
+                    HORAENTREGA = aBK_Servicio.HORAENTREGA,
+                    DISTANCIA = aBK_Servicio.DISTANCIA,
+                    PROGRAMADO = aBK_Servicio.PROGRAMADO,
+                    RESMENSAJE = "OK",
+                    RESOPERACION = "OK"
+                };
+                _ = BM_ConexionLite.InsertOrReplace(record);
 
-                    BM_Adaptador = new SqlDataAdapter(BM_Comando)
-                    {
-                        AcceptChangesDuringFill = true
-                    };
+            });
 
-                    BM_DataSet = new DataSet();
-                    BM_Adaptador.Fill(BM_DataSet, "SERVICIOS");
+            BM_ConexionLite.Close();
+            BM_ConexionLite.Dispose();
+            BM_ConexionLite = null;
 
-                    DataRow LvrServicio = BM_DataSet.Tables["SERVICIOS"].NewRow();
-                    BM_Builder = new SqlCommandBuilder(BM_Adaptador);
-
-                    LvrServicio["PENTALPHA"] = aBK_Servicio.PENTALPHA;
-                    LvrServicio["NROENVIO"] = aBK_Servicio.NROENVIO;
-                    LvrServicio["GUIADESPACHO"] = aBK_Servicio.GUIADESPACHO;
-                    LvrServicio["FECHA"] = aBK_Servicio.FECHA;
-                    LvrServicio["HORA"] = aBK_Servicio.HORA;
-                    LvrServicio["CLIENTERUT"] = aBK_Servicio.CLIENTERUT;
-                    LvrServicio["CLIENTEDIGVER"] = aBK_Servicio.CLIENTEDIGVER;
-                    LvrServicio["MENSAJERORUT"] = aBK_Servicio.MENSAJERORUT;
-                    LvrServicio["MENSAJERODIGVER"] = aBK_Servicio.MENSAJERODIGVER;
-                    LvrServicio["RECURSOID"] = aBK_Servicio.RECURSOID;
-                    LvrServicio["ODOMICILIO1"] = aBK_Servicio.ODOMICILIO1;
-                    LvrServicio["ODOMICILIO2"] = aBK_Servicio.ODOMICILIO2;
-                    LvrServicio["ONUMERO"] = aBK_Servicio.ONUMERO;
-                    LvrServicio["OPISO"] = aBK_Servicio.OPISO;
-                    LvrServicio["OOFICINA"] = aBK_Servicio.OOFICINA;
-                    LvrServicio["OCIUDAD"] = aBK_Servicio.OCIUDAD;
-                    LvrServicio["OCOMUNA"] = aBK_Servicio.OCOMUNA;
-                    LvrServicio["OESTADO"] = aBK_Servicio.OESTADO;
-                    LvrServicio["OPAIS"] = aBK_Servicio.OPAIS;
-                    LvrServicio["OCOORDENADAS"] = aBK_Servicio.OCOORDENADAS;
-                    LvrServicio["DDOMICILIO1"] = aBK_Servicio.DDOMICILIO1;
-                    LvrServicio["DDOMICILIO2"] = aBK_Servicio.DDOMICILIO2;
-                    LvrServicio["DNUMERO"] = aBK_Servicio.DNUMERO;
-                    LvrServicio["DPISO"] = aBK_Servicio.DPISO;
-                    LvrServicio["DOFICINA"] = aBK_Servicio.DOFICINA;
-                    LvrServicio["DCIUDAD"] = aBK_Servicio.DCIUDAD;
-                    LvrServicio["DCOMUNA"] = aBK_Servicio.DCOMUNA;
-                    LvrServicio["DESTADO"] = aBK_Servicio.DESTADO;
-                    LvrServicio["DPAIS"] = aBK_Servicio.DPAIS;
-                    LvrServicio["DCOORDENADAS"] = aBK_Servicio.DCOORDENADAS;
-                    LvrServicio["DESCRIPCION"] = aBK_Servicio.DESCRIPCION;
-                    LvrServicio["FACTURAS"] = aBK_Servicio.FACTURAS;
-                    LvrServicio["BULTOS"] = aBK_Servicio.BULTOS;
-                    LvrServicio["COMPRAS"] = aBK_Servicio.COMPRAS;
-                    LvrServicio["CHEQUES"] = aBK_Servicio.CHEQUES;
-                    LvrServicio["SOBRES"] = aBK_Servicio.SOBRES;
-                    LvrServicio["OTROS"] = aBK_Servicio.OTROS;
-                    LvrServicio["OBSERVACIONES"] = aBK_Servicio.OBSERVACIONES;
-                    LvrServicio["ENTREGA"] = aBK_Servicio.ENTREGA;
-                    LvrServicio["RECEPCION"] = aBK_Servicio.RECEPCION;
-                    LvrServicio["TESPERA"] = aBK_Servicio.TESPERA;
-                    LvrServicio["FECHAENTREGA"] = aBK_Servicio.FECHAENTREGA;
-                    LvrServicio["HORAENTREGA"] = aBK_Servicio.HORAENTREGA;
-                    LvrServicio["DISTANCIA"] = aBK_Servicio.DISTANCIA;
-                    LvrServicio["PROGRAMADO"] = aBK_Servicio.PROGRAMADO;
-                    BM_DataSet.Tables["SERVICIOS"].Rows.Add(LvrServicio);
-                    _ = BM_Builder.GetInsertCommand(true);
-                    _ = BM_Adaptador.Update(BM_DataSet, "SERVICIOS");
-                    _ = BM_Adaptador.InsertCommand;
-                }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                    return false;
-                }
-                return true;
-            }
-            else if (BM_TransferVar.SincronizarWebPentalpha())
-            {
-                return false;
-            }
-            else if (BM_TransferVar.SincronizarWebPropio())
-            {
-                return false;
-            }
-            return false;
+            return true;
         }
 
 
-        public bool ModificarServicio(JsonBikeMessengerServicio mBK_Servicio)
+        public bool ModificarServicio(StructBikeMessengerServicio mBK_Servicio)
         {
-            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
-            {
-                return false;
-            }
+            SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
 
-            if (BM_TransferVar.SincronizarBaseLocal())
+            BM_ConexionLite.RunInTransaction(() =>
             {
-                return false;
-            }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
-            {
-                DataSet BM_DataSet;
-                SqlDataAdapter BM_Adaptador;
-                SqlCommand BM_Comando;
-                SqlCommandBuilder BM_Builder;
-
-                try
+                TbBikeMessengerServicio record = new TbBikeMessengerServicio
                 {
-                    BM_Comando = BM_Conexion.CreateCommand();
-                    BM_Comando.UpdatedRowSource = UpdateRowSource.FirstReturnedRecord;
-                    BM_Comando.CommandText = string.Format("SELECT * FROM SERVICIOS WHERE PENTALPHA = '" + mBK_Servicio.PENTALPHA + "' AND NROENVIO = '" + mBK_Servicio.NROENVIO + "'");
+                    OPERACION = "AGREGAR",
+                    PKSERVICIO = mBK_Servicio.PKSERVICIO,
+                    PENTALPHA = mBK_Servicio.PENTALPHA,
+                    NROENVIO = mBK_Servicio.NROENVIO,
+                    GUIADESPACHO = mBK_Servicio.GUIADESPACHO,
+                    FECHA = mBK_Servicio.FECHA,
+                    HORA = mBK_Servicio.HORA,
+                    CLIENTERUT = mBK_Servicio.CLIENTERUT,
+                    CLIENTEDIGVER = mBK_Servicio.CLIENTEDIGVER,
+                    MENSAJERORUT = mBK_Servicio.MENSAJERORUT,
+                    MENSAJERODIGVER = mBK_Servicio.MENSAJERODIGVER,
+                    RECURSOID = mBK_Servicio.RECURSOID,
+                    ODOMICILIO1 = mBK_Servicio.ODOMICILIO1,
+                    ONUMERO = mBK_Servicio.ONUMERO,
+                    OPISO = mBK_Servicio.OPISO,
+                    OOFICINA = mBK_Servicio.OOFICINA,
+                    OCIUDAD = mBK_Servicio.OCIUDAD,
+                    OCOMUNA = mBK_Servicio.OCOMUNA,
+                    OESTADO = mBK_Servicio.OESTADO,
+                    OPAIS = mBK_Servicio.OPAIS,
+                    OLATITUD = mBK_Servicio.OLATITUD,
+                    OLONGITUD = mBK_Servicio.OLONGITUD,
+                    DDOMICILIO1 = mBK_Servicio.DDOMICILIO1,
+                    DNUMERO = mBK_Servicio.DNUMERO,
+                    DPISO = mBK_Servicio.DPISO,
+                    DOFICINA = mBK_Servicio.DOFICINA,
+                    DCIUDAD = mBK_Servicio.DCIUDAD,
+                    DCOMUNA = mBK_Servicio.DCOMUNA,
+                    DESTADO = mBK_Servicio.DESTADO,
+                    DPAIS = mBK_Servicio.DPAIS,
+                    DLATITUD = mBK_Servicio.DLATITUD,
+                    DLONGITUD = mBK_Servicio.DLONGITUD,
+                    DESCRIPCION = mBK_Servicio.DESCRIPCION,
+                    FACTURAS = mBK_Servicio.FACTURAS,
+                    BULTOS = mBK_Servicio.BULTOS,
+                    COMPRAS = mBK_Servicio.COMPRAS,
+                    CHEQUES = mBK_Servicio.CHEQUES,
+                    SOBRES = mBK_Servicio.SOBRES,
+                    OTROS = mBK_Servicio.OTROS,
+                    OBSERVACIONES = mBK_Servicio.OBSERVACIONES,
+                    ENTREGA = mBK_Servicio.ENTREGA,
+                    RECEPCION = mBK_Servicio.RECEPCION,
+                    TESPERA = mBK_Servicio.TESPERA,
+                    FECHAENTREGA = mBK_Servicio.FECHAENTREGA,
+                    HORAENTREGA = mBK_Servicio.HORAENTREGA,
+                    DISTANCIA = mBK_Servicio.DISTANCIA,
+                    PROGRAMADO = mBK_Servicio.PROGRAMADO,
+                    RESMENSAJE = "OK",
+                    RESOPERACION = "OK"
+                };
+                _ = BM_ConexionLite.InsertOrReplace(record);
 
-                    BM_Adaptador = new SqlDataAdapter(BM_Comando)
-                    {
-                        AcceptChangesDuringFill = true
-                    };
+            });
 
-                    BM_DataSet = new DataSet();
-                    BM_Adaptador.Fill(BM_DataSet, "SERVICIOS");
+            BM_ConexionLite.Close();
+            BM_ConexionLite.Dispose();
+            BM_ConexionLite = null;
 
-                    DataRow LvrServicio = BM_DataSet.Tables["SERVICIOS"].Rows[0];
-
-                    BM_Builder = new SqlCommandBuilder(BM_Adaptador);
-                    LvrServicio["PENTALPHA"] = mBK_Servicio.PENTALPHA;
-                    LvrServicio["NROENVIO"] = mBK_Servicio.NROENVIO;
-                    LvrServicio["GUIADESPACHO"] = mBK_Servicio.GUIADESPACHO;
-                    LvrServicio["FECHA"] = mBK_Servicio.FECHA;
-                    LvrServicio["HORA"] = mBK_Servicio.HORA;
-                    LvrServicio["CLIENTERUT"] = mBK_Servicio.CLIENTERUT;
-                    LvrServicio["CLIENTEDIGVER"] = mBK_Servicio.CLIENTEDIGVER;
-                    LvrServicio["MENSAJERORUT"] = mBK_Servicio.MENSAJERORUT;
-                    LvrServicio["MENSAJERODIGVER"] = mBK_Servicio.MENSAJERODIGVER;
-                    LvrServicio["RECURSOID"] = mBK_Servicio.RECURSOID;
-                    LvrServicio["ODOMICILIO1"] = mBK_Servicio.ODOMICILIO1;
-                    LvrServicio["ODOMICILIO2"] = mBK_Servicio.ODOMICILIO2;
-                    LvrServicio["ONUMERO"] = mBK_Servicio.ONUMERO;
-                    LvrServicio["OPISO"] = mBK_Servicio.OPISO;
-                    LvrServicio["OOFICINA"] = mBK_Servicio.OOFICINA;
-                    LvrServicio["OCIUDAD"] = mBK_Servicio.OCIUDAD;
-                    LvrServicio["OCOMUNA"] = mBK_Servicio.OCOMUNA;
-                    LvrServicio["OESTADO"] = mBK_Servicio.OESTADO;
-                    LvrServicio["OPAIS"] = mBK_Servicio.OPAIS;
-                    LvrServicio["OCOORDENADAS"] = mBK_Servicio.OCOORDENADAS;
-                    LvrServicio["DDOMICILIO1"] = mBK_Servicio.DDOMICILIO1;
-                    LvrServicio["DDOMICILIO2"] = mBK_Servicio.DDOMICILIO2;
-                    LvrServicio["DNUMERO"] = mBK_Servicio.DNUMERO;
-                    LvrServicio["DPISO"] = mBK_Servicio.DPISO;
-                    LvrServicio["DOFICINA"] = mBK_Servicio.DOFICINA;
-                    LvrServicio["DCIUDAD"] = mBK_Servicio.DCIUDAD;
-                    LvrServicio["DCOMUNA"] = mBK_Servicio.DCOMUNA;
-                    LvrServicio["DESTADO"] = mBK_Servicio.DESTADO;
-                    LvrServicio["DPAIS"] = mBK_Servicio.DPAIS;
-                    LvrServicio["DCOORDENADAS"] = mBK_Servicio.DCOORDENADAS;
-                    LvrServicio["DESCRIPCION"] = mBK_Servicio.DESCRIPCION;
-                    LvrServicio["FACTURAS"] = mBK_Servicio.FACTURAS;
-                    LvrServicio["BULTOS"] = mBK_Servicio.BULTOS;
-                    LvrServicio["COMPRAS"] = mBK_Servicio.COMPRAS;
-                    LvrServicio["CHEQUES"] = mBK_Servicio.CHEQUES;
-                    LvrServicio["SOBRES"] = mBK_Servicio.SOBRES;
-                    LvrServicio["OTROS"] = mBK_Servicio.OTROS;
-                    LvrServicio["OBSERVACIONES"] = mBK_Servicio.OBSERVACIONES;
-                    LvrServicio["ENTREGA"] = mBK_Servicio.ENTREGA;
-                    LvrServicio["RECEPCION"] = mBK_Servicio.RECEPCION;
-                    LvrServicio["TESPERA"] = mBK_Servicio.TESPERA;
-                    LvrServicio["FECHAENTREGA"] = mBK_Servicio.FECHAENTREGA;
-                    LvrServicio["HORAENTREGA"] = mBK_Servicio.HORAENTREGA;
-                    LvrServicio["DISTANCIA"] = mBK_Servicio.DISTANCIA;
-                    LvrServicio["PROGRAMADO"] = mBK_Servicio.PROGRAMADO;
-                    _ = BM_Builder.GetUpdateCommand(true);
-                    _ = BM_Adaptador.Update(BM_DataSet, "SERVICIOS");
-                    _ = BM_Adaptador.UpdateCommand;
-                }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                    return false;
-                }
-                return true;
-            }
-            else if (BM_TransferVar.SincronizarWebPentalpha())
-            {
-                return false;
-            }
-            else if (BM_TransferVar.SincronizarWebPropio())
-            {
-                return false;
-            }
-            return false;
+            return true;
         }
 
 
         public bool BorrarServicio(string pPENTALPHA, string pNROENVIO)
         {
-            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
-            {
-                return false;
-            }
+            string VPKSERVICIO = pPENTALPHA + pNROENVIO;
 
-            if (BM_TransferVar.SincronizarBaseLocal())
-            {
-                return false;
-            }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
-            {
+            SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
 
-                SqlCommand BM_Comando;
+            BM_ConexionLite.RunInTransaction(() =>
+            {
+                _ = BM_ConexionLite.Delete<TbBikeMessengerServicio>(VPKSERVICIO);
+            });
 
-                try
-                {
-                    BM_Comando = BM_Conexion.CreateCommand();
-                    BM_Comando.CommandText = string.Format("DELETE FROM SERVICIOS WHERE PENTALPHA = '" + pPENTALPHA + "' AND NROENVIO = '" + pNROENVIO + "'");
-                    _ = BM_Comando.ExecuteNonQuery();
-                }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                    return false;
-                }
-                return true;
-            }
-            else if (BM_TransferVar.SincronizarWebPentalpha())
-            {
-                return false;
-            }
-            else if (BM_TransferVar.SincronizarWebPropio())
-            {
-                return false;
-            }
-            return false;
+            BM_ConexionLite.Close();
+            BM_ConexionLite.Dispose();
+            return true;
         }
 
         // Utilitarios
 
-        public List<ClaseServicioGrid> BuscarGridServicios()
+        public List<ClaseServicioGrid> BuscarGridServicios(string pPENTALPHA)
         {
-            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            List<ClaseServicioGrid> GridLocalServicioLista = new List<ClaseServicioGrid>();
+            List<TbBikeMessengerServicio> ListaLocalServicio = new List<TbBikeMessengerServicio>();
+
+            SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
+
+            ListaLocalServicio = BM_ConexionLite.Table<TbBikeMessengerServicio>().Where(t => t.PENTALPHA == pPENTALPHA).ToList();
+
+            if (ListaLocalServicio == null)
             {
                 return null;
             }
 
-            List<ClaseServicioGrid> GridLocalServiciosLista = new List<ClaseServicioGrid>();
-
-            if (BM_TransferVar.SincronizarBaseLocal())
+            if (ListaLocalServicio.Count > 0)
             {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
-            {
-                DataSet BM_DataSet;
-                SqlDataAdapter BM_Adaptador;
-                SqlCommand BM_Comando;
-
-                try
+                for (int i = 0; i < ListaLocalServicio.Count; i++)
                 {
-                    BM_Comando = BM_Conexion.CreateCommand();
-                    BM_Comando.CommandText = string.Format("SELECT * FROM SERVICIOS_VISTA_GRID");
-
-                    BM_Adaptador = new SqlDataAdapter(BM_Comando)
+                    ClaseServicioGrid GridLocalServicio = new ClaseServicioGrid
                     {
-                        AcceptChangesDuringFill = false
+                        ENVIO = ListaLocalServicio[i].NROENVIO,
+                        FECHA = ListaLocalServicio[i].FECHA,
+                        CLIENTERUT = ListaLocalServicio[i].CLIENTERUT,
+                        CLIENTEDIGVER = ListaLocalServicio[i].CLIENTEDIGVER,
+                        ENTREGA = ListaLocalServicio[i].ENTREGA
                     };
-                    BM_DataSet = new DataSet();
-                    _ = BM_Adaptador.Fill(BM_DataSet, "SERVICIOS_VISTA_GRID");
+                    GridLocalServicioLista.Add(GridLocalServicio);
+                }
 
-                    foreach (DataRowView LvServicios in BM_DataSet.Tables["SERVICIOS_VISTA_GRID"].DefaultView)
-                    {
-                        ClaseServicioGrid GridLocalServicios = new ClaseServicioGrid
-                        {
-                            ENVIO = LvServicios["NROENVIO"].ToString(),
-                            FECHA = LvServicios["FECHA"].ToString(),
-                            CLIENTERUT = LvServicios["CLIENTERUT"].ToString(),
-                            CLIENTEDIGVER = LvServicios["CLIENTEDIGVER"].ToString(),
-                            ENTREGA = LvServicios["ENTREGA"].ToString()
-                        };
-                        GridLocalServiciosLista.Add(GridLocalServicios);
-                    }
-                }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                    return null;
-                }
-                return GridLocalServiciosLista;
+
             }
-            else if (BM_TransferVar.SincronizarWebPentalpha())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarWebPropio())
-            {
-                return null;
-            }
-            return null;
+
+            BM_ConexionLite.Close();
+            BM_ConexionLite.Dispose();
+
+            return GridLocalServicioLista;
         }
 
 
-        public List<ClaseRecursoGrid> BuscarGridRecurso()
-        {
-            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
-            {
-                return null;
-            }
 
+
+        public List<ClaseRecursoGrid> BuscarGridRecurso(string pPENTALPHA)
+        {
             List<ClaseRecursoGrid> GridLocalRecursoLista = new List<ClaseRecursoGrid>();
+            List<TbBikeMessengerRecurso> ListaLocalRecurso = new List<TbBikeMessengerRecurso>();
 
-            if (BM_TransferVar.SincronizarBaseLocal())
+            SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
+
+            ListaLocalRecurso = BM_ConexionLite.Table<TbBikeMessengerRecurso>().Where(t => t.PENTALPHA == pPENTALPHA).ToList();
+
+            if (ListaLocalRecurso == null)
             {
                 return null;
             }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
+
+            if (ListaLocalRecurso.Count > 0)
             {
-                DataSet BM_DataSet;
-                SqlDataAdapter BM_Adaptador;
-                SqlCommand BM_Comando;
-
-                try
+                for (int i = 0; i < ListaLocalRecurso.Count; i++)
                 {
-                    BM_Comando = BM_Conexion.CreateCommand();
-                    BM_Comando.CommandText = string.Format("SELECT * FROM RECURSOS_VISTA_GRID");
-
-                    BM_Adaptador = new SqlDataAdapter(BM_Comando)
+                    ClaseRecursoGrid GridLocalRecurso = new ClaseRecursoGrid
                     {
-                        AcceptChangesDuringFill = false
+                        PATENTE = ListaLocalRecurso[i].PATENTE,
+                        TIPO = ListaLocalRecurso[i].TIPO,
+                        MARCA = ListaLocalRecurso[i].MARCA,
+                        MODELO = ListaLocalRecurso[i].MODELO,
+                        RUTID = ListaLocalRecurso[i].RUTID,
+                        DIGVER = ListaLocalRecurso[i].DIGVER,
+                        CIUDAD = ListaLocalRecurso[i].CIUDAD
                     };
-                    BM_DataSet = new DataSet();
-                    _ = BM_Adaptador.Fill(BM_DataSet, "RECURSOS_VISTA_GRID");
-
-                    foreach (DataRowView LvrRecurso in BM_DataSet.Tables["RECURSOS_VISTA_GRID"].DefaultView)
-                    {
-                        ClaseRecursoGrid GridLocalRecurso = new ClaseRecursoGrid
-                        {
-                            PATENTE = LvrRecurso["PATENTE"].ToString(),
-                            TIPO = LvrRecurso["TIPO"].ToString(),
-                            MARCA = LvrRecurso["MARCA"].ToString(),
-                            MODELO = LvrRecurso["MODELO"].ToString(),
-                            RUTID = LvrRecurso["RUTID"].ToString(),
-                            DIGVER = LvrRecurso["DIGVER"].ToString()
-
-                        };
-                        GridLocalRecursoLista.Add(GridLocalRecurso);
-                    }
+                    GridLocalRecursoLista.Add(GridLocalRecurso);
                 }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                    return null;
-                }
-                return GridLocalRecursoLista;
             }
-            else if (BM_TransferVar.SincronizarWebPentalpha())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarWebPropio())
-            {
-                return null;
-            }
-            return null;
+
+            BM_ConexionLite.Close();
+            BM_ConexionLite.Dispose();
+
+            return GridLocalRecursoLista;
         }
 
-
-        public List<ClasePersonalGrid> BuscarGridPersonal()
+        public List<ClasePersonalGrid> BuscarGridPersonal(string pPENTALPHA)
         {
-            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
-            {
-                return null;
-            }
-
             List<ClasePersonalGrid> GridLocalPersonalLista = new List<ClasePersonalGrid>();
+            List<TbBikeMessengerPersonal> ListaLocalPersonal = new List<TbBikeMessengerPersonal>();
 
-            if (BM_TransferVar.SincronizarBaseLocal())
+            SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
+
+            ListaLocalPersonal = BM_ConexionLite.Table<TbBikeMessengerPersonal>().Where(t => t.PENTALPHA == pPENTALPHA).ToList();
+
+            if (ListaLocalPersonal == null)
             {
                 return null;
             }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
+
+            if (ListaLocalPersonal.Count > 0)
             {
-
-                DataSet BM_DataSet;
-                SqlDataAdapter BM_Adaptador;
-                SqlCommand BM_Comando;
-
-                try
+                for (int i = 0; i < ListaLocalPersonal.Count; i++)
                 {
-                    BM_Comando = BM_Conexion.CreateCommand();
-                    BM_Comando.CommandText = string.Format("SELECT * FROM PERSONAL_VISTA_GRID");
-
-                    BM_Adaptador = new SqlDataAdapter(BM_Comando)
+                    ClasePersonalGrid GridLocalPersonal = new ClasePersonalGrid
                     {
-                        AcceptChangesDuringFill = false
+                        RUTID = ListaLocalPersonal[i].RUTID,
+                        DIGVER = ListaLocalPersonal[i].DIGVER,
+                        APELLIDOS = ListaLocalPersonal[i].APELLIDOS,
+                        NOMBRES = ListaLocalPersonal[i].NOMBRES
                     };
-                    BM_DataSet = new DataSet();
-                    _ = BM_Adaptador.Fill(BM_DataSet, "PERSONAL_VISTA_GRID");
+                    GridLocalPersonalLista.Add(GridLocalPersonal);
+                }
+            }
 
-                    foreach (DataRowView LvrPersonal in BM_DataSet.Tables["PERSONAL_VISTA_GRID"].DefaultView)
-                    {
-                        ClasePersonalGrid GridLocalPersonal = new ClasePersonalGrid
-                        {
-                            RUTID = LvrPersonal["RUTID"].ToString(),
-                            DIGVER = LvrPersonal["DIGVER"].ToString(),
-                            APELLIDOS = LvrPersonal["APELLIDOS"].ToString(),
-                            NOMBRES = LvrPersonal["NOMBRES"].ToString()
-                        };
-                        GridLocalPersonalLista.Add(GridLocalPersonal);
-                    }
-                }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                    return null;
-                }
-                return GridLocalPersonalLista;
-            }
-            else if (BM_TransferVar.SincronizarWebPentalpha())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarWebPropio())
-            {
-                return null;
-            }
-            return null;
+            BM_ConexionLite.Close();
+            BM_ConexionLite.Dispose();
+
+            return GridLocalPersonalLista;
         }
 
 
-        public List<ClaseClientesGrid> BuscarGridClientes()
+        public List<ClaseClientesGrid> BuscarGridClientes(string pPENTALPHA)
         {
-            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            List<ClaseClientesGrid> GridLocalClienteLista = new List<ClaseClientesGrid>();
+            List<TbBikeMessengerCliente> ListaLocalCliente = new List<TbBikeMessengerCliente>();
+
+            SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
+
+            ListaLocalCliente = BM_ConexionLite.Table<TbBikeMessengerCliente>().Where(t => t.PENTALPHA == pPENTALPHA).ToList();
+
+            if (ListaLocalCliente == null || ListaLocalCliente.Count <= 0)
             {
                 return null;
             }
 
-            List<ClaseClientesGrid> GridLocalClientesLista = new List<ClaseClientesGrid>();
-
-            if (BM_TransferVar.SincronizarBaseLocal())
+            if (ListaLocalCliente.Count > 0)
             {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
-            {
-                DataSet BM_DataSet;
-                SqlDataAdapter BM_Adaptador;
-                SqlCommand BM_Comando;
-
-                try
+                for (int i = 0; i < ListaLocalCliente.Count; i++)
                 {
-                    BM_Comando = BM_Conexion.CreateCommand();
-                    BM_Comando.CommandText = string.Format("SELECT * FROM CLIENTES_VISTA_GRID");
-
-                    BM_Adaptador = new SqlDataAdapter(BM_Comando)
+                    ClaseClientesGrid GridLocalClientes = new ClaseClientesGrid
                     {
-                        AcceptChangesDuringFill = false
+                        RUTID = ListaLocalCliente[i].RUTID,
+                        DIGVER = ListaLocalCliente[i].DIGVER,
+                        NOMBRE = ListaLocalCliente[i].NOMBRE
                     };
-
-                    BM_DataSet = new DataSet();
-                    _ = BM_Adaptador.Fill(BM_DataSet, "CLIENTES_VISTA_GRID");
-
-                    foreach (DataRowView LvrClientes in BM_DataSet.Tables["CLIENTES_VISTA_GRID"].DefaultView)
-                    {
-                        ClaseClientesGrid GridLocalClientes = new ClaseClientesGrid
-                        {
-                            RUTID = LvrClientes["RUTID"].ToString(),
-                            DIGVER = LvrClientes["DIGVER"].ToString(),
-                            NOMBRE = LvrClientes["NOMBRE"].ToString()
-                        };
-
-                        GridLocalClientesLista.Add(GridLocalClientes);
-                    }
+                    GridLocalClienteLista.Add(GridLocalClientes);
                 }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                    return null;
-                }
-                return GridLocalClientesLista;
             }
-            else if (BM_TransferVar.SincronizarWebPentalpha())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarWebPropio())
-            {
-                return null;
-            }
-            return null;
+
+            BM_ConexionLite.Close();
+            BM_ConexionLite.Dispose();
+
+            return GridLocalClienteLista;
         }
 
-        public string Bm_BuscarNombreCliente(string pPENTALPHA, string pRUT, string pDIGVER)
+        public string Bm_BuscarNombreCliente(string pPENTALPHA, string pRUTID, string pDIGVER)
         {
-            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            string VNOMBRE = "";
+            string VPKCLIENTE = pPENTALPHA + pRUTID + pDIGVER;
+
+            SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
+
+            List<TbBikeMessengerCliente> results = BM_ConexionLite.Table<TbBikeMessengerCliente>().Where(t => t.PKCLIENTE == VPKCLIENTE).ToList();
+
+            if (results.Count > 0)
             {
-                return null;
+                VNOMBRE = results[0].NOMBRE;
             }
 
-            string NombreCliente = "No existe";
+            BM_ConexionLite.Close();
+            BM_ConexionLite.Dispose();
 
-            if (BM_TransferVar.SincronizarBaseLocal())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
-            {
-                SqlCommand BM_ComandoLocal;
-                SqlDataReader BM_ReaderLocal;
-
-                try
-                {
-                    BM_ComandoLocal = BM_Conexion.CreateCommand();
-                    BM_ComandoLocal.CommandText = string.Format("SELECT NOMBRE FROM CLIENTES WHERE PENTALPHA = '" + pPENTALPHA + "'  AND RUTID = '" + pRUT + "' AND DIGVER = '" + pDIGVER + "'");
-                    BM_ReaderLocal = BM_ComandoLocal.ExecuteReader();
-                    if (BM_ReaderLocal.Read())
-                    {
-                        NombreCliente = BM_ReaderLocal.GetString(0);
-                    }
-                }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                }
-                return NombreCliente;
-            }
-            else if (BM_TransferVar.SincronizarWebPentalpha())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarWebPropio())
-            {
-                return null;
-            }
-            return null;
+            return VNOMBRE;
         }
 
-        public string Bm_BuscarNombreMensajero(string pPENTALPHA, string pRUT, string pDIGVER)
+        public string Bm_BuscarNombreMensajero(string pPENTALPHA, string pRUTID, string pDIGVER)
         {
-            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            string VNOMBRE = "";
+            string VPKMENSAJERO = pPENTALPHA + pRUTID + pDIGVER;
+
+            SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
+
+            List<TbBikeMessengerPersonal> results = BM_ConexionLite.Table<TbBikeMessengerPersonal>().Where(t => t.PKPERSONAL == VPKMENSAJERO).ToList();
+
+            if (results.Count > 0)
             {
-                return null;
+                VNOMBRE = results[0].APELLIDOS + " " + results[0].NOMBRES;
             }
 
-            string NombreMensajero = "No existe";
+            BM_ConexionLite.Close();
+            BM_ConexionLite.Dispose();
 
-            if (BM_TransferVar.SincronizarBaseLocal())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
-            {
-                SqlCommand BM_ComandoLocal;
-                SqlDataReader BM_ReaderLocal;
-
-                try
-                {
-                    BM_ComandoLocal = BM_Conexion.CreateCommand();
-                    BM_ComandoLocal.CommandText = string.Format("SELECT APELLIDOS + ', ' + NOMBRES FROM PERSONAL WHERE PENTALPHA = '" + pPENTALPHA + "'  AND RUTID = '" + pRUT + "' AND DIGVER = '" + pDIGVER + "'");
-                    BM_ReaderLocal = BM_ComandoLocal.ExecuteReader();
-                    if (BM_ReaderLocal.Read())
-                    {
-                        NombreMensajero = BM_ReaderLocal.GetString(0);
-                    }
-                }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                    return null;
-                }
-                return NombreMensajero;
-            }
-            else if (BM_TransferVar.SincronizarWebPentalpha())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarWebPropio())
-            {
-                return null;
-            }
-            return null;
+            return VNOMBRE;
         }
 
-        private string Bm_BuscarNombreRecurso(string pPENTALPHA, string pPATENTE)
+        public string Bm_BuscarNombreRecurso(string pPENTALPHA, string pPATENTE)
         {
-            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
+            string VNOMBRE = "";
+            string VPKRECURSO = pPENTALPHA + pPATENTE;
+
+            SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
+
+            List<TbBikeMessengerRecurso> results = BM_ConexionLite.Table<TbBikeMessengerRecurso>().Where(t => t.PKRECURSO == VPKRECURSO).ToList();
+
+            if (results.Count > 0)
             {
-                return null;
+                VNOMBRE = results[0].TIPO + " " + results[0].MARCA + " " + results[0].MODELO + " " + results[0].ANO;
             }
 
-            string NombreMensajero = "No existe";
+            BM_ConexionLite.Close();
+            BM_ConexionLite.Dispose();
 
-            if (BM_TransferVar.SincronizarBaseLocal())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
-            {
-                SqlCommand BM_ComandoLocal;
-                SqlDataReader BM_ReaderLocal;
-
-                try
-                {
-                    BM_ComandoLocal = BM_Conexion.CreateCommand();
-                    BM_ReaderLocal = BM_ComandoLocal.ExecuteReader();
-                    if (BM_ReaderLocal.Read())
-                    {
-                        NombreMensajero = BM_ReaderLocal.GetString(0);
-                    }
-                }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                }
-                return NombreMensajero;
-            }
-            else if (BM_TransferVar.SincronizarWebPentalpha())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarWebPropio())
-            {
-                return null;
-            }
-            return null;
+            return VNOMBRE;
         }
-
-        public List<string> GetPais()
-        {
-            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
-            {
-                return null;
-            }
-
-            List<string> BK_PaisLista = new List<string>();
-
-            if (BM_TransferVar.SincronizarBaseLocal())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
-            {
-                DataSet BM_DataSetPais;
-                SqlDataAdapter BM_AdaptadorPais;
-                SqlCommand BM_ComandoPais;
-                string BK_Pais;
-
-                try
-                {
-                    BM_ComandoPais = BM_Conexion.CreateCommand();
-                    BM_ComandoPais.CommandText = string.Format("SELECT * FROM PAIS ORDER BY NOMBRE");
-
-                    BM_AdaptadorPais = new SqlDataAdapter(BM_ComandoPais);
-
-                    BM_DataSetPais = new DataSet();
-                    BM_AdaptadorPais.Fill(BM_DataSetPais, "PAIS");
-
-                    foreach (DataRow LvrPais in BM_DataSetPais.Tables["PAIS"].Rows)
-                    {
-                        BK_Pais = LvrPais["NOMBRE"].ToString();
-                        BK_PaisLista.Add(BK_Pais);
-                    }
-                }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                    return null;
-                }
-                return BK_PaisLista;
-            }
-            else if (BM_TransferVar.SincronizarWebPentalpha())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarWebPropio())
-            {
-                return null;
-            }
-            return null;
-        }
-
-        public List<string> GetRegion()
-        {
-            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
-            {
-                return null;
-            }
-
-            List<string> BK_RegionLista = new List<string>();
-
-            if (BM_TransferVar.SincronizarBaseLocal())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
-            {
-                DataSet BM_DataSetRegion;
-                SqlDataAdapter BM_AdaptadorRegion;
-                SqlCommand BM_ComandoRegion;
-                string BK_Region;
-
-                try
-                {
-                    BM_ComandoRegion = BM_Conexion.CreateCommand();
-                    BM_ComandoRegion.CommandText = string.Format("SELECT * FROM ESTADOREGION ORDER BY NOMBRE");
-
-                    BM_AdaptadorRegion = new SqlDataAdapter(BM_ComandoRegion);
-
-                    BM_DataSetRegion = new DataSet();
-                    BM_AdaptadorRegion.Fill(BM_DataSetRegion, "ESTADOREGION");
-
-                    foreach (DataRow LvrRegion in BM_DataSetRegion.Tables["ESTADOREGION"].Rows)
-                    {
-                        BK_Region = LvrRegion["NOMBRE"].ToString();
-                        BK_RegionLista.Add(BK_Region);
-                    }
-                }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                    return null;
-                }
-                return BK_RegionLista;
-            }
-            else if (BM_TransferVar.SincronizarWebPentalpha())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarWebPropio())
-            {
-                return null;
-            }
-            return null;
-        }
-
-        public List<string> GetComuna()
-        {
-            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
-            {
-                return null;
-            }
-
-            List<string> BK_ComunaLista = new List<string>();
-
-            if (BM_TransferVar.SincronizarBaseLocal())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
-            {
-                DataSet BM_DataSetComuna;
-                SqlDataAdapter BM_AdaptadorComuna;
-                SqlCommand BM_ComandoComuna;
-                string BK_Comuna;
-
-                try
-                {
-                    BM_ComandoComuna = BM_Conexion.CreateCommand();
-                    BM_ComandoComuna.CommandText = string.Format("SELECT * FROM COMUNA ORDER BY NOMBRE");
-
-                    BM_AdaptadorComuna = new SqlDataAdapter(BM_ComandoComuna);
-
-                    BM_DataSetComuna = new DataSet();
-                    BM_AdaptadorComuna.Fill(BM_DataSetComuna, "COMUNA");
-
-                    foreach (DataRow LvrComuna in BM_DataSetComuna.Tables["COMUNA"].Rows)
-                    {
-                        BK_Comuna = LvrComuna["NOMBRE"].ToString();
-                        BK_ComunaLista.Add(BK_Comuna);
-                    }
-                }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                    return null;
-                }
-                return BK_ComunaLista;
-            }
-            else if (BM_TransferVar.SincronizarWebPentalpha())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarWebPropio())
-            {
-                return null;
-            }
-            return null;
-        }
-
-        public List<string> GetCiudad()
-        {
-            if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
-            {
-                return null;
-            }
-
-            List<string> BK_CiudadLista = new List<string>();
-
-            if (BM_TransferVar.SincronizarBaseLocal())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
-            {
-                DataSet BM_DataSetCiudad;
-                SqlDataAdapter BM_AdaptadorCiudad;
-                SqlCommand BM_ComandoCiudad;
-                string BK_Ciudad;
-
-                try
-                {
-                    BM_ComandoCiudad = BM_Conexion.CreateCommand();
-                    BM_ComandoCiudad.CommandText = string.Format("SELECT * FROM CIUDAD ORDER BY NOMBRE");
-
-                    BM_AdaptadorCiudad = new SqlDataAdapter(BM_ComandoCiudad);
-
-                    BM_DataSetCiudad = new DataSet();
-                    BM_AdaptadorCiudad.Fill(BM_DataSetCiudad, "CIUDAD");
-
-                    foreach (DataRow LvrCiudad in BM_DataSetCiudad.Tables["CIUDAD"].Rows)
-                    {
-                        BK_Ciudad = LvrCiudad["NOMBRE"].ToString();
-                        BK_CiudadLista.Add(BK_Ciudad);
-                    }
-                }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                    return null;
-                }
-                return BK_CiudadLista;
-            }
-            else if (BM_TransferVar.SincronizarWebPentalpha())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarWebPropio())
-            {
-                return null;
-            }
-            return null;
-        }
-
 
         public string Bm_Servicio_Listado()
         {
+            SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
+
             if (BM_TransferVar.ESTADOPARAMETROS == "NADA")
             {
                 return null;
             }
+
+            BK_Servicio = new StructBikeMessengerServicio();
+            BK_ServicioLista = new List<StructBikeMessengerServicio>();
 
             LvrTablaHtml DocumentoHtml = new LvrTablaHtml();
 
@@ -1129,62 +564,35 @@ namespace BikeMessenger
             DocumentoHtml.AgregarEncabezado("Mensajero");
             DocumentoHtml.AgregarEncabezado("Entrega");
             DocumentoHtml.AgregarEncabezado("Recepción");
+            DocumentoHtml.AgregarEncabezado("Distancia");
             DocumentoHtml.CerrarEncabezado();
 
-            if (BM_TransferVar.SincronizarBaseLocal())
-            {
-                return null;
-            }
-            else if (BM_TransferVar.SincronizarBaseSQLServer())
-            {
-                DataSet BM_DataSet;
-                SqlDataAdapter BM_Adaptador;
-                SqlCommand BM_Comando;
+            List<TbVistaServicioCliMen> results = BM_ConexionLite.Query<TbVistaServicioCliMen>("select * from Vista_Servicio_CliMen");
 
-                try
-                {
-                    BM_Comando = BM_Conexion.CreateCommand();
-                    BM_Comando.CommandText = string.Format("SELECT * FROM SERVICIOS_VISTA_LISTADO");
-
-                    BM_Adaptador = new SqlDataAdapter(BM_Comando)
-                    {
-                        AcceptChangesDuringFill = false
-                    };
-                    BM_DataSet = new DataSet();
-                    BM_Adaptador.Fill(BM_DataSet, "SERVICIOS_VISTA_LISTADO");
-
-                    foreach (DataRowView LvrServicio in BM_DataSet.Tables["SERVICIOS_VISTA_LISTADO"].DefaultView)
-                    {
-                        DocumentoHtml.AbrirFila();
-                        DocumentoHtml.AgregarCampo(LvrServicio["NROENVIO"].ToString(), false);
-                        DocumentoHtml.AgregarCampo(LvrServicio["GUIADESPACHO"].ToString(), false);
-                        DocumentoHtml.AgregarCampo(LvrServicio["FECHA"].ToString(), false);
-                        DocumentoHtml.AgregarCampo(LvrServicio["HORA"].ToString(), false);
-                        DocumentoHtml.AgregarCampo(LvrServicio["NOMBRE"].ToString(), false);
-                        DocumentoHtml.AgregarCampo(LvrServicio["APELLIDOS"].ToString() + ", " + LvrServicio["NOMBRES"].ToString(), false);
-                        DocumentoHtml.AgregarCampo(LvrServicio["ENTREGA"].ToString(), false);
-                        DocumentoHtml.AgregarCampo(LvrServicio["RECEPCION"].ToString(), false);
-                        DocumentoHtml.CerrarFila();
-                    }
-                }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.InnerException.Message);
-                    return null;
-                }
-            }
-            else if (BM_TransferVar.SincronizarWebPentalpha())
+            for (int i = 0; i < results.Count; i++)
             {
-                return null;
+                DocumentoHtml.AbrirFila();
+                DocumentoHtml.AgregarCampo(results[i].NROENVIO, false);
+                DocumentoHtml.AgregarCampo(results[i].GUIADESPACHO, false);
+                DocumentoHtml.AgregarCampo(results[i].FECHAENTREGA, false);
+                DocumentoHtml.AgregarCampo(results[i].HORAENTREGA, false);
+                DocumentoHtml.AgregarCampo(results[i].NOMBRE, false);
+                DocumentoHtml.AgregarCampo(results[i].APELLIDOS + ", " + results[i].NOMBRES, false);
+                DocumentoHtml.AgregarCampo(results[i].ENTREGA, false);
+                DocumentoHtml.AgregarCampo(results[i].RECEPCION, false);
+                DocumentoHtml.AgregarCampo(results[i].DISTANCIA.ToString(), false);
+                DocumentoHtml.CerrarFila();
             }
-            else if (BM_TransferVar.SincronizarWebPropio())
-            {
-                return null;
-            }
+
             DocumentoHtml.FinDocumento();
+
+            BM_ConexionLite.Close();
+            BM_ConexionLite.Dispose();
+
             return DocumentoHtml.BufferHtml;
         }
     }
+
     public class ClaseServicioGrid
     {
         public string ENVIO { get; set; }
@@ -1194,3 +602,4 @@ namespace BikeMessenger
         public string ENTREGA { get; set; }
     }
 }
+

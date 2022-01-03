@@ -1,5 +1,4 @@
 ﻿using Microsoft.Toolkit.Uwp.UI.Controls;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,17 +21,14 @@ namespace BikeMessenger
     /// </summary>
     public sealed partial class PageClientes : Page
     {
-        private List<JsonBikeMessengerCliente> ClienteIOArray = new List<JsonBikeMessengerCliente>();
-        private JsonBikeMessengerCliente ClienteIO = new JsonBikeMessengerCliente();
-        private JsonBikeMessengerCliente EnviarJsonCliente = new JsonBikeMessengerCliente();
-        private JsonBikeMessengerCliente RecibirJsonCliente = new JsonBikeMessengerCliente();
+        private List<StructBikeMessengerCliente> ClienteIOArray = new List<StructBikeMessengerCliente>();
+        private StructBikeMessengerCliente ClienteIO = new StructBikeMessengerCliente();
         private Bm_Cliente_Database BM_Database_Cliente = new Bm_Cliente_Database();
         private TransferVar LvrTransferVar = new TransferVar();
         private bool BorrarSiNo;
 
         public PageClientes()
         {
-            // this.BM_Connection = BM_Connection;
             InitializeComponent();
             InicioPantalla();
         }
@@ -44,7 +40,7 @@ namespace BikeMessenger
 
             if (LvrTransferVar.CLI_RUTID == "")
             {
-                ClienteIOArray = BM_Database_Cliente.BuscarCliente();
+                ClienteIOArray = BM_Database_Cliente.BuscarCliente(LvrTransferVar.CLI_PENTALPHA);
                 if (ClienteIOArray != null && ClienteIOArray.Count > 0)
                 {
                     ClienteIO = ClienteIOArray[0];
@@ -107,8 +103,6 @@ namespace BikeMessenger
                 textBoxRut.Text = ClienteIO.RUTID;
                 textBoxDigitoVerificador.Text = ClienteIO.DIGVER;
                 textBoxNombreCliente.Text = ClienteIO.NOMBRE;
-                textBoxUsuario.Text = ClienteIO.USUARIO;
-                passwordClave.Password = ClienteIO.CLAVE;
                 textBoxActividad1.Text = ClienteIO.ACTIVIDAD1;
                 textBoxActividad2.Text = ClienteIO.ACTIVIDAD2;
                 textBoxRepresentantes1.Text = ClienteIO.REPRESENTANTE1;
@@ -124,9 +118,21 @@ namespace BikeMessenger
                 textBoxCodigoPostal.Text = ClienteIO.CODIGOPOSTAL;
                 textBoxObservaciones.Text = ClienteIO.OBSERVACIONES;
 
+                // Llenado de Pais
                 comboBoxPais.SelectedValue = ClienteIO.PAIS;
+
+                // Llenado de Estado o Region
                 comboBoxEstado.SelectedValue = ClienteIO.ESTADOREGION;
+
+                // Llenado de Comuna o Municipio
                 comboBoxComuna.SelectedValue = ClienteIO.COMUNA;
+
+                // Llenado de Cuidad
+                comboBoxCiudad.SelectedValue = ClienteIO.CIUDAD;
+
+                // Llenado de Cuidad
+                if (comboBoxCiudad.Items.Count == 0)
+                    comboBoxCiudad.Items.Add(ClienteIO.CIUDAD);
                 comboBoxCiudad.SelectedValue = ClienteIO.CIUDAD;
 
                 textBoxObservaciones.Text = ClienteIO.OBSERVACIONES;
@@ -141,6 +147,8 @@ namespace BikeMessenger
 
         private void RellenarCombos()
         {
+            BM_CCRP LocalRellenarCombos = new BM_CCRP();
+
             // Limpiar Combo Box
             comboBoxPais.Items.Clear();
             comboBoxEstado.Items.Clear();
@@ -148,75 +156,34 @@ namespace BikeMessenger
             comboBoxCiudad.Items.Clear();
 
             // Llenar Combo Pais
-            List<string> ListaPais = BM_Database_Cliente.GetPais();
-            if (ListaPais != null)
-            {
-                try
-                {
-                    for (int i = 0; i < ListaPais.Count; i++)
-                    {
-                        comboBoxPais.Items.Add(ListaPais[i]);
-                    }
-                }
-                catch (NullReferenceException)
-                {
+            comboBoxPais.ItemsSource = LocalRellenarCombos.BuscarPais();
 
-                }
-            }
 
             // Llenar Combo Region
-            List<string> ListaEstado = BM_Database_Cliente.GetRegion();
-
-            if (ListaEstado != null)
-            {
-                try
-                {
-                    for (int i = 0; i < ListaEstado.Count; i++)
-                    {
-                        comboBoxEstado.Items.Add(ListaEstado[i]);
-                    }
-                }
-                catch (NullReferenceException)
-                {
-
-                }
-            }
+            comboBoxEstado.ItemsSource = LocalRellenarCombos.BuscarRegion();
 
             // Llenar Combo Comuna
-            List<string> ListaComuna = BM_Database_Cliente.GetComuna();
-
-            if (ListaComuna != null)
-            {
-                try
-                {
-                    for (int i = 0; i < ListaComuna.Count; i++)
-                    {
-                        comboBoxComuna.Items.Add(ListaComuna[i]);
-                    }
-                }
-                catch (NullReferenceException)
-                {
-
-                }
-            }
+            comboBoxComuna.ItemsSource = LocalRellenarCombos.BuscarComuna();
 
             // Llenar Combo Ciudad
-            List<string> ListaCiudad = BM_Database_Cliente.GetCiudad();
+            comboBoxCiudad.ItemsSource = LocalRellenarCombos.BuscarCiudad();
+        }
 
-            if (ListaCiudad != null)
-            {
-                try
-                {
-                    for (int i = 0; i < ListaCiudad.Count; i++)
-                    {
-                        comboBoxCiudad.Items.Add(ListaCiudad[i]);
-                    }
-                }
-                catch (NullReferenceException)
-                {
+        private void ActualizarCombos()
+        {
+            BM_CCRP LocalRellenarCombos = new BM_CCRP();
 
-                }
-            }
+            // Actualizar Combo Pais
+            _ = LocalRellenarCombos.AgregarPais(ClienteIO.PAIS);
+
+            // Actualizar Combo Region
+            _ = LocalRellenarCombos.AgregarRegion(ClienteIO.ESTADOREGION);
+
+            // Actualizar Combo Comuna
+            _ = LocalRellenarCombos.AgregarComuna(ClienteIO.COMUNA);
+
+            // Actualizar Combo Ciudad
+            _ = LocalRellenarCombos.AgregarCiudad(ClienteIO.CIUDAD);
         }
 
         private void LimpiarPantalla()
@@ -226,8 +193,6 @@ namespace BikeMessenger
             textBoxRut.Text = "";
             textBoxDigitoVerificador.Text = "";
             textBoxNombreCliente.Text = "";
-            textBoxUsuario.Text = "";
-            passwordClave.Password = "";
             textBoxActividad1.Text = "";
             textBoxActividad2.Text = "";
             textBoxRepresentantes1.Text = "";
@@ -254,9 +219,8 @@ namespace BikeMessenger
             ClienteIO.PENTALPHA = LvrTransferVar.CLI_PENTALPHA;
             ClienteIO.RUTID = textBoxRut.Text;
             ClienteIO.DIGVER = textBoxDigitoVerificador.Text;
+            ClienteIO.PKCLIENTE = ClienteIO.PENTALPHA + ClienteIO.RUTID + ClienteIO.DIGVER;
             ClienteIO.NOMBRE = textBoxNombreCliente.Text;
-            ClienteIO.USUARIO = textBoxUsuario.Text;
-            ClienteIO.CLAVE = passwordClave.Password;
             ClienteIO.ACTIVIDAD1 = textBoxActividad1.Text;
             ClienteIO.ACTIVIDAD2 = textBoxActividad2.Text;
             ClienteIO.REPRESENTANTE1 = textBoxRepresentantes1.Text;
@@ -291,103 +255,55 @@ namespace BikeMessenger
             }
 
             ClienteIO.OBSERVACIONES = textBoxObservaciones.Text;
-            ClienteIO.LOGO = await ConvertirImageABase64Async();
+
+            try
+            {
+                ClienteIO.LOGO = await ConvertirImageABase64Async();
+            }
+            catch (ArgumentException)
+            {
+                ClienteIO.LOGO = "";
+            }
         }
 
         private async void BtnAgregarClientes(object sender, RoutedEventArgs e)
         {
-            // Muestra de espera
-            LvrProgresRing.IsActive = true;
-            await Task.Delay(500); // .5 sec delay
-
             await LlenarDbConPantallaAsync();
-
-            bool TransaccionOK = false;
-
             if (BM_Database_Cliente.AgregarCliente(ClienteIO))
             {
-                TransaccionOK = true;
 
-                if (LvrTransferVar.SincronizarWebPentalpha())
-                {
-                    TransaccionOK = ProRegistroCliente("AGREGAR");
-                }
-
-                if (LvrTransferVar.SincronizarWebPropio())
-                {
-                    TransaccionOK = ProRegistroCliente("AGREGAR");
-                }
-
-                if (TransaccionOK)
-                {
-                    await AvisoOperacionClientesDialogAsync("Agregar Cliente", "Cliente agregado exitosamente.");
-                    LlenarListaClientes();
-                    LvrTransferVar.CLI_RUTID = ClienteIO.RUTID;
-                    LvrTransferVar.CLI_DIGVER = ClienteIO.DIGVER;
-                    LvrTransferVar.EscribirValoresDeAjustes();
-                    LvrTransferVar.LeerValoresDeAjustes();
-                }
-
-                else
-                {
-                    await AvisoOperacionClientesDialogAsync("Agregar Cliente", "Error en ingreso de Cliente. Reintente o escriba a soporte contacto@pentalpha.net");
-                }
+                await AvisoOperacionClientesDialogAsync("Agregar Cliente", "Cliente agregado exitosamente.");
+                LlenarListaClientes();
+                LvrTransferVar.CLI_RUTID = ClienteIO.RUTID;
+                LvrTransferVar.CLI_DIGVER = ClienteIO.DIGVER;
+                LvrTransferVar.EscribirValoresDeAjustes();
+                LvrTransferVar.LeerValoresDeAjustes();
+                ActualizarCombos();
             }
             else
             {
-                await AvisoOperacionClientesDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de Cliente.");
+                await AvisoOperacionClientesDialogAsync("Agregar Cliente", "Error en ingreso de Cliente. Reintente o escriba a soporte contacto@pentalpha.net");
             }
-
-            LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // 1 sec delay
         }
-
 
         private async void BtnModificarClientes(object sender, RoutedEventArgs e)
         {
-            // Muestra de espera
-            LvrProgresRing.IsActive = true;
-            await Task.Delay(500); // .5 sec delay
-
             await LlenarDbConPantallaAsync();
-
-            bool TransaccionOK = false;
 
             if (BM_Database_Cliente.ModificarCliente(ClienteIO))
             {
-                TransaccionOK = true;
-
-                if (LvrTransferVar.SincronizarWebPentalpha())
-                {
-                    TransaccionOK = ProRegistroCliente("MODIFICAR");
-                }
-
-                if (LvrTransferVar.SincronizarWebPropio())
-                {
-                    TransaccionOK = ProRegistroCliente("MODIFICAR");
-                }
-
-                if (TransaccionOK)
-                {
-                    await AvisoOperacionClientesDialogAsync("Modificar Personal", "Personal modificada exitosamente.");
-                    LlenarListaClientes();
-                    LvrTransferVar.CLI_RUTID = ClienteIO.RUTID;
-                    LvrTransferVar.CLI_DIGVER = ClienteIO.DIGVER;
-                    LvrTransferVar.EscribirValoresDeAjustes();
-                    LvrTransferVar.LeerValoresDeAjustes();
-                }
-                else
-                {
-                    await AvisoOperacionClientesDialogAsync("Modificar Cliente", "Error en modificación de Cliente. Reintente o escriba a soporte contacto@pentalpha.net");
-                }
+                await AvisoOperacionClientesDialogAsync("Modificar Personal", "Personal modificada exitosamente.");
+                LlenarListaClientes();
+                LvrTransferVar.CLI_RUTID = ClienteIO.RUTID;
+                LvrTransferVar.CLI_DIGVER = ClienteIO.DIGVER;
+                LvrTransferVar.EscribirValoresDeAjustes();
+                LvrTransferVar.LeerValoresDeAjustes();
+                ActualizarCombos();
             }
             else
             {
-                await AvisoOperacionClientesDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de la personal.");
+                await AvisoOperacionClientesDialogAsync("Modificar Cliente", "Error en modificación de Cliente. Reintente o escriba a soporte contacto@pentalpha.net");
             }
-
-            LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // 1 sec delay
         }
 
         private async void BtnBorrarClientes(object sender, RoutedEventArgs e)
@@ -402,59 +318,34 @@ namespace BikeMessenger
                 return;
             }
 
-            // Muestra de espera
-            LvrProgresRing.IsActive = true;
-            await Task.Delay(500); // .5 sec delay
-
             await LlenarDbConPantallaAsync();
-
-            bool TransaccionOK = false;
 
             if (BM_Database_Cliente.BorrarCliente(LvrTransferVar.CLI_PENTALPHA, ClienteIO.RUTID, ClienteIO.DIGVER))
             {
-                TransaccionOK = true;
+                await AvisoOperacionClientesDialogAsync("Borrar Cliente", "Cliente borrado exitosamente.");
 
-                if (LvrTransferVar.SincronizarWebPentalpha())
+                if ((ClienteIOArray = BM_Database_Cliente.BuscarCliente(LvrTransferVar.CLI_PENTALPHA)) != null)
                 {
-                    TransaccionOK = ProRegistroCliente("BORRAR");
-                }
-
-                if (LvrTransferVar.SincronizarWebPropio())
-                {
-                    TransaccionOK = ProRegistroCliente("BORRAR");
-                }
-
-
-                if (TransaccionOK)
-                {
-                    if ((ClienteIOArray = BM_Database_Cliente.BuscarCliente()) != null)
-                    {
-                        ClienteIO = ClienteIOArray[0];
-                        LvrTransferVar.CLI_RUTID = ClienteIO.RUTID;
-                        LvrTransferVar.CLI_DIGVER = ClienteIO.DIGVER;
-                    }
-                    else
-                    {
-                        LvrTransferVar.CLI_RUTID = "";
-                        LvrTransferVar.CLI_DIGVER = "";
-                    }
-                    LlenarPantallaConDb();
-                    LlenarListaClientes();
-                    await AvisoOperacionClientesDialogAsync("Borrar Cliente", "Cliente borrado exitosamente.");
-                    LvrTransferVar.EscribirValoresDeAjustes();
-                    LvrTransferVar.LeerValoresDeAjustes();
+                    ClienteIO = ClienteIOArray[0];
+                    LvrTransferVar.CLI_RUTID = ClienteIO.RUTID;
+                    LvrTransferVar.CLI_DIGVER = ClienteIO.DIGVER;
                 }
                 else
                 {
-                    await AvisoOperacionClientesDialogAsync("Borrar Cliente", "Error en borrado de Cliente. Reintente o escriba a soporte contacto@pentalpha.net");
+                    LvrTransferVar.CLI_RUTID = "";
+                    LvrTransferVar.CLI_DIGVER = "";
                 }
+
+                LlenarPantallaConDb();
+                LlenarListaClientes();
+
+                LvrTransferVar.EscribirValoresDeAjustes();
+                LvrTransferVar.LeerValoresDeAjustes();
             }
             else
             {
-                await AvisoOperacionClientesDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de Cliente.");
+                await AvisoOperacionClientesDialogAsync("Borrar Cliente", "Error en borrado de Cliente. Reintente o escriba a soporte contacto@pentalpha.net");
             }
-            LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // 1 sec delay
         }
 
         private void BtnListarClientes(object sender, RoutedEventArgs e)
@@ -540,7 +431,7 @@ namespace BikeMessenger
             List<ClaseClientesGrid> GridClienteDb = new List<ClaseClientesGrid>();
             List<GridClientesIndividual> GridClienteLista = new List<GridClientesIndividual>();
 
-            if ((GridClienteDb = BM_Database_Cliente.BuscarGridClientes()) != null)
+            if ((GridClienteDb = BM_Database_Cliente.BuscarGridClientes(LvrTransferVar.CLI_PENTALPHA)) != null)
             {
                 for (int i = 0; i < GridClienteDb.Count; i++)
                 {
@@ -570,119 +461,16 @@ namespace BikeMessenger
                     ClienteIO = ClienteIOArray[0];
                     LimpiarPantalla();
                     LlenarPantallaConDb();
-                    // LlenarListaClientes();
+                    LvrTransferVar.CLI_RUTID = ClienteIO.RUTID;
+                    LvrTransferVar.CLI_DIGVER = ClienteIO.DIGVER;
+                    LvrTransferVar.EscribirValoresDeAjustes();
+                    LvrTransferVar.LeerValoresDeAjustes();
                 }
             }
             catch (ArgumentOutOfRangeException)
             {
                 // No hacer nada, es un control vacio de error
             }
-        }
-
-        //**************************************************
-        // Ejecuta operacion de registro de Clientes
-        //**************************************************
-        private bool ProRegistroCliente(string pTipoOperacion)
-        {
-            string LvrPRecibirServer;
-            string LvrPData;
-            string LvrStringHttp = "https://finanven.ddns.net";
-            string LvrStringPort = "443";
-            string LvrStringController = "/Api/BikeMessengerCliente";
-
-
-            LvrInternet LvrBKInternet = new LvrInternet();
-            string LvrParametros;
-
-            List<JsonBikeMessengerCliente> EnviarJsonClienteArray = new List<JsonBikeMessengerCliente>();
-            List<JsonBikeMessengerCliente> RecibirJsonClienteArray = new List<JsonBikeMessengerCliente>();
-
-            // Llenar estructura Json
-            CopiarMemoriaEnJson(pTipoOperacion);
-
-            // Proceso Serializar
-
-            EnviarJsonClienteArray.Add(EnviarJsonCliente);
-            LvrPData = JsonConvert.SerializeObject(EnviarJsonClienteArray);
-
-            // Preparar Parametros
-            LvrParametros = LvrPData;
-
-            LvrBKInternet.LvrInetPOST(LvrStringHttp, LvrStringPort, LvrStringController, LvrParametros);
-            LvrPRecibirServer = LvrBKInternet.LvrResultadoWeb;
-
-            if (LvrPRecibirServer != "ERROR" && LvrPRecibirServer != "" && LvrPRecibirServer != null)
-            {
-                // Procesar primer servidor
-                RecibirJsonClienteArray = JsonConvert.DeserializeObject<List<JsonBikeMessengerCliente>>(LvrPRecibirServer); // resp será el string JSON a deserializa
-                RecibirJsonCliente = RecibirJsonClienteArray[0];
-
-                return RecibirJsonCliente.RESOPERACION == "OK";
-            }
-            return false;
-        }
-
-
-        private void CopiarMemoriaEnJson(string pOPERACION)
-        {
-            // Llenar Variables
-            EnviarJsonCliente.OPERACION = pOPERACION;
-            EnviarJsonCliente.PENTALPHA = ClienteIO.PENTALPHA;
-            EnviarJsonCliente.RUTID = ClienteIO.RUTID;
-            EnviarJsonCliente.DIGVER = ClienteIO.DIGVER;
-            EnviarJsonCliente.NOMBRE = ClienteIO.NOMBRE;
-            EnviarJsonCliente.USUARIO = ClienteIO.USUARIO;
-            EnviarJsonCliente.CLAVE = ClienteIO.CLAVE;
-            EnviarJsonCliente.ACTIVIDAD1 = ClienteIO.ACTIVIDAD1;
-            EnviarJsonCliente.ACTIVIDAD2 = ClienteIO.ACTIVIDAD2;
-            EnviarJsonCliente.REPRESENTANTE1 = ClienteIO.REPRESENTANTE1;
-            EnviarJsonCliente.REPRESENTANTE2 = ClienteIO.REPRESENTANTE2;
-            EnviarJsonCliente.EMAIL = ClienteIO.EMAIL;
-            EnviarJsonCliente.DOMICILIO1 = ClienteIO.DOMICILIO1;
-            EnviarJsonCliente.DOMICILIO2 = ClienteIO.DOMICILIO2;
-            EnviarJsonCliente.NUMERO = ClienteIO.NUMERO;
-            EnviarJsonCliente.PISO = ClienteIO.PISO;
-            EnviarJsonCliente.OFICINA = ClienteIO.OFICINA;
-            EnviarJsonCliente.CIUDAD = ClienteIO.CIUDAD;
-            EnviarJsonCliente.COMUNA = ClienteIO.COMUNA;
-            EnviarJsonCliente.ESTADOREGION = ClienteIO.ESTADOREGION;
-            EnviarJsonCliente.CODIGOPOSTAL = ClienteIO.CODIGOPOSTAL;
-            EnviarJsonCliente.PAIS = ClienteIO.PAIS;
-            EnviarJsonCliente.OBSERVACIONES = ClienteIO.OBSERVACIONES;
-            EnviarJsonCliente.LOGO = ClienteIO.LOGO;
-            EnviarJsonCliente.RESOPERACION = "";
-            EnviarJsonCliente.RESMENSAJE = "";
-        }
-
-        private void CopiarJsonEnMemoria(string pOPERACION)
-        {
-            // Proceso
-            //EnviarJsonCliente.OPERACION = pOPERACION;
-            ClienteIO.PENTALPHA = EnviarJsonCliente.PENTALPHA;
-            ClienteIO.RUTID = EnviarJsonCliente.RUTID;
-            ClienteIO.DIGVER = EnviarJsonCliente.DIGVER;
-            ClienteIO.NOMBRE = EnviarJsonCliente.NOMBRE;
-            ClienteIO.USUARIO = EnviarJsonCliente.USUARIO;
-            ClienteIO.CLAVE = EnviarJsonCliente.CLAVE;
-            ClienteIO.ACTIVIDAD1 = EnviarJsonCliente.ACTIVIDAD1;
-            ClienteIO.ACTIVIDAD2 = EnviarJsonCliente.ACTIVIDAD2;
-            ClienteIO.REPRESENTANTE1 = EnviarJsonCliente.REPRESENTANTE1;
-            ClienteIO.REPRESENTANTE2 = EnviarJsonCliente.REPRESENTANTE2;
-            ClienteIO.EMAIL = EnviarJsonCliente.EMAIL;
-            ClienteIO.DOMICILIO1 = EnviarJsonCliente.DOMICILIO1;
-            ClienteIO.DOMICILIO2 = EnviarJsonCliente.DOMICILIO2;
-            ClienteIO.NUMERO = EnviarJsonCliente.NUMERO;
-            ClienteIO.PISO = EnviarJsonCliente.PISO;
-            ClienteIO.OFICINA = EnviarJsonCliente.OFICINA;
-            ClienteIO.CIUDAD = EnviarJsonCliente.CIUDAD;
-            ClienteIO.COMUNA = EnviarJsonCliente.COMUNA;
-            ClienteIO.ESTADOREGION = EnviarJsonCliente.ESTADOREGION;
-            ClienteIO.CODIGOPOSTAL = EnviarJsonCliente.CODIGOPOSTAL;
-            ClienteIO.PAIS = EnviarJsonCliente.PAIS;
-            ClienteIO.OBSERVACIONES = EnviarJsonCliente.OBSERVACIONES;
-            ClienteIO.LOGO = EnviarJsonCliente.LOGO;
-            // EnviarJsonCliente.RESOPERACION = "";
-            // EnviarJsonCliente.RESMENSAJE = "";
         }
     }
 
