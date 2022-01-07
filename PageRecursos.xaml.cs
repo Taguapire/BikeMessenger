@@ -1,5 +1,4 @@
 ﻿using Microsoft.Toolkit.Uwp.UI.Controls;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,7 +11,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -23,10 +21,8 @@ namespace BikeMessenger
     /// </summary>
     public sealed partial class PageRecursos : Page
     {
-        private List<JsonBikeMessengerRecurso> RecursoIOArray = new List<JsonBikeMessengerRecurso>();
-        private JsonBikeMessengerRecurso RecursoIO = new JsonBikeMessengerRecurso();
-        private readonly JsonBikeMessengerRecurso EnviarJsonRecurso = new JsonBikeMessengerRecurso();
-        private JsonBikeMessengerRecurso RecibirJsonRecurso = new JsonBikeMessengerRecurso();
+        private List<StructBikeMessengerRecurso> RecursoIOArray = new List<StructBikeMessengerRecurso>();
+        private StructBikeMessengerRecurso RecursoIO = new StructBikeMessengerRecurso();
         private readonly Bm_Recurso_Database BM_Database_Recurso = new Bm_Recurso_Database();
         private TransferVar LvrTransferVar = new TransferVar();
         private bool BorrarSiNo;
@@ -52,7 +48,7 @@ namespace BikeMessenger
 
             if (LvrTransferVar.REC_PAT_SER == "")
             {
-                RecursoIOArray = BM_Database_Recurso.BuscarRecurso();
+                RecursoIOArray = BM_Database_Recurso.BuscarRecurso(LvrTransferVar.REC_PENTALPHA);
                 if (RecursoIOArray != null && RecursoIOArray.Count > 0)
                 {
                     RecursoIO = RecursoIOArray[0];
@@ -108,39 +104,43 @@ namespace BikeMessenger
 
         private void RellenarCombos()
         {
+            BM_CCRP LocalRellenarCombos = new BM_CCRP();
+
             // Limpiar Combo Box
             comboBoxPais.Items.Clear();
             comboBoxEstado.Items.Clear();
             comboBoxComuna.Items.Clear();
             comboBoxCiudad.Items.Clear();
 
+
             // Llenar Combo Pais
-            List<string> ListaPais = BM_Database_Recurso.GetPais();
-            for (int i = 0; i < ListaPais.Count; i++)
-            {
-                comboBoxPais.Items.Add(ListaPais[i]);
-            }
+            comboBoxPais.ItemsSource = LocalRellenarCombos.BuscarPais();
 
             // Llenar Combo Region
-            List<string> ListaEstado = BM_Database_Recurso.GetRegion();
-            for (int i = 0; i < ListaEstado.Count; i++)
-            {
-                comboBoxEstado.Items.Add(ListaEstado[i]);
-            }
+            comboBoxEstado.ItemsSource = LocalRellenarCombos.BuscarRegion();
 
             // Llenar Combo Comuna
-            List<string> ListaComuna = BM_Database_Recurso.GetComuna();
-            for (int i = 0; i < ListaComuna.Count; i++)
-            {
-                comboBoxComuna.Items.Add(ListaComuna[i]);
-            }
+            comboBoxComuna.ItemsSource = LocalRellenarCombos.BuscarComuna();
 
             // Llenar Combo Ciudad
-            List<string> ListaCiudad = BM_Database_Recurso.GetCiudad();
-            for (int i = 0; i < ListaCiudad.Count; i++)
-            {
-                comboBoxCiudad.Items.Add(ListaCiudad[i]);
-            }
+            comboBoxCiudad.ItemsSource = LocalRellenarCombos.BuscarCiudad();
+        }
+
+        private void ActualizarCombos()
+        {
+            BM_CCRP LocalRellenarCombos = new BM_CCRP();
+
+            // Actualizar Combo Pais
+            _ = LocalRellenarCombos.AgregarPais(RecursoIO.PAIS);
+
+            // Actualizar Combo Region
+            _ = LocalRellenarCombos.AgregarRegion(RecursoIO.REGION);
+
+            // Actualizar Combo Comuna
+            _ = LocalRellenarCombos.AgregarComuna(RecursoIO.COMUNA);
+
+            // Actualizar Combo Ciudad
+            _ = LocalRellenarCombos.AgregarCiudad(RecursoIO.CIUDAD);
         }
 
         private async void LlenarPantallaConDb()
@@ -161,10 +161,19 @@ namespace BikeMessenger
                 textBoxVariante.Text = RecursoIO.VARIANTE;
                 textBoxAno.Text = RecursoIO.ANO;
                 textBoxColor.Text = RecursoIO.COLOR;
+
+                // Llenado de Pais
                 comboBoxPais.SelectedValue = RecursoIO.PAIS;
+
+                // Llenado de Estado o Region
                 comboBoxEstado.SelectedValue = RecursoIO.REGION;
+
+                // Llenado de Comuna o Municipio
                 comboBoxComuna.SelectedValue = RecursoIO.COMUNA;
+
+                // Llenado de Cuidad
                 comboBoxCiudad.SelectedValue = RecursoIO.CIUDAD;
+
                 textBoxObservaciones.Text = RecursoIO.OBSERVACIONES;
                 imageFotoRecurso.Source = Base64StringToBitmap(RecursoIO.FOTO);
             }
@@ -201,6 +210,7 @@ namespace BikeMessenger
         {
             RecursoIO.PENTALPHA = LvrTransferVar.REC_PENTALPHA;
             RecursoIO.PATENTE = textBoxPatenteCodigo.Text;
+            RecursoIO.PKRECURSO = RecursoIO.PENTALPHA + RecursoIO.PATENTE;
             RecursoIO.RUTID = textBoxRut.Text;
             RecursoIO.DIGVER = textBoxDigitoVerificador.Text;
             // ***********************************************************
@@ -236,108 +246,62 @@ namespace BikeMessenger
             }
 
             RecursoIO.OBSERVACIONES = textBoxObservaciones.Text;
-            RecursoIO.FOTO = await ConvertirImageABase64Async();
+            try
+            {
+                RecursoIO.FOTO = await ConvertirImageABase64Async();
+            }
+            catch (ArgumentException)
+            {
+                RecursoIO.FOTO = "";
+            }
         }
 
 
         private async void BtnAgregarRecursos(object sender, RoutedEventArgs e)
         {
             // Muestra de espera
-            LvrProgresRing.IsActive = true;
-            await Task.Delay(500); // .5 sec delay
 
             await LlenarDbConPantallaAsync();
 
-            bool TransaccionOK = false;
-
             if (BM_Database_Recurso.AgregarRecurso(RecursoIO))
             {
-                TransaccionOK = true;
-
-                if (LvrTransferVar.SincronizarWebPentalpha())
-                {
-                    TransaccionOK = ProRegistroRecurso("AGREGAR");
-                }
-
-                if (LvrTransferVar.SincronizarWebPropio())
-                {
-                    TransaccionOK = ProRegistroRecurso("AGREGAR");
-                }
-
-                if (TransaccionOK)
-                {
-                    await AvisoOperacionRecursosDialogAsync("Agregar Recurso", "Recurso agregado exitosamente.");
-                    LlenarListaRecursos();
-                    LlenarListaPropietarios();
-                    LvrTransferVar.REC_RUTID = RecursoIO.RUTID;
-                    LvrTransferVar.REC_DIGVER = RecursoIO.DIGVER;
-                    LvrTransferVar.REC_PAT_SER = RecursoIO.PATENTE;
-                    LvrTransferVar.EscribirValoresDeAjustes();
-                    LvrTransferVar.LeerValoresDeAjustes();
-                }
-
-                else
-                {
-                    await AvisoOperacionRecursosDialogAsync("Agregar Recurso", "Error en ingreso de Recurso. Reintente o escriba a soporte contacto@pentalpha.net");
-                }
+                await AvisoOperacionRecursosDialogAsync("Agregar Recurso", "Recurso agregado exitosamente.");
+                LlenarListaRecursos();
+                LlenarListaPropietarios();
+                LvrTransferVar.REC_RUTID = RecursoIO.RUTID;
+                LvrTransferVar.REC_DIGVER = RecursoIO.DIGVER;
+                LvrTransferVar.REC_PAT_SER = RecursoIO.PATENTE;
+                LvrTransferVar.EscribirValoresDeAjustes();
+                LvrTransferVar.LeerValoresDeAjustes();
+                ActualizarCombos();
             }
             else
             {
-                await AvisoOperacionRecursosDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de Cliente.");
+                await AvisoOperacionRecursosDialogAsync("Agregar Recurso", "Error en ingreso del Recurso. Reintente o escriba a soporte contacto@pentalpha.net");
             }
-
-            LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // 1 sec delay
         }
 
         private async void BtnModificarRecursos(object sender, RoutedEventArgs e)
         {
-            LvrProgresRing.IsActive = true;
-            await Task.Delay(500); // .5 sec delay
-
             await LlenarDbConPantallaAsync();
 
             if (BM_Database_Recurso.ModificarRecurso(RecursoIO))
             {
-                // Muestra de espera
-                bool TransaccionOK = true;
-
-                if (LvrTransferVar.SincronizarWebPentalpha())
-                {
-                    TransaccionOK = ProRegistroRecurso("MODIFICAR");
-                }
-                if (LvrTransferVar.SincronizarWebPropio())
-                {
-                    TransaccionOK = ProRegistroRecurso("MODIFICAR");
-                }
-
-
-                if (TransaccionOK)
-                {
-                    await AvisoOperacionRecursosDialogAsync("Modificar Recurso", "Recurso modificado exitosamente.");
-                    LlenarListaRecursos();
-                    LlenarListaPropietarios();
-                    LvrTransferVar.REC_PAT_SER = RecursoIO.PATENTE;
-                    LvrTransferVar.REC_RUTID = RecursoIO.RUTID;
-                    LvrTransferVar.REC_DIGVER = RecursoIO.DIGVER;
-                    LvrTransferVar.EscribirValoresDeAjustes();
-                    LvrTransferVar.LeerValoresDeAjustes();
-                }
-                else
-                {
-                    await AvisoOperacionRecursosDialogAsync("Modificar Recurso", "Error en modificación de recurso. Reintente o escriba a soporte contacto@pentalpha.net");
-                }
+                await AvisoOperacionRecursosDialogAsync("Modificar Recurso", "Recurso modificado exitosamente.");
+                LlenarListaRecursos();
+                LlenarListaPropietarios();
+                LvrTransferVar.REC_PAT_SER = RecursoIO.PATENTE;
+                LvrTransferVar.REC_RUTID = RecursoIO.RUTID;
+                LvrTransferVar.REC_DIGVER = RecursoIO.DIGVER;
+                LvrTransferVar.EscribirValoresDeAjustes();
+                LvrTransferVar.LeerValoresDeAjustes();
+                ActualizarCombos();
             }
             else
             {
-                await AvisoOperacionRecursosDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de recursos.");
+                await AvisoOperacionRecursosDialogAsync("Agregar Recurso", "Error en la Modificación del Recurso. Reintente o escriba a soporte contacto@pentalpha.net");
             }
-
-            LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // 1 sec delay
         }
-
-
 
         private async void BtnBorrarRecursos(object sender, RoutedEventArgs e)
         {
@@ -351,61 +315,34 @@ namespace BikeMessenger
                 return;
             }
 
-            // Muestra de espera
-            bool TransaccionOK = false;
-            LvrProgresRing.IsActive = true;
-            await Task.Delay(500); // .5 sec delay
-
             if (BM_Database_Recurso.BorrarRecurso(LvrTransferVar.REC_PENTALPHA, RecursoIO.PATENTE))
             {
-                TransaccionOK = true;
+                RecursoIOArray = BM_Database_Recurso.BuscarRecurso(LvrTransferVar.REC_PENTALPHA);
 
-                if (LvrTransferVar.SincronizarWebPentalpha())
+                if (RecursoIOArray != null && RecursoIOArray.Count > 0)
                 {
-                    TransaccionOK = ProRegistroRecurso("BORRAR");
-                }
-
-                if (LvrTransferVar.SincronizarWebPropio())
-                {
-                    TransaccionOK = ProRegistroRecurso("BORRAR");
-                }
-
-
-                if (TransaccionOK)
-                {
-                    RecursoIOArray = BM_Database_Recurso.BuscarRecurso();
-
-                    if (RecursoIOArray != null && RecursoIOArray.Count > 0)
-                    {
-                        RecursoIO = RecursoIOArray[0];
-                        LvrTransferVar.REC_PAT_SER = RecursoIO.PATENTE;
-                        LvrTransferVar.REC_RUTID = RecursoIO.RUTID;
-                        LvrTransferVar.REC_DIGVER = RecursoIO.DIGVER;
-                    }
-                    else
-                    {
-                        LvrTransferVar.REC_RUTID = "";
-                        LvrTransferVar.REC_DIGVER = "";
-                        LvrTransferVar.REC_PAT_SER = "";
-                    }
-                    LlenarPantallaConDb();
-                    LlenarListaRecursos();
-                    LlenarListaPropietarios();
-                    await AvisoOperacionRecursosDialogAsync("Borrar Recurso", "Recurso borrado exitosamente.");
-                    LvrTransferVar.EscribirValoresDeAjustes();
-                    LvrTransferVar.LeerValoresDeAjustes();
+                    RecursoIO = RecursoIOArray[0];
+                    LvrTransferVar.REC_PAT_SER = RecursoIO.PATENTE;
+                    LvrTransferVar.REC_RUTID = RecursoIO.RUTID;
+                    LvrTransferVar.REC_DIGVER = RecursoIO.DIGVER;
                 }
                 else
                 {
-                    await AvisoOperacionRecursosDialogAsync("Borrar Recurso", "Error en borrado de recurso. Reintente o escriba a soporte contacto@pentalpha.net");
+                    LvrTransferVar.REC_RUTID = "";
+                    LvrTransferVar.REC_DIGVER = "";
+                    LvrTransferVar.REC_PAT_SER = "";
                 }
+                LlenarPantallaConDb();
+                LlenarListaRecursos();
+                LlenarListaPropietarios();
+                await AvisoOperacionRecursosDialogAsync("Borrar Recurso", "Recurso borrado exitosamente.");
+                LvrTransferVar.EscribirValoresDeAjustes();
+                LvrTransferVar.LeerValoresDeAjustes();
             }
             else
             {
-                await AvisoOperacionRecursosDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de recurso.");
+                await AvisoOperacionRecursosDialogAsync("Borrar Recurso", "Error en Borrado de Recurso. Reintente o escriba a soporte contacto@pentalpha.net");
             }
-            LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // 1 sec delay
         }
 
         private void BtnListarRecursos(object sender, RoutedEventArgs e)
@@ -473,13 +410,14 @@ namespace BikeMessenger
 
             BorrarSiNo = result == ContentDialogResult.Primary;
         }
+
         //**************************************** Propietarios ************************************
         private void LlenarListaPropietarios()
         {
             List<ClasePersonalGrid> GridPersonalDb = new List<ClasePersonalGrid>();
             List<GridPropietarioIndividual> GridPropietariosLista = new List<GridPropietarioIndividual>();
 
-            if ((GridPersonalDb = BM_Database_Recurso.BuscarGridPersonal()) != null)
+            if ((GridPersonalDb = BM_Database_Recurso.BuscarGridPersonal(LvrTransferVar.EMP_PENTALPHA)) != null)
             {
                 for (int i = 0; i < GridPersonalDb.Count; i++)
                 {
@@ -520,7 +458,7 @@ namespace BikeMessenger
 
             List<ClaseRecursoGrid> GridRecursoDb = new List<ClaseRecursoGrid>();
             List<GridRecursoIndividual> GridRecursoLista = new List<GridRecursoIndividual>();
-            if ((GridRecursoDb = BM_Database_Recurso.BuscarGridRecurso()) != null)
+            if ((GridRecursoDb = BM_Database_Recurso.BuscarGridRecurso(LvrTransferVar.REC_PENTALPHA)) != null)
             {
                 for (int i = 0; i < GridRecursoDb.Count; i++)
                 {
@@ -551,7 +489,11 @@ namespace BikeMessenger
                     LimpiarPantalla();
                     RecursoIO = RecursoIOArray[0];
                     LlenarPantallaConDb();
-                    // LlenarListaPersonal();
+                    LvrTransferVar.REC_RUTID = RecursoIO.RUTID;
+                    LvrTransferVar.REC_DIGVER = RecursoIO.DIGVER;
+                    LvrTransferVar.REC_PAT_SER = RecursoIO.PATENTE;
+                    LvrTransferVar.EscribirValoresDeAjustes();
+                    LvrTransferVar.LeerValoresDeAjustes();
                 }
                 else
                 {
@@ -573,120 +515,6 @@ namespace BikeMessenger
                 CloseButtonText = "Continuar"
             };
             _ = await AvisoOperacionPersonalDialog.ShowAsync();
-        }
-
-        //**************************************************
-        // Ejecuta operacion de registro de Recurso
-        //**************************************************
-        private bool ProRegistroRecurso(string pTipoOperacion)
-        {
-            string LvrPRecibirServer;
-            string LvrPData;
-            string LvrStringHttp = "https://finanven.ddns.net";
-            string LvrStringPort = "443";
-            string LvrStringController = "/Api/BikeMessengerRecurso";
-
-
-            LvrInternet LvrBKInternet = new LvrInternet();
-            string LvrParametros;
-
-            List<JsonBikeMessengerRecurso> EnviarJsonRecursoArray = new List<JsonBikeMessengerRecurso>();
-            List<JsonBikeMessengerRecurso> RecibirJsonRecursoArray = new List<JsonBikeMessengerRecurso>();
-
-            // Llenar estructura Json
-            CopiarMemoriaEnJson(pTipoOperacion);
-
-            // Proceso Serializar
-
-            EnviarJsonRecursoArray.Add(EnviarJsonRecurso);
-            LvrPData = JsonConvert.SerializeObject(EnviarJsonRecursoArray);
-
-            // Preparar Parametros
-            LvrParametros = LvrPData;
-
-            LvrBKInternet.LvrInetPOST(LvrStringHttp, LvrStringPort, LvrStringController, LvrParametros);
-            LvrPRecibirServer = LvrBKInternet.LvrResultadoWeb;
-
-            if (LvrPRecibirServer != "ERROR" && LvrPRecibirServer != "" && LvrPRecibirServer != null)
-            {
-                // Procesar primer servidor
-                RecibirJsonRecursoArray = JsonConvert.DeserializeObject<List<JsonBikeMessengerRecurso>>(LvrPRecibirServer); // resp será el string JSON a deserializa
-                RecibirJsonRecurso = RecibirJsonRecursoArray[0];
-
-                return RecibirJsonRecurso.RESOPERACION == "OK";
-            }
-            return false;
-        }
-
-        private void CopiarMemoriaEnJson(string pOPERACION)
-        {
-            // Limpiar Variables
-
-            EnviarJsonRecurso.OPERACION = "";
-            EnviarJsonRecurso.PENTALPHA = "";
-            EnviarJsonRecurso.PATENTE = "";
-            EnviarJsonRecurso.RUTID = "";
-            EnviarJsonRecurso.DIGVER = "";
-            EnviarJsonRecurso.TIPO = "";
-            EnviarJsonRecurso.MARCA = "";
-            EnviarJsonRecurso.MODELO = "";
-            EnviarJsonRecurso.VARIANTE = "";
-            EnviarJsonRecurso.ANO = "";
-            EnviarJsonRecurso.COLOR = "";
-            EnviarJsonRecurso.CIUDAD = "";
-            EnviarJsonRecurso.COMUNA = "";
-            EnviarJsonRecurso.REGION = "";
-            EnviarJsonRecurso.PAIS = "";
-            EnviarJsonRecurso.OBSERVACIONES = "";
-            EnviarJsonRecurso.FOTO = "";
-            EnviarJsonRecurso.RESOPERACION = "";
-            EnviarJsonRecurso.RESMENSAJE = "";
-
-            // Llenar Variables
-            EnviarJsonRecurso.OPERACION = pOPERACION;
-            EnviarJsonRecurso.PENTALPHA = RecursoIO.PENTALPHA;
-            EnviarJsonRecurso.PATENTE = RecursoIO.PATENTE;
-            EnviarJsonRecurso.RUTID = RecursoIO.RUTID;
-            EnviarJsonRecurso.DIGVER = RecursoIO.DIGVER;
-            EnviarJsonRecurso.TIPO = RecursoIO.TIPO;
-            EnviarJsonRecurso.MARCA = RecursoIO.MARCA;
-            EnviarJsonRecurso.MODELO = RecursoIO.MODELO;
-            EnviarJsonRecurso.VARIANTE = RecursoIO.VARIANTE;
-            EnviarJsonRecurso.ANO = RecursoIO.ANO;
-            EnviarJsonRecurso.COLOR = RecursoIO.COLOR;
-            EnviarJsonRecurso.CIUDAD = RecursoIO.CIUDAD;
-            EnviarJsonRecurso.COMUNA = RecursoIO.COMUNA;
-            EnviarJsonRecurso.REGION = RecursoIO.REGION;
-            EnviarJsonRecurso.PAIS = RecursoIO.PAIS;
-            EnviarJsonRecurso.OBSERVACIONES = RecursoIO.OBSERVACIONES;
-            EnviarJsonRecurso.FOTO = RecursoIO.FOTO;
-            EnviarJsonRecurso.RESOPERACION = "";
-            EnviarJsonRecurso.RESMENSAJE = "";
-        }
-
-        private void CopiarJsonEnMemoria(string pOPERACION)
-        {
-            // Proceso
-            // EnviarJsonPersonal.OPERACION = pOPERACION;
-            // EnviarJsonRecurso.OPERACION = pOPERACION;
-            RecursoIO.PENTALPHA = EnviarJsonRecurso.PENTALPHA;
-            RecursoIO.PATENTE = EnviarJsonRecurso.PATENTE;
-            RecursoIO.RUTID = EnviarJsonRecurso.RUTID;
-            RecursoIO.DIGVER = EnviarJsonRecurso.DIGVER;
-            RecursoIO.TIPO = EnviarJsonRecurso.TIPO;
-            RecursoIO.MARCA = EnviarJsonRecurso.MARCA;
-            RecursoIO.MODELO = EnviarJsonRecurso.MODELO;
-            RecursoIO.VARIANTE = EnviarJsonRecurso.VARIANTE;
-            RecursoIO.ANO = EnviarJsonRecurso.ANO;
-            RecursoIO.COLOR = EnviarJsonRecurso.COLOR;
-            RecursoIO.CIUDAD = EnviarJsonRecurso.CIUDAD;
-            RecursoIO.COMUNA = EnviarJsonRecurso.COMUNA;
-            RecursoIO.REGION = EnviarJsonRecurso.REGION;
-            RecursoIO.PAIS = EnviarJsonRecurso.PAIS;
-            RecursoIO.OBSERVACIONES = EnviarJsonRecurso.OBSERVACIONES;
-            RecursoIO.FOTO = EnviarJsonRecurso.FOTO;
-            // EnviarJsonRecurso.RESOPERACION = "";
-            // EnviarJsonRecurso.RESMENSAJE = "";
         }
     }
 

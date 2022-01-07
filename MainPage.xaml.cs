@@ -1,7 +1,7 @@
 ﻿using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-
+using SQLite;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -14,9 +14,17 @@ namespace BikeMessenger
     {
         private string BM_Ultimo_Item = "";
         private TransferVar LvrTransferVar = new TransferVar();
+
         public MainPage()
         {
             InitializeComponent();
+            InicializarBasesDeDatos();
+            if (LvrTransferVar.ESTADOPARAMETROS == "NADA")
+            {
+                LvrTransferVar.ESTADOPARAMETROS = "S";
+                LvrTransferVar.BASEDEDATOSLOCAL = "S";
+                LvrTransferVar.EscribirValoresDeAjustes();
+            }
         }
 
         private void BM_NavPag_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
@@ -158,7 +166,74 @@ namespace BikeMessenger
             {
                 BM_NavPag.IsBackEnabled = false;
             }
+        }
 
+        private void InicializarBasesDeDatos()
+        {
+            string DbVistaRecursosPropietario = "";
+            DbVistaRecursosPropietario += "CREATE VIEW if not exists Vista_Recursos_Propietario ";
+            DbVistaRecursosPropietario += "as ";
+            DbVistaRecursosPropietario += "select  a.tipo, ";
+            DbVistaRecursosPropietario += "a.patente, ";
+            DbVistaRecursosPropietario += "a.marca, ";
+            DbVistaRecursosPropietario += "a.modelo, ";
+            DbVistaRecursosPropietario += "a.variante, ";
+            DbVistaRecursosPropietario += "b.apellidos, ";
+            DbVistaRecursosPropietario += "b.nombres, ";
+            DbVistaRecursosPropietario += "a.ano, ";
+            DbVistaRecursosPropietario += "a.ciudad, ";
+            DbVistaRecursosPropietario += "a.comuna, ";
+            DbVistaRecursosPropietario += "a.region, ";
+            DbVistaRecursosPropietario += "a.pais ";
+            DbVistaRecursosPropietario += "from TbBikeMessengerRecurso as a, ";
+            DbVistaRecursosPropietario += "TbBikeMessengerPersonal as b ";
+            DbVistaRecursosPropietario += "where a.pentalpha = b.pentalpha AND ";
+            DbVistaRecursosPropietario += "a.rutid = b.rutid AND ";
+            DbVistaRecursosPropietario += "a.digver = b.digver ";
+
+            string DbVistaServicioCliMen = "";
+            DbVistaServicioCliMen += "CREATE VIEW if not exists Vista_Servicio_CliMen ";
+            DbVistaServicioCliMen += "as ";
+            DbVistaServicioCliMen += "select a.nroenvio, ";
+            DbVistaServicioCliMen += "a.guiadespacho, ";
+            DbVistaServicioCliMen += "a.fechaentrega, ";
+            DbVistaServicioCliMen += "a.horaentrega, ";
+            DbVistaServicioCliMen += "b.nombre, ";
+            DbVistaServicioCliMen += "c.apellidos, ";
+            DbVistaServicioCliMen += "c.nombres, ";
+            DbVistaServicioCliMen += "a.entrega, ";
+            DbVistaServicioCliMen += "a.recepcion, ";
+            DbVistaServicioCliMen += "a.distancia ";
+            DbVistaServicioCliMen += "from TbBikeMessengerServicio a ";
+            DbVistaServicioCliMen += "left join TbBikeMessengerCliente b ";
+            DbVistaServicioCliMen += "on a.pentalpha = b.pentalpha AND a.clienterut = b.rutid AND a.clientedigver = b.digver ";
+            DbVistaServicioCliMen += "left join TbBikeMessengerPersonal c ";
+            DbVistaServicioCliMen += "on a.pentalpha = c.pentalpha AND a.mensajerorut = c.rutid AND a.mensajerodigver = c.digver ";
+
+            try
+            {
+                SQLiteConnection BM_ConexionLite = new SQLiteConnection(LvrTransferVar.DIRECTORIO_BASE_LOCAL + "\\BikeMessenger.db");
+
+                _ = BM_ConexionLite.CreateTable<TbBikeMessengerEmpresa>();
+                _ = BM_ConexionLite.CreateTable<TbBikeMessengerPersonal>();
+                _ = BM_ConexionLite.CreateTable<TbBikeMessengerRecurso>();
+                _ = BM_ConexionLite.CreateTable<TbBikeMessengerCliente>();
+                _ = BM_ConexionLite.CreateTable<TbBikeMessengerServicio>();
+                _ = BM_ConexionLite.CreateTable<TbBikeMessengerComuna>();
+                _ = BM_ConexionLite.CreateTable<TbBikeMessengerCiudad>();
+                _ = BM_ConexionLite.CreateTable<TbBikeMessengerRegion>();
+                _ = BM_ConexionLite.CreateTable<TbBikeMessengerPais>();
+                _ = BM_ConexionLite.Execute(DbVistaRecursosPropietario);
+                _ = BM_ConexionLite.Execute(DbVistaServicioCliMen);
+
+                BM_ConexionLite.Close();
+                BM_ConexionLite.Dispose();
+                BM_ConexionLite = null;
+            }
+            catch (SQLiteException Ex)
+            {
+                Console.WriteLine(Ex.InnerException.Message);
+            }
         }
     }
 }

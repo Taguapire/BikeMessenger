@@ -11,7 +11,7 @@
     Publisher="CN=F99EFFD5-8698-48D3-9336-BD5411647FFA"
     Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="1c120dc6-edff-4e90-9638-7555e8996516" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="506fac40-e916-4027-a62e-3076cb27ee38" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>BikeMessenger</DisplayName>

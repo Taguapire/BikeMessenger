@@ -22,8 +22,8 @@ namespace BikeMessenger
     /// </summary>
     public sealed partial class PageEmpresa : Page
     {
-        private List<JsonBikeMessengerEmpresa> EmpresaIOArray = new List<JsonBikeMessengerEmpresa>();
-        private JsonBikeMessengerEmpresa EmpresaIO = new JsonBikeMessengerEmpresa();
+        private List<StructBikeMessengerEmpresa> EmpresaIOArray = new List<StructBikeMessengerEmpresa>();
+        private StructBikeMessengerEmpresa EmpresaIO = new StructBikeMessengerEmpresa();
         private Bm_Empresa_Database BM_Database_Empresa = new Bm_Empresa_Database();
         private TransferVar LvrTransferVar = new TransferVar();
         private PentalphaCripto LvrCrypto = new PentalphaCripto();
@@ -97,11 +97,8 @@ namespace BikeMessenger
 
             // Filter to include a sample subset of file types.
             openPicker.FileTypeFilter.Clear();
-            openPicker.FileTypeFilter.Add(".bmp");
             openPicker.FileTypeFilter.Add(".png");
-            openPicker.FileTypeFilter.Add(".jpeg");
-            openPicker.FileTypeFilter.Add(".jpg");
-
+            
             // Open the file picker.
             Windows.Storage.StorageFile file = await openPicker.PickSingleFileAsync();
 
@@ -119,16 +116,16 @@ namespace BikeMessenger
                 imageLogoEmpresa.Source = bitmapImage;
             }
         }
+
         private async void LlenarPantallaConDb()
         {
             try
             {
                 LlenarBasePentalpha(EmpresaIO.PENTALPHA);
+
                 textBoxRut.Text = EmpresaIO.RUTID;
                 textBoxDigitoVerificador.Text = EmpresaIO.DIGVER;
                 textBoxNombreEmpresa.Text = EmpresaIO.NOMBRE;
-                textBoxUsuario.Text = EmpresaIO.USUARIO;
-                passwordClave.Password = EmpresaIO.CLAVE;
                 textBoxActividad1.Text = EmpresaIO.ACTIVIDAD1;
                 textBoxActividad2.Text = EmpresaIO.ACTIVIDAD2;
                 textBoxRepresentantes1.Text = EmpresaIO.REPRESENTANTE1;
@@ -142,9 +139,16 @@ namespace BikeMessenger
                 textBoxOficina.Text = EmpresaIO.OFICINA;
                 textBoxCodigoPostal.Text = EmpresaIO.CODIGOPOSTAL;
 
+                // Llenado de Pais
                 comboBoxPais.SelectedValue = EmpresaIO.PAIS;
+
+                // Llenado de Estado o Region
                 comboBoxEstado.SelectedValue = EmpresaIO.ESTADOREGION;
+
+                // Llenado de Comuna o Municipio
                 comboBoxComuna.SelectedValue = EmpresaIO.COMUNA;
+
+                // Llenado de Ciudad
                 comboBoxCiudad.SelectedValue = EmpresaIO.CIUDAD;
 
                 textBoxTelefono1.Text = EmpresaIO.TELEFONO1;
@@ -161,9 +165,10 @@ namespace BikeMessenger
             }
         }
 
-
         private void RellenarCombos()
         {
+            BM_CCRP LocalRellenarCombos = new BM_CCRP();
+
             // Limpiar Combo Box
             comboBoxPais.Items.Clear();
             comboBoxEstado.Items.Clear();
@@ -171,46 +176,33 @@ namespace BikeMessenger
             comboBoxCiudad.Items.Clear();
 
             // Llenar Combo Pais
-            List<string> ListaPais = BM_Database_Empresa.GetPais();
-            if (ListaPais != null)
-            {
-                foreach (var LocalLista in ListaPais)
-                {
-                    comboBoxPais.Items.Add(LocalLista);
-                }
-            }
+            comboBoxPais.ItemsSource = LocalRellenarCombos.BuscarPais();
 
             // Llenar Combo Region
-            List<string> ListaEstado = BM_Database_Empresa.GetRegion();
-            if (ListaEstado != null)
-            {
-                foreach (var LocalLista in ListaEstado)
-                {
-                    comboBoxEstado.Items.Add(LocalLista);
-                }
-            }
+            comboBoxEstado.ItemsSource = LocalRellenarCombos.BuscarRegion();
 
             // Llenar Combo Comuna
-            List<string> ListaComuna = BM_Database_Empresa.GetComuna();
-            if (ListaComuna != null)
-            {
-                foreach (var LocalLista in ListaComuna)
-                {
-                    comboBoxComuna.Items.Add(LocalLista);
-                }
-            }
-
+            comboBoxComuna.ItemsSource = LocalRellenarCombos.BuscarComuna();
 
             // Llenar Combo Ciudad
+            comboBoxCiudad.ItemsSource = LocalRellenarCombos.BuscarCiudad();
+        }
 
-            List<string> ListaCiudad = BM_Database_Empresa.GetCiudad();
-            if (ListaCiudad != null)
-            {
-                foreach (var LocalLista in ListaCiudad)
-                {
-                    comboBoxCiudad.Items.Add(LocalLista);
-                }
-            }
+        private void ActualizarCombos()
+        {
+            BM_CCRP LocalRellenarCombos = new BM_CCRP();
+
+            // Actualizar Combo Pais
+            _ = LocalRellenarCombos.AgregarPais(EmpresaIO.PAIS);
+
+            // Actualizar Combo Region
+            _ = LocalRellenarCombos.AgregarRegion(EmpresaIO.ESTADOREGION);
+
+            // Actualizar Combo Comuna
+            _ = LocalRellenarCombos.AgregarComuna(EmpresaIO.COMUNA);
+
+            // Actualizar Combo Ciudad
+            _ = LocalRellenarCombos.AgregarCiudad(EmpresaIO.CIUDAD);
         }
 
         private async Task LlenarDbConPantallaAsync()
@@ -218,8 +210,6 @@ namespace BikeMessenger
             EmpresaIO.RUTID = textBoxRut.Text;
             EmpresaIO.DIGVER = textBoxDigitoVerificador.Text;
             EmpresaIO.NOMBRE = textBoxNombreEmpresa.Text;
-            EmpresaIO.USUARIO = textBoxUsuario.Text;
-            EmpresaIO.CLAVE = passwordClave.Password;
             EmpresaIO.ACTIVIDAD1 = textBoxActividad1.Text;
             EmpresaIO.ACTIVIDAD2 = textBoxActividad2.Text;
             EmpresaIO.REPRESENTANTE1 = textBoxRepresentantes1.Text;
@@ -257,25 +247,19 @@ namespace BikeMessenger
             EmpresaIO.TELEFONO3 = textBoxTelefono3.Text;
 
             EmpresaIO.OBSERVACIONES = textBoxObservaciones.Text;
-            EmpresaIO.LOGO = await ConvertirImageABase64Async();
+
+            try
+            {
+                EmpresaIO.LOGO = await ConvertirImageABase64Async();
+            }
+            catch (ArgumentException)
+            {
+                EmpresaIO.LOGO = "";
+            }
         }
 
         private async void BtnAgregarEmpresa(object sender, RoutedEventArgs e)
         {
-            // Muestra de espera
-            LvrProgresRing.IsActive = true;
-            await Task.Delay(500); // 1 sec delay
-            // **********************************************************
-            // Verificación de Claves
-            // **********************************************************
-            if (textBoxUsuario.Text == "" || passwordClave.Password == "")
-            {
-                LvrProgresRing.IsActive = false;
-                await Task.Delay(500); // 1 sec delay
-                _ = AvisoOperacionEmpresaDialogAsync("Identificación de Usuario", "Debe completar su usuario y clave para el envio de la Orden de Servicio.");
-                return;
-            }
-
             await LlenarDbConPantallaAsync();
 
             if (BM_Database_Empresa.AgregarEmpresa(EmpresaIO))
@@ -285,8 +269,8 @@ namespace BikeMessenger
                 LvrTransferVar.EscribirValoresDeAjustes();
                 LvrTransferVar.LeerValoresDeAjustes();
 
-                bool TransaccionOK = true;
-                
+                ActualizarCombos();
+
                 appBarAgregar.IsEnabled = false;
                 appBarModificar.IsEnabled = true;
                 appBarBorrar.IsEnabled = true;
@@ -295,72 +279,35 @@ namespace BikeMessenger
                 textBoxRut.IsReadOnly = true;
                 textBoxDigitoVerificador.IsReadOnly = true;
 
-                if (TransaccionOK)
-                {
-                    await AvisoOperacionEmpresaDialogAsync("Agregar Empresa", "Empresa agregada exitosamente.");
-                }
-                else
-                {
-                    await AvisoOperacionEmpresaDialogAsync("Agregar Empresa", "Error en ingreso de la empresa. Reintente o escriba a soporte contacto@pentalpha.net");
-                }
+                await AvisoOperacionEmpresaDialogAsync("Agregar Empresa", "Empresa agregada exitosamente.");
             }
             else
             {
-                await AvisoOperacionEmpresaDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
+                await AvisoOperacionEmpresaDialogAsync("Agregar Empresa", "Error en ingreso de la empresa. Reintente o escriba a soporte contacto@pentalpha.net");
             }
-            LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // 1 sec delay
         }
 
         private async void BtnModificarEmpresa(object sender, RoutedEventArgs e)
         {
-            // Muestra de espera
-            LvrProgresRing.IsActive = true;
-            await Task.Delay(500); // 1 sec delay
-
-            // **********************************************************
-            // Verificación de Claves
-            // **********************************************************
-            if (textBoxUsuario.Text == "" || passwordClave.Password == "")
-            {
-                LvrProgresRing.IsActive = false;
-                await Task.Delay(500); // 1 sec delay
-                _ = AvisoOperacionEmpresaDialogAsync("Identificación de Usuario", "Debe completar su usuario y clave para el envio de la Orden de Servicio.");
-                return;
-            }
-
             await LlenarDbConPantallaAsync();
-
 
             if (BM_Database_Empresa.ModificarEmpresa(EmpresaIO))
             {
-                bool TransaccionOK = true;
-
                 LvrTransferVar.PENTALPHA_ID = EmpresaIO.PENTALPHA;
                 LvrTransferVar.ActualizarPentalphaId();
                 LvrTransferVar.EscribirValoresDeAjustes();
                 LvrTransferVar.LeerValoresDeAjustes();
 
-                if (TransaccionOK)
-                {
-                    await AvisoOperacionEmpresaDialogAsync("Modificar Empresa", "Empresa modificada exitosamente.");
-                }
-                else
-                {
-                    await AvisoOperacionEmpresaDialogAsync("Modificar Empresa", "Error en modificación de la empresa. Reintente o escriba a soporte contacto@pentalpha.net");
-                }
+                await AvisoOperacionEmpresaDialogAsync("Modificar Empresa", "Empresa modificada exitosamente.");
             }
             else
             {
-                await AvisoOperacionEmpresaDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
+                await AvisoOperacionEmpresaDialogAsync("Modificar Empresa", "Error en modificación de la empresa. Reintente o escriba a soporte contacto@pentalpha.net");
             }
-            LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // 1 sec delay
         }
 
         private async void BtnBorrarEmpresa(object sender, RoutedEventArgs e)
         {
-
             BorrarSiNo = false;
 
             await AvisoBorrarEmpresaDialogAsync();
@@ -370,27 +317,10 @@ namespace BikeMessenger
                 return;
             }
 
-            // Muestra de espera
-            LvrProgresRing.IsActive = true;
-            await Task.Delay(500); // 1 sec delay
-
-            // **********************************************************
-            // Verificación de Claves
-            // **********************************************************
-            if (textBoxUsuario.Text == "" || passwordClave.Password == "")
-            {
-                LvrProgresRing.IsActive = false;
-                await Task.Delay(500); // 1 sec delay
-                _ = AvisoOperacionEmpresaDialogAsync("Identificación de Usuario", "Debe completar su usuario y clave para el envio de la Orden de Servicio.");
-                return;
-            }
-
             await LlenarDbConPantallaAsync();
 
             if (BM_Database_Empresa.BorrarEmpresa(EmpresaIO.PENTALPHA))
             {
-                bool TransaccionOK = true;
-
                 LvrTransferVar.PENTALPHA_ID = EmpresaIO.PENTALPHA;
                 LvrTransferVar.ActualizarPentalphaId();
                 LvrTransferVar.EscribirValoresDeAjustes();
@@ -403,21 +333,12 @@ namespace BikeMessenger
                 textBoxRut.IsReadOnly = false;
                 textBoxDigitoVerificador.IsReadOnly = false;
 
-                if (TransaccionOK)
-                {
-                    await AvisoOperacionEmpresaDialogAsync("Borrar Empresa", "Empresa borrada exitosamente.");
-                }
-                else
-                {
-                    await AvisoOperacionEmpresaDialogAsync("Agregar Empresa", "Error en borrado de la empresa. Reintente o escriba a soporte contacto@pentalpha.net");
-                }
+                await AvisoOperacionEmpresaDialogAsync("Borrar Empresa", "Empresa borrada exitosamente.");
             }
             else
             {
-                await AvisoOperacionEmpresaDialogAsync("Acceso a Base de Datos", "Debe llenar los datos de la empresa.");
+                await AvisoOperacionEmpresaDialogAsync("Borrar Empresa", "Error en borrado de la empresa. Reintente o escriba a soporte contacto@pentalpha.net");
             }
-            LvrProgresRing.IsActive = false;
-            await Task.Delay(500); // 1 sec delay
         }
 
         private void BtnSalirEmpresa(object sender, RoutedEventArgs e)
@@ -536,7 +457,7 @@ namespace BikeMessenger
             LvrTransferVar.CLI_PENTALPHA = pPentalpha;
             // Valores de SERVICIOS
             LvrTransferVar.SER_PENTALPHA = pPentalpha;
-            
+
             LvrTransferVar.EscribirValoresDeAjustes();
             LvrTransferVar.LeerValoresDeAjustes();
         }
