@@ -3,7 +3,6 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
 namespace BikeMessenger
@@ -67,7 +66,7 @@ namespace BikeMessenger
                 Window.Current.Activate();
             }
         }
-       
+
 
         /*
         protected override void OnLaunched(LaunchActivatedEventArgs e)
@@ -134,7 +133,7 @@ namespace BikeMessenger
         /// </summary>
         /// <param name="sender">The Frame which failed navigation</param>
         /// <param name="e">Details about the navigation failure</param>
-        void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
+        private void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
             throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
         }

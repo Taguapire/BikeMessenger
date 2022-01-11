@@ -3,6 +3,7 @@ using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
@@ -117,6 +118,11 @@ namespace BikeMessenger
                 default:
                     break;
             }
+        }
+
+        private void BtnSalirVisorDeServicios(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            Application.Current.Exit();
         }
     }
 

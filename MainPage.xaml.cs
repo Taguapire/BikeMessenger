@@ -49,12 +49,11 @@ namespace BikeMessenger
 
         private void BM_NavPag_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
-            string BM_ItemContent = "";
             LvrTransferVar.LeerValoresDeAjustes();
 
             try
             {
-                BM_ItemContent = (string) args.InvokedItem;
+                string BM_ItemContent = (string)args.InvokedItem;
 
                 if (BM_ItemContent != "" || BM_ItemContent != null)
                 {
@@ -146,6 +145,8 @@ namespace BikeMessenger
                         case "Salir":
                             Application.Current.Exit();
                             break;
+                        default:
+                            break;
                     }
                 }
             }
@@ -155,7 +156,7 @@ namespace BikeMessenger
                 Console.WriteLine(ee.Message);
             }
         }
-        
+
         private void BM_NavPag_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
         {
             if (CuadroDeContenido.CanGoBack)
