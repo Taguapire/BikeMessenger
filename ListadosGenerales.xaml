@@ -15,7 +15,7 @@
             <CommandBar.Content>
                 <TextBlock Text="Listados" Margin="12,8"/>
             </CommandBar.Content>
-            <AppBarButton x:Name="appBarImprimir" Icon="SaveLocal" Label="Almacenar en Pendrive" Click="LvrAlmacenarEnPendrive"/>
+            <AppBarButton x:Name="appBarImprimir" Icon="SaveLocal" Label="Almacenar Reporte" Click="LvrAlmacenarReporte"/>
             <AppBarButton x:Name="appBarButtonVolver" Icon="Back" Label="Volver" Click="BtnListadoGeneralVolver"/>
         </CommandBar>
     </Page.BottomAppBar>

@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
-using Windows.Graphics.Printing;
+using Windows.Storage.Provider;
+using Windows.Storage;
+using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
@@ -113,12 +117,26 @@ namespace BikeMessenger
                 case "PERSONAL":
                     Bm_Personal_Database BM_Database_Personal = new Bm_Personal_Database();
                     HtmlImprimir = BM_Database_Personal.Bm_Personal_Listado(LvrTransferVar.EMP_PENTALPHA);
-                    VisorWeb.NavigateToString(HtmlImprimir);
+                    try
+                    {
+                        VisorWeb.NavigateToString(HtmlImprimir);
+                    }
+                    catch(ArgumentNullException)
+                    {
+                        _ = AvisoOperacionListadoDialogAsync("Listado de Personal", "El reporte de personal no contiene datos para listar.");
+                    }
                     break;
                 case "RECURSO":
                     Bm_Recurso_Database BM_Database_Recurso = new Bm_Recurso_Database();
                     HtmlImprimir = BM_Database_Recurso.Bm_Recurso_Listado(LvrTransferVar.EMP_PENTALPHA);
-                    VisorWeb.NavigateToString(HtmlImprimir);
+                    try
+                    {
+                        VisorWeb.NavigateToString(HtmlImprimir);
+                    }
+                    catch (ArgumentNullException)
+                    {
+                        _ = AvisoOperacionListadoDialogAsync("Listado de Recursos", "El reporte de recursos no contiene datos para listar.");
+                    }
                     break;
                 case "CLIENTE":
                     Bm_Cliente_Database BM_Database_Cliente = new Bm_Cliente_Database();
@@ -129,64 +147,62 @@ namespace BikeMessenger
                     }
                     catch (ArgumentNullException)
                     {
-                        ;
+                        _ = AvisoOperacionListadoDialogAsync("Listado de Clientes", "El reporte de clientes no contiene datos para listar.");
                     }
                     break;
                 case "SERVICIO":
                     Bm_Servicio_Database BM_Database_Servicio = new Bm_Servicio_Database();
                     HtmlImprimir = BM_Database_Servicio.Bm_Servicio_Listado();
-                    VisorWeb.NavigateToString(HtmlImprimir);
+                    try
+                    {
+                        VisorWeb.NavigateToString(HtmlImprimir);
+                    }
+                    catch (ArgumentNullException)
+                    {
+                        _ = AvisoOperacionListadoDialogAsync("Listado de Servicios", "El reporte de servicios no contiene datos para listar.");
+                    }
                     break;
                 default:
                     break;
             }
         }
 
-        private async void LvrImprimir(object sender, RoutedEventArgs e)
+        private async void LvrAlmacenarReporte(object sender, RoutedEventArgs e)
         {
-
-            //PrintManager LvrPrintManager;
-            //PrintDocument LvrPrintDocument = new PrintDocument();
-
-            //LvrPrintManager = PrintManager.GetForCurrentView();
-            //LvrPrintDocument.AddPage(VisorWeb);
-            //LvrPrintDocument.AddPagesComplete();
-
-            if (PrintManager.IsSupported())
+            FileSavePicker savePicker = new FileSavePicker
             {
-                try
+                SuggestedStartLocation = PickerLocationId.DocumentsLibrary
+            };
+            savePicker.FileTypeChoices.Add("Plain Text", new List<string>() { ".html" });
+            savePicker.SuggestedFileName = LvrTransferVar.PantallaAnterior;
+            StorageFile file = await savePicker.PickSaveFileAsync();
+            
+            if (file != null)
+            {
+                // Prevent updates to the remote version of the file until
+                // we finish making changes and call CompleteUpdatesAsync.
+                CachedFileManager.DeferUpdates(file);
+                // write to file
+                await FileIO.WriteTextAsync(file, HtmlImprimir);
+                // Let Windows know that we're finished changing the file so
+                // the other app can update the remote version of the file.
+                // Completing updates may require Windows to ask for user input.
+                FileUpdateStatus status =
+                    await CachedFileManager.CompleteUpdatesAsync(file);
+                if (status == FileUpdateStatus.Complete)
                 {
-                    // Show print UI
-                    _ = await PrintManager.ShowPrintUIAsync();
-
+                    _ = AvisoOperacionListadoDialogAsync("Almacenando Reporte", "Archivo " + file.Name + " fué almacenado.");
                 }
-                catch
+                else
                 {
-                    // Printing cannot proceed at this time
-                    ContentDialog noPrintingDialog = new ContentDialog()
-                    {
-                        Title = "Error de Impresión",
-                        Content = "\nDisculpe, el proceso de impresión no puede iniciarse en estos momentos.",
-                        PrimaryButtonText = "OK"
-                    };
-                    _ = await noPrintingDialog.ShowAsync();
+                    _ = AvisoOperacionListadoDialogAsync("Almacenando Reporte", "Archivo " + file.Name + " no fué almacenado.");
+      
                 }
             }
             else
             {
-                // Printing is not supported on this device
-                ContentDialog noPrintingDialog = new ContentDialog()
-                {
-                    Title = "Impresión no Soportada",
-                    Content = "\nDisculpe, el proceso de impresión no es soportado en este dispositivo.",
-                    PrimaryButtonText = "OK"
-                };
-                _ = await noPrintingDialog.ShowAsync();
+                _ = AvisoOperacionListadoDialogAsync("Almacenando Reporte", "La operación fue cancelada.");
             }
-        }
-
-        private void LvrAlmacenarEnPendrive(object sender, RoutedEventArgs e)
-        {
         }
 
         private async Task AvisoOperacionListadoDialogAsync(string xTitulo, string xDescripcion)
