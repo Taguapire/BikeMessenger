@@ -10,7 +10,7 @@ namespace BikeMessenger
 
         public string ESTADOPARAMETROS { get; set; }        // "NADA/SQLITE/SQLSERVER/WEBPENTALPHA/WEBPROPIO"
         //--------------------------------------------------------------------
-        public string DIRECTORIO_RESPALDOS { get; set; }      // "ApplicationData.Current.LocalFolder.Path";
+        public string DIRECTORIO_RESPALDOS { get; set; }    // "ApplicationData.Current.LocalFolder.Path";
         public string DIRECTORIO_BASE_LOCAL { get; set; }   // "ApplicationData.Current.LocalFolder.Path";
         //--------------------------------------------------------------------
         public string PENTALPHA_ID { get; set; }            // "N";

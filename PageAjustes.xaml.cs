@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage;
+using Windows.Storage.Search;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -28,6 +30,7 @@ namespace BikeMessenger
                 LvrTransferVar.BASEDEDATOSLOCAL = "S";
                 textBoxDirectorioActual.Text = LvrTransferVar.DIRECTORIO_BASE_LOCAL;
                 textBoxDirectorioDeRespaldos.Text = LvrTransferVar.DIRECTORIO_RESPALDOS;
+                _ = ActualizarGrillaDerespaldos();
             }
         }
 
@@ -102,6 +105,7 @@ namespace BikeMessenger
             try
             {
                 await CopiarBaseDeDatosAsync(textBoxDirectorioActual.Text, textBoxDirectorioDeRespaldos.Text);
+                await ActualizarGrillaDerespaldos();
             }
             catch (ArgumentException)
             {
@@ -114,6 +118,10 @@ namespace BikeMessenger
             catch (UnauthorizedAccessException)
             {
                 await AvisoCopiaBaseDialogAsync("Respaldar Base de Datos", "Acceso no autorizado a este directorio.");
+            }
+            catch (FileNotFoundException)
+            {
+                await AvisoCopiaBaseDialogAsync("Respaldar Base de Datos", "No se puede localizar la Base de Datos.");
             }
             catch (Exception)
             {
@@ -155,22 +163,85 @@ namespace BikeMessenger
             //            await Task.Delay(500); // 1 sec delay
 
             StorageFolder FolderOrigen = await StorageFolder.GetFolderFromPathAsync(DirectorioOrigen);
-            StorageFile BaseDatosOrigen = await FolderOrigen.GetFileAsync("BikeMessenger.db3");
+            StorageFile BaseDatosOrigen = await FolderOrigen.GetFileAsync("BikeMessenger.db");
 
             StorageFolder FolderDestino = await StorageFolder.GetFolderFromPathAsync(DirectorioDestino);
-            //StorageFile BaseDatosDestino = await FolderDestino.GetFileAsync("BikeMessenger.db3");
+            //StorageFile BaseDatosDestino = await FolderDestino.GetFileAsync("BikeMessenger.db");
 
-            _ = await BaseDatosOrigen.CopyAsync(FolderDestino, "BikeMessenger.db3", NameCollisionOption.GenerateUniqueName);
+            _ = await BaseDatosOrigen.CopyAsync(FolderDestino, "BikeMessenger.db", NameCollisionOption.GenerateUniqueName);
 
             //LvrTransferVar.CrearDirectorioRespaldo(DirectorioDestino);
             //LvrTransferVar.LeerDirectorio();
 
-            //            LvrProgresRing.IsActive = false;
-            //            await Task.Delay(500); // 1 sec delay
+            // LvrProgresRing.IsActive = false;
+            // await Task.Delay(500); // 1 sec delay
 
             await AvisoCopiaBaseDialogAsync("Cambiar Directorio", "La Copia de la Base se Datos se ha completado. A continuación saldra de la aplicación al presionar continuar.");
 
             Application.Current.Exit();
+        }
+
+        private async Task ActualizarGrillaDerespaldos()
+        {
+            StorageFolder folder;
+            List<string> fileTypeFilter = new List<string>();
+            QueryOptions queryOptions;
+            StorageFileQueryResult queryResult;
+            IReadOnlyList<StorageFile> ListadoDeBasesDedatos;
+            List<GridListadoArchivosDB> GrillaDeArchivosDB = new List<GridListadoArchivosDB>();
+
+            try
+            {
+                folder = await StorageFolder.GetFolderFromPathAsync(LvrTransferVar.DIRECTORIO_RESPALDOS);
+                fileTypeFilter.Add(".db");
+                fileTypeFilter.Add(".DB");
+                fileTypeFilter.Add(".db3");
+                fileTypeFilter.Add(".DB3");
+                queryOptions = new QueryOptions(CommonFileQuery.OrderByName, fileTypeFilter);
+                queryResult = folder.CreateFileQueryWithOptions(queryOptions);
+                ListadoDeBasesDedatos = await queryResult.GetFilesAsync();
+
+                // Access properties for each file
+                foreach (StorageFile Archivo in ListadoDeBasesDedatos)
+                {
+                    GrillaDeArchivosDB.Add(new GridListadoArchivosDB
+                    {
+                        CREACION = Archivo.DateCreated.DateTime.ToString(),
+                        NOMBRE = Archivo.Name,
+                        RESPALDO = Archivo.Path
+                    });
+                }
+                dataGridRespaldos.ItemsSource = GrillaDeArchivosDB;
+            }
+            catch (InvalidOperationException e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.InnerException);
+            }
+            catch (ArgumentException e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.InnerException);
+            }
+            catch (FileNotFoundException e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.InnerException);
+            }
+        }
+
+        internal class GridListadoArchivosDB
+        {
+            public string CREACION { get; set; }
+            public string NOMBRE { get; set; }
+            public string RESPALDO { get; set; }
+
+            public GridListadoArchivosDB()
+            {
+                CREACION = "";
+                NOMBRE = "";
+                RESPALDO = "";
+            }
         }
     }
 }
