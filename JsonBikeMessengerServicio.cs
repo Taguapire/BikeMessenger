@@ -44,11 +44,10 @@ namespace BikeMessenger
         public int SOBRES { get; set; }
         public int OTROS { get; set; }
         public string OBSERVACIONES { get; set; }
-        public string ENTREGA { get; set; }
-        public string RECEPCION { get; set; }
-        public string TESPERA { get; set; }
         public string FECHAENTREGA { get; set; }
         public string HORAENTREGA { get; set; }
+        public string RECEPCION { get; set; }
+        public string TESPERA { get; set; }
         public double DISTANCIA { get; set; }
         public string PROGRAMADO { get; set; }
         public string RESOPERACION { get; set; }
@@ -95,11 +94,10 @@ namespace BikeMessenger
             SOBRES = 0;
             OTROS = 0;
             OBSERVACIONES = "";
-            ENTREGA = "";
-            RECEPCION = "";
-            TESPERA = "";
             FECHAENTREGA = "";
             HORAENTREGA = "";
+            RECEPCION = "";
+            TESPERA = "";
             DISTANCIA = 0;
             PROGRAMADO = "";
             RESOPERACION = "";
@@ -190,16 +188,14 @@ namespace BikeMessenger
         public int OTROS { get; set; }
         [Column("observaciones")]
         public string OBSERVACIONES { get; set; }
-        [Column("entrega")]
-        public string ENTREGA { get; set; }
-        [Column("recepcion")]
-        public string RECEPCION { get; set; }
-        [Column("tespera")]
-        public string TESPERA { get; set; }
         [Column("fechaentrega")]
         public string FECHAENTREGA { get; set; }
         [Column("horaentrega")]
         public string HORAENTREGA { get; set; }
+        [Column("recepcion")]
+        public string RECEPCION { get; set; }
+        [Column("tespera")]
+        public string TESPERA { get; set; }
         [Column("distancia")]
         public double DISTANCIA { get; set; }
         [Column("programado")]

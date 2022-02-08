@@ -202,7 +202,6 @@ namespace BikeMessenger
             DbVistaServicioCliMen += "b.nombre, ";
             DbVistaServicioCliMen += "c.apellidos, ";
             DbVistaServicioCliMen += "c.nombres, ";
-            DbVistaServicioCliMen += "a.entrega, ";
             DbVistaServicioCliMen += "a.recepcion, ";
             DbVistaServicioCliMen += "a.distancia ";
             DbVistaServicioCliMen += "from TbBikeMessengerServicio a ";

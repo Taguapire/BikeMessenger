@@ -201,6 +201,70 @@ namespace BikeMessenger
             }
         }
 
+        private async void CalcularDistancia()
+        {
+            double lvrlatOrigen = 0;
+            double lvrlonOrigen = 0;
+            double lvrlatDestino = 0;
+            double lvrlonDestino = 0;
+
+            if (textBoxOrigenDomicilio1.Text == "" || textBoxOrigenDomicilio1.Text == "" || comboBoxOrigenComuna.Text == "" || comboBoxOrigenCiudad.Text == "" || comboBoxOrigenPais.Text == "")
+            {
+                await AvisoOperacionRecursosDialogAsync("Dirección de Origen", "Aun faltan datos por completar.");
+                return;
+            }
+
+            if (textBoxDestinoDomicilio1.Text == "" || textBoxDestinoDomicilio1.Text == "" || comboBoxDestinoComuna.Text == "" || comboBoxDestinoCiudad.Text == "" || comboBoxDestinoPais.Text == "")
+            {
+                await AvisoOperacionRecursosDialogAsync("Dirección de Destino", "Aun faltan datos por completar.");
+                return;
+            }
+
+            string addressInicio = textBoxOrigenDomicilio1.Text + " " + textBoxOrigenNumero.Text + "," + comboBoxOrigenComuna.Text + "," + comboBoxOrigenCiudad.Text + "," + comboBoxOrigenPais.Text;
+            string addressFinal = textBoxDestinoDomicilio1.Text + " " + textBoxDestinoNumero.Text + "," + comboBoxDestinoComuna.Text + "," + comboBoxDestinoCiudad.Text + "," + comboBoxDestinoPais.Text;
+
+            MapLocationFinderResult resultsOrigen = await MapLocationFinder.FindLocationsAsync(addressInicio, null);
+
+            if (resultsOrigen.Status == MapLocationFinderStatus.Success)
+            {
+                lvrlatOrigen = resultsOrigen.Locations[0].Point.Position.Latitude;
+                lvrlonOrigen = resultsOrigen.Locations[0].Point.Position.Longitude;
+            }
+
+            MapLocationFinderResult resultsDestino = await MapLocationFinder.FindLocationsAsync(addressFinal, null);
+
+            if (resultsDestino.Status == MapLocationFinderStatus.Success)
+            {
+                lvrlatDestino = resultsDestino.Locations[0].Point.Position.Latitude;
+                lvrlonDestino = resultsDestino.Locations[0].Point.Position.Longitude;
+            }
+
+            BasicGeoposition startLocation = new BasicGeoposition() { Latitude = lvrlatOrigen, Longitude = lvrlonOrigen };
+            BasicGeoposition endLocation = new BasicGeoposition() { Latitude = lvrlatDestino, Longitude = lvrlonDestino };
+
+            MapRouteDrivingOptions OpcionDeConduccion = new MapRouteDrivingOptions
+            {
+                MaxAlternateRouteCount = 2,
+                RouteOptimization = MapRouteOptimization.TimeWithTraffic,
+                RouteRestrictions = MapRouteRestrictions.Highways
+            };
+
+            MapRouteFinderResult routeResult =
+                await MapRouteFinder.GetDrivingRouteAsync(
+                new Geopoint(startLocation),
+                new Geopoint(endLocation),
+                OpcionDeConduccion);
+
+            if (routeResult.Status == MapRouteFinderStatus.Success)
+            {
+                // Use the route to initialize a MapRouteView.
+                LvrDistanciaRecorrida = routeResult.Route.LengthInMeters;
+            }
+            else
+            {
+                LvrDistanciaRecorrida = 0;
+            }
+        }
 
         private async void BtnMapaBuscarRutaServicios(object sender, RoutedEventArgs e)
         {
@@ -348,7 +412,7 @@ namespace BikeMessenger
                 textBoxSobres.Text = ServicioIO.SOBRES.ToString() == "0" ? "" : ServicioIO.SOBRES.ToString();
                 textBoxOtros.Text = ServicioIO.OTROS.ToString() == "0" ? "" : ServicioIO.OTROS.ToString();
                 textBoxObservaciones.Text = ServicioIO.OBSERVACIONES;
-                textBoxEntrega.Text = ServicioIO.ENTREGA;
+                // textBoxEntrega.Text = ServicioIO.ENTREGA;
                 textBoxRecepcion.Text = ServicioIO.RECEPCION;
                 textBoxTiempoDeEspera.Text = ServicioIO.TESPERA.ToString();
 
@@ -463,7 +527,7 @@ namespace BikeMessenger
             ServicioIO.OTROS = int.Parse(textBoxOtros.Text != "" ? textBoxOtros.Text : "0");
 
             ServicioIO.OBSERVACIONES = textBoxObservaciones.Text;
-            ServicioIO.ENTREGA = textBoxEntrega.Text;
+            // ServicioIO.ENTREGA = textBoxEntrega.Text;
             ServicioIO.RECEPCION = textBoxRecepcion.Text; ;
             ServicioIO.TESPERA = controlHora.Time.ToString();
             ServicioIO.FECHAENTREGA = (string)BtnFechaServicio.Content;
