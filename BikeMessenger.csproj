@@ -143,6 +143,7 @@
     <Compile Include="Bm_Personal_Database.cs" />
     <Compile Include="Bm_Recurso_Database.cs" />
     <Compile Include="Bm_Servicio_Database.cs" />
+    <Compile Include="ComunicacionXMPP.cs" />
     <Compile Include="JsonBikeMessengerCliente.cs" />
     <Compile Include="JsonBikeMessengerEmpresa.cs" />
     <Compile Include="JsonBikeMessengerPersonal.cs" />
@@ -291,6 +292,15 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Matrix.vNext">
+      <Version>2.4.5</Version>
+    </PackageReference>
+    <PackageReference Include="Matrix.vNext.Extensions">
+      <Version>2.4.5</Version>
+    </PackageReference>
+    <PackageReference Include="Matrix.vNext.Srv">
+      <Version>2.4.5</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.13</Version>
     </PackageReference>

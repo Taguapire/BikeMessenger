@@ -131,6 +131,8 @@ namespace BikeMessenger
                 LvrTransferVar.EscribirValoresDeAjustes();
                 LvrTransferVar.LeerValoresDeAjustes();
                 ActualizarCombos();
+                ComunicacionXMPP AsignarServicio = new ComunicacionXMPP();
+                await AsignarServicio.ProcesoEnvioMensaje();
                 await AvisoOperacionServiciosDialogAsync("Agregar Servicio", "Servicio agregado exitosamente.");
             }
             else
@@ -151,6 +153,8 @@ namespace BikeMessenger
                 LvrTransferVar.EscribirValoresDeAjustes();
                 LvrTransferVar.LeerValoresDeAjustes();
                 ActualizarCombos();
+                ComunicacionXMPP AsignarServicio = new ComunicacionXMPP();
+                await AsignarServicio.ProcesoEnvioMensaje();
                 await AvisoOperacionServiciosDialogAsync("Modificar Servicio", "Servicio modificado exitosamente.");
             }
             else
@@ -460,8 +464,16 @@ namespace BikeMessenger
             ServicioIO.CLIENTEDIGVER = textBoxDigitoVerificador.Text;
             string xyRutCompleto = textBoxIdMensajero.Text; ;
             string[] CadenaDividida = xyRutCompleto.Split("-", 2, StringSplitOptions.None);
-            ServicioIO.MENSAJERORUT = CadenaDividida[0];
-            ServicioIO.MENSAJERODIGVER = CadenaDividida[1];
+            try
+            {
+                ServicioIO.MENSAJERORUT = CadenaDividida[0];
+                ServicioIO.MENSAJERODIGVER = CadenaDividida[1];
+            }
+            catch(IndexOutOfRangeException)
+            {
+                ServicioIO.MENSAJERORUT = "";
+                ServicioIO.MENSAJERODIGVER = "";
+            }
             ServicioIO.RECURSOID = textBoxIdRecurso.Text;
             ServicioIO.ODOMICILIO1 = textBoxOrigenDomicilio1.Text;
             ServicioIO.ONUMERO = textBoxOrigenNumero.Text;
