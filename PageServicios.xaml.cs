@@ -131,13 +131,15 @@ namespace BikeMessenger
                 LvrTransferVar.EscribirValoresDeAjustes();
                 LvrTransferVar.LeerValoresDeAjustes();
                 ActualizarCombos();
-                ComunicacionXMPP AsignarServicio = new ComunicacionXMPP();
+                ComunicacionXMPP AsignarServicio = new ComunicacionXMPP(ServicioIO);
+                AsignarServicio.ProcesarJson();
                 await AsignarServicio.ProcesoEnvioMensaje();
+
                 await AvisoOperacionServiciosDialogAsync("Agregar Servicio", "Servicio agregado exitosamente.");
             }
             else
             {
-                await AvisoOperacionServiciosDialogAsync("Agregar Servicio", "Error en ingreso de servicio. Reintente o escriba a soporte contacto@pentalpha.net");
+                await AvisoOperacionServiciosDialogAsync("Agregar ServiXMPPcio", "Error en ingreso de servicio. Reintente o escriba a soporte contacto@pentalpha.net");
             }
         }
 
@@ -153,7 +155,8 @@ namespace BikeMessenger
                 LvrTransferVar.EscribirValoresDeAjustes();
                 LvrTransferVar.LeerValoresDeAjustes();
                 ActualizarCombos();
-                ComunicacionXMPP AsignarServicio = new ComunicacionXMPP();
+                ComunicacionXMPP AsignarServicio = new ComunicacionXMPP(ServicioIO);
+                AsignarServicio.ProcesarJson();
                 await AsignarServicio.ProcesoEnvioMensaje();
                 await AvisoOperacionServiciosDialogAsync("Modificar Servicio", "Servicio modificado exitosamente.");
             }
@@ -891,8 +894,6 @@ namespace BikeMessenger
             PopUpFechaInicial.IsOpen = true;
         }
     }
-
-
 
     internal class GridEnvioIndividualServicios
     {
