@@ -1,5 +1,4 @@
-﻿using Microsoft.Toolkit.Uwp.UI.Controls;
-using SQLite;
+﻿using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -89,22 +88,22 @@ namespace BikeMessenger
             switch (e.Column.Header.ToString())
             {
                 case "NRO_ENVIO":
-                    e.Column.Header = "Nro de Envio";
+                    e.Column.Header = "Envio";
                     break;
                 case "GUIA_DESPACHO":
-                    e.Column.Header = "Guia de Despacho";
+                    e.Column.Header = "Guia";
                     break;
                 case "FECHA_ENTREGA":
-                    e.Column.Header = "Fecha de Entrega";
+                    e.Column.Header = "Fecha Entrega";
                     break;
                 case "HORA_ENTREGA":
-                    e.Column.Header = "Hora de Entrega";
+                    e.Column.Header = "Hora Entrega";
                     break;
                 case "CLIENTE":
-                    e.Column.Header = "Nombre del Cliente";
+                    e.Column.Header = "Cliente";
                     break;
                 case "MENSAJERO":
-                    e.Column.Header = "Nombre del Mensajero";
+                    e.Column.Header = "Mensajero";
                     break;
                 case "ENTREGA":
                     e.Column.Header = "Entregado";

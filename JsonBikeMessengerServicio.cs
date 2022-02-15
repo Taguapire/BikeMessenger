@@ -44,6 +44,7 @@ namespace BikeMessenger
         public int SOBRES { get; set; }
         public int OTROS { get; set; }
         public string OBSERVACIONES { get; set; }
+        public string ENTREGA { get; set; }
         public string FECHAENTREGA { get; set; }
         public string HORAENTREGA { get; set; }
         public string RECEPCION { get; set; }
@@ -94,6 +95,7 @@ namespace BikeMessenger
             SOBRES = 0;
             OTROS = 0;
             OBSERVACIONES = "";
+            ENTREGA = "";
             FECHAENTREGA = "";
             HORAENTREGA = "";
             RECEPCION = "";
@@ -188,6 +190,8 @@ namespace BikeMessenger
         public int OTROS { get; set; }
         [Column("observaciones")]
         public string OBSERVACIONES { get; set; }
+        [Column("entrega")]
+        public string ENTREGA { get; set; }
         [Column("fechaentrega")]
         public string FECHAENTREGA { get; set; }
         [Column("horaentrega")]

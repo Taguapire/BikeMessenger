@@ -75,6 +75,7 @@ namespace BikeMessenger
                         SOBRES = results[i].SOBRES,
                         OTROS = results[i].OTROS,
                         OBSERVACIONES = results[i].OBSERVACIONES,
+                        ENTREGA = results[i].ENTREGA,
                         FECHAENTREGA = results[i].FECHAENTREGA,
                         HORAENTREGA = results[i].HORAENTREGA,
                         RECEPCION = results[i].RECEPCION,
@@ -150,6 +151,7 @@ namespace BikeMessenger
                         SOBRES = results[i].SOBRES,
                         OTROS = results[i].OTROS,
                         OBSERVACIONES = results[i].OBSERVACIONES,
+                        ENTREGA = results[i].ENTREGA,
                         FECHAENTREGA = results[i].FECHAENTREGA,
                         HORAENTREGA = results[i].HORAENTREGA,
                         RECEPCION = results[i].RECEPCION,
@@ -217,6 +219,7 @@ namespace BikeMessenger
                     SOBRES = aBK_Servicio.SOBRES,
                     OTROS = aBK_Servicio.OTROS,
                     OBSERVACIONES = aBK_Servicio.OBSERVACIONES,
+                    ENTREGA = aBK_Servicio.ENTREGA,
                     FECHAENTREGA = aBK_Servicio.FECHAENTREGA,
                     HORAENTREGA = aBK_Servicio.HORAENTREGA,
                     RECEPCION = aBK_Servicio.RECEPCION,
@@ -286,6 +289,7 @@ namespace BikeMessenger
                     SOBRES = mBK_Servicio.SOBRES,
                     OTROS = mBK_Servicio.OTROS,
                     OBSERVACIONES = mBK_Servicio.OBSERVACIONES,
+                    ENTREGA = mBK_Servicio.ENTREGA,
                     FECHAENTREGA = mBK_Servicio.FECHAENTREGA,
                     HORAENTREGA = mBK_Servicio.HORAENTREGA,
                     RECEPCION = mBK_Servicio.RECEPCION,
@@ -362,9 +366,6 @@ namespace BikeMessenger
 
             return GridLocalServicioLista;
         }
-
-
-
 
         public List<ClaseRecursoGrid> BuscarGridRecurso(string pPENTALPHA)
         {

@@ -21,7 +21,7 @@
     <Grid x:Name="GridPageInicio" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
         <TextBlock x:Name="TituloDePaginaDeInicio" HorizontalAlignment="Center" Margin="80,10,0,0" Text="Servicios de Mensajeria" TextWrapping="NoWrap" VerticalAlignment="Top" ScrollViewer.VerticalScrollBarVisibility="Disabled" FontSize="14"/>
 
-        <Custom:DataGrid x:Name="DGViewServicios" HorizontalAlignment="Center" Height="655" Margin="0,55,0,0" VerticalAlignment="Top" Width="1260" FocusVisualPrimaryBrush="#E40F0101" AutoGeneratingColumn="GeneracionDeColumnas" Background="#6626C7F7" ScrollViewer.HorizontalScrollBarVisibility="Visible" GridLinesVisibility="All" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" HeadersVisibility="All" SelectionMode="Single"/>
+        <Custom:DataGrid x:Name="DGViewServicios" HorizontalAlignment="Center" Height="655" Margin="0,55,0,0" VerticalAlignment="Top" Width="1080" FocusVisualPrimaryBrush="#E40F0101" AutoGeneratingColumn="GeneracionDeColumnas" Background="#6626C7F7" ScrollViewer.HorizontalScrollBarVisibility="Visible" GridLinesVisibility="All" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollBarVisibility="Visible" HeadersVisibility="All" SelectionMode="Single" BackgroundSizing="OuterBorderEdge" CanBeScrollAnchor="True"/>
 
     </Grid>
 </Page>

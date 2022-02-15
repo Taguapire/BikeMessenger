@@ -1,28 +1,13 @@
-﻿using System;
-using System.Reactive.Linq;
-using Matrix;
-using Matrix.Extensions.Client.Roster;
-using Matrix.Extensions.Client.Presence;
-using Matrix.Xmpp;
-using Matrix.Xmpp.Base;
-using Matrix.Srv;
-using DotNetty.Transport.Channels;
-using System.Diagnostics;
-using Microsoft.Extensions.Logging;
-using Matrix.Extensions.Client.Message;
-using System.Threading.Tasks;
+﻿
 using Newtonsoft.Json;
-using Windows.UI.Xaml.Controls;
 
 namespace BikeMessenger
 {
     internal class ComunicacionXMPP
     {
         private AvisoDeEnvio AvisoEnvioXMPP = new AvisoDeEnvio();
-        private string CadenaJsonXMPP;
-        public XmppClient xmppClient;
-        private Bm_Servicio_Database BM_Database_Servicio = new Bm_Servicio_Database();
-
+        public string CadenaJsonXMPP { get; private set; }
+        
         public ComunicacionXMPP()
         {
 
@@ -41,51 +26,6 @@ namespace BikeMessenger
             AvisoEnvioXMPP.LONGITUDDESTINO = pServicioXMPP.LONGITUDDESTINO;
             AvisoEnvioXMPP.DISTANCIA = pServicioXMPP.DISTANCIA;
             CadenaJsonXMPP = JsonConvert.SerializeObject(AvisoEnvioXMPP);
-        }
-
-        public async void ProcesarConexionAlserver(string pUsername, string pPassword, string pXmppDomain)
-        {
-            xmppClient = new XmppClient
-            {
-                Username = pUsername,
-                Password = pPassword,
-                XmppDomain = pXmppDomain,
-                // setting the resolver to use the Srv resolver is optional, but recommended
-                HostnameResolver = new SrvNameResolver()
-            };
-
-            // connect so the server
-            await xmppClient.ConnectAsync();
-            await xmppClient.SendPresenceAsync(Show.None, "Online");
-        }
-
-        public async void ProcesarDesconexionDelServer()
-        {
-            // Desconectar del Servidor
-            await xmppClient.DisconnectAsync();
-        }
-
-        public async void ProcesoEnvioMensaje(string pMensajeroDestinatario)
-        {
-            // Envio del Mensaje
-            await xmppClient.SendChatMessageAsync(pMensajeroDestinatario, CadenaJsonXMPP);
-        }
-
-        public void ProcesoRecibirMensajes()
-        {
-            xmppClient.XmppXElementStreamObserver
-                .Where(el => el is Message)
-                .Subscribe(el =>
-                {
-                    var msgbox = new ContentDialog
-                    {
-                        Title = "Nuevo Mensaje",
-                        Content = el.ToString(),
-                        CloseButtonText = "Continuar"
-                    };
-                    var ignored = msgbox.ShowAsync();
-
-                });
         }
     }
 

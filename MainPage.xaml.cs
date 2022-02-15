@@ -2,6 +2,16 @@
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using SQLite;
+using Matrix;
+using Matrix.Srv;
+using Matrix.Extensions.Client.Presence;
+using Matrix.Xmpp;
+using System.Reactive.Linq;
+using Windows.UI.Popups;
+using Matrix.Xml;
+using System.Threading.Tasks;
+using System.Linq;
+using Matrix.Xmpp.Base;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -14,6 +24,8 @@ namespace BikeMessenger
     {
         private string BM_Ultimo_Item = "";
         private TransferVar LvrTransferVar = new TransferVar();
+        public XmppClient xmppClient;
+        private string MensajeNuevoRecibido;
 
         public MainPage()
         {
@@ -24,6 +36,65 @@ namespace BikeMessenger
                 LvrTransferVar.ESTADOPARAMETROS = "S";
                 LvrTransferVar.BASEDEDATOSLOCAL = "S";
                 LvrTransferVar.EscribirValoresDeAjustes();
+            }
+            IniciarXMPP("pruebaswindows", "Pruebas1970", "finanven.ddns.net");
+        }
+
+        private async void IniciarXMPP(string pUsername, string pPassword, string pXmppDomain)
+        {
+            TaskScheduler UISyncContext = TaskScheduler.FromCurrentSynchronizationContext();
+
+            try
+            {
+                xmppClient = new XmppClient
+                {
+                    Username = pUsername,
+                    Password = pPassword,
+                    XmppDomain = pXmppDomain,
+                    // setting the resolver to use the Srv resolver is optional, but recommended
+                    HostnameResolver = new SrvNameResolver()
+                };
+
+                // connect so the server
+                await xmppClient.ConnectAsync();
+
+                await xmppClient.SendPresenceAsync(Show.None, "Online");
+
+                xmppClient.XmppXElementStreamObserver
+                    .Where(el => el is Message)
+                    .Subscribe(async el =>
+                    {
+                        MensajeNuevoRecibido = el.Cast<Message>().Body;
+                        MessageDialog dialog = new MessageDialog(MensajeNuevoRecibido);
+                        dialog.Title = "Mensaje De: " + el.Cast<Message>().From.User;
+                        dialog.Options = MessageDialogOptions.None;
+                        await Task.Factory.StartNew(() => { _ = dialog.ShowAsync(); }, new System.Threading.CancellationToken(), TaskCreationOptions.PreferFairness, UISyncContext);
+                    });
+            }
+
+            catch (DotNetty.Transport.Channels.ConnectException)
+            {
+                ;
+            }
+            catch (System.Net.Sockets.SocketException)
+            {
+                ;
+            }
+        }
+
+        private async void TerminarXMPP()
+        {
+            try
+            {
+                await xmppClient.DisconnectAsync();
+            }
+            catch (DotNetty.Transport.Channels.ConnectException)
+            {
+                ;
+            }
+            catch (System.Net.Sockets.SocketException)
+            {
+                ;
             }
         }
 
@@ -131,7 +202,7 @@ namespace BikeMessenger
                             {
                                 BM_Ultimo_Item = BM_ItemContent;
                                 BM_NavPag.IsBackEnabled = true;
-                                _ = CuadroDeContenido.Navigate(typeof(PageServicios));
+                                _ = CuadroDeContenido.Navigate(typeof(PageServicios), xmppClient);
                             }
                             break;
                         case "Ajustes":
