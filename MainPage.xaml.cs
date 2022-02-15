@@ -235,5 +235,10 @@ namespace BikeMessenger
                 Console.WriteLine(Ex.InnerException.Message);
             }
         }
+
+        private void BM_NavPag_Unloaded(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

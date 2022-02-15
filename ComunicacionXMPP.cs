@@ -12,61 +12,80 @@ using Microsoft.Extensions.Logging;
 using Matrix.Extensions.Client.Message;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Windows.UI.Xaml.Controls;
 
 namespace BikeMessenger
 {
     internal class ComunicacionXMPP
     {
-        AvisoDeEnvio AvisoEnvioXMPP = new AvisoDeEnvio();
+        private AvisoDeEnvio AvisoEnvioXMPP = new AvisoDeEnvio();
         private string CadenaJsonXMPP;
+        public XmppClient xmppClient;
+        private Bm_Servicio_Database BM_Database_Servicio = new Bm_Servicio_Database();
 
-        public ComunicacionXMPP(StructBikeMessengerServicio ServicioXMPP)
+        public ComunicacionXMPP()
         {
-            AvisoEnvioXMPP.ENVIO = ServicioXMPP.NROENVIO;
-            AvisoEnvioXMPP.FECHA = ServicioXMPP.FECHAENTREGA;
-            AvisoEnvioXMPP.HORA = ServicioXMPP.HORAENTREGA;
-            AvisoEnvioXMPP.CLIENTE = ServicioXMPP.CLIENTERUT + ServicioXMPP.CLIENTEDIGVER;
-            AvisoEnvioXMPP.DESCRIPCION = ServicioXMPP.DESCRIPCION;
-            AvisoEnvioXMPP.LATITUDORIGEN = ServicioXMPP.OLATITUD;
-            AvisoEnvioXMPP.LONGITUDORIGEN = ServicioXMPP.OLONGITUD;
-            AvisoEnvioXMPP.LATITUDDESTINO = ServicioXMPP.DLATITUD;
-            AvisoEnvioXMPP.LONGITUDDESTINO = ServicioXMPP.DLONGITUD;
-            AvisoEnvioXMPP.DISTANCIA = ServicioXMPP.DISTANCIA;
+
         }
 
-        public void ProcesarJson()
+        public void ProcesarJson(AvisoDeEnvio pServicioXMPP)
         {
+            AvisoEnvioXMPP.ENVIO = pServicioXMPP.ENVIO;
+            AvisoEnvioXMPP.FECHA = pServicioXMPP.FECHA;
+            AvisoEnvioXMPP.HORA = pServicioXMPP.HORA;
+            AvisoEnvioXMPP.CLIENTE = pServicioXMPP.CLIENTE;
+            AvisoEnvioXMPP.DESCRIPCION = pServicioXMPP.DESCRIPCION;
+            AvisoEnvioXMPP.LATITUDORIGEN = pServicioXMPP.LATITUDORIGEN;
+            AvisoEnvioXMPP.LONGITUDORIGEN = pServicioXMPP.LONGITUDORIGEN;
+            AvisoEnvioXMPP.LATITUDDESTINO = pServicioXMPP.LATITUDDESTINO;
+            AvisoEnvioXMPP.LONGITUDDESTINO = pServicioXMPP.LONGITUDDESTINO;
+            AvisoEnvioXMPP.DISTANCIA = pServicioXMPP.DISTANCIA;
             CadenaJsonXMPP = JsonConvert.SerializeObject(AvisoEnvioXMPP);
         }
 
-        public async Task ProcesoEnvioMensaje()
+        public async void ProcesarConexionAlserver(string pUsername, string pPassword, string pXmppDomain)
         {
-            // setup XmppClient with some properties
-            XmppClient xmppClient = new XmppClient
+            xmppClient = new XmppClient
             {
-                Username = "pruebaswindows",
-                Password = "Pruebas1970",
-                XmppDomain = "finanven.ddns.net",
+                Username = pUsername,
+                Password = pPassword,
+                XmppDomain = pXmppDomain,
                 // setting the resolver to use the Srv resolver is optional, but recommended
                 HostnameResolver = new SrvNameResolver()
             };
 
             // connect so the server
-            _ = await xmppClient.ConnectAsync();
+            await xmppClient.ConnectAsync();
+            await xmppClient.SendPresenceAsync(Show.None, "Online");
+        }
 
-            // request roster (contact list). This is optional, 
-            // but most chat clients do this on startup
-            // Matrix.Xmpp.Client.Iq roster = xmppClient.RequestRosterAsync().GetAwaiter().GetResult();
+        public async void ProcesarDesconexionDelServer()
+        {
+            // Desconectar del Servidor
+            await xmppClient.DisconnectAsync();
+        }
 
-            // send our own presence to the server. This is required for most scenarios
-            // but there are also use cases where you may not want to publish and send you own presence
-            // await xmppClient.SendPresenceAsync(Show.Chat, "Listo para chatear");
+        public async void ProcesoEnvioMensaje(string pMensajeroDestinatario)
+        {
+            // Envio del Mensaje
+            await xmppClient.SendChatMessageAsync(pMensajeroDestinatario, CadenaJsonXMPP);
+        }
 
-            // send a chat message to user2
-            await xmppClient.SendChatMessageAsync("luis@finanven.ddns.net", CadenaJsonXMPP);
+        public void ProcesoRecibirMensajes()
+        {
+            xmppClient.XmppXElementStreamObserver
+                .Where(el => el is Message)
+                .Subscribe(el =>
+                {
+                    var msgbox = new ContentDialog
+                    {
+                        Title = "Nuevo Mensaje",
+                        Content = el.ToString(),
+                        CloseButtonText = "Continuar"
+                    };
+                    var ignored = msgbox.ShowAsync();
 
-            // Close connection again
-            _ = await xmppClient.DisconnectAsync();
+                });
         }
     }
 
@@ -83,7 +102,7 @@ namespace BikeMessenger
         public double LONGITUDDESTINO { get; set; }
         public double DISTANCIA { get; set; }
 
-        public AvisoDeEnvio ()
+        public AvisoDeEnvio()
         {
             ENVIO = "";
             FECHA = "";

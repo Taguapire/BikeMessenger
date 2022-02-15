@@ -11,7 +11,10 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Maps;
 using Windows.UI.Xaml.Media.Animation;
-
+using System.Reactive.Linq;
+using Matrix.Xmpp.Base;
+using Matrix.Xml;
+using Windows.UI.Popups;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -28,6 +31,9 @@ namespace BikeMessenger
         private TransferVar LvrTransferVar = new TransferVar();
         private bool BorrarSiNo;
         private double LvrDistanciaRecorrida = 0;
+        private AvisoDeEnvio AvisoEnvioData;
+        private ComunicacionXMPP AsignarServicio = new ComunicacionXMPP();
+        private string MensajeNuevoRecibido;
 
         public PageServicios()
         {
@@ -35,6 +41,17 @@ namespace BikeMessenger
             mapControlBikeMessenger.MapServiceToken = "kObotinnsvzUnI3k9Smn~hOr - MYZEy_DGqfvj5V0QHQ~AlzXtL5PnD05eblszjnq7bMEEwk4TSFF3szRn_yyu2GaEo9JehDSttrmHwgRFSzi";
             appBarBuscarRuta.IsEnabled = false;
             InicioPantalla();
+            TaskScheduler UISyncContext = TaskScheduler.FromCurrentSynchronizationContext();
+            AsignarServicio.ProcesarConexionAlserver("pruebaswindows", "Pruebas1970", "finanven.ddns.net");
+            // Funcion CallBack de XMPP
+            _ = AsignarServicio.xmppClient.XmppXElementStreamObserver
+                .Where(el => el is Message)
+                .Subscribe(async el =>
+                {
+                    MensajeNuevoRecibido = "Nuevo Mensaje De: " + el.Cast<Message>().From.User;
+                    var dialog = new MessageDialog(MensajeNuevoRecibido);
+                    await Task.Factory.StartNew(() => { _ = dialog.ShowAsync(); }, new System.Threading.CancellationToken(), TaskCreationOptions.PreferFairness, UISyncContext);
+                });
         }
 
         void InicioPantalla()
@@ -131,10 +148,30 @@ namespace BikeMessenger
                 LvrTransferVar.EscribirValoresDeAjustes();
                 LvrTransferVar.LeerValoresDeAjustes();
                 ActualizarCombos();
-                ComunicacionXMPP AsignarServicio = new ComunicacionXMPP(ServicioIO);
-                AsignarServicio.ProcesarJson();
-                await AsignarServicio.ProcesoEnvioMensaje();
-
+                try
+                {
+                    AvisoEnvioData = new AvisoDeEnvio();
+                    AvisoEnvioData.ENVIO = ServicioIO.NROENVIO;
+                    AvisoEnvioData.FECHA = ServicioIO.FECHAENTREGA;
+                    AvisoEnvioData.HORA = ServicioIO.HORAENTREGA;
+                    AvisoEnvioData.CLIENTE = textBoxCliente.Text ?? "";
+                    AvisoEnvioData.DESCRIPCION = ServicioIO.DESCRIPCION;
+                    AvisoEnvioData.LATITUDORIGEN = ServicioIO.OLATITUD;
+                    AvisoEnvioData.LONGITUDORIGEN = ServicioIO.OLONGITUD;
+                    AvisoEnvioData.LATITUDDESTINO = ServicioIO.DLATITUD;
+                    AvisoEnvioData.LONGITUDDESTINO = ServicioIO.DLONGITUD;
+                    AvisoEnvioData.DISTANCIA = ServicioIO.DISTANCIA;
+                    AsignarServicio.ProcesarJson(AvisoEnvioData);
+                    AsignarServicio.ProcesoEnvioMensaje("luis@finanven.ddns.net");
+                }
+                catch (DotNetty.Transport.Channels.ConnectException)
+                {
+                    ;
+                }
+                catch (System.Net.Sockets.SocketException)
+                {
+                    ;
+                }
                 await AvisoOperacionServiciosDialogAsync("Agregar Servicio", "Servicio agregado exitosamente.");
             }
             else
@@ -155,9 +192,30 @@ namespace BikeMessenger
                 LvrTransferVar.EscribirValoresDeAjustes();
                 LvrTransferVar.LeerValoresDeAjustes();
                 ActualizarCombos();
-                ComunicacionXMPP AsignarServicio = new ComunicacionXMPP(ServicioIO);
-                AsignarServicio.ProcesarJson();
-                await AsignarServicio.ProcesoEnvioMensaje();
+                try
+                {
+                    AvisoEnvioData = new AvisoDeEnvio();
+                    AvisoEnvioData.ENVIO = ServicioIO.NROENVIO;
+                    AvisoEnvioData.FECHA = ServicioIO.FECHAENTREGA;
+                    AvisoEnvioData.HORA = ServicioIO.HORAENTREGA;
+                    AvisoEnvioData.CLIENTE = textBoxCliente.Text ?? "";
+                    AvisoEnvioData.DESCRIPCION = ServicioIO.DESCRIPCION;
+                    AvisoEnvioData.LATITUDORIGEN = ServicioIO.OLATITUD;
+                    AvisoEnvioData.LONGITUDORIGEN = ServicioIO.OLONGITUD;
+                    AvisoEnvioData.LATITUDDESTINO = ServicioIO.DLATITUD;
+                    AvisoEnvioData.LONGITUDDESTINO = ServicioIO.DLONGITUD;
+                    AvisoEnvioData.DISTANCIA = ServicioIO.DISTANCIA;
+                    AsignarServicio.ProcesarJson(AvisoEnvioData);
+                    AsignarServicio.ProcesoEnvioMensaje("luis@finanven.ddns.net");
+                }
+                catch (DotNetty.Transport.Channels.ConnectException)
+                {
+                    ;
+                }
+                catch (System.Net.Sockets.SocketException)
+                {
+                    ;
+                }
                 await AvisoOperacionServiciosDialogAsync("Modificar Servicio", "Servicio modificado exitosamente.");
             }
             else
@@ -892,6 +950,25 @@ namespace BikeMessenger
         private void BtnCambioFechaInicial(object sender, RoutedEventArgs e)
         {
             PopUpFechaInicial.IsOpen = true;
+        }
+
+        private void BtnCambioFechaEntrega(object sender, RoutedEventArgs e)
+        {
+            PopUpFechaEntrega.IsOpen = true;
+        }
+
+        private void CambioDeFechaEntrega(CalendarView sender, CalendarViewSelectedDatesChangedEventArgs args)
+        {
+            try
+            {
+                DateTimeOffset FechaEntrega = args.AddedDates.First();
+                BtnFechaEntrega.Content = FechaEntrega.DateTime.ToString("d", new CultureInfo("es-ES"));
+                PopUpFechaEntrega.IsOpen = false;
+            }
+            catch (Exception e)
+            {
+                Console.Out.WriteLine(e.InnerException);
+            }
         }
     }
 

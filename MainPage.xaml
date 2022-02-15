@@ -13,7 +13,7 @@
         <Grid.Background>
             <AcrylicBrush TintColor="#FF357ADE"/>
         </Grid.Background>
-        <NavigationView x:Name="BM_NavPag" IsTabStop="False" Loaded="BM_NavPag_Loaded" SelectionChanged="BM_NavPag_SelectionChanged" ItemInvoked="BM_NavPag_ItemInvoked" Margin="0,0,0,12" IsSettingsVisible="False" Foreground="White" IsBackEnabled="False" BackRequested="BM_NavPag_BackRequested" HorizontalAlignment="Left" Width="1200" HorizontalContentAlignment="Left" OpenPaneLength="130" Background="#FF3085EC">
+        <NavigationView x:Name="BM_NavPag" IsTabStop="False" Loaded="BM_NavPag_Loaded" SelectionChanged="BM_NavPag_SelectionChanged" ItemInvoked="BM_NavPag_ItemInvoked" Margin="0,0,0,12" IsSettingsVisible="False" Foreground="White" IsBackEnabled="False" BackRequested="BM_NavPag_BackRequested" HorizontalAlignment="Left" Width="1200" HorizontalContentAlignment="Left" OpenPaneLength="130" Background="#FF3085EC" Unloaded="BM_NavPag_Unloaded">
             <NavigationView.MenuItems>
                 <NavigationViewItem x:Name="MenuNav_Inicio" Content="Inicio" Tag="Inicio_Page" HorizontalAlignment="Stretch">
                     <NavigationViewItem.Icon>

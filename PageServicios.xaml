@@ -35,10 +35,6 @@
         <TextBox x:Name="textBoxRutID" HorizontalAlignment="Left" Margin="620,23,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" Width="154" HorizontalContentAlignment="Left" VerticalContentAlignment="Bottom" BorderThickness="1,1,1,1" Background="#66C6D7DC" TabIndex="17"/>
         <TextBox x:Name="textBoxDigitoVerificador" HorizontalAlignment="Left" Margin="779,23,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Background="#66C6D7DC" TabIndex="18"/>
         <TextBox x:Name="textBoxCliente" HorizontalAlignment="Left" Margin="620,55,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" RenderTransformOrigin="1.824,0.625" Width="420" BorderThickness="1,1,1,1" Background="#66C6D7DC" IsReadOnly="True" TabIndex="19"/>
-        <Button x:Name="BtnFechaServicio" Content="Fecha" Margin="159,87,0,0" VerticalAlignment="Top" Width="238" Click="BtnCambioFechaInicial"/>
-        <Popup x:Name="PopUpFechaInicial">
-            <CalendarView x:Name="CalendarFechaServicio" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" SelectionMode="Single" SelectedDatesChanged="CambioDeFechaServicio"/>
-        </Popup>
         <TextBlock x:Name="labelDestinoNumero" HorizontalAlignment="Left" Margin="530,250,0,0" Text="Número" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="120" HorizontalTextAlignment="Right"/>
         <TextBox x:Name="textBoxDestinoDomicilio1" HorizontalAlignment="Left" Margin="655,218,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="385" BorderThickness="1,1,1,1" Background="#66C6D7DC" TabIndex="25"/>
         <TextBlock x:Name="labelDestinoPiso" HorizontalAlignment="Left" Margin="734,250,0,0" Text="Piso" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="64" HorizontalTextAlignment="Right"/>
@@ -57,6 +53,10 @@
         <TextBox x:Name="textBoxTelefono1" HorizontalAlignment="Left" Margin="620,119,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" RenderTransformOrigin="1.824,0.625" Width="210" BorderThickness="1,1,1,1" Background="#66C6D7DC" IsReadOnly="True" TabIndex="21"/>
         <TextBox x:Name="textBoxNombres" HorizontalAlignment="Left" Margin="620,87,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" RenderTransformOrigin="1.824,0.625" Width="420" BorderThickness="1,1,1,1" AcceptsReturn="True" Background="#66C6D7DC" IsReadOnly="True" TabIndex="20"/>
         <TextBlock x:Name="labelFecha" HorizontalAlignment="Left" Margin="14,96,0,0" Text="Fecha" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.92,-0.053" Height="23" Width="140" HorizontalTextAlignment="Right"/>
+        <Button x:Name="BtnFechaServicio" Content="Fecha" Margin="159,87,0,0" VerticalAlignment="Top" Width="238" Click="BtnCambioFechaInicial"/>
+        <Popup x:Name="PopUpFechaInicial">
+            <CalendarView x:Name="CalendarFechaServicio" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" SelectionMode="Single" SelectedDatesChanged="CambioDeFechaServicio"/>
+        </Popup>
         <TimePicker x:Name="controlHora" Margin="159,119,0,0" VerticalAlignment="Top" Width="238" ClockIdentifier="24HourClock" TabIndex="4" IsTabStop="True"/>
         <TextBlock x:Name="labelHora" HorizontalAlignment="Left" Margin="14,119,0,0" Text="Hora" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.92,-0.053" Height="32" Width="140" HorizontalTextAlignment="End"/>
         <TextBox x:Name="textBoxNroDeEnvio" HorizontalAlignment="Left" Margin="159,23,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" Width="311" HorizontalContentAlignment="Left" VerticalContentAlignment="Bottom" BorderThickness="1,1,1,1" Background="#66C6D7DC" TabIndex="1"/>
@@ -83,10 +83,14 @@
         <ComboBox x:Name="comboBoxOrigenPais" Margin="140,378,0,0" Width="385" BorderThickness="1,1,1,1" Background="#66C6D7DC" Grid.ColumnSpan="2" IsEditable="True" TabIndex="14"/>
         <TextBlock x:Name="labelObservaciones" HorizontalAlignment="Left" Margin="15,486,0,0" Text="Observaciones" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
         <TextBox x:Name="textBoxObservaciones" HorizontalAlignment="Left" Margin="140,486,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="385" BorderThickness="1,1,1,1" Background="#66C6D7DC" Height="96" AcceptsReturn="True" TabIndex="16"/>
-        <TextBlock x:Name="labelEntrega" HorizontalAlignment="Left" Margin="530,486,0,0" Text="Entrega" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
+        <TextBlock x:Name="labelEntrega" HorizontalAlignment="Left" Margin="530,493,0,0" Text="Entrega" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
+        <Button x:Name="BtnFechaEntrega" Content="Fecha" Margin="655,488,0,0" VerticalAlignment="Top" Width="147" Click="BtnCambioFechaEntrega" Height="30"/>
+        <Popup x:Name="PopUpFechaEntrega">
+            <CalendarView x:Name="CalendarFechaEntrega" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" SelectionMode="Single" SelectedDatesChanged="CambioDeFechaEntrega"/>
+        </Popup>
+        <TimePicker x:Name="controlHoraEntrega" Margin="802,488,0,0" VerticalAlignment="Top" Width="238" ClockIdentifier="24HourClock" TabIndex="4" IsTabStop="True"/>
         <TextBlock x:Name="labelRecepcion" HorizontalAlignment="Left" Margin="530,518,0,0" Text="Recepción" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
         <TextBlock x:Name="labelTiempoDeEspera" HorizontalAlignment="Left" Margin="530,550,0,0" Text="T. de Espera" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
-        <TextBox x:Name="textBoxEntrega" HorizontalAlignment="Left" Margin="655,486,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="385" BorderThickness="1,1,1,1" Background="#66C6D7DC" TabIndex="39"/>
         <TextBox x:Name="textBoxRecepcion" HorizontalAlignment="Left" Margin="655,518,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="385" BorderThickness="1,1,1,1" Background="#66C6D7DC" TabIndex="40"/>
         <TextBox x:Name="textBoxTiempoDeEspera" HorizontalAlignment="Left" Margin="655,550,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="385" BorderThickness="1,1,1,1" Background="#66C6D7DC" TabIndex="41"/>
         <TextBlock x:Name="labelDescripcion" HorizontalAlignment="Left" Margin="15,410,0,0" Text="Descripción" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
@@ -160,5 +164,6 @@
         <TextBlock x:Name="labelCompras" HorizontalAlignment="Left" Margin="894,410,0,0" Text="Compras" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="77" HorizontalTextAlignment="Right"/>
         <TextBlock x:Name="labelOtros" HorizontalAlignment="Left" Margin="894,442,0,0" Text="Otros" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="77" HorizontalTextAlignment="Right"/>
         <Custom1:MapControl x:Name="mapControlBikeMessenger" Visibility="Collapsed" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Stretch"/>
+        
     </Grid>
 </Page>

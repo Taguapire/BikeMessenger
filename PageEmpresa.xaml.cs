@@ -41,7 +41,7 @@ namespace BikeMessenger
             RellenarCombos();
 
             EmpresaIOArray = BM_Database_Empresa.BuscarEmpresa(LvrTransferVar.PENTALPHA_ID);
-
+            //EmpresaIOArray = BM_Database_Empresa.BuscarEmpresa();
             if (EmpresaIOArray != null && EmpresaIOArray.Count > 0)
             {
                 EmpresaIO = EmpresaIOArray[0];
