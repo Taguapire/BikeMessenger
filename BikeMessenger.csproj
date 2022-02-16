@@ -180,6 +180,9 @@
     <Compile Include="PentalphaCripto.cs" />
     <Compile Include="PentalphaJson.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegistroXMPP.xaml.cs">
+      <DependentUpon>RegistroXMPP.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TransferVar.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -287,6 +290,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="PageServicios.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="RegistroXMPP.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
