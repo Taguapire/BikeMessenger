@@ -12,6 +12,24 @@
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick" Background="#FF5FCBE8">
 
-    <Grid Width="500" Height="300" Background="#FF1A8DB3">
+    <Grid Width="500" Height="245" Background="#FF1A8DB3">
+        <TextBlock HorizontalAlignment="Left" Margin="3,17,0,0" TextWrapping="Wrap" Text="Pentalpha ID" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="28,49,0,0" TextWrapping="Wrap" Text="Empresa" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="46,81,0,0" TextWrapping="Wrap" Text="RutID" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="264,81,0,0" TextWrapping="Wrap" Text="Dig. Ver." VerticalAlignment="Top" Width="54"/>
+        <TextBlock HorizontalAlignment="Left" Margin="33,0,0,0" TextWrapping="Wrap" Text="Usuario" VerticalAlignment="Center"/>
+        <TextBlock HorizontalAlignment="Left" Margin="281,113,0,0" TextWrapping="Wrap" Text="Clave" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="32,145,0,0" TextWrapping="Wrap" Text="Remoto" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="40,177,0,0" TextWrapping="Wrap" Text="Propio" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="32,209,0,0" TextWrapping="Wrap" Text="Licencia" VerticalAlignment="Top"/>
+        <TextBox x:Name="TBoxPentalphaId" HorizontalAlignment="Left" Margin="86,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="404" TabIndex="1" IsReadOnly="True"/>
+        <TextBox x:Name="TBoxEmpresa" HorizontalAlignment="Left" Margin="86,42,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="404" TabIndex="2" IsReadOnly="True"/>
+        <TextBox x:Name="TBoxRutId" HorizontalAlignment="Left" Margin="86,74,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="158" TabIndex="3" IsReadOnly="True"/>
+        <TextBox x:Name="TBoxDigVer" HorizontalAlignment="Left" Margin="324,74,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" TabIndex="4" IsReadOnly="True"/>
+        <TextBox x:Name="TBoxClave" HorizontalAlignment="Left" Margin="324,106,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="166" TabIndex="6"/>
+        <TextBox x:Name="TBoxUsuario" HorizontalAlignment="Left" Margin="86,106,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="158" TabIndex="5"/>
+        <TextBox x:Name="TBoxRemoto" HorizontalAlignment="Left" Margin="86,138,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="404" TabIndex="7" IsReadOnly="True"/>
+        <TextBox x:Name="TBoxPropio" HorizontalAlignment="Left" Margin="87,170,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="403" TabIndex="8" IsReadOnly="True"/>
+        <TextBox x:Name="TBoxLicencia" HorizontalAlignment="Left" Margin="87,202,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="403" TabIndex="9" IsReadOnly="True"/>
     </Grid>
 </ContentDialog>

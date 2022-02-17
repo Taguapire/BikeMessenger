@@ -243,6 +243,12 @@ namespace BikeMessenger
                 RESPALDO = "";
             }
         }
+
+        private void BtnConfiguraciónUsuarioClick(object sender, RoutedEventArgs e)
+        {
+            RegistroXMPP dialogXMPP = new RegistroXMPP();
+            _ = dialogXMPP.ShowAsync();
+        }
     }
 }
 
