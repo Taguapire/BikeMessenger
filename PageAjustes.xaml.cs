@@ -23,15 +23,14 @@ namespace BikeMessenger
         {
             InitializeComponent();
 
-            if (LvrTransferVar.SincronizarBaseLocal())
-            {
-                checkBoxActivarSQLite.IsChecked = LvrTransferVar.SincronizarBaseLocal();
-                LvrTransferVar.ESTADOPARAMETROS = "S";
-                LvrTransferVar.BASEDEDATOSLOCAL = "S";
-                textBoxDirectorioActual.Text = LvrTransferVar.DIRECTORIO_BASE_LOCAL;
-                textBoxDirectorioDeRespaldos.Text = LvrTransferVar.DIRECTORIO_RESPALDOS;
-                _ = ActualizarGrillaDerespaldos();
-            }
+            // En Estudio
+            checkBoxActivarSQLite.IsChecked = true;
+            LvrTransferVar.ESTADOPARAMETROS = "S";
+            LvrTransferVar.BASEDEDATOSLOCAL = "S";
+
+            textBoxDirectorioActual.Text = LvrTransferVar.DIRECTORIO_BASE_LOCAL;
+            textBoxDirectorioDeRespaldos.Text = LvrTransferVar.DIRECTORIO_RESPALDOS;
+            _ = ActualizarGrillaDerespaldos();
         }
 
         private void BtnSalirAjustes(object sender, RoutedEventArgs e)
@@ -246,8 +245,29 @@ namespace BikeMessenger
 
         private void BtnConfiguraciónUsuarioClick(object sender, RoutedEventArgs e)
         {
+            PentalphaJson localPentalphaJson = new PentalphaJson();
+
+            localPentalphaJson.PENTALPHA = LvrTransferVar.PENTALPHA_ID;
+            localPentalphaJson.EMPRESA = LvrTransferVar.EMP_NOMBRE;
+            localPentalphaJson.RUTID = LvrTransferVar.EMP_RUTID;
+            localPentalphaJson.DIGVER = LvrTransferVar.EMCLI_DIGVER;
+            localPentalphaJson.USUARIO = LvrTransferVar.USUARIO;
+            localPentalphaJson.CLAVE = LvrTransferVar.CLAVE;
+            localPentalphaJson.REMOTO = LvrTransferVar.REMOTO;
+            localPentalphaJson.PROPIO = LvrTransferVar.PROPIO;
+            localPentalphaJson.LICENCIA = LvrTransferVar.LICENCIA;
+
             RegistroXMPP dialogXMPP = new RegistroXMPP();
+            dialogXMPP.localPentalphaJson = localPentalphaJson;
+
+            dialogXMPP.MemoriaPantalla();
+
             _ = dialogXMPP.ShowAsync();
+        }
+
+        private void CheckBoxActivarSQLiteClick(object sender, RoutedEventArgs e)
+        {
+            checkBoxActivarSQLite.IsChecked = true;
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace BikeMessenger
 {
-    internal class PentalphaJson
+    public class PentalphaJson
     {
         public string PENTALPHA { get; set; }
         public string EMPRESA { get; set; }

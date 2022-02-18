@@ -50,6 +50,11 @@ namespace BikeMessenger
                     LlenarPantallaConDb();
 
                     LvrTransferVar.PENTALPHA_ID = EmpresaIO.PENTALPHA;
+                    LvrTransferVar.EMP_PENTALPHA = EmpresaIO.PENTALPHA;
+                    LvrTransferVar.EMP_NOMBRE = EmpresaIO.NOMBRE;
+                    LvrTransferVar.EMP_RUTID = EmpresaIO.RUTID;
+                    LvrTransferVar.EMCLI_DIGVER = EmpresaIO.DIGVER;
+
                     LvrTransferVar.ActualizarPentalphaId();
                     LvrTransferVar.EscribirValoresDeAjustes();
                     LvrTransferVar.LeerValoresDeAjustes();
@@ -264,6 +269,12 @@ namespace BikeMessenger
             if (BM_Database_Empresa.AgregarEmpresa(EmpresaIO))
             {
                 LvrTransferVar.PENTALPHA_ID = EmpresaIO.PENTALPHA;
+                LvrTransferVar.PENTALPHA_ID = EmpresaIO.PENTALPHA;
+                LvrTransferVar.EMP_PENTALPHA = EmpresaIO.PENTALPHA;
+                LvrTransferVar.EMP_NOMBRE = EmpresaIO.NOMBRE;
+                LvrTransferVar.EMP_RUTID = EmpresaIO.RUTID;
+                LvrTransferVar.EMCLI_DIGVER = EmpresaIO.DIGVER;
+
                 LvrTransferVar.ActualizarPentalphaId();
                 LvrTransferVar.EscribirValoresDeAjustes();
                 LvrTransferVar.LeerValoresDeAjustes();
@@ -293,6 +304,10 @@ namespace BikeMessenger
             if (BM_Database_Empresa.ModificarEmpresa(EmpresaIO))
             {
                 LvrTransferVar.PENTALPHA_ID = EmpresaIO.PENTALPHA;
+                LvrTransferVar.EMP_PENTALPHA = EmpresaIO.PENTALPHA;
+                LvrTransferVar.EMP_NOMBRE = EmpresaIO.NOMBRE;
+                LvrTransferVar.EMP_RUTID = EmpresaIO.RUTID;
+                LvrTransferVar.EMCLI_DIGVER = EmpresaIO.DIGVER;
                 LvrTransferVar.ActualizarPentalphaId();
                 LvrTransferVar.EscribirValoresDeAjustes();
                 LvrTransferVar.LeerValoresDeAjustes();
@@ -320,7 +335,11 @@ namespace BikeMessenger
 
             if (BM_Database_Empresa.BorrarEmpresa(EmpresaIO.PENTALPHA))
             {
-                LvrTransferVar.PENTALPHA_ID = EmpresaIO.PENTALPHA;
+                LvrTransferVar.PENTALPHA_ID = "";
+                LvrTransferVar.EMP_PENTALPHA = "";
+                LvrTransferVar.EMP_NOMBRE = "";
+                LvrTransferVar.EMP_RUTID = "";
+                LvrTransferVar.EMCLI_DIGVER = "";
                 LvrTransferVar.ActualizarPentalphaId();
                 LvrTransferVar.EscribirValoresDeAjustes();
                 LvrTransferVar.LeerValoresDeAjustes();
@@ -448,6 +467,7 @@ namespace BikeMessenger
             // Valores de Empresa
             LvrTransferVar.PENTALPHA_ID = pPentalpha;
             LvrTransferVar.EMP_PENTALPHA = pPentalpha;
+            
             // Valores de Personal
             LvrTransferVar.PER_PENTALPHA = pPentalpha;
             // Valores de Recursos
