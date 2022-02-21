@@ -27,6 +27,8 @@ namespace BikeMessenger
             checkBoxActivarSQLite.IsChecked = true;
             LvrTransferVar.ESTADOPARAMETROS = "S";
             LvrTransferVar.BASEDEDATOSLOCAL = "S";
+            BtnConfiguraciónUsuario.IsEnabled = (LvrTransferVar.MOBILES_XMPP == "S");
+            checkBoxActivarXMPP.IsChecked = (LvrTransferVar.MOBILES_XMPP == "S");
 
             textBoxDirectorioActual.Text = LvrTransferVar.DIRECTORIO_BASE_LOCAL;
             textBoxDirectorioDeRespaldos.Text = LvrTransferVar.DIRECTORIO_RESPALDOS;
@@ -40,8 +42,6 @@ namespace BikeMessenger
 
         private void BtnGrabarCambios(object sender, RoutedEventArgs e)
         {
-            LvrTransferVar.ESTADOPARAMETROS = "NADA";
-
             if ((bool)checkBoxActivarSQLite.IsChecked)
             {
                 LvrTransferVar.ESTADOPARAMETROS = "S";
@@ -243,7 +243,7 @@ namespace BikeMessenger
             }
         }
 
-        private void BtnConfiguraciónUsuarioClick(object sender, RoutedEventArgs e)
+        private async void BtnConfiguraciónUsuarioClick(object sender, RoutedEventArgs e)
         {
             PentalphaJson localPentalphaJson = new PentalphaJson();
 
@@ -262,12 +262,42 @@ namespace BikeMessenger
 
             dialogXMPP.MemoriaPantalla();
 
-            _ = dialogXMPP.ShowAsync();
-        }
+            var Resultado = await dialogXMPP.ShowAsync();
+
+            if (Resultado == ContentDialogResult.Primary)
+            {
+                LvrTransferVar.PENTALPHA_ID = localPentalphaJson.PENTALPHA;
+                LvrTransferVar.EMP_NOMBRE = localPentalphaJson.EMPRESA;
+                LvrTransferVar.EMP_RUTID = localPentalphaJson.RUTID;
+                LvrTransferVar.EMCLI_DIGVER = localPentalphaJson.DIGVER;
+                LvrTransferVar.USUARIO = localPentalphaJson.USUARIO;
+                LvrTransferVar.CLAVE = localPentalphaJson.CLAVE;
+                LvrTransferVar.REMOTO = localPentalphaJson.REMOTO;
+                LvrTransferVar.PROPIO = localPentalphaJson.PROPIO;
+                LvrTransferVar.LICENCIA = localPentalphaJson.LICENCIA;
+            }
+        }    
 
         private void CheckBoxActivarSQLiteClick(object sender, RoutedEventArgs e)
         {
             checkBoxActivarSQLite.IsChecked = true;
+        }
+
+        private void CheckBoxActivarXMPPClick(object sender, RoutedEventArgs e)
+        {
+            CheckBox VerificarActivación = (CheckBox)sender;
+            
+            if ((bool)VerificarActivación.IsChecked)
+            {
+                LvrTransferVar.MOBILES_XMPP = "S";
+                BtnConfiguraciónUsuario.IsEnabled = true;
+            }
+            else
+            {
+                LvrTransferVar.MOBILES_XMPP = "N";
+                BtnConfiguraciónUsuario.IsEnabled = false;
+            }
+            LvrTransferVar.EscribirValoresDeAjustes();
         }
     }
 }

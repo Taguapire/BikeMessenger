@@ -35,5 +35,6 @@
         <TextBlock HorizontalAlignment="Left" Margin="51,87,0,0" TextWrapping="Wrap" Text="Configuración de Usuario Administrador" VerticalAlignment="Top"/>
         <Button x:Name="BtnConfiguraciónUsuario" Content="Administrador" Margin="320,81,0,0" VerticalAlignment="Top" Width="225" Click="BtnConfiguraciónUsuarioClick"/>
         <Button x:Name="btnRestaurarBaseDeDatos" Content="Restaurar Base de Datos" Height="32" Margin="690,224,0,0" VerticalAlignment="Top" Width="225" Click="BtnEventoCopiarBaseDeDatos" ClickMode="Press" BorderBrush="#FF1D0404"/>
+        <CheckBox x:Name="checkBoxActivarXMPP" Content="Comunicación con Mobiles" Margin="675,80,0,0" VerticalAlignment="Top" Width="485" IsChecked="True" Click="CheckBoxActivarXMPPClick"/>
     </Grid>
 </Page>

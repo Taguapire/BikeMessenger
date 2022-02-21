@@ -31,15 +31,15 @@ namespace BikeMessenger
         {
             InitializeComponent();
             InicializarBasesDeDatos();
-            if (LvrTransferVar.ESTADOPARAMETROS == "NADA")
+            if (LvrTransferVar.MOBILES_XMPP == "S")
             {
-                LvrTransferVar.ESTADOPARAMETROS = "S";
-                LvrTransferVar.BASEDEDATOSLOCAL = "S";
-                LvrTransferVar.EscribirValoresDeAjustes();
+                IniciarXMPP(LvrTransferVar.USUARIO, LvrTransferVar.CLAVE, LvrTransferVar.DOMINIO_XMPP);
             }
-            IniciarXMPP("pruebaswindows", "Pruebas1970", "finanven.ddns.net");
         }
 
+        //************************************************************************************
+        // Conexión Principal al Servidor XMPP
+        //************************************************************************************
         private async void IniciarXMPP(string pUsername, string pPassword, string pXmppDomain)
         {
             TaskScheduler UISyncContext = TaskScheduler.FromCurrentSynchronizationContext();
@@ -60,25 +60,41 @@ namespace BikeMessenger
 
                 await xmppClient.SendPresenceAsync(Show.None, "Online");
 
-                xmppClient.XmppXElementStreamObserver
+                _ = xmppClient.XmppXElementStreamObserver
                     .Where(el => el is Message)
                     .Subscribe(async el =>
                     {
                         MensajeNuevoRecibido = el.Cast<Message>().Body;
                         MessageDialog dialog = new MessageDialog(MensajeNuevoRecibido);
-                        dialog.Title = "Mensaje De: " + el.Cast<Message>().From.User;
+                        string Usuario = "";
+                        Usuario = el.Cast<Message>().From.User;
+                        if (Usuario != "" && Usuario != null)
+                        {
+                            Usuario = el.Cast<Message>().From.User;
+                        }
+                        else
+                        {
+                            Usuario = "ADMINISTRADOR";
+                        }
+                        dialog.Title = "Mensaje De: " + Usuario;
                         dialog.Options = MessageDialogOptions.None;
                         await Task.Factory.StartNew(() => { _ = dialog.ShowAsync(); }, new System.Threading.CancellationToken(), TaskCreationOptions.PreferFairness, UISyncContext);
                     });
             }
-
+            catch (Matrix.AuthenticationException)
+            {
+                LvrTransferVar.MOBILES_XMPP = "N";
+                LvrTransferVar.EscribirValoresDeAjustes();
+            }
             catch (DotNetty.Transport.Channels.ConnectException)
             {
-                ;
+                LvrTransferVar.MOBILES_XMPP = "N";
+                LvrTransferVar.EscribirValoresDeAjustes();
             }
             catch (System.Net.Sockets.SocketException)
             {
-                ;
+                LvrTransferVar.MOBILES_XMPP = "N";
+                LvrTransferVar.EscribirValoresDeAjustes();
             }
         }
 
@@ -86,7 +102,10 @@ namespace BikeMessenger
         {
             try
             {
-                await xmppClient.DisconnectAsync();
+                if (LvrTransferVar.MOBILES_XMPP == "S")
+                {
+                    await xmppClient.DisconnectAsync();
+                }
             }
             catch (DotNetty.Transport.Channels.ConnectException)
             {
@@ -214,6 +233,7 @@ namespace BikeMessenger
                             }
                             break;
                         case "Salir":
+                            TerminarXMPP();
                             Application.Current.Exit();
                             break;
                         default:

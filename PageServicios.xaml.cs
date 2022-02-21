@@ -160,7 +160,17 @@ namespace BikeMessenger
                     AvisoEnvioData.LONGITUDDESTINO = ServicioIO.DLONGITUD;
                     AvisoEnvioData.DISTANCIA = ServicioIO.DISTANCIA;
                     AsignarServicio.ProcesarJson(AvisoEnvioData);
-                    _ = xmppClient.SendChatMessageAsync("luis@finanven.ddns.net", AsignarServicio.CadenaJsonXMPP);
+                    if (LvrTransferVar.MOBILES_XMPP == "S")
+                    {
+                        string lMensajero = "";
+                        lMensajero += ServicioIO.MENSAJERORUT;
+                        lMensajero += "-";
+                        lMensajero += ServicioIO.MENSAJERODIGVER;
+                        lMensajero += "@";
+                        lMensajero +=
+                        lMensajero += LvrTransferVar.DOMINIO_XMPP;
+                        _ = xmppClient.SendChatMessageAsync(lMensajero, AsignarServicio.CadenaJsonXMPP);
+                    }
                 }
                 catch (DotNetty.Transport.Channels.ConnectException)
                 {
@@ -204,7 +214,16 @@ namespace BikeMessenger
                     AvisoEnvioData.LONGITUDDESTINO = ServicioIO.DLONGITUD;
                     AvisoEnvioData.DISTANCIA = ServicioIO.DISTANCIA;
                     AsignarServicio.ProcesarJson(AvisoEnvioData);
-                    _ = xmppClient.SendChatMessageAsync("luis@finanven.ddns.net", AsignarServicio.CadenaJsonXMPP);
+                    if (LvrTransferVar.MOBILES_XMPP == "S")
+                    {
+                        string lMensajero = "";
+                        lMensajero += ServicioIO.MENSAJERORUT;
+                        lMensajero += "-";
+                        lMensajero += ServicioIO.MENSAJERODIGVER;
+                        lMensajero += "@";
+                        lMensajero += LvrTransferVar.DOMINIO_XMPP;
+                        _ = xmppClient.SendChatMessageAsync(lMensajero, AsignarServicio.CadenaJsonXMPP);
+                    }
                 }
                 catch (DotNetty.Transport.Channels.ConnectException)
                 {
@@ -633,7 +652,10 @@ namespace BikeMessenger
         {
             try
             {
-                _ = await xmppClient.DisconnectAsync();
+                if (LvrTransferVar.MOBILES_XMPP == "S")
+                {
+                    await xmppClient.DisconnectAsync();
+                }
             }
 
             catch (DotNetty.Transport.Channels.ConnectException)

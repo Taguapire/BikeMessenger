@@ -18,6 +18,9 @@ namespace BikeMessenger
         public string BASEDEDATOSLOCAL { get; set; }        // "N";
                                                             //--------------------------------------------------------------------
 
+        // Comunicación con Mobiles
+        public string MOBILES_XMPP { get; set; }
+
         // Valores de Empresa
         public string EMP_PENTALPHA { get; set; }
         public string EMP_NOMBRE { get; set; }
@@ -44,23 +47,31 @@ namespace BikeMessenger
         public string SER_PENTALPHA { get; set; }
         public string SER_NROENVIO { get; set; }
 
-        // Valores de XMPP
+        // Valores de Usuario XMPP
         public string USUARIO { get; set; }
         public string CLAVE { get; set; }
         public string REMOTO { get; set; }
         public string PROPIO { get; set; }
         public string LICENCIA { get; set; }
 
-        public string PantallaAnterior { get; set; }
+        // Dominio XMPP
+        public string DOMINIO_XMPP = "finanven.ddns.net";
+        public string USUARIO_DOMINIO { get; set; }
 
+        // Controles
+        public string PantallaAnterior { get; set; }
 
         public TransferVar()
         {
+            // Principales de Bases de Datos
             ESTADOPARAMETROS = (string)localSettings.Values["ESTADOPARAMETROS"];
             DIRECTORIO_RESPALDOS = (string)localSettings.Values["DIRECTORIO_RESPALDOS"];
             DIRECTORIO_BASE_LOCAL = ApplicationData.Current.LocalFolder.Path;
             PENTALPHA_ID = (string)localSettings.Values["PENTALPHA_ID"];
             BASEDEDATOSLOCAL = (string)localSettings.Values["BASEDEDATOSLOCAL"];
+
+            // Mobiles XMPP
+            MOBILES_XMPP = (string)localSettings.Values["MOBILES_XMPP"];
 
             // Valores de Empresa
             EMP_PENTALPHA = (string)localSettings.Values["EMP_PENTALPHA"];
@@ -94,6 +105,9 @@ namespace BikeMessenger
             REMOTO = (string)localSettings.Values["REMOTO"];
             PROPIO = (string)localSettings.Values["PROPIO"];
             LICENCIA = (string)localSettings.Values["LICENCIA"];
+
+            // Usuario Dominio
+            USUARIO_DOMINIO = USUARIO + "@" + DOMINIO_XMPP;
         }
 
         public void EscribirValoresDeAjustes()
@@ -106,6 +120,9 @@ namespace BikeMessenger
             localSettings.Values["PENTALPHA_ID"] = PENTALPHA_ID;
 
             localSettings.Values["BASEDEDATOSLOCAL"] = BASEDEDATOSLOCAL;
+
+            // Mobiles XMPP
+            localSettings.Values["MOBILES_XMPP"] = MOBILES_XMPP;
 
             // Valores de Empresa
             localSettings.Values["EMP_PENTALPHA"] = EMP_PENTALPHA;
@@ -139,15 +156,22 @@ namespace BikeMessenger
             localSettings.Values["REMOTO"] = REMOTO;
             localSettings.Values["PROPIO"] = PROPIO;
             localSettings.Values["LICENCIA"] = LICENCIA;
+
+            // Usuario Dominio
+            USUARIO_DOMINIO = USUARIO + "@" + DOMINIO_XMPP;
         }
 
         public void LeerValoresDeAjustes()
         {
+            // 
             ESTADOPARAMETROS = (string)localSettings.Values["ESTADOPARAMETROS"];
             DIRECTORIO_RESPALDOS = (string)localSettings.Values["DIRECTORIO_RESPALDOS"];
             DIRECTORIO_BASE_LOCAL = (string)localSettings.Values["DIRECTORIO_BASE_LOCAL"];
             PENTALPHA_ID = (string)localSettings.Values["PENTALPHA_ID"];
             BASEDEDATOSLOCAL = (string)localSettings.Values["BASEDEDATOSLOCAL"];
+
+            // Mobiles XMPP
+            MOBILES_XMPP = (string)localSettings.Values["MOBILES_XMPP"];
 
             // Valores de Empresa
             EMP_PENTALPHA = (string)localSettings.Values["EMP_PENTALPHA"];
@@ -181,6 +205,9 @@ namespace BikeMessenger
             REMOTO = (string)localSettings.Values["REMOTO"];
             PROPIO = (string)localSettings.Values["PROPIO"];
             LICENCIA = (string)localSettings.Values["LICENCIA"];
+
+            // Usuario Dominio
+            USUARIO_DOMINIO = USUARIO + "@" + DOMINIO_XMPP;
         }
 
         public void ActualizarPentalphaId()
