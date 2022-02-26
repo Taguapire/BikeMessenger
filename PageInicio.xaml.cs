@@ -123,6 +123,11 @@ namespace BikeMessenger
         {
             Application.Current.Exit();
         }
+
+        private void RevisarDetalleCotizacionServicio(object sender, Windows.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)
+        {
+
+        }
     }
 
     internal class GridListViewServicios
