@@ -71,6 +71,7 @@ namespace BikeMessenger
                         if (Usuario != "" && Usuario != null)
                         {
                             Usuario = el.Cast<Message>().From.User;
+                            ProcesarMensajeRecibido(MensajeNuevoRecibido);
                         }
                         else
                         {
@@ -101,6 +102,28 @@ namespace BikeMessenger
                 LvrTransferVar.MOBILES_XMPP = "N";
                 LvrTransferVar.EscribirValoresDeAjustes();
             }
+        }
+
+        public Boolean ProcesarMensajeRecibido(string MensajeJSON)
+        {
+            // Procesar aqui el mensaje recivido
+            // Tipos de Mensajes:
+            //  01.- Aviso General del Administrador
+            //  02.- Aviso de Aceptación de Servicio
+            //  03.- Aviso de Rechazo de Servicio
+            //  04.- Aviso de Entrega de Servicio
+            //  05.- Aviso de No entrega de Servicio
+            //  06.- Aviso de Cancelación de Servicio
+            //  07.- Aviso de Solicitud de Cotización
+            //  08.- Aviso de Aceptación de Cotización
+            //  09.- Aviso de Solicitud de Soporte
+            //  10.- Aviso de Reclamo de Cliente
+            //  11.- Aviso de Puntaje de Evaluación de Servicio
+            //  12.- Aviso de Pago de Servicio por Tarjeta
+            //  13.- Aviso de Pago de Servicio por Transferencia
+            //  14.- Aviso de Pago de Servicio en Efectivo
+            //  15.- Aviso de Traspaso de Servicio
+            return true;
         }
 
         private async void TerminarXMPP()
