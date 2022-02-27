@@ -139,12 +139,14 @@
     </Compile>
     <Compile Include="BM_CCRP.cs" />
     <Compile Include="Bm_Cliente_Database.cs" />
+    <Compile Include="Bm_Cotizacion_Database.cs" />
     <Compile Include="Bm_Empresa_Database.cs" />
     <Compile Include="Bm_Personal_Database.cs" />
     <Compile Include="Bm_Recurso_Database.cs" />
     <Compile Include="Bm_Servicio_Database.cs" />
     <Compile Include="ComunicacionXMPP.cs" />
     <Compile Include="JsonBikeMessengerCliente.cs" />
+    <Compile Include="JsonBikeMessengerCotizacion.cs" />
     <Compile Include="JsonBikeMessengerEmpresa.cs" />
     <Compile Include="JsonBikeMessengerPersonal.cs" />
     <Compile Include="JsonBikeMessengerRecurso.cs" />
@@ -161,6 +163,9 @@
     </Compile>
     <Compile Include="PageClientes.xaml.cs">
       <DependentUpon>PageClientes.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PageCotizacion.xaml.cs">
+      <DependentUpon>PageCotizacion.xaml</DependentUpon>
     </Compile>
     <Compile Include="PageEmpresa.xaml.cs">
       <DependentUpon>PageEmpresa.xaml</DependentUpon>
@@ -270,6 +275,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="PageClientes.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PageCotizacion.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

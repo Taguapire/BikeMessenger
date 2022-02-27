@@ -40,6 +40,11 @@
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE779;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <NavigationViewItem x:Name="MenuNav_Cotizacion" Content="Cotización" Tag="Cotizacion_Page" HorizontalAlignment="Stretch">
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE835;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <NavigationViewItem x:Name="MenuNav_Servicios" Content="Servicios" Tag="Servicios_Page" HorizontalAlignment="Stretch">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE835;"/>

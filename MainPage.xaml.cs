@@ -96,6 +96,11 @@ namespace BikeMessenger
                 LvrTransferVar.MOBILES_XMPP = "N";
                 LvrTransferVar.EscribirValoresDeAjustes();
             }
+            catch (System.IO.IOException)
+            {
+                LvrTransferVar.MOBILES_XMPP = "N";
+                LvrTransferVar.EscribirValoresDeAjustes();
+            }
         }
 
         private async void TerminarXMPP()
@@ -106,6 +111,10 @@ namespace BikeMessenger
                 {
                     await xmppClient.DisconnectAsync();
                 }
+            }
+            catch (DotNetty.Transport.Channels.ClosedChannelException)
+            {
+                ;
             }
             catch (DotNetty.Transport.Channels.ConnectException)
             {
@@ -153,7 +162,8 @@ namespace BikeMessenger
                             if (BM_Ultimo_Item != BM_ItemContent)
                             {
                                 BM_Ultimo_Item = BM_ItemContent;
-                                _ = CuadroDeContenido.Navigate(typeof(PageInicio));
+                                BM_NavPag.Header = "Servicios";
+                                _ = CuadroDeContenido.Navigate(typeof(PageInicio), xmppClient);
                             }
                             break;
 
@@ -166,8 +176,9 @@ namespace BikeMessenger
                             if (BM_Ultimo_Item != BM_ItemContent)
                             {
                                 BM_Ultimo_Item = BM_ItemContent;
+                                BM_NavPag.Header = "Edición de Empresa";
                                 BM_NavPag.IsBackEnabled = true;
-                                _ = CuadroDeContenido.Navigate(typeof(PageEmpresa));
+                                _ = CuadroDeContenido.Navigate(typeof(PageEmpresa), xmppClient);
                             }
                             break;
 
@@ -180,8 +191,9 @@ namespace BikeMessenger
                             if (BM_Ultimo_Item != BM_ItemContent)
                             {
                                 BM_Ultimo_Item = BM_ItemContent;
+                                BM_NavPag.Header = "Administración de Personal";
                                 BM_NavPag.IsBackEnabled = true;
-                                _ = CuadroDeContenido.Navigate(typeof(PagePersonal));
+                                _ = CuadroDeContenido.Navigate(typeof(PagePersonal), xmppClient);
                             }
                             break;
 
@@ -194,8 +206,9 @@ namespace BikeMessenger
                             if (BM_Ultimo_Item != BM_ItemContent)
                             {
                                 BM_Ultimo_Item = BM_ItemContent;
+                                BM_NavPag.Header = "Administración de Recursos";
                                 BM_NavPag.IsBackEnabled = true;
-                                _ = CuadroDeContenido.Navigate(typeof(PageRecursos));
+                                _ = CuadroDeContenido.Navigate(typeof(PageRecursos), xmppClient);
                             }
                             break;
                         case "Clientes":
@@ -207,8 +220,23 @@ namespace BikeMessenger
                             if (BM_Ultimo_Item != BM_ItemContent)
                             {
                                 BM_Ultimo_Item = BM_ItemContent;
+                                BM_NavPag.Header = "Administración de Clientes";
                                 BM_NavPag.IsBackEnabled = true;
-                                _ = CuadroDeContenido.Navigate(typeof(PageClientes));
+                                _ = CuadroDeContenido.Navigate(typeof(PageClientes), xmppClient);
+                            }
+                            break;
+                        case "Cotización":
+                            if (LvrTransferVar.ESTADOPARAMETROS == "NADA")
+                            {
+                                break;
+                            }
+
+                            if (BM_Ultimo_Item != BM_ItemContent)
+                            {
+                                BM_Ultimo_Item = BM_ItemContent;
+                                BM_NavPag.Header = "Cotizaciones Solicitadas";
+                                BM_NavPag.IsBackEnabled = true;
+                                _ = CuadroDeContenido.Navigate(typeof(PageCotizacion), xmppClient);
                             }
                             break;
                         case "Servicios":
@@ -220,6 +248,7 @@ namespace BikeMessenger
                             if (BM_Ultimo_Item != BM_ItemContent)
                             {
                                 BM_Ultimo_Item = BM_ItemContent;
+                                BM_NavPag.Header = "Administración de Servicios";
                                 BM_NavPag.IsBackEnabled = true;
                                 _ = CuadroDeContenido.Navigate(typeof(PageServicios), xmppClient);
                             }
@@ -228,8 +257,9 @@ namespace BikeMessenger
                             if (BM_Ultimo_Item != BM_ItemContent)
                             {
                                 BM_Ultimo_Item = BM_ItemContent;
+                                BM_NavPag.Header = "Configuración y Ajustes";
                                 BM_NavPag.IsBackEnabled = true;
-                                _ = CuadroDeContenido.Navigate(typeof(PageAjustes));
+                                _ = CuadroDeContenido.Navigate(typeof(PageAjustes), xmppClient);
                             }
                             break;
                         case "Salir":
@@ -301,6 +331,17 @@ namespace BikeMessenger
             DbVistaServicioCliMen += "left join TbBikeMessengerPersonal c ";
             DbVistaServicioCliMen += "on a.pentalpha = c.pentalpha AND a.mensajerorut = c.rutid AND a.mensajerodigver = c.digver ";
 
+            string DbVistaCotizacionCliMen = "";
+            DbVistaCotizacionCliMen += "CREATE VIEW if not exists Vista_Cotizacion_CliMen ";
+            DbVistaCotizacionCliMen += "as ";
+            DbVistaCotizacionCliMen += "select ";
+            DbVistaCotizacionCliMen += "cotizacion, ";
+            DbVistaCotizacionCliMen += "fechaentrega, ";
+            DbVistaCotizacionCliMen += "horaentrega, ";
+            DbVistaCotizacionCliMen += "nombre, ";
+            DbVistaCotizacionCliMen += "distancia ";
+            DbVistaCotizacionCliMen += "from TbBikeMessengerCotizacion ";
+
             try
             {
                 SQLiteConnection BM_ConexionLite = new SQLiteConnection(LvrTransferVar.DIRECTORIO_BASE_LOCAL + "\\BikeMessenger.db");
@@ -309,6 +350,7 @@ namespace BikeMessenger
                 _ = BM_ConexionLite.CreateTable<TbBikeMessengerPersonal>();
                 _ = BM_ConexionLite.CreateTable<TbBikeMessengerRecurso>();
                 _ = BM_ConexionLite.CreateTable<TbBikeMessengerCliente>();
+                _ = BM_ConexionLite.CreateTable<TbBikeMessengerCotizacion>();
                 _ = BM_ConexionLite.CreateTable<TbBikeMessengerServicio>();
                 _ = BM_ConexionLite.CreateTable<TbBikeMessengerComuna>();
                 _ = BM_ConexionLite.CreateTable<TbBikeMessengerCiudad>();
@@ -316,6 +358,7 @@ namespace BikeMessenger
                 _ = BM_ConexionLite.CreateTable<TbBikeMessengerPais>();
                 _ = BM_ConexionLite.Execute(DbVistaRecursosPropietario);
                 _ = BM_ConexionLite.Execute(DbVistaServicioCliMen);
+                _ = BM_ConexionLite.Execute(DbVistaCotizacionCliMen);
 
                 BM_ConexionLite.Close();
                 BM_ConexionLite.Dispose();
@@ -329,7 +372,7 @@ namespace BikeMessenger
 
         private void BM_NavPag_Unloaded(object sender, RoutedEventArgs e)
         {
-
+            ; 
         }
     }
 }

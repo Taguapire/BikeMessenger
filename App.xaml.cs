@@ -148,6 +148,7 @@ namespace BikeMessenger
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
             SuspendingDeferral deferral = e.SuspendingOperation.GetDeferral();
+            // Cierre de XMPP
             //TODO: Save application state and stop any background activity
             deferral.Complete();
         }

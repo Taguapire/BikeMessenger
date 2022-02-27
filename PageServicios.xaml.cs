@@ -657,7 +657,10 @@ namespace BikeMessenger
                     await xmppClient.DisconnectAsync();
                 }
             }
-
+            catch (DotNetty.Transport.Channels.ClosedChannelException)
+            {
+                ;
+            }
             catch (DotNetty.Transport.Channels.ConnectException)
             {
                 ;

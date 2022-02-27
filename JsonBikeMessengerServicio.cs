@@ -112,7 +112,7 @@ namespace BikeMessenger
         [Column("operacion")]
         public string OPERACION { get; set; }
         [PrimaryKey]
-        [Column("pkpersonal")]
+        [Column("pkservicio")]
         public string PKSERVICIO { get; set; }
         [Column("pentalpha")]
         public string PENTALPHA { get; set; }
