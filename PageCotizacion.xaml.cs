@@ -76,9 +76,12 @@ namespace BikeMessenger
                 GridCotizacionesLista.Add(new GridListViewCotizaciones
                 {
                     COTIZACION = results[i].COTIZACION,
+                    CLIENTE = results[i].NOMBRE,
+                    TIPOCARGA = results[i].TIPOCARGA,
+                    ORIGEN = results[i].ORIGEN,
+                    DESTINO = results[i].DESTINO,
                     FECHA_ENTREGA = results[i].FECHAENTREGA,
                     HORA_ENTREGA = results[i].HORAENTREGA,
-                    CLIENTE = results[i].NOMBRE,
                     DISTANCIA = results[i].DISTANCIA
                 });
             }
@@ -96,14 +99,23 @@ namespace BikeMessenger
                 case "COTIZACION":
                     e.Column.Header = "Nro Cotización";
                     break;
+                case "CLIENTE":
+                    e.Column.Header = "Cliente";
+                    break;
+                case "TIPOCARGA":
+                    e.Column.Header = "Tipo";
+                    break;
+                case "ORIGEN":
+                    e.Column.Header = "Dirección Origen";
+                    break;
+                case "DESTINO":
+                    e.Column.Header = "Dirección Destino";
+                    break;
                 case "FECHA_ENTREGA":
                     e.Column.Header = "Fecha de Entrega";
                     break;
                 case "HORA_ENTREGA":
                     e.Column.Header = "Hora de Entrega";
-                    break;
-                case "CLIENTE":
-                    e.Column.Header = "Cliente";
                     break;
                 case "DISTANCIA":
                     e.Column.Header = "Distancia";
@@ -126,17 +138,23 @@ namespace BikeMessenger
     internal class GridListViewCotizaciones
     {
         public string COTIZACION { get; set; }
+        public string CLIENTE { get; set; }
+        public string TIPOCARGA { get; set; }
+        public string ORIGEN { get; set; }
+        public string DESTINO { get; set; }
         public string FECHA_ENTREGA { get; set; }
         public string HORA_ENTREGA { get; set; }
-        public string CLIENTE { get; set; }
         public double DISTANCIA { get; set; }
 
         public GridListViewCotizaciones()
         {
             COTIZACION = "";
+            CLIENTE = "";
+            TIPOCARGA = "";
+            ORIGEN = "";
+            DESTINO = "";
             FECHA_ENTREGA = "";
             HORA_ENTREGA = "";
-            CLIENTE = "";
             DISTANCIA = 0;
         }
     }

@@ -102,6 +102,11 @@ namespace BikeMessenger
                 LvrTransferVar.MOBILES_XMPP = "N";
                 LvrTransferVar.EscribirValoresDeAjustes();
             }
+            catch (System.NullReferenceException)
+            {
+                LvrTransferVar.MOBILES_XMPP = "N";
+                LvrTransferVar.EscribirValoresDeAjustes();
+            }
         }
 
         public Boolean ProcesarMensajeRecibido(string MensajeJSON)
@@ -359,10 +364,12 @@ namespace BikeMessenger
             DbVistaCotizacionCliMen += "as ";
             DbVistaCotizacionCliMen += "select ";
             DbVistaCotizacionCliMen += "cotizacion, ";
+            DbVistaCotizacionCliMen += "nombre, ";
+            DbVistaCotizacionCliMen += "(ocalle + ' ' + onumero + ' ' + ocomuna) as origen, ";
+            DbVistaCotizacionCliMen += "(dcalle + ' ' + dnumero + ' ' + dcomuna) as destino, ";
             DbVistaCotizacionCliMen += "fechaentrega, ";
             DbVistaCotizacionCliMen += "horaentrega, ";
-            DbVistaCotizacionCliMen += "nombre, ";
-            DbVistaCotizacionCliMen += "distancia ";
+            DbVistaCotizacionCliMen += "distancia "; 
             DbVistaCotizacionCliMen += "from TbBikeMessengerCotizacion ";
 
             try

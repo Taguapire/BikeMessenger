@@ -5,12 +5,10 @@
     xmlns:local="using:BikeMessenger"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Custom="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    mc:Ignorable="d" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
-    <Page.Background>
-        <AcrylicBrush TintColor="#CC62B8EA"/>
-    </Page.Background>
+    NavigationCacheMode="Required"
+    mc:Ignorable="d">
     <Page.BottomAppBar>
-        <CommandBar x:Name="CommandBarBottomAjustes" DefaultLabelPosition="Right"  Background="#FFC5CCCF" HorizontalAlignment="Center">
+        <CommandBar x:Name="CommandBarBottomAjustes" DefaultLabelPosition="Right"  HorizontalAlignment="Center">
             <CommandBar.Content>
                 <TextBlock Text="Ajustes" Margin="12,8"/>
             </CommandBar.Content>
@@ -18,23 +16,23 @@
             <AppBarButton x:Name="appBarSalir" Icon="Go" Label="Salir" Click="BtnSalirAjustes"/>
         </CommandBar>
     </Page.BottomAppBar>
-    <Grid x:Name="GridAjustes" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
-        <Grid.Background>
-            <AcrylicBrush TintColor="#CC62B8EA"/>
-        </Grid.Background>
-        <TextBlock x:Name="labelDirectorioActual" Margin="37,162,0,0" Text="Directorio Base de Datos" TextWrapping="NoWrap" VerticalAlignment="Top" RenderTransformOrigin="0.92,-0.053" Height="28" HorizontalTextAlignment="Right" HorizontalAlignment="Left" Width="161"/>
-        <TextBox x:Name="textBoxDirectorioActual" HorizontalAlignment="Left" Margin="210,155,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" Width="705" HorizontalContentAlignment="Left" VerticalContentAlignment="Bottom" BorderThickness="1,1,1,1" IsReadOnly="True"/>
-        <Button x:Name="btnBuscarNuevoDirectorio" Content="Buscar Nuevo Directorio" Height="32" Margin="210,224,0,0" VerticalAlignment="Top" Width="225" Click="BtnEventoBuscarNuevoDirectorio" ClickMode="Press" BorderBrush="#FF1D0404"/>
-        <TextBox x:Name="textBoxDirectorioDeRespaldos" HorizontalAlignment="Left" Margin="210,187,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" Width="705" HorizontalContentAlignment="Left" VerticalContentAlignment="Bottom" BorderThickness="1,1,1,1" IsReadOnly="True"/>
-        <Button x:Name="btnCopiarBaseDeDatos" Content="Respaldar Base de Datos" Height="32" Margin="450,224,0,0" VerticalAlignment="Top" Width="225" Click="BtnEventoCopiarBaseDeDatos" ClickMode="Press" BorderBrush="#FF1D0404"/>
-        <TextBlock x:Name="labelDirectorioSqlite" HorizontalAlignment="Left" Margin="25,38,0,0" Text="Configuración de Bases de Datos y Almacenamientos  de Reportes y Archivos" TextWrapping="NoWrap" VerticalAlignment="Top" RenderTransformOrigin="0.92,-0.053" Height="32" Width="934" HorizontalTextAlignment="Center" FontWeight="Bold"/>
-        <TextBlock x:Name="labelDirectorioRespaldo" HorizontalAlignment="Left" Margin="37,194,0,0" Text="Directorio de Respaldo" TextWrapping="NoWrap" VerticalAlignment="Top" RenderTransformOrigin="0.92,-0.053" Height="28" Width="162" HorizontalTextAlignment="Right"/>
-        <CheckBox x:Name="checkBoxActivarSQLite" Content="Activa y configura los valores de conexión hacia una Base de Datos SQLite" Margin="49,118,0,0" VerticalAlignment="Top" Width="866" IsChecked="True" Click="CheckBoxActivarSQLiteClick"/>
-        <TextBlock x:Name="lblGrillaDeRespaldos" HorizontalAlignment="Left" Margin="49,281,0,0" TextWrapping="Wrap" Text="Listado de Respaldos Realizados" VerticalAlignment="Top" Width="234"/>
-        <Custom:DataGrid x:Name="dataGridRespaldos"  HeadersVisibility="Column" AlternatingRowBackground="LightGray" HorizontalAlignment="Left" Margin="49,305,0,0" VerticalAlignment="Top" Height="265" Width="866" BorderThickness="1,1,1,1" BorderBrush="#66000000" Background="#6626C7F7" GridLinesVisibility="All" IsReadOnly="True" />
-        <TextBlock HorizontalAlignment="Left" Margin="51,87,0,0" TextWrapping="Wrap" Text="Configuración de Usuario Administrador" VerticalAlignment="Top"/>
-        <Button x:Name="BtnConfiguraciónUsuario" Content="Administrador" Margin="320,81,0,0" VerticalAlignment="Top" Width="225" Click="BtnConfiguraciónUsuarioClick"/>
-        <Button x:Name="btnRestaurarBaseDeDatos" Content="Restaurar Base de Datos" Height="32" Margin="690,224,0,0" VerticalAlignment="Top" Width="225" Click="BtnEventoCopiarBaseDeDatos" ClickMode="Press" BorderBrush="#FF1D0404"/>
-        <CheckBox x:Name="checkBoxActivarXMPP" Content="Comunicación con Mobiles" Margin="675,80,0,0" VerticalAlignment="Top" Width="485" IsChecked="True" Click="CheckBoxActivarXMPPClick"/>
-    </Grid>
+    <RelativePanel x:Name="LayoutRoot" HorizontalAlignment="Left" VerticalAlignment="Center">
+        <Grid x:Name="GridAjustes">
+            <TextBlock x:Name="labelDirectorioActual" Margin="37,162,0,0" Text="Directorio Base de Datos" TextWrapping="NoWrap" VerticalAlignment="Top" RenderTransformOrigin="0.92,-0.053" Height="28" HorizontalTextAlignment="Right" HorizontalAlignment="Left" Width="161"/>
+            <TextBox x:Name="textBoxDirectorioActual" HorizontalAlignment="Left" Margin="210,155,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" Width="705" HorizontalContentAlignment="Left" VerticalContentAlignment="Bottom" BorderThickness="1,1,1,1" IsReadOnly="True"/>
+            <Button x:Name="btnBuscarNuevoDirectorio" Content="Buscar Nuevo Directorio" Height="32" Margin="210,224,0,0" VerticalAlignment="Top" Width="225" Click="BtnEventoBuscarNuevoDirectorio" ClickMode="Press" BorderBrush="#FF1D0404"/>
+            <TextBox x:Name="textBoxDirectorioDeRespaldos" HorizontalAlignment="Left" Margin="210,187,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" Width="705" HorizontalContentAlignment="Left" VerticalContentAlignment="Bottom" BorderThickness="1,1,1,1" IsReadOnly="True"/>
+            <Button x:Name="btnCopiarBaseDeDatos" Content="Respaldar Base de Datos" Height="32" Margin="450,224,0,0" VerticalAlignment="Top" Width="225" Click="BtnEventoCopiarBaseDeDatos" ClickMode="Press" BorderBrush="#FF1D0404"/>
+            <TextBlock x:Name="labelDirectorioSqlite" HorizontalAlignment="Left" Margin="25,38,0,0" Text="Configuración de Bases de Datos y Almacenamientos  de Reportes y Archivos" TextWrapping="NoWrap" VerticalAlignment="Top" RenderTransformOrigin="0.92,-0.053" Height="32" Width="934" HorizontalTextAlignment="Center" FontWeight="Bold"/>
+            <TextBlock x:Name="labelDirectorioRespaldo" HorizontalAlignment="Left" Margin="37,194,0,0" Text="Directorio de Respaldo" TextWrapping="NoWrap" VerticalAlignment="Top" RenderTransformOrigin="0.92,-0.053" Height="28" Width="162" HorizontalTextAlignment="Right"/>
+            <CheckBox x:Name="checkBoxActivarSQLite" Content="Activa y configura los valores de conexión hacia una Base de Datos SQLite" Margin="49,118,0,0" VerticalAlignment="Top" Width="514" IsChecked="True" Click="CheckBoxActivarSQLiteClick"/>
+            <TextBlock x:Name="lblGrillaDeRespaldos" HorizontalAlignment="Left" Margin="49,281,0,0" TextWrapping="Wrap" Text="Listado de Respaldos Realizados" VerticalAlignment="Top" Width="234"/>
+            <Custom:DataGrid x:Name="dataGridRespaldos"  HeadersVisibility="Column" HorizontalAlignment="Left" Margin="49,305,0,0" VerticalAlignment="Top" Height="265" Width="866" BorderThickness="1,1,1,1" GridLinesVisibility="All" IsReadOnly="True" />
+            <TextBlock HorizontalAlignment="Left" Margin="49,86,0,0" TextWrapping="Wrap" Text="Configuración Administrador" VerticalAlignment="Top" Height="26"/>
+            <Button x:Name="BtnConfiguraciónUsuario" Content="Administrador" Margin="255,81,0,0" VerticalAlignment="Top" Width="135" Click="BtnConfiguraciónUsuarioClick"/>
+            <Button x:Name="btnRestaurarBaseDeDatos" Content="Restaurar Base de Datos" Height="32" Margin="690,224,0,0" VerticalAlignment="Top" Width="225" Click="BtnEventoCopiarBaseDeDatos" ClickMode="Press"/>
+            <CheckBox x:Name="checkBoxActivarXMPP" Content="Comunicación con Mobiles" Margin="430,81,0,0" VerticalAlignment="Top" Width="225" IsChecked="True" Click="CheckBoxActivarXMPPClick"/>
+            <ToggleSwitch Header="Tema" OnContent="Light" OffContent="Dark" Toggled="ToggleSwitch_Toggled" Loaded="ToggleSwitch_Loaded" Margin="690,86,0,0" VerticalAlignment="Top" Width="195" Height="69"/>
+        </Grid>
+    </RelativePanel>
 </Page>

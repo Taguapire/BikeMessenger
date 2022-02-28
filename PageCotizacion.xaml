@@ -6,19 +6,41 @@
     xmlns:local="using:BikeMessenger"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
-    <Page.Background>
-        <AcrylicBrush TintColor="#CC62B8EA"/>
-    </Page.Background>
+    NavigationCacheMode="Required"
+    mc:Ignorable="d">
     <Page.BottomAppBar>
-        <CommandBar x:Name="CommandBarBottomEmpresas" DefaultLabelPosition="Right"  Background="#FFC5CCCF" HorizontalAlignment="Center">
+        <CommandBar x:Name="CommandBarBottomEmpresas" DefaultLabelPosition="Right" HorizontalAlignment="Center">
             <CommandBar.Content>
                 <TextBlock Text="Visor de Cotizaciones" Margin="12,8"/>
             </CommandBar.Content>
             <AppBarButton x:Name="appBarSalir" Icon="Go" Label="Salir" Click="BtnSalirVisorDeCotizaciones"/>
         </CommandBar>
     </Page.BottomAppBar>
-    <Grid x:Name="GridPageCotizacion" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
-        <Custom:DataGrid x:Name="DGViewCotizacion" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" FocusVisualPrimaryBrush="#E40F0101" AutoGeneratingColumn="GeneracionDeColumnas" Background="#6626C7F7" ScrollViewer.HorizontalScrollBarVisibility="Visible" GridLinesVisibility="All" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollBarVisibility="Visible" HeadersVisibility="All" SelectionMode="Single" BackgroundSizing="OuterBorderEdge" CanBeScrollAnchor="True" IsReadOnly="True" DoubleTapped="RevisarDetalleCotizacionServicio"/>
-    </Grid>
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+        <StackPanel x:Name="LayoutRoot" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Custom:DataGrid x:Name="DGViewCotizacion" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AutoGeneratingColumn="GeneracionDeColumnas" ScrollViewer.HorizontalScrollBarVisibility="Visible" GridLinesVisibility="All" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollBarVisibility="Visible" HeadersVisibility="All" SelectionMode="Single" BackgroundSizing="OuterBorderEdge" CanBeScrollAnchor="True" IsReadOnly="True" DoubleTapped="RevisarDetalleCotizacionServicio"/>
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup>
+                    <VisualState>
+                        <VisualState.StateTriggers>
+                            <AdaptiveTrigger MinWindowWidth="{StaticResource LargeWindowSnapPoint}" />
+                        </VisualState.StateTriggers>
+                    </VisualState>
+                    <VisualState>
+                        <VisualState.StateTriggers>
+                            <AdaptiveTrigger MinWindowWidth="{StaticResource MediumWindowSnapPoint}" />
+                        </VisualState.StateTriggers>
+                    </VisualState>
+                    <VisualState>
+                        <VisualState.StateTriggers>
+                            <AdaptiveTrigger MinWindowWidth="{StaticResource MinWindowSnapPoint}" />
+                        </VisualState.StateTriggers>
+                        <VisualState.Setters>
+                            <Setter Target="MainCommandBar.DefaultLabelPosition" Value="Bottom"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+        </StackPanel>
+    </ScrollViewer>
 </Page>

@@ -6,12 +6,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Custom="using:Microsoft.Toolkit.Uwp.UI.Controls" xmlns:Custom1="using:Windows.UI.Xaml.Controls.Maps" x:Name="PantallaServicios"
     x:Class="BikeMessenger.PageServicios"
-    mc:Ignorable="d" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
-    <Page.Background>
-        <AcrylicBrush TintColor="#CC62B8EA"/>
-    </Page.Background>
+    NavigationCacheMode="Required"
+    mc:Ignorable="d">
     <Page.BottomAppBar>
-        <CommandBar x:Name="CommandBarBottomServicios" DefaultLabelPosition="Right"  Background="#FFC5CCCF" HorizontalAlignment="Center">
+        <CommandBar x:Name="CommandBarBottomServicios" DefaultLabelPosition="Right" HorizontalAlignment="Center">
             <CommandBar.Content>
                 <TextBlock Text="Servicios" Margin="12,8"/>
             </CommandBar.Content>
@@ -24,146 +22,166 @@
             <AppBarButton x:Name="appBarSalir" Icon="Go" Label="Salir" Click="BtnSalirServicios"/>
         </CommandBar>
     </Page.BottomAppBar>
-    <Grid x:Name="GridServicios" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto">
-        <Grid.Background>
-            <AcrylicBrush TintColor="#CC62B8EA"/>
-        </Grid.Background>
-        <TextBlock x:Name="labelCliente" HorizontalAlignment="Left" Margin="475,55,0,0" Text="Cliente" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="140" HorizontalTextAlignment="Right" />
-        <TextBlock x:Name="labelContacto" HorizontalAlignment="Left" Margin="475,87,0,0" Text="Contacto" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.492,3.158" Height="32" Width="140" HorizontalTextAlignment="Right"/>
-        <TextBlock x:Name="labelTelefono" HorizontalAlignment="Left" Margin="475,119,0,0" Text="Teléfonos" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="140" HorizontalTextAlignment="Right" />
-        <TextBlock x:Name="labelDestinoDomicilio" HorizontalAlignment="Left" Margin="530,218,0,0" Text="Domicilio" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="120" HorizontalTextAlignment="Right"/>
-        <TextBox x:Name="textBoxRutID" HorizontalAlignment="Left" Margin="620,23,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" Width="154" HorizontalContentAlignment="Left" VerticalContentAlignment="Bottom" BorderThickness="1,1,1,1" Background="#66C6D7DC" TabIndex="17"/>
-        <TextBox x:Name="textBoxDigitoVerificador" HorizontalAlignment="Left" Margin="779,23,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Background="#66C6D7DC" TabIndex="18"/>
-        <TextBox x:Name="textBoxCliente" HorizontalAlignment="Left" Margin="620,55,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" RenderTransformOrigin="1.824,0.625" Width="420" BorderThickness="1,1,1,1" Background="#66C6D7DC" IsReadOnly="True" TabIndex="19"/>
-        <TextBlock x:Name="labelDestinoNumero" HorizontalAlignment="Left" Margin="530,250,0,0" Text="Número" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="120" HorizontalTextAlignment="Right"/>
-        <TextBox x:Name="textBoxDestinoDomicilio1" HorizontalAlignment="Left" Margin="655,218,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="385" BorderThickness="1,1,1,1" Background="#66C6D7DC" TabIndex="25"/>
-        <TextBlock x:Name="labelDestinoPiso" HorizontalAlignment="Left" Margin="734,250,0,0" Text="Piso" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="64" HorizontalTextAlignment="Right"/>
-        <TextBlock x:Name="labelDestinoOficina" HorizontalAlignment="Left" Margin="886,250,0,0" Text="Oficina" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="70" HorizontalTextAlignment="Right"/>
-        <TextBlock x:Name="labelDestinoComuna" HorizontalAlignment="Left" Margin="530,314,0,0" Text="Comuna" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
-        <TextBox x:Name="textBoxDestinoNumero" HorizontalAlignment="Left" Margin="655,250,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Background="#66C6D7DC" TabIndex="26"/>
-        <TextBox x:Name="textBoxDestinoPiso" HorizontalAlignment="Left" Margin="803,250,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Background="#66C6D7DC" TabIndex="27"/>
-        <ComboBox x:Name="comboBoxDestinoCiudad" Margin="655,282,0,0" Width="385" BorderThickness="1,1,1,1" Background="#66C6D7DC" IsEditable="True" TabIndex="29"/>
-        <TextBlock x:Name="labelDestinoCiudad" HorizontalAlignment="Left" Margin="530,282,0,0" Text="Ciudad" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
-        <TextBlock x:Name="labelDestinoEstado" HorizontalAlignment="Left" Margin="530,346,0,0" Text="Estado/Región" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
-        <TextBlock x:Name="labelDestinoPais" HorizontalAlignment="Left" Margin="530,378,0,0" Text="Pais" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
-        <TextBox x:Name="textBoxDestinoOficina" HorizontalAlignment="Left" Margin="961,250,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Background="#66C6D7DC" Width="79" TabIndex="28"/>
-        <ComboBox x:Name="comboBoxDestinoComuna" Margin="655,314,0,0" Width="385" BorderThickness="1,1,1,1" Background="#66C6D7DC" IsEditable="True" TabIndex="30"/>
-        <ComboBox x:Name="comboBoxDestinoEstado" Margin="655,346,0,0" Width="385" BorderThickness="1,1,1,1" Background="#66C6D7DC" IsEditable="True" TabIndex="31"/>
-        <ComboBox x:Name="comboBoxDestinoPais" Margin="655,378,0,0" Width="385" BorderThickness="1,1,1,1" Background="#66C6D7DC" IsEditable="True" TabIndex="32"/>
-        <TextBox x:Name="textBoxTelefono1" HorizontalAlignment="Left" Margin="620,119,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" RenderTransformOrigin="1.824,0.625" Width="210" BorderThickness="1,1,1,1" Background="#66C6D7DC" IsReadOnly="True" TabIndex="21"/>
-        <TextBox x:Name="textBoxNombres" HorizontalAlignment="Left" Margin="620,87,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" RenderTransformOrigin="1.824,0.625" Width="420" BorderThickness="1,1,1,1" AcceptsReturn="True" Background="#66C6D7DC" IsReadOnly="True" TabIndex="20"/>
-        <TextBlock x:Name="labelFecha" HorizontalAlignment="Left" Margin="14,96,0,0" Text="Fecha" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.92,-0.053" Height="23" Width="140" HorizontalTextAlignment="Right"/>
-        <Button x:Name="BtnFechaServicio" Content="Fecha" Margin="159,87,0,0" VerticalAlignment="Top" Width="238" Click="BtnCambioFechaInicial"/>
-        <Popup x:Name="PopUpFechaInicial">
-            <CalendarView x:Name="CalendarFechaServicio" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" SelectionMode="Single" SelectedDatesChanged="CambioDeFechaServicio"/>
-        </Popup>
-        <TimePicker x:Name="controlHora" Margin="159,119,0,0" VerticalAlignment="Top" Width="238" ClockIdentifier="24HourClock" TabIndex="4" IsTabStop="True"/>
-        <TextBlock x:Name="labelHora" HorizontalAlignment="Left" Margin="14,119,0,0" Text="Hora" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.92,-0.053" Height="32" Width="140" HorizontalTextAlignment="End"/>
-        <TextBox x:Name="textBoxNroDeEnvio" HorizontalAlignment="Left" Margin="159,23,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" Width="311" HorizontalContentAlignment="Left" VerticalContentAlignment="Bottom" BorderThickness="1,1,1,1" Background="#66C6D7DC" TabIndex="1"/>
-        <TextBlock x:Name="labelGuiaDespacho" HorizontalAlignment="Left" Margin="14,55,0,0" Text="Guia de Despacho" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.92,-0.053" Height="32" Width="140" HorizontalTextAlignment="Right"/>
-        <TextBox x:Name="textBoxGuiaDeDespacho" HorizontalAlignment="Left" Margin="159,55,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" Width="311" HorizontalContentAlignment="Left" VerticalContentAlignment="Bottom" BorderThickness="1,1,1,1" Background="#66C6D7DC" TabIndex="2"/>
-        <TextBox x:Name="textBoxTelefono2" HorizontalAlignment="Left" Margin="835,119,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" RenderTransformOrigin="1.824,0.625" Width="205" BorderThickness="1,1,1,1" Background="#66C6D7DC" IsReadOnly="True" TabIndex="22"/>
-        <TextBox x:Name="labelOrigen" HorizontalAlignment="Left" Margin="15,154,0,0" Text="Origen" TextWrapping="NoWrap" VerticalAlignment="Top" Height="32" Width="510" IsReadOnly="True" IsTabStop="False"/>
-        <TextBox x:Name="labelDestino" HorizontalAlignment="Left" Margin="530,154,0,0" Text="Destino" TextWrapping="NoWrap" VerticalAlignment="Top" Height="32" Width="510" IsReadOnly="True" IsTabStop="False"/>
-        <TextBlock x:Name="labelOrigenDomicilio" HorizontalAlignment="Left" Margin="15,218,0,0" Text="Domicilio" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="120" HorizontalTextAlignment="Right"/>
-        <TextBlock x:Name="labelOrigenNumero" HorizontalAlignment="Left" Margin="15,250,0,0" Text="Número" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="120" HorizontalTextAlignment="Right"/>
-        <TextBox x:Name="textBoxOrigenDomicilio1" HorizontalAlignment="Left" Margin="140,218,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="385" BorderThickness="1,1,1,1" Background="#66C6D7DC" TabIndex="7"/>
-        <TextBlock x:Name="labelOrigenPiso" HorizontalAlignment="Left" Margin="219,250,0,0" Text="Piso" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="51" HorizontalTextAlignment="Right"/>
-        <TextBlock x:Name="labelOrigenOficina" HorizontalAlignment="Left" Margin="354,250,0,0" Text="Oficina" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="66" HorizontalTextAlignment="Right"/>
-        <TextBlock x:Name="labelOrigenComuna" HorizontalAlignment="Left" Margin="15,314,0,0" Text="Comuna" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
-        <TextBox x:Name="textBoxOrigenNumero" HorizontalAlignment="Left" Margin="140,250,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Background="#66C6D7DC" TabIndex="8"/>
-        <TextBox x:Name="textBoxOrigenPiso" HorizontalAlignment="Left" Margin="275,250,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Background="#66C6D7DC" TabIndex="9"/>
-        <ComboBox x:Name="comboBoxOrigenCiudad" Margin="140,282,0,0" Width="385" BorderThickness="1,1,1,1" Background="#66C6D7DC" Grid.ColumnSpan="2" IsEditable="True" TabIndex="11"/>
-        <TextBlock x:Name="labelOrigenCiudad" HorizontalAlignment="Left" Margin="15,282,0,0" Text="Ciudad" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
-        <TextBlock x:Name="labelOrigenEstado" HorizontalAlignment="Left" Margin="15,346,0,0" Text="Estado/Región" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
-        <TextBlock x:Name="labelOrigenPais" HorizontalAlignment="Left" Margin="15,378,0,0" Text="Pais" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
-        <TextBox x:Name="textBoxOrigenOficina" HorizontalAlignment="Left" Margin="425,250,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Background="#66C6D7DC" Width="100" RenderTransformOrigin="0.143,0.469" Grid.ColumnSpan="2" TabIndex="10"/>
-        <ComboBox x:Name="comboBoxOrigenComuna" Margin="140,314,0,0" Width="385" BorderThickness="1,1,1,1" Background="#66C6D7DC" Grid.ColumnSpan="2" IsEditable="True" TabIndex="12"/>
-        <ComboBox x:Name="comboBoxOrigenEstado" Margin="140,346,0,0" Width="385" BorderThickness="1,1,1,1" Background="#66C6D7DC" Grid.ColumnSpan="2" IsEditable="True" TabIndex="13"/>
-        <ComboBox x:Name="comboBoxOrigenPais" Margin="140,378,0,0" Width="385" BorderThickness="1,1,1,1" Background="#66C6D7DC" Grid.ColumnSpan="2" IsEditable="True" TabIndex="14"/>
-        <TextBlock x:Name="labelObservaciones" HorizontalAlignment="Left" Margin="15,486,0,0" Text="Observaciones" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
-        <TextBox x:Name="textBoxObservaciones" HorizontalAlignment="Left" Margin="140,486,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="385" BorderThickness="1,1,1,1" Background="#66C6D7DC" Height="96" AcceptsReturn="True" TabIndex="16"/>
-        <TextBlock x:Name="labelEntrega" HorizontalAlignment="Left" Margin="530,493,0,0" Text="Entrega" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
-        <Button x:Name="BtnFechaEntrega" Content="Fecha" Margin="655,488,0,0" VerticalAlignment="Top" Width="147" Click="BtnCambioFechaEntrega" Height="30"/>
-        <Popup x:Name="PopUpFechaEntrega">
-            <CalendarView x:Name="CalendarFechaEntrega" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" SelectionMode="Single" SelectedDatesChanged="CambioDeFechaEntrega"/>
-        </Popup>
-        <TimePicker x:Name="controlHoraEntrega" Margin="802,488,0,0" VerticalAlignment="Top" Width="238" ClockIdentifier="24HourClock" TabIndex="4" IsTabStop="True"/>
-        <TextBlock x:Name="labelRecepcion" HorizontalAlignment="Left" Margin="530,518,0,0" Text="Recepción" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
-        <TextBlock x:Name="labelTiempoDeEspera" HorizontalAlignment="Left" Margin="530,550,0,0" Text="T. de Espera" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
-        <TextBox x:Name="textBoxRecepcion" HorizontalAlignment="Left" Margin="655,518,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="385" BorderThickness="1,1,1,1" Background="#66C6D7DC" TabIndex="40"/>
-        <TextBox x:Name="textBoxTiempoDeEspera" HorizontalAlignment="Left" Margin="655,550,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="385" BorderThickness="1,1,1,1" Background="#66C6D7DC" TabIndex="41"/>
-        <TextBlock x:Name="labelDescripcion" HorizontalAlignment="Left" Margin="15,410,0,0" Text="Descripción" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
-        <TextBox x:Name="textBoxDescripcion" HorizontalAlignment="Left" Margin="140,410,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="385" BorderThickness="1,1,1,1" Background="#66C6D7DC" Height="65" AcceptsReturn="True" TabIndex="15"/>
-        <TextBox x:Name="textBoxIdMensajero" HorizontalAlignment="Left" Margin="140,186,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="130" BorderThickness="1,1,1,1" Background="#66C6D7DC" TabIndex="5"/>
-        <TextBox x:Name="textBoxNombreMensajero" HorizontalAlignment="Left" Margin="275,186,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="250" BorderThickness="1,1,1,1" Background="#66C6D7DC" TabIndex="6"/>
-        <TextBox x:Name="textBoxIdRecurso" HorizontalAlignment="Left" Margin="655,186,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="130" BorderThickness="1,1,1,1" Background="#66C6D7DC" TabIndex="23"/>
-        <TextBox x:Name="textBoxNombreRecurso" HorizontalAlignment="Left" Margin="790,186,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="250" BorderThickness="1,1,1,1" Background="#66C6D7DC" TabIndex="24"/>
-        <Button x:Name="BtnListarEnvios" Margin="14,23,0,0" VerticalAlignment="Top" Width="140" Height="32" HorizontalContentAlignment="Left" UseLayoutRounding="True" RenderTransformOrigin="0.5,0.5" Click="BtnEventoListarEnvios">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Nro de Envío" TextAlignment="Left"></TextBlock>
-                <SymbolIcon Symbol="Find" Width="46"></SymbolIcon>
-            </StackPanel>
-            <Button.Flyout>
-                <Flyout x:Name="BtnFlyoutNroEnvios">
-                    <StackPanel>
-                        <Custom:DataGrid x:Name="dataGridListadoNroEnvios" HeadersVisibility="Column" AlternatingRowBackground="LightGray" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Height="277" Width="500" BorderThickness="1,1,1,1" BorderBrush="#66000000" Background="#6626C7F7" GridLinesVisibility="All" SelectionChanged="DataGridSeleccion_NroDeEnvios"/>
-                    </StackPanel>
-                </Flyout>
-            </Button.Flyout>
-        </Button>
-        <Button x:Name="BtnListarClientes" Margin="475,23,0,0" VerticalAlignment="Top" Width="140" Height="32" HorizontalContentAlignment="Left" UseLayoutRounding="True" RenderTransformOrigin="0.5,0.5" Click="BtnEventoListarClientes">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="ID de Cliente" TextAlignment="Left"></TextBlock>
-                <SymbolIcon Symbol="Find" Width="46"></SymbolIcon>
-            </StackPanel>
-            <Button.Flyout>
-                <Flyout x:Name="BtnFlyoutIdCliente">
-                    <StackPanel>
-                        <Custom:DataGrid x:Name="dataGridListadoClientes" HeadersVisibility="Column" AlternatingRowBackground="LightGray" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Height="277" Width="500" BorderThickness="1,1,1,1" BorderBrush="#66000000" Background="#6626C7F7" GridLinesVisibility="All" SelectionChanged="DataGridSeleccion_IdCliente"/>
-                    </StackPanel>
-                </Flyout>
-            </Button.Flyout>
-        </Button>
-        <Button x:Name="BtnListarMensajeros" Margin="15,186,0,0" VerticalAlignment="Top" Width="120" Height="32" HorizontalContentAlignment="Left" UseLayoutRounding="True" RenderTransformOrigin="0.5,0.5" Click="BtnEventoListarMensajeros">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Mensajero" TextAlignment="Left"/>
-                <SymbolIcon Symbol="Find" Width="45"/>
-            </StackPanel>
-            <Button.Flyout>
-                <Flyout x:Name="BtnFlyoutMensajeros">
-                    <StackPanel>
-                        <Custom:DataGrid x:Name="dataGridListadoMensajeros" HeadersVisibility="Column" AlternatingRowBackground="LightGray" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Height="277" Width="500" BorderThickness="1,1,1,1" BorderBrush="#66000000" Background="#6626C7F7" GridLinesVisibility="All" SelectionChanged="DataGridSeleccion_Mensajeros"/>
-                    </StackPanel>
-                </Flyout>
-            </Button.Flyout>
-        </Button>
-        <Button x:Name="BtnListarRecursos" Margin="530,186,0,0" VerticalAlignment="Top" Width="120" Height="32" HorizontalContentAlignment="Left" UseLayoutRounding="True" RenderTransformOrigin="0.5,0.5" Click="BtnEventoListarRecursos">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Recurso" TextAlignment="Left"/>
-                <SymbolIcon Symbol="Find" Width="60"/>
-            </StackPanel>
-            <Button.Flyout>
-                <Flyout x:Name="BtnFlyoutRecursos">
-                    <StackPanel>
-                        <Custom:DataGrid x:Name="dataGridListadoRecursos" HeadersVisibility="Column" AlternatingRowBackground="LightGray" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Height="277" Width="600" BorderThickness="1,1,1,1" BorderBrush="#66000000" Background="#6626C7F7" GridLinesVisibility="All" SelectionChanged="DataGridSeleccion_Recursos"/>
-                    </StackPanel>
-                </Flyout>
-            </Button.Flyout>
-        </Button>
-        <TextBox x:Name="textBoxFacturas" HorizontalAlignment="Left" Margin="655,410,0,0" Text="0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Background="#66C6D7DC" Width="64" TabIndex="33" InputScope="Number" CharacterReceived="ValidarValorNumerico"/>
-        <TextBox x:Name="textBoxCheques" HorizontalAlignment="Left" Margin="655,442,0,0" Text="0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Background="#66C6D7DC" Width="64" TabIndex="36" InputScope="Number" CharacterReceived="ValidarValorNumerico"/>
-        <TextBox x:Name="textBoxBultos" HorizontalAlignment="Left" Margin="816,410,0,0" Text="0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Background="#66C6D7DC" Width="64" TabIndex="34" InputScope="Number" CharacterReceived="ValidarValorNumerico"/>
-        <TextBox x:Name="textBoxSobres" HorizontalAlignment="Left" Margin="816,442,0,0" Text="0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Background="#66C6D7DC" Width="64" TabIndex="37" InputScope="Number" CharacterReceived="ValidarValorNumerico"/>
-        <TextBox x:Name="textBoxCompras" HorizontalAlignment="Left" Margin="976,410,0,0" Text="0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Background="#66C6D7DC" Width="64" TabIndex="35" InputScope="Number" CharacterReceived="ValidarValorNumerico"/>
-        <TextBox x:Name="textBoxOtros" HorizontalAlignment="Left" Margin="976,442,0,0" Text="0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Background="#66C6D7DC" Width="64" TabIndex="38" InputScope="Number" CharacterReceived="ValidarValorNumerico"/>
-        <TextBlock x:Name="labelFacturas" HorizontalAlignment="Left" Margin="530,410,0,0" Text="Facturas" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
-        <TextBlock x:Name="labelCheques" HorizontalAlignment="Left" Margin="530,442,0,0" Text="Cheques" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
-        <TextBlock x:Name="labelBultos" HorizontalAlignment="Left" Margin="734,410,0,0" Text="Bultos" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="77" HorizontalTextAlignment="Right"/>
-        <TextBlock x:Name="labelSobres" HorizontalAlignment="Left" Margin="734,442,0,0" Text="Sobres" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="77" HorizontalTextAlignment="Right"/>
-        <TextBlock x:Name="labelCompras" HorizontalAlignment="Left" Margin="894,410,0,0" Text="Compras" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="77" HorizontalTextAlignment="Right"/>
-        <TextBlock x:Name="labelOtros" HorizontalAlignment="Left" Margin="894,442,0,0" Text="Otros" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="77" HorizontalTextAlignment="Right"/>
-        <Custom1:MapControl x:Name="mapControlBikeMessenger" Visibility="Collapsed" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Stretch"/>
-        
-    </Grid>
+    <RelativePanel x:Name="LayoutRoot" HorizontalAlignment="Left" VerticalAlignment="Center" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" UseLayoutRounding="False">
+        <Grid x:Name="GridServicios" RelativePanel.AlignHorizontalCenterWithPanel="False" RelativePanel.AlignVerticalCenterWithPanel="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <TextBlock x:Name="labelCliente" HorizontalAlignment="Left" Margin="475,55,0,0" Text="Cliente" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="140" HorizontalTextAlignment="Right" />
+            <TextBlock x:Name="labelContacto" HorizontalAlignment="Left" Margin="475,87,0,0" Text="Contacto" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.492,3.158" Height="32" Width="140" HorizontalTextAlignment="Right"/>
+            <TextBlock x:Name="labelTelefono" HorizontalAlignment="Left" Margin="475,119,0,0" Text="Teléfonos" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="140" HorizontalTextAlignment="Right" />
+            <TextBlock x:Name="labelDestinoDomicilio" HorizontalAlignment="Left" Margin="530,218,0,0" Text="Domicilio" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="120" HorizontalTextAlignment="Right"/>
+            <TextBox x:Name="textBoxRutID" HorizontalAlignment="Left" Margin="620,23,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" Width="154" HorizontalContentAlignment="Left" VerticalContentAlignment="Bottom" BorderThickness="1,1,1,1" TabIndex="17"/>
+            <TextBox x:Name="textBoxDigitoVerificador" HorizontalAlignment="Left" Margin="779,23,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" TabIndex="18"/>
+            <TextBox x:Name="textBoxCliente" HorizontalAlignment="Left" Margin="620,55,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" RenderTransformOrigin="1.824,0.625" Width="420" BorderThickness="1,1,1,1" IsReadOnly="True" TabIndex="19"/>
+            <TextBlock x:Name="labelDestinoNumero" HorizontalAlignment="Left" Margin="530,250,0,0" Text="Número" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="120" HorizontalTextAlignment="Right"/>
+            <TextBox x:Name="textBoxDestinoDomicilio1" HorizontalAlignment="Left" Margin="655,218,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="385" BorderThickness="1,1,1,1" TabIndex="25"/>
+            <TextBlock x:Name="labelDestinoPiso" HorizontalAlignment="Left" Margin="734,250,0,0" Text="Piso" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="64" HorizontalTextAlignment="Right"/>
+            <TextBlock x:Name="labelDestinoOficina" HorizontalAlignment="Left" Margin="886,250,0,0" Text="Oficina" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="70" HorizontalTextAlignment="Right"/>
+            <TextBlock x:Name="labelDestinoComuna" HorizontalAlignment="Left" Margin="530,314,0,0" Text="Comuna" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
+            <TextBox x:Name="textBoxDestinoNumero" HorizontalAlignment="Left" Margin="655,250,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" TabIndex="26"/>
+            <TextBox x:Name="textBoxDestinoPiso" HorizontalAlignment="Left" Margin="803,250,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" TabIndex="27"/>
+            <ComboBox x:Name="comboBoxDestinoCiudad" Margin="655,282,0,0" Width="385" BorderThickness="1,1,1,1" IsEditable="True" TabIndex="29"/>
+            <TextBlock x:Name="labelDestinoCiudad" HorizontalAlignment="Left" Margin="530,282,0,0" Text="Ciudad" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
+            <TextBlock x:Name="labelDestinoEstado" HorizontalAlignment="Left" Margin="530,346,0,0" Text="Estado/Región" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
+            <TextBlock x:Name="labelDestinoPais" HorizontalAlignment="Left" Margin="530,378,0,0" Text="Pais" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
+            <TextBox x:Name="textBoxDestinoOficina" HorizontalAlignment="Left" Margin="961,250,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Width="79" TabIndex="28"/>
+            <ComboBox x:Name="comboBoxDestinoComuna" Margin="655,314,0,0" Width="385" BorderThickness="1,1,1,1" IsEditable="True" TabIndex="30"/>
+            <ComboBox x:Name="comboBoxDestinoEstado" Margin="655,346,0,0" Width="385" BorderThickness="1,1,1,1" IsEditable="True" TabIndex="31"/>
+            <ComboBox x:Name="comboBoxDestinoPais" Margin="655,378,0,0" Width="385" BorderThickness="1,1,1,1" IsEditable="True" TabIndex="32"/>
+            <TextBox x:Name="textBoxTelefono1" HorizontalAlignment="Left" Margin="620,119,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" RenderTransformOrigin="1.824,0.625" Width="210" BorderThickness="1,1,1,1" IsReadOnly="True" TabIndex="21"/>
+            <TextBox x:Name="textBoxNombres" HorizontalAlignment="Left" Margin="620,87,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" RenderTransformOrigin="1.824,0.625" Width="420" BorderThickness="1,1,1,1" AcceptsReturn="True" IsReadOnly="True" TabIndex="20"/>
+            <TextBlock x:Name="labelFecha" HorizontalAlignment="Left" Margin="14,96,0,0" Text="Fecha" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.92,-0.053" Height="23" Width="140" HorizontalTextAlignment="Right"/>
+            <Button x:Name="BtnFechaServicio" Content="Fecha" Margin="159,87,0,0" VerticalAlignment="Top" Width="238" Click="BtnCambioFechaInicial"/>
+            <Popup x:Name="PopUpFechaInicial">
+                <CalendarView x:Name="CalendarFechaServicio" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" SelectionMode="Single" SelectedDatesChanged="CambioDeFechaServicio"/>
+            </Popup>
+            <TimePicker x:Name="controlHora" Margin="159,119,0,0" VerticalAlignment="Top" Width="238" ClockIdentifier="24HourClock" TabIndex="4" IsTabStop="True"/>
+            <TextBlock x:Name="labelHora" HorizontalAlignment="Left" Margin="14,119,0,0" Text="Hora" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.92,-0.053" Height="32" Width="140" HorizontalTextAlignment="End"/>
+            <TextBox x:Name="textBoxNroDeEnvio" HorizontalAlignment="Left" Margin="159,23,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" Width="311" HorizontalContentAlignment="Left" VerticalContentAlignment="Bottom" BorderThickness="1,1,1,1" TabIndex="1"/>
+            <TextBlock x:Name="labelGuiaDespacho" HorizontalAlignment="Left" Margin="14,55,0,0" Text="Guia de Despacho" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.92,-0.053" Height="32" Width="140" HorizontalTextAlignment="Right"/>
+            <TextBox x:Name="textBoxGuiaDeDespacho" HorizontalAlignment="Left" Margin="159,55,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" Width="311" HorizontalContentAlignment="Left" VerticalContentAlignment="Bottom" BorderThickness="1,1,1,1" TabIndex="2"/>
+            <TextBox x:Name="textBoxTelefono2" HorizontalAlignment="Left" Margin="835,119,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" RenderTransformOrigin="1.824,0.625" Width="205" BorderThickness="1,1,1,1" IsReadOnly="True" TabIndex="22"/>
+            <TextBox x:Name="labelOrigen" HorizontalAlignment="Left" Margin="15,154,0,0" Text="Origen" TextWrapping="NoWrap" VerticalAlignment="Top" Height="32" Width="510" IsReadOnly="True" IsTabStop="False"/>
+            <TextBox x:Name="labelDestino" HorizontalAlignment="Left" Margin="530,154,0,0" Text="Destino" TextWrapping="NoWrap" VerticalAlignment="Top" Height="32" Width="510" IsReadOnly="True" IsTabStop="False"/>
+            <TextBlock x:Name="labelOrigenDomicilio" HorizontalAlignment="Left" Margin="15,218,0,0" Text="Domicilio" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="120" HorizontalTextAlignment="Right"/>
+            <TextBlock x:Name="labelOrigenNumero" HorizontalAlignment="Left" Margin="15,250,0,0" Text="Número" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="120" HorizontalTextAlignment="Right"/>
+            <TextBox x:Name="textBoxOrigenDomicilio1" HorizontalAlignment="Left" Margin="140,218,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="385" BorderThickness="1,1,1,1" TabIndex="7"/>
+            <TextBlock x:Name="labelOrigenPiso" HorizontalAlignment="Left" Margin="219,250,0,0" Text="Piso" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="51" HorizontalTextAlignment="Right"/>
+            <TextBlock x:Name="labelOrigenOficina" HorizontalAlignment="Left" Margin="354,250,0,0" Text="Oficina" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="66" HorizontalTextAlignment="Right"/>
+            <TextBlock x:Name="labelOrigenComuna" HorizontalAlignment="Left" Margin="15,314,0,0" Text="Comuna" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
+            <TextBox x:Name="textBoxOrigenNumero" HorizontalAlignment="Left" Margin="140,250,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" TabIndex="8"/>
+            <TextBox x:Name="textBoxOrigenPiso" HorizontalAlignment="Left" Margin="275,250,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" TabIndex="9"/>
+            <ComboBox x:Name="comboBoxOrigenCiudad" Margin="140,282,0,0" Width="385" BorderThickness="1,1,1,1" Grid.ColumnSpan="2" IsEditable="True" TabIndex="11"/>
+            <TextBlock x:Name="labelOrigenCiudad" HorizontalAlignment="Left" Margin="15,282,0,0" Text="Ciudad" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
+            <TextBlock x:Name="labelOrigenEstado" HorizontalAlignment="Left" Margin="15,346,0,0" Text="Estado/Región" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
+            <TextBlock x:Name="labelOrigenPais" HorizontalAlignment="Left" Margin="15,378,0,0" Text="Pais" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
+            <TextBox x:Name="textBoxOrigenOficina" HorizontalAlignment="Left" Margin="425,250,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Width="100" RenderTransformOrigin="0.143,0.469" Grid.ColumnSpan="2" TabIndex="10"/>
+            <ComboBox x:Name="comboBoxOrigenComuna" Margin="140,314,0,0" Width="385" BorderThickness="1,1,1,1" Grid.ColumnSpan="2" IsEditable="True" TabIndex="12"/>
+            <ComboBox x:Name="comboBoxOrigenEstado" Margin="140,346,0,0" Width="385" BorderThickness="1,1,1,1" Grid.ColumnSpan="2" IsEditable="True" TabIndex="13"/>
+            <ComboBox x:Name="comboBoxOrigenPais" Margin="140,378,0,0" Width="385" BorderThickness="1,1,1,1" Grid.ColumnSpan="2" IsEditable="True" TabIndex="14"/>
+            <TextBlock x:Name="labelObservaciones" HorizontalAlignment="Left" Margin="15,486,0,0" Text="Observaciones" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
+            <TextBox x:Name="textBoxObservaciones" HorizontalAlignment="Left" Margin="140,486,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="385" BorderThickness="1,1,1,1" Height="96" AcceptsReturn="True" TabIndex="16"/>
+            <TextBlock x:Name="labelEntrega" HorizontalAlignment="Left" Margin="530,493,0,0" Text="Entrega" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
+            <Button x:Name="BtnFechaEntrega" Content="Fecha" Margin="655,488,0,0" VerticalAlignment="Top" Width="147" Click="BtnCambioFechaEntrega" Height="30"/>
+            <Popup x:Name="PopUpFechaEntrega">
+                <CalendarView x:Name="CalendarFechaEntrega" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" SelectionMode="Single" SelectedDatesChanged="CambioDeFechaEntrega"/>
+            </Popup>
+            <TimePicker x:Name="controlHoraEntrega" Margin="802,488,0,0" VerticalAlignment="Top" Width="238" ClockIdentifier="24HourClock" TabIndex="4" IsTabStop="True"/>
+            <TextBlock x:Name="labelRecepcion" HorizontalAlignment="Left" Margin="530,518,0,0" Text="Recepción" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
+            <TextBlock x:Name="labelTiempoDeEspera" HorizontalAlignment="Left" Margin="530,550,0,0" Text="T. de Espera" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
+            <TextBox x:Name="textBoxRecepcion" HorizontalAlignment="Left" Margin="655,518,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="385" BorderThickness="1,1,1,1" TabIndex="40"/>
+            <TextBox x:Name="textBoxTiempoDeEspera" HorizontalAlignment="Left" Margin="655,550,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="385" BorderThickness="1,1,1,1" TabIndex="41"/>
+            <TextBlock x:Name="labelDescripcion" HorizontalAlignment="Left" Margin="15,410,0,0" Text="Descripción" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
+            <TextBox x:Name="textBoxDescripcion" HorizontalAlignment="Left" Margin="140,410,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="385" BorderThickness="1,1,1,1" Height="65" AcceptsReturn="True" TabIndex="15"/>
+            <TextBox x:Name="textBoxIdMensajero" HorizontalAlignment="Left" Margin="140,186,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="130" BorderThickness="1,1,1,1" TabIndex="5"/>
+            <TextBox x:Name="textBoxNombreMensajero" HorizontalAlignment="Left" Margin="275,186,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="250" BorderThickness="1,1,1,1" TabIndex="6"/>
+            <TextBox x:Name="textBoxIdRecurso" HorizontalAlignment="Left" Margin="655,186,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="130" BorderThickness="1,1,1,1" TabIndex="23"/>
+            <TextBox x:Name="textBoxNombreRecurso" HorizontalAlignment="Left" Margin="790,186,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="250" BorderThickness="1,1,1,1" TabIndex="24"/>
+            <Button x:Name="BtnListarEnvios" Margin="14,23,0,0" VerticalAlignment="Top" Width="140" Height="32" HorizontalContentAlignment="Left" UseLayoutRounding="True" RenderTransformOrigin="0.5,0.5" Click="BtnEventoListarEnvios">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Nro de Envío" TextAlignment="Left"></TextBlock>
+                    <SymbolIcon Symbol="Find" Width="46"></SymbolIcon>
+                </StackPanel>
+                <Button.Flyout>
+                    <Flyout x:Name="BtnFlyoutNroEnvios">
+                        <StackPanel>
+                            <Custom:DataGrid x:Name="dataGridListadoNroEnvios" HeadersVisibility="Column" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Height="277" Width="500" BorderThickness="1,1,1,1" GridLinesVisibility="All" SelectionChanged="DataGridSeleccion_NroDeEnvios"/>
+                        </StackPanel>
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+            <Button x:Name="BtnListarClientes" Margin="475,23,0,0" VerticalAlignment="Top" Width="140" Height="32" HorizontalContentAlignment="Left" UseLayoutRounding="True" RenderTransformOrigin="0.5,0.5" Click="BtnEventoListarClientes">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="ID de Cliente" TextAlignment="Left"></TextBlock>
+                    <SymbolIcon Symbol="Find" Width="46"></SymbolIcon>
+                </StackPanel>
+                <Button.Flyout>
+                    <Flyout x:Name="BtnFlyoutIdCliente">
+                        <StackPanel>
+                            <Custom:DataGrid x:Name="dataGridListadoClientes" HeadersVisibility="Column" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Height="277" Width="500" BorderThickness="1,1,1,1" GridLinesVisibility="All" SelectionChanged="DataGridSeleccion_IdCliente"/>
+                        </StackPanel>
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+            <Button x:Name="BtnListarMensajeros" Margin="15,186,0,0" VerticalAlignment="Top" Width="120" Height="32" HorizontalContentAlignment="Left" UseLayoutRounding="True" RenderTransformOrigin="0.5,0.5" Click="BtnEventoListarMensajeros">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Mensajero" TextAlignment="Left"/>
+                    <SymbolIcon Symbol="Find" Width="45"/>
+                </StackPanel>
+                <Button.Flyout>
+                    <Flyout x:Name="BtnFlyoutMensajeros">
+                        <StackPanel>
+                            <Custom:DataGrid x:Name="dataGridListadoMensajeros" HeadersVisibility="Column" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Height="277" Width="500" BorderThickness="1,1,1,1" GridLinesVisibility="All" SelectionChanged="DataGridSeleccion_Mensajeros"/>
+                        </StackPanel>
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+            <Button x:Name="BtnListarRecursos" Margin="530,186,0,0" VerticalAlignment="Top" Width="120" Height="32" HorizontalContentAlignment="Left" UseLayoutRounding="True" RenderTransformOrigin="0.5,0.5" Click="BtnEventoListarRecursos">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Recurso" TextAlignment="Left"/>
+                    <SymbolIcon Symbol="Find" Width="60"/>
+                </StackPanel>
+                <Button.Flyout>
+                    <Flyout x:Name="BtnFlyoutRecursos">
+                        <StackPanel>
+                            <Custom:DataGrid x:Name="dataGridListadoRecursos" HeadersVisibility="Column" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Height="277" Width="600" BorderThickness="1,1,1,1" GridLinesVisibility="All" SelectionChanged="DataGridSeleccion_Recursos"/>
+                        </StackPanel>
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+            <TextBox x:Name="textBoxFacturas" HorizontalAlignment="Left" Margin="655,410,0,0" Text="0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Width="64" TabIndex="33" InputScope="Number" CharacterReceived="ValidarValorNumerico"/>
+            <TextBox x:Name="textBoxCheques" HorizontalAlignment="Left" Margin="655,442,0,0" Text="0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Width="64" TabIndex="36" InputScope="Number" CharacterReceived="ValidarValorNumerico"/>
+            <TextBox x:Name="textBoxBultos" HorizontalAlignment="Left" Margin="816,410,0,0" Text="0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Width="64" TabIndex="34" InputScope="Number" CharacterReceived="ValidarValorNumerico"/>
+            <TextBox x:Name="textBoxSobres" HorizontalAlignment="Left" Margin="816,442,0,0" Text="0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Width="64" TabIndex="37" InputScope="Number" CharacterReceived="ValidarValorNumerico"/>
+            <TextBox x:Name="textBoxCompras" HorizontalAlignment="Left" Margin="976,410,0,0" Text="0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Width="64" TabIndex="35" InputScope="Number" CharacterReceived="ValidarValorNumerico"/>
+            <TextBox x:Name="textBoxOtros" HorizontalAlignment="Left" Margin="976,442,0,0" Text="0" TextWrapping="NoWrap" VerticalAlignment="Top" BorderThickness="1,1,1,1" Width="64" TabIndex="38" InputScope="Number" CharacterReceived="ValidarValorNumerico"/>
+            <TextBlock x:Name="labelFacturas" HorizontalAlignment="Left" Margin="530,410,0,0" Text="Facturas" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
+            <TextBlock x:Name="labelCheques" HorizontalAlignment="Left" Margin="530,442,0,0" Text="Cheques" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="120" HorizontalTextAlignment="Right"/>
+            <TextBlock x:Name="labelBultos" HorizontalAlignment="Left" Margin="734,410,0,0" Text="Bultos" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="77" HorizontalTextAlignment="Right"/>
+            <TextBlock x:Name="labelSobres" HorizontalAlignment="Left" Margin="734,442,0,0" Text="Sobres" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="77" HorizontalTextAlignment="Right"/>
+            <TextBlock x:Name="labelCompras" HorizontalAlignment="Left" Margin="894,410,0,0" Text="Compras" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="77" HorizontalTextAlignment="Right"/>
+            <TextBlock x:Name="labelOtros" HorizontalAlignment="Left" Margin="894,442,0,0" Text="Otros" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="77" HorizontalTextAlignment="Right"/>
+            <Custom1:MapControl x:Name="mapControlBikeMessenger" Visibility="Collapsed" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Stretch" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        </Grid>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource LargeWindowSnapPoint}" />
+                    </VisualState.StateTriggers>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource MediumWindowSnapPoint}" />
+                    </VisualState.StateTriggers>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource MinWindowSnapPoint}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="MainCommandBar.DefaultLabelPosition" Value="Bottom"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+    </RelativePanel>
 </Page>

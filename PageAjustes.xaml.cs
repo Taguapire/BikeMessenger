@@ -31,7 +31,14 @@ namespace BikeMessenger
             checkBoxActivarXMPP.IsChecked = (LvrTransferVar.MOBILES_XMPP == "S");
 
             textBoxDirectorioActual.Text = LvrTransferVar.DIRECTORIO_BASE_LOCAL;
-            textBoxDirectorioDeRespaldos.Text = LvrTransferVar.DIRECTORIO_RESPALDOS;
+            try
+            {
+                textBoxDirectorioDeRespaldos.Text = LvrTransferVar.DIRECTORIO_RESPALDOS;
+            }
+            catch (System.ArgumentNullException)
+            {
+                textBoxDirectorioDeRespaldos.Text = "";
+            }
             _ = ActualizarGrillaDerespaldos();
         }
 
@@ -298,6 +305,19 @@ namespace BikeMessenger
                 BtnConfiguraciónUsuario.IsEnabled = false;
             }
             LvrTransferVar.EscribirValoresDeAjustes();
+        }
+
+        private void ToggleSwitch_Toggled(object sender, RoutedEventArgs e)
+        {
+            // Save theme choice to LocalSettings. 
+            // ApplicationTheme enum values: 0 = Light, 1 = Dark
+            ApplicationData.Current.LocalSettings.Values["themeSetting"] =
+                                                             ((ToggleSwitch)sender).IsOn ? 0 : 1;
+        }
+
+        private void ToggleSwitch_Loaded(object sender, RoutedEventArgs e)
+        {
+            ((ToggleSwitch)sender).IsOn = App.Current.RequestedTheme == ApplicationTheme.Light;
         }
     }
 }

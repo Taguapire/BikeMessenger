@@ -8,10 +8,10 @@
 
   <Identity
     Name="21006SQLBiker.46887132F12D8"
-    Publisher="CN=PENTALPHA E.I.R.L."
+    Publisher="CN=F99EFFD5-8698-48D3-9336-BD5411647FFA"
     Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="506fac40-e916-4027-a62e-3076cb27ee38" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="0439ff14-97c3-4f86-9d58-a79540117b6a" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>BikeMessenger</DisplayName>

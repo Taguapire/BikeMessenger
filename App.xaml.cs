@@ -4,6 +4,7 @@ using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using Windows.Storage;
 
 namespace BikeMessenger
 {
@@ -22,6 +23,15 @@ namespace BikeMessenger
         {
             InitializeComponent();
             Suspending += OnSuspending;
+
+            // Get theme choice from LocalSettings.
+            object value = ApplicationData.Current.LocalSettings.Values["themeSetting"];
+
+            if (value != null)
+            {
+                // Apply theme choice.
+                Current.RequestedTheme = (ApplicationTheme)(int)value;
+            }
         }
 
         /// <summary>

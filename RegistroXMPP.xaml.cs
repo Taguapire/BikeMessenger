@@ -33,10 +33,10 @@ namespace BikeMessenger
 
         public void MemoriaPantalla()
         {
-            TBoxPentalphaId.Text = localPentalphaJson.PENTALPHA;
-            TBoxEmpresa.Text = localPentalphaJson.EMPRESA;
-            TBoxRutId.Text = localPentalphaJson.RUTID;
-            TBoxDigVer.Text = localPentalphaJson.DIGVER;
+            TBoxPentalphaId.Text = localPentalphaJson.PENTALPHA ?? "";
+            TBoxEmpresa.Text = localPentalphaJson.EMPRESA ?? "";
+            TBoxRutId.Text = localPentalphaJson.RUTID ?? "";
+            TBoxDigVer.Text = localPentalphaJson.DIGVER ?? "";
             TBoxUsuario.Text = localPentalphaJson.USUARIO ?? "";
             TBoxClave.Text = localPentalphaJson.CLAVE ?? "";
             TBoxRemoto.Text = localPentalphaJson.REMOTO ?? "";

@@ -6,10 +6,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Custom="using:Microsoft.Toolkit.Uwp.UI.Controls" x:Name="PaginaDeImpresion"
     x:Class="BikeMessenger.ListadosGenerales"
-    mc:Ignorable="d" Width="1280" Height="720" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
-    <Page.Background>
-        <AcrylicBrush TintColor="#CCABDAF5"/>
-    </Page.Background>
+    NavigationCacheMode="Required"
+    mc:Ignorable="d">
     <Page.BottomAppBar>
         <CommandBar x:Name="CommandBarBottonListadosGenerales" DefaultLabelPosition="Right"  Background="#FFC5CCCF" HorizontalAlignment="Center">
             <CommandBar.Content>
@@ -19,5 +17,8 @@
             <AppBarButton x:Name="appBarButtonVolver" Icon="Back" Label="Volver" Click="BtnListadoGeneralVolver"/>
         </CommandBar>
     </Page.BottomAppBar>
-    <Grid x:Name="PanelDePresentacion" MaxWidth="1280" MaxHeight="720" ScrollViewer.HorizontalScrollBarVisibility="Visible" MinWidth="1280" MinHeight="720"/>
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+        <StackPanel x:Name="PanelDePresentacion" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        </StackPanel>
+    </ScrollViewer>
 </Page>

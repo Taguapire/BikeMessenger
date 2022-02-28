@@ -31,7 +31,7 @@ namespace BikeMessenger
         private TransferVar LvrTransferVar = new TransferVar();
         private bool BorrarSiNo;
         private double LvrDistanciaRecorrida = 0;
-        private AvisoDeEnvio AvisoEnvioData;
+        private StructAsignacionDeServicio AvisoEnvioData;
         private ComunicacionXMPP AsignarServicio = new ComunicacionXMPP();
         private XmppClient xmppClient;
         private double lvrlatOrigen = 0;
@@ -148,7 +148,7 @@ namespace BikeMessenger
                 ActualizarCombos();
                 try
                 {
-                    AvisoEnvioData = new AvisoDeEnvio();
+                    AvisoEnvioData = new StructAsignacionDeServicio();
                     AvisoEnvioData.ENVIO = ServicioIO.NROENVIO;
                     AvisoEnvioData.FECHA = ServicioIO.FECHAENTREGA;
                     AvisoEnvioData.HORA = ServicioIO.HORAENTREGA;
@@ -159,7 +159,7 @@ namespace BikeMessenger
                     AvisoEnvioData.LATITUDDESTINO = ServicioIO.DLATITUD;
                     AvisoEnvioData.LONGITUDDESTINO = ServicioIO.DLONGITUD;
                     AvisoEnvioData.DISTANCIA = ServicioIO.DISTANCIA;
-                    AsignarServicio.ProcesarJson(AvisoEnvioData);
+                    AsignarServicio.ProcesarJsoAsignacionDeServicio(AvisoEnvioData);
                     if (LvrTransferVar.MOBILES_XMPP == "S")
                     {
                         string lMensajero = "";
@@ -202,7 +202,7 @@ namespace BikeMessenger
                 ActualizarCombos();
                 try
                 {
-                    AvisoEnvioData = new AvisoDeEnvio();
+                    AvisoEnvioData = new StructAsignacionDeServicio();
                     AvisoEnvioData.ENVIO = ServicioIO.NROENVIO;
                     AvisoEnvioData.FECHA = ServicioIO.FECHAENTREGA;
                     AvisoEnvioData.HORA = ServicioIO.HORAENTREGA;
@@ -213,7 +213,7 @@ namespace BikeMessenger
                     AvisoEnvioData.LATITUDDESTINO = ServicioIO.DLATITUD;
                     AvisoEnvioData.LONGITUDDESTINO = ServicioIO.DLONGITUD;
                     AvisoEnvioData.DISTANCIA = ServicioIO.DISTANCIA;
-                    AsignarServicio.ProcesarJson(AvisoEnvioData);
+                    AsignarServicio.ProcesarJsoAsignacionDeServicio(AvisoEnvioData);
                     if (LvrTransferVar.MOBILES_XMPP == "S")
                     {
                         string lMensajero = "";
