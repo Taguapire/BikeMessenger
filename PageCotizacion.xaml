@@ -13,12 +13,17 @@
             <CommandBar.Content>
                 <TextBlock Text="Visor de Cotizaciones" Margin="12,8"/>
             </CommandBar.Content>
+            <AppBarButton x:Name="appBarNuevo" Icon="Document" Label="Nueva Cotización" Click="BtnNuevaCotizacion"/>
+            <AppBarButton x:Name="appBarEditar" Icon="Edit" Label="Editar Cotización" Click="BtnEditarCotizacion"/>
+            <AppBarButton x:Name="appBarEliminar" Icon="Delete" Label="Eliminar Cotización" Click="BtnEliminarCotizacion"/>
+            <AppBarButton x:Name="appBarListado" Icon="List" Label="Lista de Cotización" Click="BtnListaDeCotizaciones"/>
             <AppBarButton x:Name="appBarSalir" Icon="Go" Label="Salir" Click="BtnSalirVisorDeCotizaciones"/>
         </CommandBar>
     </Page.BottomAppBar>
     <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
         <StackPanel x:Name="LayoutRoot" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Custom:DataGrid x:Name="DGViewCotizacion" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AutoGeneratingColumn="GeneracionDeColumnas" ScrollViewer.HorizontalScrollBarVisibility="Visible" GridLinesVisibility="All" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollBarVisibility="Visible" HeadersVisibility="All" SelectionMode="Single" BackgroundSizing="OuterBorderEdge" CanBeScrollAnchor="True" IsReadOnly="True" DoubleTapped="RevisarDetalleCotizacionServicio"/>
+            <WebView x:Name="VisorDetalleCotizaciones" Height="720" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" UseLayoutRounding="False" ScriptNotify="VisorCotizacionScriptNotify" NavigationCompleted="VisorCotizacionLlenadoFormulario"/>
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup>
                     <VisualState>
