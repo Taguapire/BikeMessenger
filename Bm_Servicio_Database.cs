@@ -249,7 +249,7 @@ namespace BikeMessenger
             {
                 TbBikeMessengerServicio record = new TbBikeMessengerServicio
                 {
-                    OPERACION = "AGREGAR",
+                    OPERACION = "MODIFICAR",
                     PKSERVICIO = mBK_Servicio.PKSERVICIO,
                     PENTALPHA = mBK_Servicio.PENTALPHA,
                     NROENVIO = mBK_Servicio.NROENVIO,
@@ -357,10 +357,7 @@ namespace BikeMessenger
                     };
                     GridLocalServicioLista.Add(GridLocalServicio);
                 }
-
-
             }
-
             BM_ConexionLite.Close();
             BM_ConexionLite.Dispose();
 

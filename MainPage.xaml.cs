@@ -365,8 +365,8 @@ namespace BikeMessenger
             DbVistaCotizacionCliMen += "select ";
             DbVistaCotizacionCliMen += "cotizacion, ";
             DbVistaCotizacionCliMen += "nombre, ";
-            DbVistaCotizacionCliMen += "(ocalle + ' ' + onumero + ' ' + ocomuna) as origen, ";
-            DbVistaCotizacionCliMen += "(dcalle + ' ' + dnumero + ' ' + dcomuna) as destino, ";
+            DbVistaCotizacionCliMen += "(ocalle || ' ' || onumero || ' ' || ocomuna) as origen, ";
+            DbVistaCotizacionCliMen += "(dcalle || ' ' || dnumero || ' ' || dcomuna) as destino, ";
             DbVistaCotizacionCliMen += "fechaentrega, ";
             DbVistaCotizacionCliMen += "horaentrega, ";
             DbVistaCotizacionCliMen += "distancia "; 

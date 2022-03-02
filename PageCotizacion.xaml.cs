@@ -1,19 +1,10 @@
-﻿using SQLite;
+﻿using Microsoft.Toolkit.Uwp.UI.Controls;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
+using System.Data;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -24,74 +15,33 @@ namespace BikeMessenger
     /// </summary>
     public sealed partial class PageCotizacion : Page
     {
+        private List<StructBikeMessengerCotizacion> CotizacionIOArray = new List<StructBikeMessengerCotizacion>();
+        private StructBikeMessengerCotizacion CotizacionIO = new StructBikeMessengerCotizacion();
+        private Bm_Cotizacion_Database BM_Database_Cotizacion = new Bm_Cotizacion_Database();
         private TransferVar LvrTransferVar = new TransferVar();
+        private bool BorrarSiNo;
         private bool ContinuarSiNo;
         private readonly Uri PaginaCotizacion = new Uri("ms-appx-web:///html/EditorCotizaciones.html");
-        private StructBikeMessengerCotizacion DbCotizacion = new StructBikeMessengerCotizacion();
+        private string OperacionActual = "";
 
         public PageCotizacion()
         {
             InitializeComponent();
-            InciarlistViewServicios();
-            ContinuarSiNo = false;
+            BorrarSiNo = false;
             if (LvrTransferVar.ESTADOPARAMETROS == "NADA")
             {
                 LvrTransferVar.ESTADOPARAMETROS = "S";
                 LvrTransferVar.BASEDEDATOSLOCAL = "S";
                 LvrTransferVar.EscribirValoresDeAjustes();
             }
+            InciarlistViewCotizaciones();
         }
 
-        private async Task AvisoIniciarParemetrosDialogAsync()
+        private void InciarlistViewCotizaciones()
         {
-            ContentDialog AvisoConfirmacionPersonalDialog = new ContentDialog
-            {
-                Title = "Iniciar en Ajuste",
-                Content = "Usted aun no a definido Base de Datos.",
-                PrimaryButtonText = "Aceptar Usar SQLite",
-                CloseButtonText = "Cancelar y definir valores en Ajustes"
-            };
-
-            ContentDialogResult result = await AvisoConfirmacionPersonalDialog.ShowAsync();
-
-            ContinuarSiNo = result == ContentDialogResult.Primary;
-        }
-
-        private void InciarlistViewServicios()
-        {
-
             List<GridListViewCotizaciones> GridCotizacionesLista = new List<GridListViewCotizaciones>();
-
-            string CompletoNombreBD = LvrTransferVar.DIRECTORIO_BASE_LOCAL + "\\BikeMessenger.db";
-
-            SQLiteConnection BM_ConexionLite = new SQLiteConnection(CompletoNombreBD);
-
-            if (LvrTransferVar.ESTADOPARAMETROS == "NADA")
-            {
-                return;
-            }
-
-            List<TbVistaCotizacionCliMen> results = BM_ConexionLite.Query<TbVistaCotizacionCliMen>("select * from Vista_Cotizacion_CliMen");
-
-            for (int i = 0; i < results.Count; i++)
-            {
-                GridCotizacionesLista.Add(new GridListViewCotizaciones
-                {
-                    COTIZACION = results[i].COTIZACION,
-                    CLIENTE = results[i].NOMBRE,
-                    TIPOCARGA = results[i].TIPOCARGA,
-                    ORIGEN = results[i].ORIGEN,
-                    DESTINO = results[i].DESTINO,
-                    FECHA_ENTREGA = results[i].FECHAENTREGA,
-                    HORA_ENTREGA = results[i].HORAENTREGA,
-                    DISTANCIA = results[i].DISTANCIA
-                });
-            }
-
+            GridCotizacionesLista = BM_Database_Cotizacion.ListaViewCotizaciones();
             DGViewCotizacion.ItemsSource = GridCotizacionesLista;
-
-            BM_ConexionLite.Close();
-            BM_ConexionLite.Dispose();
         }
 
         private void GeneracionDeColumnas(object sender, Microsoft.Toolkit.Uwp.UI.Controls.DataGridAutoGeneratingColumnEventArgs e)
@@ -134,157 +84,336 @@ namespace BikeMessenger
 
         private void RevisarDetalleCotizacionServicio(object sender, Windows.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)
         {
-            VisorDetalleCotizaciones.Visibility = Visibility.Visible;
-            DGViewCotizacion.Visibility = Visibility.Collapsed;
+            // Tomar Valor de PENTALPHA_ID y NRO DE COTIZACION
+            string VCOTIZACION = "";
+            OperacionActual = "EDITAR";
+            appBarNuevo.IsEnabled = false;
+            appBarEditar.IsEnabled = true;
+            appBarEliminar.IsEnabled = false;
+            appBarListado.IsEnabled = true;
+            try
+            {
+                DataGrid CeldaSeleccionada = sender as DataGrid;
+                GridListViewCotizaciones Fila = (GridListViewCotizaciones)CeldaSeleccionada.SelectedItems[0];
+                VCOTIZACION = Fila.COTIZACION;
+
+                // Buscar en Tabla de Cotizaciones
+                CotizacionIOArray = BM_Database_Cotizacion.BuscarCotizacion(LvrTransferVar.PENTALPHA_ID, VCOTIZACION);
+
+                // Llenar CotizacionIO
+                if (CotizacionIOArray.Count > 0)
+                {
+                    CotizacionIO = CotizacionIOArray[0];
+                    VisorDetalleCotizaciones.Visibility = Visibility.Visible;
+                    DGViewCotizacion.Visibility = Visibility.Collapsed;
+                    VisorDetalleCotizaciones.Navigate(PaginaCotizacion);
+                }
+            }
+            catch (System.NullReferenceException)
+            {
+                ActivarBotones();
+            }
+            catch (System.ArgumentException)
+            {
+                ActivarBotones();
+            }
+            catch (System.Exception)
+            {
+                ActivarBotones();
+            }
         }
 
         private void BtnNuevaCotizacion(object sender, RoutedEventArgs e)
         {
+            OperacionActual = "AGREGAR";
+            appBarNuevo.IsEnabled = true;
+            appBarEditar.IsEnabled = false;
+            appBarEliminar.IsEnabled = false;
+            appBarListado.IsEnabled = true;
             VisorDetalleCotizaciones.Visibility = Visibility.Visible;
             DGViewCotizacion.Visibility = Visibility.Collapsed;
             try
             {
+                CotizacionIO = new StructBikeMessengerCotizacion();
                 VisorDetalleCotizaciones.Navigate(PaginaCotizacion);
+            }
+            catch (System.NullReferenceException)
+            {
+                ActivarBotones();
             }
             catch (System.ArgumentException)
             {
-                ;
+                ActivarBotones();
             }
             catch (System.Exception)
             {
-                ;
+                ActivarBotones();
             }
         }
 
         private void BtnEditarCotizacion(object sender, RoutedEventArgs e)
         {
+            OperacionActual = "EDITAR";
+            appBarNuevo.IsEnabled = false;
+            appBarEditar.IsEnabled = true;
+            appBarEliminar.IsEnabled = false;
+            appBarListado.IsEnabled = true;
             VisorDetalleCotizaciones.Visibility = Visibility.Visible;
             DGViewCotizacion.Visibility = Visibility.Collapsed;
             try
             {
                 VisorDetalleCotizaciones.Navigate(PaginaCotizacion);
             }
+            catch (System.NullReferenceException)
+            {
+                ActivarBotones();
+            }
             catch (System.ArgumentException)
             {
-                ;
+                ActivarBotones();
             }
             catch (System.Exception)
             {
-                ;
+                ActivarBotones();
             }
         }
 
         private void BtnEliminarCotizacion(object sender, RoutedEventArgs e)
         {
+            OperacionActual = "ELIMINAR";
+            appBarNuevo.IsEnabled = false;
+            appBarEditar.IsEnabled = false;
+            appBarEliminar.IsEnabled = true;
+            appBarListado.IsEnabled = true;
             VisorDetalleCotizaciones.Visibility = Visibility.Visible;
             DGViewCotizacion.Visibility = Visibility.Collapsed;
+            try
+            {
+                VisorDetalleCotizaciones.Navigate(PaginaCotizacion);
+            }
+            catch (System.NullReferenceException)
+            {
+                ActivarBotones();
+            }
+            catch (System.ArgumentException)
+            {
+                ActivarBotones();
+            }
+            catch (System.Exception)
+            {
+                ActivarBotones();
+            }
         }
 
         private void BtnListaDeCotizaciones(object sender, RoutedEventArgs e)
         {
             DGViewCotizacion.Visibility = Visibility.Visible;
             VisorDetalleCotizaciones.Visibility = Visibility.Collapsed;
+            InciarlistViewCotizaciones();
+            ActivarBotones();
         }
 
-        private void VisorCotizacionScriptNotify(object sender, NotifyEventArgs e)
+        private void ActivarBotones()
+        {
+            appBarNuevo.IsEnabled = true;
+            appBarEditar.IsEnabled = true;
+            appBarEliminar.IsEnabled = true;
+            appBarListado.IsEnabled = true;
+        }
+        private async void VisorCotizacionScriptNotify(object sender, NotifyEventArgs e)
         {
             string RetornoCotizacion = e.Value;
             string[] ParametrosCotizacion = RetornoCotizacion.Split("&&");
 
-            DbCotizacion.OPERACION = "ACTUALIZAR";
-            DbCotizacion.PENTALPHA = LvrTransferVar.PENTALPHA_ID + "1";
-            DbCotizacion.PENTALPHA = LvrTransferVar.PENTALPHA_ID;
-            DbCotizacion.COTIZACION = "1";
-            DbCotizacion.NOMBRE = ParametrosCotizacion[0];
-            DbCotizacion.TELEFONO = ParametrosCotizacion[1];
-            DbCotizacion.EMAIL = ParametrosCotizacion[2];
-            DbCotizacion.OCALLE = ParametrosCotizacion[3];
-            DbCotizacion.ONUMERO = ParametrosCotizacion[4];
-            DbCotizacion.ODPTO = ParametrosCotizacion[5];
-            DbCotizacion.OOFICINA = ParametrosCotizacion[6];
-            DbCotizacion.OCASA = ParametrosCotizacion[7];
-            DbCotizacion.OCOMUNA = ParametrosCotizacion[8];
-            DbCotizacion.ONOMBRE = ParametrosCotizacion[9];
-            DbCotizacion.OTELEFONO = ParametrosCotizacion[10];
-            DbCotizacion.DCALLE = ParametrosCotizacion[11];
-            DbCotizacion.DNUMERO = ParametrosCotizacion[12];
-            DbCotizacion.DDPTO = ParametrosCotizacion[13];
-            DbCotizacion.DOFICINA = ParametrosCotizacion[14];
-            DbCotizacion.DCASA = ParametrosCotizacion[15];
-            DbCotizacion.DCOMUNA = ParametrosCotizacion[16];
-            DbCotizacion.DNOMBRE = ParametrosCotizacion[17];
-            DbCotizacion.DTELEFONO = ParametrosCotizacion[18];
-            DbCotizacion.REGRESODE = ParametrosCotizacion[19];
-            DbCotizacion.TIPOCARGA = ParametrosCotizacion[20];
-            DbCotizacion.LARGO = Double.Parse(ParametrosCotizacion[21]);
-            DbCotizacion.ANCHO = Double.Parse(ParametrosCotizacion[22]);
-            DbCotizacion.ALTO = Double.Parse(ParametrosCotizacion[23]);
-            DbCotizacion.PESO = Double.Parse(ParametrosCotizacion[24]);
-            DbCotizacion.DESCRIPCION = ParametrosCotizacion[25];
-            DbCotizacion.FECHAENTREGA = ParametrosCotizacion[26];
-            DbCotizacion.HORAENTREGA = ParametrosCotizacion[27];
-            DbCotizacion.DISTANCIA = Double.Parse(ParametrosCotizacion[28]);
-            DbCotizacion.RESOPERACION = "OK";
-            DbCotizacion.RESMENSAJE = "OK";
+            CotizacionIO.OPERACION = OperacionActual;
+            CotizacionIO.PKCOTIZACION = LvrTransferVar.PENTALPHA_ID + ParametrosCotizacion[0];
+            CotizacionIO.PENTALPHA = LvrTransferVar.PENTALPHA_ID;
+            CotizacionIO.COTIZACION = ParametrosCotizacion[0];
+            CotizacionIO.NOMBRE = ParametrosCotizacion[1];
+            CotizacionIO.TELEFONO = ParametrosCotizacion[2];
+            CotizacionIO.EMAIL = ParametrosCotizacion[3];
+            CotizacionIO.OCALLE = ParametrosCotizacion[4];
+            CotizacionIO.ONUMERO = ParametrosCotizacion[5];
+            CotizacionIO.ODPTO = ParametrosCotizacion[6];
+            CotizacionIO.OOFICINA = ParametrosCotizacion[7];
+            CotizacionIO.OCASA = ParametrosCotizacion[8];
+            CotizacionIO.OCOMUNA = ParametrosCotizacion[9];
+            CotizacionIO.ONOMBRE = ParametrosCotizacion[10];
+            CotizacionIO.OTELEFONO = ParametrosCotizacion[11];
+            CotizacionIO.DCALLE = ParametrosCotizacion[12];
+            CotizacionIO.DNUMERO = ParametrosCotizacion[13];
+            CotizacionIO.DDPTO = ParametrosCotizacion[14];
+            CotizacionIO.DOFICINA = ParametrosCotizacion[15];
+            CotizacionIO.DCASA = ParametrosCotizacion[16];
+            CotizacionIO.DCOMUNA = ParametrosCotizacion[17];
+            CotizacionIO.DNOMBRE = ParametrosCotizacion[18];
+            CotizacionIO.DTELEFONO = ParametrosCotizacion[19];
+            CotizacionIO.REGRESODE = ParametrosCotizacion[20];
+            CotizacionIO.TIPOCARGA = ParametrosCotizacion[21];
+            
+            try
+            {
+                CotizacionIO.LARGO = Double.Parse(ParametrosCotizacion[22]);
+            }
+            catch (System.FormatException)
+            {
+                CotizacionIO.LARGO = 0;
+            }
+            
+            try
+            {
+                CotizacionIO.ANCHO = Double.Parse(ParametrosCotizacion[23]);
+            }
+            catch (System.FormatException)
+            {
+                CotizacionIO.ANCHO = 0;
+            }
+
+            try
+            {
+                CotizacionIO.ALTO = Double.Parse(ParametrosCotizacion[24]);
+            }
+            catch (System.FormatException)
+            {
+                CotizacionIO.ALTO = 0;
+            }
+
+            try
+            {
+                CotizacionIO.PESO = Double.Parse(ParametrosCotizacion[25]);
+            }
+            catch (System.FormatException)
+            {
+                CotizacionIO.PESO = 0;
+            }
+
+            CotizacionIO.DESCRIPCION = ParametrosCotizacion[26];
+            CotizacionIO.FECHAENTREGA = ParametrosCotizacion[27];
+            CotizacionIO.HORAENTREGA = ParametrosCotizacion[28];
+
+            try
+            {
+                CotizacionIO.DISTANCIA = Double.Parse(ParametrosCotizacion[29]);
+            }
+            catch (System.FormatException)
+            {
+                CotizacionIO.DISTANCIA = 0;
+            }
+
+            CotizacionIO.RESOPERACION = "OK";
+            CotizacionIO.RESMENSAJE = "OK";
+            if (OperacionActual.Equals("AGREGAR"))
+            {
+                if (BM_Database_Cotizacion.AgregarCotizacion(CotizacionIO))
+                {
+                    await AvisoOperacionCotizacionDialogAsync("Agregar Cotización", "Cotización agregada exitosamente.");                   
+                }
+                else
+                {
+                    await AvisoOperacionCotizacionDialogAsync("Agregar Cotización", "Error en ingreso de Cotización. Reintente o escriba a soporte contacto@pentalpha.net");
+                }
+            }
+            else if (OperacionActual.Equals("EDITAR"))
+            {
+                if (BM_Database_Cotizacion.ModificarCotizacion(CotizacionIO))
+                {
+                    await AvisoOperacionCotizacionDialogAsync("Modificar Cotización", "Cotización agregada exitosamente.");
+                }
+                else
+                {
+                    await AvisoOperacionCotizacionDialogAsync("Modificar Cotización", "Error en ingreso de Cotización. Reintente o escriba a soporte contacto@pentalpha.net");
+                }
+            }
+            else if (OperacionActual.Equals("ELIMINAR"))
+            {
+                BorrarSiNo = false;
+
+                await AvisoBorrarCotizacionDialogAsync();
+
+                if (!BorrarSiNo)
+                {
+                    return;
+                }
+
+                if (BM_Database_Cotizacion.BorrarCotizacion(LvrTransferVar.PENTALPHA_ID, CotizacionIO.PKCOTIZACION))
+                {
+                    await AvisoOperacionCotizacionDialogAsync("Borrar Cotizacion", "Cotización borrada exitosamente.");
+
+                }
+                else
+                {
+                    await AvisoOperacionCotizacionDialogAsync("Borrar Cotizacion", "Error en ingreso de Cotización. Reintente o escriba a soporte contacto@pentalpha.net");
+                }
+            }
+            else
+            {
+                OperacionActual = "";
+            }
+            OperacionActual = "";
+        }
+
+        private async Task AvisoOperacionCotizacionDialogAsync(string xTitulo, string xDescripcion)
+        {
+            ContentDialog AvisoOperacionCotizacionDialog = new ContentDialog
+            {
+                Title = xTitulo,
+                Content = xDescripcion,
+                CloseButtonText = "Continuar"
+            };
+            _ = await AvisoOperacionCotizacionDialog.ShowAsync();
+        }
+
+
+        private async Task AvisoBorrarCotizacionDialogAsync()
+        {
+            ContentDialog AvisoConfirmacionCotizacionDialog = new ContentDialog
+            {
+                Title = "Borrar Cotización",
+                Content = "Confirme borrado del registro actual!",
+                PrimaryButtonText = "Borrar",
+                CloseButtonText = "Cancelar"
+            };
+
+            ContentDialogResult result = await AvisoConfirmacionCotizacionDialog.ShowAsync();
+
+            BorrarSiNo = result == ContentDialogResult.Primary;
         }
 
         private async void VisorCotizacionLlenadoFormulario(WebView sender, WebViewNavigationCompletedEventArgs args)
         {
-            string[] Parametros = new string[29];
-            Parametros[0] = DbCotizacion.NOMBRE ?? "";
-            Parametros[1] = DbCotizacion.TELEFONO ?? "";
-            Parametros[2] = DbCotizacion.EMAIL ?? "";
-            Parametros[3] = DbCotizacion.OCALLE ?? "";
-            Parametros[4] = DbCotizacion.ONUMERO ?? "";
-            Parametros[5] = DbCotizacion.ODPTO ?? "";
-            Parametros[6] = DbCotizacion.OOFICINA ?? "";
-            Parametros[7] = DbCotizacion.OCASA ?? "";
-            Parametros[8] = DbCotizacion.OCOMUNA ?? "";
-            Parametros[9] = DbCotizacion.ONOMBRE ?? "";
-            Parametros[10] = DbCotizacion.OTELEFONO ?? "";
-            Parametros[11] = DbCotizacion.DCALLE ?? "";
-            Parametros[12] = DbCotizacion.DNUMERO ?? "";
-            Parametros[13] = DbCotizacion.DDPTO ?? "";
-            Parametros[14] = DbCotizacion.DOFICINA ?? "";
-            Parametros[15] = DbCotizacion.DCASA ?? "";
-            Parametros[16] = DbCotizacion.DCOMUNA ?? "";
-            Parametros[17] = DbCotizacion.DNOMBRE ?? "";
-            Parametros[18] = DbCotizacion.DTELEFONO ?? "";
-            Parametros[19] = DbCotizacion.REGRESODE ?? "NO";
-            Parametros[20] = DbCotizacion.TIPOCARGA ?? "OTROS";
-            Parametros[21] = DbCotizacion.LARGO.ToString() ?? "0";
-            Parametros[22] = DbCotizacion.ANCHO.ToString() ?? "0";
-            Parametros[23] = DbCotizacion.ALTO.ToString() ?? "0";
-            Parametros[24] = DbCotizacion.PESO.ToString() ?? "0";
-            Parametros[25] = DbCotizacion.DESCRIPCION ?? "";
-            Parametros[26] = DbCotizacion.FECHAENTREGA ?? "";
-            Parametros[27] = DbCotizacion.HORAENTREGA ?? "";
-            Parametros[28] = DbCotizacion.DISTANCIA.ToString() ?? "0";
+            string[] Parametros = new string[30];
+
+            Parametros[0] = CotizacionIO.COTIZACION ?? "";
+            Parametros[1] = CotizacionIO.NOMBRE ?? "";
+            Parametros[2] = CotizacionIO.TELEFONO ?? "";
+            Parametros[3] = CotizacionIO.EMAIL ?? "";
+            Parametros[4] = CotizacionIO.OCALLE ?? "";
+            Parametros[5] = CotizacionIO.ONUMERO ?? "";
+            Parametros[6] = CotizacionIO.ODPTO ?? "";
+            Parametros[7] = CotizacionIO.OOFICINA ?? "";
+            Parametros[8] = CotizacionIO.OCASA ?? "";
+            Parametros[9] = CotizacionIO.OCOMUNA ?? "";
+            Parametros[10] = CotizacionIO.ONOMBRE ?? "";
+            Parametros[11] = CotizacionIO.OTELEFONO ?? "";
+            Parametros[12] = CotizacionIO.DCALLE ?? "";
+            Parametros[13] = CotizacionIO.DNUMERO ?? "";
+            Parametros[14] = CotizacionIO.DDPTO ?? "";
+            Parametros[15] = CotizacionIO.DOFICINA ?? "";
+            Parametros[16] = CotizacionIO.DCASA ?? "";
+            Parametros[17] = CotizacionIO.DCOMUNA ?? "";
+            Parametros[18] = CotizacionIO.DNOMBRE ?? "";
+            Parametros[19] = CotizacionIO.DTELEFONO ?? "";
+            Parametros[20] = CotizacionIO.REGRESODE ?? "";
+            Parametros[21] = CotizacionIO.TIPOCARGA ?? "";
+            Parametros[22] = CotizacionIO.LARGO.ToString() ?? "0";
+            Parametros[23] = CotizacionIO.ANCHO.ToString() ?? "0";
+            Parametros[24] = CotizacionIO.ALTO.ToString() ?? "0";
+            Parametros[25] = CotizacionIO.PESO.ToString() ?? "0";
+            Parametros[26] = CotizacionIO.DESCRIPCION ?? "";
+            Parametros[27] = CotizacionIO.FECHAENTREGA ?? "";
+            Parametros[28] = CotizacionIO.HORAENTREGA ?? "";
+            Parametros[29] = CotizacionIO.DISTANCIA.ToString() ?? "0";
             _ = await VisorDetalleCotizaciones.InvokeScriptAsync("llenadoFormulario", Parametros);
-        }
-    }
-
-    internal class GridListViewCotizaciones
-    {
-        public string COTIZACION { get; set; }
-        public string CLIENTE { get; set; }
-        public string TIPOCARGA { get; set; }
-        public string ORIGEN { get; set; }
-        public string DESTINO { get; set; }
-        public string FECHA_ENTREGA { get; set; }
-        public string HORA_ENTREGA { get; set; }
-        public double DISTANCIA { get; set; }
-
-        public GridListViewCotizaciones()
-        {
-            COTIZACION = "";
-            CLIENTE = "";
-            TIPOCARGA = "";
-            ORIGEN = "";
-            DESTINO = "";
-            FECHA_ENTREGA = "";
-            HORA_ENTREGA = "";
-            DISTANCIA = 0;
         }
     }
 }

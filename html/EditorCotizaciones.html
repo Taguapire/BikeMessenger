@@ -12,6 +12,7 @@
 <body>
     <h2>Datos de Cotización</h2>
     <form id="formulario">
+        <input type="text" id="cotizacion" name="cotizacion" size="32" placeholder="Nro Cotizacion"><br>
         <input type="text" id="nombre" name="nombre" size="32" placeholder="Ingrese Nombre"><br>
         <input type="text" id="telefono" name="telefono" placeholder="Ingrese Telefono"><br>
         <input type="email" id="email" name="email" placeholder="Ingrese Email"><br><br>
@@ -36,13 +37,13 @@
         <input type="text" id="dnombre" name="dnombre" size="32" placeholder="Nombre Contacto"><br>
         <input type="text" id="dtelefono" name="dtelefono" placeholder="Teléfono Contacto"><br><br>
 
-        <label for="regresode">Retorno al Origen:</label>
+        <label for="lregresode">Retorno al Origen:</label>
         <select id="regresode" name="regresoda">
             <option value="SI">Si</option>
             <option value="NO">No</option>
         </select><br><br>
 
-        <label for="tipocarga">Tipo de Carga:</label>
+        <label for="ltipocarga">Tipo de Carga:</label>
         <select id="tipocarga" name="tipocarga">
             <option value="FACTURAS">Facturas</option>
             <option value="BULTOS">Bultos</option>
@@ -54,25 +55,25 @@
             <option value="OTROS">Otros</option>
         </select><br><br>
 
-        <label for="largo">Largo (cm)</label>
+        <label for="llargo">Largo (cm)</label>
         <input type="number" id="largo" name="largo" placeholder="Largo (cm)"><br>
-        <label for="ancho">Ancho (cm)</label>
+        <label for="lancho">Ancho (cm)</label>
         <input type="number" id="ancho" name="ancho" placeholder="Ancho (cm)"><br>
-        <label for="alto">Alto (cm)</label>
+        <label for="lalto">Alto (cm)</label>
         <input type="number" id="alto" name="alto" placeholder="Alto (cm)"><br>
-        <label for="peso">Peso (gr)</label>
+        <label for="lpeso">Peso (gr)</label>
         <input type="number" id="peso" name="peso" placeholder="Peso (gr)"><br><br>
 
-        <label for="descripcion">Descripción</label><br>
+        <label for="ldescripcion">Descripción</label><br>
         <textarea name="descripcion" cols="64" rows="5"> </textarea><br><br>
 
-        <label for="fechaentrega">Fecha de Entrega</label>
+        <label for="lfechaentrega">Fecha de Entrega</label>
         <input type="date" id="fechaentrega" name="fechaentrega" placeholder="Fecha de Entrega"><br><br>
 
-        <label for="horadeentrega">Hora de Entrega</label>
+        <label for="lhoradeentrega">Hora de Entrega</label>
         <input type="time" id="horaentrega" name="horaentrega" placeholder="Hora de Entrega"><br><br>
 
-        <label for="distancia">Distancia (km)</label>
+        <label for="ldistancia">Distancia (km)</label>
         <input type="number" id="distancia" name="distancia" placeholder="Distancia (Km)"><br><br>
 
         <button type="button" onclick="limpiarFormulario()">Limpiar Formulario</button>
@@ -81,6 +82,7 @@
 
     <script>
         function limpiarFormulario() {
+            document.forms["formulario"]["cotizacion"].value = "";
             document.forms["formulario"]["nombre"].value = "";
             document.forms["formulario"]["telefono"].value = "";
             document.forms["formulario"]["email"].value = "";
@@ -112,7 +114,7 @@
             document.forms["formulario"]["distancia"].value = 0;
         }
 
-        function llenadoFormulario(pnombre, ptelefono, pemail,
+        function llenadoFormulario(pcotizacion, pnombre, ptelefono, pemail,
             pocalle, ponumero, podpto, pooficina, pocasa, pocomuna,
             ponombre, potelefono,
             pdcalle, pdnumero, pddpto, pdoficina, pdcasa, pdcomuna,
@@ -123,6 +125,7 @@
             pfechaentrega, phoraentrega,
             pdistancia) {
 
+            document.forms["formulario"]["cotizacion"].value = pcotizacion;
             document.forms["formulario"]["nombre"].value = pnombre;
             document.forms["formulario"]["telefono"].value = ptelefono;
             document.forms["formulario"]["email"].value = pemail;
@@ -156,6 +159,8 @@
 
         function llenadoRespuesta() {
             var valorCadena = "";
+            valorCadena += document.forms["formulario"]["cotizacion"].value;
+            valorCadena += "&&";
             valorCadena += document.forms["formulario"]["nombre"].value;
             valorCadena += "&&";
             valorCadena += document.forms["formulario"]["telefono"].value;

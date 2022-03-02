@@ -26,6 +26,7 @@ namespace BikeMessenger
         private Bm_Personal_Database BM_Database_Personal = new Bm_Personal_Database();
         private TransferVar LvrTransferVar = new TransferVar();
         private bool BorrarSiNo;
+        private bool ContinuarSiNo;
 
         public PagePersonal()
         {
