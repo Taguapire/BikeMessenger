@@ -53,7 +53,8 @@ namespace BikeMessenger
                     Password = pPassword,
                     XmppDomain = pXmppDomain,
                     Tls = false,
-                    HostnameResolver = new SrvNameResolver()
+                    HostnameResolver = new SrvNameResolver(),
+                    Resource = "BikeMessenger"
                 };
 
                 // connect so the server
@@ -68,11 +69,13 @@ namespace BikeMessenger
                         MensajeNuevoRecibido = el.Cast<Message>().Body;
                         MessageDialog dialog = new MessageDialog(MensajeNuevoRecibido);
                         string Usuario = "";
+                        string Recurso = "";
                         Usuario = el.Cast<Message>().From.User;
                         if (Usuario != "" && Usuario != null)
                         {
                             Usuario = el.Cast<Message>().From.User;
-                            ProcesarMensajeRecibido(Usuario, MensajeNuevoRecibido);
+                            Recurso = el.Cast<Message>().From.Resource;
+                            ProcesarMensajeRecibido(Usuario, Recurso, MensajeNuevoRecibido);
                         }
                         else
                         {
@@ -110,7 +113,7 @@ namespace BikeMessenger
             }
         }
 
-        public bool ProcesarMensajeRecibido(string pUsuario, string pMensajeJSON)
+        public bool ProcesarMensajeRecibido(string pUsuario, string pRecurso, string pMensajeJSON)
         {
             // Procesar aqui el mensaje recivido
             // Tipos de Mensajes:
@@ -127,6 +130,8 @@ namespace BikeMessenger
                 Bm_Cotizacion_Database BM_Database_Cotizacion = new Bm_Cotizacion_Database();
                 StructBikeMessengerCotizacion CotizacionIO = JsonConvert.DeserializeObject<StructBikeMessengerCotizacion>(pMensajeJSON);
                 CotizacionIO.PENTALPHA = LvrTransferVar.PENTALPHA_ID;
+                CotizacionIO.COTIZACION = ""; //  Procedimiento de AutoIncremento
+                CotizacionIO.PKCOTIZACION = CotizacionIO.PENTALPHA + CotizacionIO.COTIZACION;
                 CotizacionIO.RESMENSAJE = "OK";
                 CotizacionIO.RESOPERACION = "OK";
                 if (BM_Database_Cotizacion.AgregarCotizacion(CotizacionIO))
