@@ -30,7 +30,7 @@
             <Custom:DataGrid x:Name="dataGridRespaldos"  HeadersVisibility="Column" HorizontalAlignment="Left" Margin="49,305,0,0" VerticalAlignment="Top" Height="265" Width="866" BorderThickness="1,1,1,1" GridLinesVisibility="All" IsReadOnly="True" />
             <TextBlock HorizontalAlignment="Left" Margin="49,86,0,0" TextWrapping="Wrap" Text="Configuración Administrador" VerticalAlignment="Top" Height="26"/>
             <Button x:Name="BtnConfiguraciónUsuario" Content="Administrador" Margin="255,81,0,0" VerticalAlignment="Top" Width="135" Click="BtnConfiguraciónUsuarioClick"/>
-            <Button x:Name="btnRestaurarBaseDeDatos" Content="Restaurar Base de Datos" Height="32" Margin="690,224,0,0" VerticalAlignment="Top" Width="225" Click="BtnEventoCopiarBaseDeDatos" ClickMode="Press"/>
+            <Button x:Name="btnRestaurarBaseDeDatos" Content="Restaurar Base de Datos" Height="32" Margin="690,224,0,0" VerticalAlignment="Top" Width="225" ClickMode="Press" Click="BtnEventoRestaurarBaseDeDatos"/>
             <CheckBox x:Name="checkBoxActivarXMPP" Content="Comunicación con Mobiles" Margin="430,81,0,0" VerticalAlignment="Top" Width="225" IsChecked="True" Click="CheckBoxActivarXMPPClick"/>
             <ToggleSwitch Header="Tema" OnContent="Light" OffContent="Dark" Toggled="ToggleSwitch_Toggled" Loaded="ToggleSwitch_Loaded" Margin="690,86,0,0" VerticalAlignment="Top" Width="195" Height="69"/>
         </Grid>

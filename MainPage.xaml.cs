@@ -12,6 +12,7 @@ using Matrix.Xml;
 using System.Threading.Tasks;
 using System.Linq;
 using Matrix.Xmpp.Base;
+using Newtonsoft.Json;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -51,7 +52,7 @@ namespace BikeMessenger
                     Username = pUsername,
                     Password = pPassword,
                     XmppDomain = pXmppDomain,
-                    // setting the resolver to use the Srv resolver is optional, but recommended
+                    Tls = false,
                     HostnameResolver = new SrvNameResolver()
                 };
 
@@ -71,7 +72,7 @@ namespace BikeMessenger
                         if (Usuario != "" && Usuario != null)
                         {
                             Usuario = el.Cast<Message>().From.User;
-                            ProcesarMensajeRecibido(MensajeNuevoRecibido);
+                            ProcesarMensajeRecibido(Usuario, MensajeNuevoRecibido);
                         }
                         else
                         {
@@ -109,7 +110,7 @@ namespace BikeMessenger
             }
         }
 
-        public Boolean ProcesarMensajeRecibido(string MensajeJSON)
+        public bool ProcesarMensajeRecibido(string pUsuario, string pMensajeJSON)
         {
             // Procesar aqui el mensaje recivido
             // Tipos de Mensajes:
@@ -120,6 +121,23 @@ namespace BikeMessenger
             //  05.- Aviso de No entrega de Servicio
             //  06.- Aviso de Cancelación de Servicio
             //  07.- Aviso de Solicitud de Cotización
+            if (pUsuario == "officeboycotizar")
+            {
+                // Procesar Deserializacion
+                Bm_Cotizacion_Database BM_Database_Cotizacion = new Bm_Cotizacion_Database();
+                StructBikeMessengerCotizacion CotizacionIO = JsonConvert.DeserializeObject<StructBikeMessengerCotizacion>(pMensajeJSON);
+                CotizacionIO.PENTALPHA = LvrTransferVar.PENTALPHA_ID;
+                CotizacionIO.RESMENSAJE = "OK";
+                CotizacionIO.RESOPERACION = "OK";
+                if (BM_Database_Cotizacion.AgregarCotizacion(CotizacionIO))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
             //  08.- Aviso de Aceptación de Cotización
             //  09.- Aviso de Solicitud de Soporte
             //  10.- Aviso de Reclamo de Cliente
@@ -365,6 +383,7 @@ namespace BikeMessenger
             DbVistaCotizacionCliMen += "select ";
             DbVistaCotizacionCliMen += "cotizacion, ";
             DbVistaCotizacionCliMen += "nombre, ";
+            DbVistaCotizacionCliMen += "tipocarga, ";
             DbVistaCotizacionCliMen += "(ocalle || ' ' || onumero || ' ' || ocomuna) as origen, ";
             DbVistaCotizacionCliMen += "(dcalle || ' ' || dnumero || ' ' || dcomuna) as destino, ";
             DbVistaCotizacionCliMen += "fechaentrega, ";

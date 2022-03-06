@@ -1,47 +1,47 @@
 ﻿<!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <style>
-        body {
-            background-color: lightblue;
-        }
-    </style>
     <meta charset="utf-8" />
+    <meta name="viewport" content="user-scalable=yes, width=device-width, minimum-scale=0.5, maximum-scale=2, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <title>Editor de Cotizaciones</title>
 </head>
 <body>
     <h2>Datos de Cotización</h2>
-    <form id="formulario">
-        <input type="text" id="cotizacion" name="cotizacion" size="32" placeholder="Nro Cotizacion"><br>
-        <input type="text" id="nombre" name="nombre" size="32" placeholder="Ingrese Nombre"><br>
-        <input type="text" id="telefono" name="telefono" placeholder="Ingrese Telefono"><br>
-        <input type="email" id="email" name="email" placeholder="Ingrese Email"><br><br>
+    <form onsubmit="return llenadoRespuesta()">
+        <input type="text" id="cotizacion" name="cotizacion" size="5" placeholder="Nro Cotizacion"><br>
+        <input type="text" id="nombre" name="nombre" size="32" placeholder="Ingrese Nombre" required><br>
+        <input type="text" id="telefono" name="telefono" size="10" placeholder="Ingrese Telefono" required><br>
+        <input type="email" id="email" name="email" size="32" placeholder="Ingrese Email" required><br><br>
 
+        <h3>Origen</h3>
         <label for="origen">Origen</label><br>
-        <input type="text" id="ocalle" name="ocalle" size="64" placeholder="Calle/Avenida"><br>
-        <input type="text" id="onumero" name="onumero" placeholder="Número">
-        <input type="text" id="odpto" name="odpto" placeholder="Dpto">
-        <input type="text" id="ooficina" name="ooficina" placeholder="Oficina">
-        <input type="text" id="ocasa" name="ocasa" placeholder="Casa"><br>
-        <input type="text" id="ocomuna" name="ocomuna" placeholder="Comuna"><br>
-        <input type="text" id="onombre" name="onombre" size="32" placeholder="Nombre Contacto"><br>
-        <input type="text" id="otelefono" name="otelefono" placeholder="Teléfono Contacto"><br><br>
+        <input type="text" id="ocalle" name="ocalle" size="32" placeholder="Calle/Avenida" required><br>
+        <input type="text" id="onumero" name="onumero" size="10" placeholder="Número" required>
+        <input type="text" id="odpto" name="odpto" size="10" placeholder="Dpto">
+        <input type="text" id="ooficina" name="ooficina" size="10" placeholder="Oficina">
+        <input type="text" id="ocasa" name="ocasa" size="10" placeholder="Casa"><br>
+        <input type="text" id="ocomuna" name="ocomuna" size="32" placeholder="Comuna" required><br>
+        <input type="text" id="onombre" name="onombre" size="32" placeholder="Nombre Contacto" required><br>
+        <input type="text" id="otelefono" name="otelefono" size="10" placeholder="Teléfono Contacto" required><br><br>
 
-        <label for="destino">Destino</label><br>
-        <input type="text" id="dcalle" name="dcalle" size="64" placeholder="Calle/Avenida"><br>
-        <input type="text" id="dnumero" name="dnumero" placeholder="Número">
-        <input type="text" id="ddpto" name="ddpto" placeholder="Dpto">
-        <input type="text" id="doficina" name="doficina" placeholder="Oficina">
-        <input type="text" id="dcasa" name="dcasa" placeholder="Casa"><br>
-        <input type="text" id="dcomuna" name="dcomuna" placeholder="Comuna"><br>
-        <input type="text" id="dnombre" name="dnombre" size="32" placeholder="Nombre Contacto"><br>
-        <input type="text" id="dtelefono" name="dtelefono" placeholder="Teléfono Contacto"><br><br>
+        <h3>Destino</h3>
+        <input type="text" id="dcalle" name="dcalle" size="32" placeholder="Calle/Avenida" required><br>
+        <input type="text" id="dnumero" name="dnumero" size="10" placeholder="Número" required>
+        <input type="text" id="ddpto" name="ddpto" size="10" placeholder="Dpto">
+        <input type="text" id="doficina" name="doficina" size="10" placeholder="Oficina">
+        <input type="text" id="dcasa" name="dcasa" size="10" placeholder="Casa"><br>
+        <input type="text" id="dcomuna" name="dcomuna" size="32" placeholder="Comuna" required><br>
+        <input type="text" id="dnombre" name="dnombre" size="32" placeholder="Nombre Contacto" required><br>
+        <input type="text" id="dtelefono" name="dtelefono" size="10" placeholder="Teléfono Contacto" required><br><br>
 
         <label for="lregresode">Retorno al Origen:</label>
-        <select id="regresode" name="regresoda">
+        <select id="regresode" name="regresode">
             <option value="SI">Si</option>
             <option value="NO">No</option>
-        </select><br><br>
+        </select><br>
 
         <label for="ltipocarga">Tipo de Carga:</label>
         <select id="tipocarga" name="tipocarga">
@@ -55,63 +55,83 @@
             <option value="OTROS">Otros</option>
         </select><br><br>
 
-        <label for="llargo">Largo (cm)</label>
-        <input type="number" id="largo" name="largo" placeholder="Largo (cm)"><br>
-        <label for="lancho">Ancho (cm)</label>
-        <input type="number" id="ancho" name="ancho" placeholder="Ancho (cm)"><br>
-        <label for="lalto">Alto (cm)</label>
-        <input type="number" id="alto" name="alto" placeholder="Alto (cm)"><br>
-        <label for="lpeso">Peso (gr)</label>
-        <input type="number" id="peso" name="peso" placeholder="Peso (gr)"><br><br>
+        <table>
+            <tr>
+                <td><label for="llargo">Largo (cm)</label></td>
+                <td><input type="number" id="largo" name="largo" size="5" placeholder="Largo (cm)"></td>
+            </tr>
+            <tr>
+                <td><label for="lancho">Ancho (cm)</label></td>
+                <td><input type="number" id="ancho" name="ancho" size="5" placeholder="Ancho (cm)"></td>
+            </tr>
+            <tr>
+                <td><label for="lalto">Alto (cm)</label></td>
+                <td><input type="number" id="alto" name="alto" size="5" placeholder="Alto (cm)"></td>
+            </tr>
+            <tr>
+                <td><label for="lpeso">Peso (grs)</label></td>
+                <td><input type="number" id="peso" name="peso" size="5" placeholder="Peso (gr)"></td>
+            </tr>
+        </table>
+        <br>
 
-        <label for="ldescripcion">Descripción</label><br>
-        <textarea name="descripcion" cols="64" rows="5"> </textarea><br><br>
+        <label for="ldescripcion">Descripción del Envio</label><br>
+        <textarea name="descripcion" id="descripcion" cols="35" rows="4" required> </textarea><br><br>
 
-        <label for="lfechaentrega">Fecha de Entrega</label>
-        <input type="date" id="fechaentrega" name="fechaentrega" placeholder="Fecha de Entrega"><br><br>
+        <table>
+            <tr>
+                <td><label for="lfechaentrega">Fecha de Entrega</label></td>
+                <td><input type="date" id="fechaentrega" name="fechaentrega" placeholder="Fecha de Entrega" required></td>
 
-        <label for="lhoradeentrega">Hora de Entrega</label>
-        <input type="time" id="horaentrega" name="horaentrega" placeholder="Hora de Entrega"><br><br>
+            </tr>
+            <tr>
+                <td><label for="lhoradeentrega">Hora de Entrega</label></td>
+                <td><input type="time" id="horaentrega" name="horaentrega" placeholder="Hora de Entrega" required></td>
+            </tr>
+            <tr>
+                <td><label for="ldistancia">Distancia (km)</label></td>
+                <td><input type="number" id="distancia" name="distancia" size="10" placeholder="Distancia (Km)"></td>
+            </tr>
+        </table>
+        <br>
 
-        <label for="ldistancia">Distancia (km)</label>
-        <input type="number" id="distancia" name="distancia" placeholder="Distancia (Km)"><br><br>
+        <input id="limpiar" type="button" value="Limpiar Formulario" onclick="limpiarFormulario()">
+        <input id="cotizar" type="submit" value="Aceptar Cambios">
+        <br>
 
-        <button type="button" onclick="limpiarFormulario()">Limpiar Formulario</button>
-        <button type="button" onclick="llenadoRespuesta()">Aceptar Cambios</button>
     </form>
 
     <script>
         function limpiarFormulario() {
-            document.forms["formulario"]["cotizacion"].value = "";
-            document.forms["formulario"]["nombre"].value = "";
-            document.forms["formulario"]["telefono"].value = "";
-            document.forms["formulario"]["email"].value = "";
-            document.forms["formulario"]["ocalle"].value = "";
-            document.forms["formulario"]["onumero"].value = "";
-            document.forms["formulario"]["odpto"].value = "";
-            document.forms["formulario"]["ooficina"].value = "";
-            document.forms["formulario"]["ocasa"].value = "";
-            document.forms["formulario"]["ocomuna"].value = "";
-            document.forms["formulario"]["onombre"].value = "";
-            document.forms["formulario"]["otelefono"].value = "";
-            document.forms["formulario"]["dcalle"].value = "";
-            document.forms["formulario"]["dnumero"].value = "";
-            document.forms["formulario"]["ddpto"].value = "";
-            document.forms["formulario"]["doficina"].value = "";
-            document.forms["formulario"]["dcasa"].value = "";
-            document.forms["formulario"]["dcomuna"].value = "";
-            document.forms["formulario"]["dnombre"].value = "";
-            document.forms["formulario"]["dtelefono"].value = "";
-            document.forms["formulario"]["regresode"].value = "";
-            document.forms["formulario"]["tipocarga"].value = "";
-            document.forms["formulario"]["largo"].value = 0;
-            document.forms["formulario"]["ancho"].value = 0;
-            document.forms["formulario"]["alto"].value = 0;
-            document.forms["formulario"]["peso"].value = 0;
-            document.forms["formulario"]["descripcion"].value = "";
-            document.forms["formulario"]["fechaentrega"].value = "";
-            document.forms["formulario"]["horaentrega"].value = "";
-            document.forms["formulario"]["distancia"].value = 0;
+            document.getElementById("cotizacion").value = "";
+            document.getElementById("nombre").value = "";
+            document.getElementById("telefono").value = "";
+            document.getElementById("email").value = "";
+            document.getElementById("ocalle").value = "";
+            document.getElementById("onumero").value = "";
+            document.getElementById("odpto").value = "";
+            document.getElementById("ooficina").value = "";
+            document.getElementById("ocasa").value = "";
+            document.getElementById("ocomuna").value = "";
+            document.getElementById("onombre").value = "";
+            document.getElementById("otelefono").value = "";
+            document.getElementById("dcalle").value = "";
+            document.getElementById("dnumero").value = "";
+            document.getElementById("ddpto").value = "";
+            document.getElementById("doficina").value = "";
+            document.getElementById("dcasa").value = "";
+            document.getElementById("dcomuna").value = "";
+            document.getElementById("dnombre").value = "";
+            document.getElementById("dtelefono").value = "";
+            document.getElementById("regresode").value = "";
+            document.getElementById("tipocarga").value = "";
+            document.getElementById("largo").value = 0;
+            document.getElementById("ancho").value = 0;
+            document.getElementById("alto").value = 0;
+            document.getElementById("peso").value = 0;
+            document.getElementById("descripcion").value = "";
+            document.getElementById("distancia").value = 0;
+
         }
 
         function llenadoFormulario(pcotizacion, pnombre, ptelefono, pemail,
@@ -125,102 +145,103 @@
             pfechaentrega, phoraentrega,
             pdistancia) {
 
-            document.forms["formulario"]["cotizacion"].value = pcotizacion;
-            document.forms["formulario"]["nombre"].value = pnombre;
-            document.forms["formulario"]["telefono"].value = ptelefono;
-            document.forms["formulario"]["email"].value = pemail;
-            document.forms["formulario"]["ocalle"].value = pocalle;
-            document.forms["formulario"]["onumero"].value = ponumero;
-            document.forms["formulario"]["odpto"].value = podpto;
-            document.forms["formulario"]["ooficina"].value = pooficina;
-            document.forms["formulario"]["ocasa"].value = pocasa;
-            document.forms["formulario"]["ocomuna"].value = pocomuna;
-            document.forms["formulario"]["onombre"].value = ponombre;
-            document.forms["formulario"]["otelefono"].value = potelefono;
-            document.forms["formulario"]["dcalle"].value = pdcalle;
-            document.forms["formulario"]["dnumero"].value = pdnumero;
-            document.forms["formulario"]["ddpto"].value = pddpto;
-            document.forms["formulario"]["doficina"].value = pdoficina;
-            document.forms["formulario"]["dcasa"].value = pdcasa;
-            document.forms["formulario"]["dcomuna"].value = pdcomuna;
-            document.forms["formulario"]["dnombre"].value = pdnombre;
-            document.forms["formulario"]["dtelefono"].value = pdtelefono;
-            document.forms["formulario"]["regresode"].value = pregresode;
-            document.forms["formulario"]["tipocarga"].value = ptipocarga;
-            document.forms["formulario"]["largo"].value = Number(plargo);
-            document.forms["formulario"]["ancho"].value = Number(pancho);
-            document.forms["formulario"]["alto"].value = Number(palto);
-            document.forms["formulario"]["peso"].value = Number(ppeso);
-            document.forms["formulario"]["descripcion"].value = pdescripcion;
-            document.forms["formulario"]["fechaentrega"].value = pfechaentrega;
-            document.forms["formulario"]["horaentrega"].value = phoraentrega;
-            document.forms["formulario"]["distancia"].value = Number(pdistancia);
+            document.getElementById("cotizacion").value = pcotizacion;
+            document.getElementById("nombre").value = pnombre;
+            document.getElementById("telefono").value = ptelefono;
+            document.getElementById("email").value = pemail;
+            document.getElementById("ocalle").value = pocalle;
+            document.getElementById("onumero").value = ponumero;
+            document.getElementById("odpto").value = podpto;
+            document.getElementById("ooficina").value = pooficina;
+            document.getElementById("ocasa").value = pocasa;
+            document.getElementById("ocomuna").value = pocomuna;
+            document.getElementById("onombre").value = ponombre;
+            document.getElementById("otelefono").value = potelefono;
+            document.getElementById("dcalle").value = pdcalle;
+            document.getElementById("dnumero").value = pdnumero;
+            document.getElementById("ddpto").value = pddpto;
+            document.getElementById("doficina").value = pdoficina;
+            document.getElementById("dcasa").value = pdcasa;
+            document.getElementById("dcomuna").value = pdcomuna;
+            document.getElementById("dnombre").value = pdnombre;
+            document.getElementById("dtelefono").value = pdtelefono;
+            document.getElementById("regresode").value = pregresode;
+            document.getElementById("tipocarga").value = ptipocarga;
+            document.getElementById("largo").value = Number(plargo);
+            document.getElementById("ancho").value = Number(pancho);
+            document.getElementById("alto").value = Number(palto);
+            document.getElementById("peso").value = Number(ppeso);
+            document.getElementById("descripcion").value = pdescripcion;
+            document.getElementById("fechaentrega").value = pfechaentrega;
+            document.getElementById("horaentrega").value = phoraentrega;
+            document.getElementById("distancia").value = Number(pdistancia);
         }
 
         function llenadoRespuesta() {
             var valorCadena = "";
-            valorCadena += document.forms["formulario"]["cotizacion"].value;
+            valorCadena += document.getElementById("cotizacion").value;
             valorCadena += "&&";
-            valorCadena += document.forms["formulario"]["nombre"].value;
+            valorCadena += document.getElementById("nombre").value;
             valorCadena += "&&";
-            valorCadena += document.forms["formulario"]["telefono"].value;
+            valorCadena += document.getElementById("telefono").value;
             valorCadena += "&&";
-            valorCadena += document.forms["formulario"]["email"].value;
+            valorCadena += document.getElementById("email").value;
             valorCadena += "&&";
-            valorCadena += document.forms["formulario"]["ocalle"].value;
+            valorCadena += document.getElementById("ocalle").value;
             valorCadena += "&&";
-            valorCadena += document.forms["formulario"]["onumero"].value;
+            valorCadena += document.getElementById("onumero").value;
             valorCadena += "&&";
-            valorCadena += document.forms["formulario"]["odpto"].value;
+            valorCadena += document.getElementById("odpto").value;
             valorCadena += "&&";
-            valorCadena += document.forms["formulario"]["ooficina"].value;
+            valorCadena += document.getElementById("ooficina").value;
             valorCadena += "&&";
-            valorCadena += document.forms["formulario"]["ocasa"].value;
+            valorCadena += document.getElementById("ocasa").value;
             valorCadena += "&&";
-            valorCadena += document.forms["formulario"]["ocomuna"].value;
+            valorCadena += document.getElementById("ocomuna").value;
             valorCadena += "&&";
-            valorCadena += document.forms["formulario"]["onombre"].value;
+            valorCadena += document.getElementById("onombre").value;
             valorCadena += "&&";
-            valorCadena += document.forms["formulario"]["otelefono"].value;
+            valorCadena += document.getElementById("otelefono").value;
             valorCadena += "&&";
-            valorCadena += document.forms["formulario"]["dcalle"].value;
+            valorCadena += document.getElementById("dcalle").value;
             valorCadena += "&&";
-            valorCadena += document.forms["formulario"]["dnumero"].value;
+            valorCadena += document.getElementById("dnumero").value;
             valorCadena += "&&";
-            valorCadena += document.forms["formulario"]["ddpto"].value;
+            valorCadena += document.getElementById("ddpto").value;
             valorCadena += "&&";
-            valorCadena += document.forms["formulario"]["doficina"].value;
+            valorCadena += document.getElementById("doficina").value;
             valorCadena += "&&";
-            valorCadena += document.forms["formulario"]["dcasa"].value;
+            valorCadena += document.getElementById("dcasa").value;
             valorCadena += "&&";
-            valorCadena += document.forms["formulario"]["dcomuna"].value;
+            valorCadena += document.getElementById("dcomuna").value;
             valorCadena += "&&";
-            valorCadena += document.forms["formulario"]["dnombre"].value;
+            valorCadena += document.getElementById("dnombre").value;
             valorCadena += "&&";
-            valorCadena += document.forms["formulario"]["dtelefono"].value;
+            valorCadena += document.getElementById("dtelefono").value;
             valorCadena += "&&";
-            valorCadena += document.forms["formulario"]["regresode"].value;
+            valorCadena += document.getElementById("regresode").value;
             valorCadena += "&&";
-            valorCadena += document.forms["formulario"]["tipocarga"].value;
+            valorCadena += document.getElementById("tipocarga").value;
             valorCadena += "&&";
-            valorCadena += document.forms["formulario"]["largo"].value;
+            valorCadena += document.getElementById("largo").value;
             valorCadena += "&&";
-            valorCadena += document.forms["formulario"]["ancho"].value;
+            valorCadena += document.getElementById("ancho").value;
             valorCadena += "&&";
-            valorCadena += document.forms["formulario"]["alto"].value;
+            valorCadena += document.getElementById("alto").value;
             valorCadena += "&&";
-            valorCadena += document.forms["formulario"]["peso"].value;
+            valorCadena += document.getElementById("peso").value;
             valorCadena += "&&";
-            valorCadena += document.forms["formulario"]["descripcion"].value;
+            valorCadena += document.getElementById("descripcion").value;
             valorCadena += "&&";
-            valorCadena += document.forms["formulario"]["fechaentrega"].value;
+            valorCadena += document.getElementById("fechaentrega").value;
             valorCadena += "&&";
-            valorCadena += document.forms["formulario"]["horaentrega"].value;
+            valorCadena += document.getElementById("horaentrega").value;
             valorCadena += "&&";
-            valorCadena += document.forms["formulario"]["distancia"].value;
+            valorCadena += document.getElementById("distancia").value;
             window.external.notify(valorCadena);
         }
     </script>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery.js"></script>
 </body>
 </html>

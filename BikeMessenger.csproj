@@ -11,7 +11,7 @@
     <AssemblyName>BikeMessenger</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.20348.0</TargetPlatformVersion>
+    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.19041.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
@@ -196,7 +196,6 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
-    <None Include="BikeMessenger_Pentalpha_Key.pfx" />
     <None Include="BikeMessenger_TemporaryKey.pfx" />
     <None Include="efpt.config.json" />
     <None Include="Package.StoreAssociation.xml" />

@@ -326,5 +326,4 @@ namespace BikeMessenger
             DISTANCIA = 0;
         }
     }
-
 }

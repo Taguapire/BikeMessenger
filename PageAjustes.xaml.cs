@@ -18,6 +18,7 @@ namespace BikeMessenger
     {
         private TransferVar LvrTransferVar = new TransferVar();
         private bool CopiarBaseDeDatosSiNo;
+        private bool RestaurarBaseDeDatosSiNo;
 
         public PageAjustes()
         {
@@ -136,6 +137,45 @@ namespace BikeMessenger
             CopiarBaseDeDatosSiNo = false;
         }
 
+        private async void BtnEventoRestaurarBaseDeDatos(object sender, RoutedEventArgs e)
+        {
+
+            RestaurarBaseDeDatosSiNo = false;
+
+            await AvisoRestaurarBaseDeDatosDialogAsync();
+
+            if (!RestaurarBaseDeDatosSiNo)
+            {
+                return;
+            }
+
+            try
+            {
+                await RestaurarBaseDeDatosAsync(textBoxDirectorioDeRespaldos.Text, textBoxDirectorioActual.Text);
+            }
+            catch (ArgumentException)
+            {
+                await AvisoRestaurarBaseDialogAsync("Restaurar Base de Datos", "No a sido posible restaurar la base de datos a directorio destino.");
+            }
+            catch (InvalidCastException)
+            {
+                await AvisoRestaurarBaseDialogAsync("Restaurar Base de Datos", "No a sido posible restaurar la base de datos a directorio destino.");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                await AvisoRestaurarBaseDialogAsync("Restaurar Base de Datos", "Acceso no autorizado a este directorio.");
+            }
+            catch (FileNotFoundException)
+            {
+                await AvisoRestaurarBaseDialogAsync("Restaurar Base de Datos", "No se puede localizar la Base de Datos.");
+            }
+            catch (Exception)
+            {
+                await AvisoRestaurarBaseDialogAsync("Restaurar Base de Datos", "No puede restaurarse la Base de Datos en Destino.");
+            }
+            RestaurarBaseDeDatosSiNo = false;
+        }
+
         private async Task AvisoCopiarBaseDeDatosDialogAsync()
         {
             ContentDialog AvisoCopiarBaseDialog = new ContentDialog
@@ -151,6 +191,21 @@ namespace BikeMessenger
             CopiarBaseDeDatosSiNo = result == ContentDialogResult.Primary;
         }
 
+        private async Task AvisoRestaurarBaseDeDatosDialogAsync()
+        {
+            ContentDialog AvisoRestaurarBaseDialog = new ContentDialog
+            {
+                Title = "Restaurar Base de Datos",
+                Content = "Confirme la restauración de Base de Datos. La Base de Datos se cerrara para ejecutar esta operación, por lo que al final debera salir de la aplicación y la ejecutara nuevamente.",
+                PrimaryButtonText = "Confirmar",
+                CloseButtonText = "Cancelar"
+            };
+
+            ContentDialogResult result = await AvisoRestaurarBaseDialog.ShowAsync();
+
+            RestaurarBaseDeDatosSiNo = result == ContentDialogResult.Primary;
+        }
+
         private async Task AvisoCopiaBaseDialogAsync(string pTitle, string pContent)
         {
             ContentDialog AvisoCopiaDbDialog = new ContentDialog
@@ -162,7 +217,43 @@ namespace BikeMessenger
             _ = await AvisoCopiaDbDialog.ShowAsync();
         }
 
+        private async Task AvisoRestaurarBaseDialogAsync(string pTitle, string pContent)
+        {
+            ContentDialog AvisoCopiaDbDialog = new ContentDialog
+            {
+                Title = pTitle,
+                Content = pContent,
+                CloseButtonText = "Continuar"
+            };
+            _ = await AvisoCopiaDbDialog.ShowAsync();
+        }
+
         private async Task CopiarBaseDeDatosAsync(string DirectorioOrigen, string DirectorioDestino)
+        {
+            // Muestra de espera
+            //            LvrProgresRing.IsActive = true;
+            //            await Task.Delay(500); // 1 sec delay
+
+            StorageFolder FolderOrigen = await StorageFolder.GetFolderFromPathAsync(DirectorioOrigen);
+            StorageFile BaseDatosOrigen = await FolderOrigen.GetFileAsync("BikeMessenger.db");
+
+            StorageFolder FolderDestino = await StorageFolder.GetFolderFromPathAsync(DirectorioDestino);
+            //StorageFile BaseDatosDestino = await FolderDestino.GetFileAsync("BikeMessenger.db");
+
+            _ = await BaseDatosOrigen.CopyAsync(FolderDestino, "BikeMessenger.db", NameCollisionOption.GenerateUniqueName);
+
+            //LvrTransferVar.CrearDirectorioRespaldo(DirectorioDestino);
+            //LvrTransferVar.LeerDirectorio();
+
+            // LvrProgresRing.IsActive = false;
+            // await Task.Delay(500); // 1 sec delay
+
+            await AvisoCopiaBaseDialogAsync("Cambiar Directorio", "La Copia de la Base se Datos se ha completado. A continuación saldra de la aplicación al presionar continuar.");
+
+            Application.Current.Exit();
+        }
+
+        private async Task RestaurarBaseDeDatosAsync(string DirectorioOrigen, string DirectorioDestino)
         {
             // Muestra de espera
             //            LvrProgresRing.IsActive = true;
