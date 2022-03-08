@@ -20,7 +20,7 @@ namespace BikeMessenger
 
         // Comunicación con Mobiles
         public string MOBILES_XMPP { get; set; }
-
+        
         // Valores de Empresa
         public string EMP_PENTALPHA { get; set; }
         public string EMP_NOMBRE { get; set; }
@@ -43,6 +43,10 @@ namespace BikeMessenger
         public string CLI_RUTID { get; set; }
         public string CLI_DIGVER { get; set; }
 
+        // Valores de COTIZACION
+        public string COT_NROCOTIZACION { get; set; }
+        public string COT_PENTALPHA { get; set; }
+        
         // Valores de SERVICIOS
         public string SER_PENTALPHA { get; set; }
         public string SER_NROENVIO { get; set; }
@@ -95,6 +99,15 @@ namespace BikeMessenger
             CLI_RUTID = (string)localSettings.Values["CLI_RUTID"];
             CLI_DIGVER = (string)localSettings.Values["CLI_DIGVER"];
 
+            // Valores de COTIZACION
+            COT_NROCOTIZACION = (string)localSettings.Values["COT_NROCOTIZACION"];
+            if (COT_NROCOTIZACION == null || COT_NROCOTIZACION == "")
+            {
+                COT_NROCOTIZACION = "0";
+                localSettings.Values["COT_NROCOTIZACION"] = COT_NROCOTIZACION;
+            }
+            COT_PENTALPHA = (string)localSettings.Values["COT_PENTALPHA"];
+
             // Valores de SERVICIOS
             SER_PENTALPHA = (string)localSettings.Values["SER_PENTALPHA"];
             SER_NROENVIO = (string)localSettings.Values["SER_NROENVIO"];
@@ -146,6 +159,10 @@ namespace BikeMessenger
             localSettings.Values["CLI_RUTID"] = CLI_RUTID;
             localSettings.Values["CLI_DIGVER"] = CLI_DIGVER;
 
+            // Valores de COTIZACION
+            localSettings.Values["COT_PENTALPHA"] = COT_PENTALPHA;
+            localSettings.Values["COT_NROCOTIZACION"] = COT_NROCOTIZACION;
+
             // Valores de SERVICIOS
             localSettings.Values["SER_PENTALPHA"] = SER_PENTALPHA;
             localSettings.Values["SER_NROENVIO"] = SER_NROENVIO;
@@ -195,6 +212,10 @@ namespace BikeMessenger
             CLI_RUTID = (string)localSettings.Values["CLI_RUTID"];
             CLI_DIGVER = (string)localSettings.Values["CLI_DIGVER"];
 
+            // Valores de COTIZACION
+            COT_NROCOTIZACION = (string)localSettings.Values["COT_NROCOTIZACION"];
+            COT_PENTALPHA = (string)localSettings.Values["COT_PENTALPHA"];
+
             // Valores de SERVICIOS
             SER_PENTALPHA = (string)localSettings.Values["SER_PENTALPHA"];
             SER_NROENVIO = (string)localSettings.Values["SER_NROENVIO"];
@@ -223,6 +244,9 @@ namespace BikeMessenger
 
             // Valores de Clientes
             CLI_PENTALPHA = PENTALPHA_ID;
+
+            // Valores de SERVICIOS
+            COT_PENTALPHA = PENTALPHA_ID;
 
             // Valores de SERVICIOS
             SER_PENTALPHA = PENTALPHA_ID;

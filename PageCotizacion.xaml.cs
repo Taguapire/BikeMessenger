@@ -20,7 +20,6 @@ namespace BikeMessenger
         private Bm_Cotizacion_Database BM_Database_Cotizacion = new Bm_Cotizacion_Database();
         private TransferVar LvrTransferVar = new TransferVar();
         private bool BorrarSiNo;
-        private bool ContinuarSiNo;
         private readonly Uri PaginaCotizacion = new Uri("ms-appx-web:///html/EditorCotizaciones.html");
         private string OperacionActual = "";
 
@@ -335,10 +334,10 @@ namespace BikeMessenger
                     return;
                 }
 
-                if (BM_Database_Cotizacion.BorrarCotizacion(LvrTransferVar.PENTALPHA_ID, CotizacionIO.PKCOTIZACION))
+                if (BM_Database_Cotizacion.BorrarCotizacion(CotizacionIO.PENTALPHA, CotizacionIO.COTIZACION))
                 {
                     await AvisoOperacionCotizacionDialogAsync("Borrar Cotizacion", "Cotización borrada exitosamente.");
-
+                    _ = await VisorDetalleCotizaciones.InvokeScriptAsync("limpiarFormulario", null);
                 }
                 else
                 {
@@ -414,6 +413,39 @@ namespace BikeMessenger
             Parametros[28] = CotizacionIO.HORAENTREGA ?? "";
             Parametros[29] = CotizacionIO.DISTANCIA.ToString() ?? "0";
             _ = await VisorDetalleCotizaciones.InvokeScriptAsync("llenadoFormulario", Parametros);
+        }
+
+        private void RevisarDetalleCotizacionServicio(object sender, SelectionChangedEventArgs e)
+        {
+            // Tomar Valor de PENTALPHA_ID y NRO DE COTIZACION
+            string VCOTIZACION = "";
+            try
+            {
+                DataGrid CeldaSeleccionada = sender as DataGrid;
+                GridListViewCotizaciones Fila = (GridListViewCotizaciones)CeldaSeleccionada.SelectedItems[0];
+                VCOTIZACION = Fila.COTIZACION;
+
+                // Buscar en Tabla de Cotizaciones
+                CotizacionIOArray = BM_Database_Cotizacion.BuscarCotizacion(LvrTransferVar.PENTALPHA_ID, VCOTIZACION);
+
+                // Llenar CotizacionIO
+                if (CotizacionIOArray.Count > 0)
+                {
+                    CotizacionIO = CotizacionIOArray[0];
+                }
+            }
+            catch (System.NullReferenceException)
+            {
+                ;
+            }
+            catch (System.ArgumentException)
+            {
+                ;
+            }
+            catch (System.Exception)
+            {
+                ;
+            }
         }
     }
 }

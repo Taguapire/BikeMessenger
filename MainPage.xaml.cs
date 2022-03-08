@@ -66,8 +66,8 @@ namespace BikeMessenger
                     .Where(el => el is Message)
                     .Subscribe(async el =>
                     {
+                        string DetalleDeMensaje = "";
                         MensajeNuevoRecibido = el.Cast<Message>().Body;
-                        MessageDialog dialog = new MessageDialog(MensajeNuevoRecibido);
                         string Usuario = "";
                         string Recurso = "";
                         Usuario = el.Cast<Message>().From.User;
@@ -75,14 +75,18 @@ namespace BikeMessenger
                         {
                             Usuario = el.Cast<Message>().From.User;
                             Recurso = el.Cast<Message>().From.Resource;
-                            ProcesarMensajeRecibido(Usuario, Recurso, MensajeNuevoRecibido);
+                            DetalleDeMensaje = ProcesarMensajeRecibido(Usuario, Recurso, MensajeNuevoRecibido);
                         }
                         else
                         {
                             Usuario = "ADMINISTRADOR";
+                            DetalleDeMensaje = MensajeNuevoRecibido;
                         }
-                        dialog.Title = "Mensaje De: " + Usuario;
-                        dialog.Options = MessageDialogOptions.None;
+                        MessageDialog dialog = new MessageDialog(DetalleDeMensaje)
+                        {
+                            Title = "Mensaje De: " + Usuario,
+                            Options = MessageDialogOptions.None
+                        };
                         await Task.Factory.StartNew(() => { _ = dialog.ShowAsync(); }, new System.Threading.CancellationToken(), TaskCreationOptions.PreferFairness, UISyncContext);
                     });
             }
@@ -113,7 +117,7 @@ namespace BikeMessenger
             }
         }
 
-        public bool ProcesarMensajeRecibido(string pUsuario, string pRecurso, string pMensajeJSON)
+        public string ProcesarMensajeRecibido(string pUsuario, string pRecurso, string pMensajeJSON)
         {
             // Procesar aqui el mensaje recivido
             // Tipos de Mensajes:
@@ -130,17 +134,20 @@ namespace BikeMessenger
                 Bm_Cotizacion_Database BM_Database_Cotizacion = new Bm_Cotizacion_Database();
                 StructBikeMessengerCotizacion CotizacionIO = JsonConvert.DeserializeObject<StructBikeMessengerCotizacion>(pMensajeJSON);
                 CotizacionIO.PENTALPHA = LvrTransferVar.PENTALPHA_ID;
-                CotizacionIO.COTIZACION = ""; //  Procedimiento de AutoIncremento
+                CotizacionIO.COTIZACION = (int.Parse(LvrTransferVar.COT_NROCOTIZACION) + 1).ToString();
                 CotizacionIO.PKCOTIZACION = CotizacionIO.PENTALPHA + CotizacionIO.COTIZACION;
                 CotizacionIO.RESMENSAJE = "OK";
                 CotizacionIO.RESOPERACION = "OK";
                 if (BM_Database_Cotizacion.AgregarCotizacion(CotizacionIO))
                 {
-                    return true;
+                    LvrTransferVar.COT_NROCOTIZACION = CotizacionIO.COTIZACION;
+                    LvrTransferVar.COT_PENTALPHA = LvrTransferVar.PENTALPHA_ID;
+                    LvrTransferVar.EscribirValoresDeAjustes();
+                    return "Cotización solicitada por: " + CotizacionIO.NOMBRE;
                 }
                 else
                 {
-                    return false;
+                    return "No es cotización";
                 }
             }
             //  08.- Aviso de Aceptación de Cotización
@@ -151,7 +158,7 @@ namespace BikeMessenger
             //  13.- Aviso de Pago de Servicio por Transferencia
             //  14.- Aviso de Pago de Servicio en Efectivo
             //  15.- Aviso de Traspaso de Servicio
-            return true;
+            return "Sin operación definida";
         }
 
         private async void TerminarXMPP()

@@ -263,7 +263,7 @@ namespace BikeMessenger
 
             BM_ConexionLite.RunInTransaction(() =>
             {
-                _ = BM_ConexionLite.Delete<TbBikeMessengerServicio>(VPKCOTIZACION);
+                _ = BM_ConexionLite.Delete<TbBikeMessengerCotizacion>(VPKCOTIZACION);
             });
 
             BM_ConexionLite.Close();
