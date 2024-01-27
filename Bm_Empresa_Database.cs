@@ -171,7 +171,7 @@ namespace BikeMessenger
             {
                 TbBikeMessengerEmpresa record = new TbBikeMessengerEmpresa
                 {
-                    OPERACION = "AGREGAR",
+                    OPERACION = "MODIFICAR",
                     PENTALPHA = mBK_Empresa.PENTALPHA,
                     RUTID = mBK_Empresa.RUTID,
                     DIGVER = mBK_Empresa.DIGVER,

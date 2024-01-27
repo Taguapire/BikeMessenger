@@ -1,6 +1,10 @@
-﻿using SQLite;
+﻿using Auth0.OidcClient;
+using IdentityModel.OidcClient.Browser;
+using IdentityModel.OidcClient;
+using SQLite;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;

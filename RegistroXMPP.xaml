@@ -10,9 +10,9 @@
     PrimaryButtonText="Aceptar"
     SecondaryButtonText="Cancelar"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-    SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
 
-    <Grid Width="500" Height="280">
+    <Grid Width="500" Height="280" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
         <TextBlock HorizontalAlignment="Left" Margin="3,17,0,0" TextWrapping="Wrap" Text="Pentalpha ID" VerticalAlignment="Top"/>
         <TextBlock HorizontalAlignment="Left" Margin="28,85,0,0" TextWrapping="Wrap" Text="Empresa" VerticalAlignment="Top"/>
         <TextBlock HorizontalAlignment="Left" Margin="46,117,0,0" TextWrapping="Wrap" Text="RutID" VerticalAlignment="Top"/>

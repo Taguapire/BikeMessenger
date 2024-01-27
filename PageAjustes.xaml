@@ -6,18 +6,18 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Custom="using:Microsoft.Toolkit.Uwp.UI.Controls"
     NavigationCacheMode="Required"
-    mc:Ignorable="d">
+    mc:Ignorable="d" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
     <Page.BottomAppBar>
         <CommandBar x:Name="CommandBarBottomAjustes" DefaultLabelPosition="Right"  HorizontalAlignment="Center">
             <CommandBar.Content>
-                <TextBlock Text="Ajustes" Margin="12,8"/>
+                <TextBlock Name="VisorDeEstadoUsuario" Text="Ajustes" Margin="12,8"/>
             </CommandBar.Content>
             <AppBarButton x:Name="appBarGrabar" Icon="Edit" Label="Grabar Cambios" Click="BtnGrabarCambios"/>
             <AppBarButton x:Name="appBarSalir" Icon="Go" Label="Salir" Click="BtnSalirAjustes"/>
         </CommandBar>
     </Page.BottomAppBar>
-    <RelativePanel x:Name="LayoutRoot" HorizontalAlignment="Left" VerticalAlignment="Center">
-        <Grid x:Name="GridAjustes">
+    <RelativePanel x:Name="LayoutRoot" HorizontalAlignment="Left" VerticalAlignment="Center" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
+        <Grid x:Name="GridAjustes" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
             <TextBlock x:Name="labelDirectorioActual" Margin="37,162,0,0" Text="Directorio Base de Datos" TextWrapping="NoWrap" VerticalAlignment="Top" RenderTransformOrigin="0.92,-0.053" Height="28" HorizontalTextAlignment="Right" HorizontalAlignment="Left" Width="161"/>
             <TextBox x:Name="textBoxDirectorioActual" HorizontalAlignment="Left" Margin="210,155,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" Width="705" HorizontalContentAlignment="Left" VerticalContentAlignment="Bottom" BorderThickness="1,1,1,1" IsReadOnly="True"/>
             <Button x:Name="btnBuscarNuevoDirectorio" Content="Buscar Nuevo Directorio" Height="32" Margin="210,224,0,0" VerticalAlignment="Top" Width="225" Click="BtnEventoBuscarNuevoDirectorio" ClickMode="Press" BorderBrush="#FF1D0404"/>

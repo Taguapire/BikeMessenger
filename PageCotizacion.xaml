@@ -7,11 +7,11 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     NavigationCacheMode="Required"
-    mc:Ignorable="d">
+    mc:Ignorable="d" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
     <Page.BottomAppBar>
-        <CommandBar x:Name="CommandBarBottomEmpresas" DefaultLabelPosition="Right" HorizontalAlignment="Center">
+        <CommandBar x:Name="CommandBarBottomCotizaciones" DefaultLabelPosition="Right" HorizontalAlignment="Center">
             <CommandBar.Content>
-                <TextBlock Text="Visor de Cotizaciones" Margin="12,8"/>
+                <TextBlock Name="VisorDeEstadoUsuario" Text="Visor de Cotizaciones" Margin="12,8"/>
             </CommandBar.Content>
             <AppBarButton x:Name="appBarNuevo" Icon="Document" Label="Nueva Cotización" Click="BtnNuevaCotizacion"/>
             <AppBarButton x:Name="appBarEditar" Icon="Edit" Label="Editar Cotización" Click="BtnEditarCotizacion"/>
@@ -21,9 +21,9 @@
         </CommandBar>
     </Page.BottomAppBar>
     <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-        <StackPanel x:Name="LayoutRoot" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <Custom:DataGrid x:Name="DGViewCotizacion" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AutoGeneratingColumn="GeneracionDeColumnas" ScrollViewer.HorizontalScrollBarVisibility="Visible" GridLinesVisibility="All" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollBarVisibility="Visible" HeadersVisibility="All" SelectionMode="Single" BackgroundSizing="OuterBorderEdge" CanBeScrollAnchor="True" IsReadOnly="True" DoubleTapped="RevisarDetalleCotizacionServicio" SelectionChanged="RevisarDetalleCotizacionServicio"/>
-            <WebView x:Name="VisorDetalleCotizaciones" Height="720" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" UseLayoutRounding="False" ScriptNotify="VisorCotizacionScriptNotify" NavigationCompleted="VisorCotizacionLlenadoFormulario"/>
+        <StackPanel x:Name="LayoutRoot" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <Custom:DataGrid x:Name="DGViewCotizacion" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AutoGeneratingColumn="GeneracionDeColumnas" ScrollViewer.HorizontalScrollBarVisibility="Visible" GridLinesVisibility="All" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollBarVisibility="Visible" HeadersVisibility="All" SelectionMode="Single" BackgroundSizing="OuterBorderEdge" CanBeScrollAnchor="True" IsReadOnly="True" DoubleTapped="RevisarDetalleCotizacionServicio" SelectionChanged="RevisarDetalleCotizacionServicio"/>
+            <WebView x:Name="VisorDetalleCotizaciones" ScrollViewer.HorizontalScrollBarVisibility="Visible" UseLayoutRounding="False" ScriptNotify="VisorCotizacionScriptNotify" NavigationCompleted="VisorCotizacionLlenadoFormulario"/>
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup>
                     <VisualState>

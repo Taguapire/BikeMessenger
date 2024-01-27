@@ -11,9 +11,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Maps;
 using Windows.UI.Xaml.Media.Animation;
-using System.Reactive.Linq;
-using Matrix;
-using Matrix.Extensions.Client.Message;
 using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
@@ -31,9 +28,6 @@ namespace BikeMessenger
         private TransferVar LvrTransferVar = new TransferVar();
         private bool BorrarSiNo;
         private double LvrDistanciaRecorrida = 0;
-        private StructAsignacionDeServicio AvisoEnvioData;
-        private ComunicacionXMPP AsignarServicio = new ComunicacionXMPP();
-        private XmppClient xmppClient;
         private double lvrlatOrigen = 0;
         private double lvrlonOrigen = 0;
         private double lvrlatDestino = 0;
@@ -49,7 +43,7 @@ namespace BikeMessenger
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            xmppClient = e.Parameter as XmppClient;
+            ;
         }
 
         void InicioPantalla()
@@ -146,40 +140,6 @@ namespace BikeMessenger
                 LvrTransferVar.EscribirValoresDeAjustes();
                 LvrTransferVar.LeerValoresDeAjustes();
                 ActualizarCombos();
-                try
-                {
-                    AvisoEnvioData = new StructAsignacionDeServicio();
-                    AvisoEnvioData.ENVIO = ServicioIO.NROENVIO;
-                    AvisoEnvioData.FECHA = ServicioIO.FECHAENTREGA;
-                    AvisoEnvioData.HORA = ServicioIO.HORAENTREGA;
-                    AvisoEnvioData.CLIENTE = textBoxCliente.Text ?? "";
-                    AvisoEnvioData.DESCRIPCION = ServicioIO.DESCRIPCION;
-                    AvisoEnvioData.LATITUDORIGEN = ServicioIO.OLATITUD;
-                    AvisoEnvioData.LONGITUDORIGEN = ServicioIO.OLONGITUD;
-                    AvisoEnvioData.LATITUDDESTINO = ServicioIO.DLATITUD;
-                    AvisoEnvioData.LONGITUDDESTINO = ServicioIO.DLONGITUD;
-                    AvisoEnvioData.DISTANCIA = ServicioIO.DISTANCIA;
-                    AsignarServicio.ProcesarJsoAsignacionDeServicio(AvisoEnvioData);
-                    if (LvrTransferVar.MOBILES_XMPP == "S")
-                    {
-                        string lMensajero = "";
-                        lMensajero += ServicioIO.MENSAJERORUT;
-                        lMensajero += "-";
-                        lMensajero += ServicioIO.MENSAJERODIGVER;
-                        lMensajero += "@";
-                        lMensajero +=
-                        lMensajero += LvrTransferVar.DOMINIO_XMPP;
-                        _ = xmppClient.SendChatMessageAsync(lMensajero, AsignarServicio.CadenaJsonXMPP);
-                    }
-                }
-                catch (DotNetty.Transport.Channels.ConnectException)
-                {
-                    ;
-                }
-                catch (System.Net.Sockets.SocketException)
-                {
-                    ;
-                }
                 await AvisoOperacionServiciosDialogAsync("Agregar Servicio", "Servicio agregado exitosamente.");
             }
             else
@@ -200,39 +160,6 @@ namespace BikeMessenger
                 LvrTransferVar.EscribirValoresDeAjustes();
                 LvrTransferVar.LeerValoresDeAjustes();
                 ActualizarCombos();
-                try
-                {
-                    AvisoEnvioData = new StructAsignacionDeServicio();
-                    AvisoEnvioData.ENVIO = ServicioIO.NROENVIO;
-                    AvisoEnvioData.FECHA = ServicioIO.FECHAENTREGA;
-                    AvisoEnvioData.HORA = ServicioIO.HORAENTREGA;
-                    AvisoEnvioData.CLIENTE = textBoxCliente.Text ?? "";
-                    AvisoEnvioData.DESCRIPCION = ServicioIO.DESCRIPCION;
-                    AvisoEnvioData.LATITUDORIGEN = ServicioIO.OLATITUD;
-                    AvisoEnvioData.LONGITUDORIGEN = ServicioIO.OLONGITUD;
-                    AvisoEnvioData.LATITUDDESTINO = ServicioIO.DLATITUD;
-                    AvisoEnvioData.LONGITUDDESTINO = ServicioIO.DLONGITUD;
-                    AvisoEnvioData.DISTANCIA = ServicioIO.DISTANCIA;
-                    AsignarServicio.ProcesarJsoAsignacionDeServicio(AvisoEnvioData);
-                    if (LvrTransferVar.MOBILES_XMPP == "S")
-                    {
-                        string lMensajero = "";
-                        lMensajero += ServicioIO.MENSAJERORUT;
-                        lMensajero += "-";
-                        lMensajero += ServicioIO.MENSAJERODIGVER;
-                        lMensajero += "@";
-                        lMensajero += LvrTransferVar.DOMINIO_XMPP;
-                        _ = xmppClient.SendChatMessageAsync(lMensajero, AsignarServicio.CadenaJsonXMPP);
-                    }
-                }
-                catch (DotNetty.Transport.Channels.ConnectException)
-                {
-                    ;
-                }
-                catch (System.Net.Sockets.SocketException)
-                {
-                    ;
-                }
                 await AvisoOperacionServiciosDialogAsync("Modificar Servicio", "Servicio modificado exitosamente.");
             }
             else
@@ -290,13 +217,13 @@ namespace BikeMessenger
             lvrlatDestino = 0;
             lvrlonDestino = 0;
 
-            if (textBoxOrigenDomicilio1.Text == "" || textBoxOrigenDomicilio1.Text == "" || comboBoxOrigenComuna.Text == "" || comboBoxOrigenCiudad.Text == "" || comboBoxOrigenPais.Text == "")
+            if (textBoxOrigenDomicilio1.Text == "" || textBoxOrigenNumero.Text == "" || comboBoxOrigenComuna.Text == "" || comboBoxOrigenCiudad.Text == "" || comboBoxOrigenPais.Text == "")
             {
                 await AvisoOperacionRecursosDialogAsync("Dirección de Origen", "Aun faltan datos por completar.");
                 return;
             }
 
-            if (textBoxDestinoDomicilio1.Text == "" || textBoxDestinoDomicilio1.Text == "" || comboBoxDestinoComuna.Text == "" || comboBoxDestinoCiudad.Text == "" || comboBoxDestinoPais.Text == "")
+            if (textBoxDestinoDomicilio1.Text == "" || textBoxDestinoNumero.Text == "" || comboBoxDestinoComuna.Text == "" || comboBoxDestinoCiudad.Text == "" || comboBoxDestinoPais.Text == "")
             {
                 await AvisoOperacionRecursosDialogAsync("Dirección de Destino", "Aun faltan datos por completar.");
                 return;
@@ -648,27 +575,8 @@ namespace BikeMessenger
             _ = await noErrorRecuperacionDialog.ShowAsync();
         }
 
-        private async void BtnSalirServicios(object sender, RoutedEventArgs e)
+        private void BtnSalirServicios(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                if (LvrTransferVar.MOBILES_XMPP == "S")
-                {
-                    await xmppClient.DisconnectAsync();
-                }
-            }
-            catch (DotNetty.Transport.Channels.ClosedChannelException)
-            {
-                ;
-            }
-            catch (DotNetty.Transport.Channels.ConnectException)
-            {
-                ;
-            }
-            catch (System.Net.Sockets.SocketException)
-            {
-                ;
-            }
             Application.Current.Exit();
         }
 

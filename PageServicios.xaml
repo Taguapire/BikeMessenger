@@ -7,11 +7,11 @@
     xmlns:Custom="using:Microsoft.Toolkit.Uwp.UI.Controls" xmlns:Custom1="using:Windows.UI.Xaml.Controls.Maps" x:Name="PantallaServicios"
     x:Class="BikeMessenger.PageServicios"
     NavigationCacheMode="Required"
-    mc:Ignorable="d">
+    mc:Ignorable="d" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
     <Page.BottomAppBar>
         <CommandBar x:Name="CommandBarBottomServicios" DefaultLabelPosition="Right" HorizontalAlignment="Center">
             <CommandBar.Content>
-                <TextBlock Text="Servicios" Margin="12,8"/>
+                <TextBlock Name="VisorDeEstadoUsuario" Text="Servicios" Margin="12,8"/>
             </CommandBar.Content>
             <AppBarButton x:Name="appBarAgregar" Icon="Add" Label="Agregar" Click="BtnAgregarServicios"/>
             <AppBarButton x:Name="appBarModificar" Icon="Edit" Label="Modificar" Click="BtnModificarServicios"/>
@@ -23,7 +23,7 @@
         </CommandBar>
     </Page.BottomAppBar>
     <RelativePanel x:Name="LayoutRoot" HorizontalAlignment="Left" VerticalAlignment="Center" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" UseLayoutRounding="False">
-        <Grid x:Name="GridServicios" RelativePanel.AlignHorizontalCenterWithPanel="False" RelativePanel.AlignVerticalCenterWithPanel="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid x:Name="GridServicios" RelativePanel.AlignHorizontalCenterWithPanel="False" RelativePanel.AlignVerticalCenterWithPanel="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
             <TextBlock x:Name="labelCliente" HorizontalAlignment="Left" Margin="475,55,0,0" Text="Cliente" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="140" HorizontalTextAlignment="Right" />
             <TextBlock x:Name="labelContacto" HorizontalAlignment="Left" Margin="475,87,0,0" Text="Contacto" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.492,3.158" Height="32" Width="140" HorizontalTextAlignment="Right"/>
             <TextBlock x:Name="labelTelefono" HorizontalAlignment="Left" Margin="475,119,0,0" Text="Teléfonos" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="140" HorizontalTextAlignment="Right" />
@@ -159,7 +159,7 @@
             <TextBlock x:Name="labelSobres" HorizontalAlignment="Left" Margin="734,442,0,0" Text="Sobres" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="77" HorizontalTextAlignment="Right"/>
             <TextBlock x:Name="labelCompras" HorizontalAlignment="Left" Margin="894,410,0,0" Text="Compras" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="77" HorizontalTextAlignment="Right"/>
             <TextBlock x:Name="labelOtros" HorizontalAlignment="Left" Margin="894,442,0,0" Text="Otros" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.52,2.053" Height="32" Width="77" HorizontalTextAlignment="Right"/>
-            <Custom1:MapControl x:Name="mapControlBikeMessenger" Visibility="Collapsed" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Stretch" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            <Custom1:MapControl x:Name="mapControlBikeMessenger" Visibility="Collapsed" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Stretch" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TrafficFlowVisible="True" PedestrianFeaturesVisible="True" LandmarksVisible="True" BusinessLandmarksVisible="False" Style="Terrain" ZoomInteractionMode="GestureAndControl" TiltInteractionMode="GestureAndControl"/>
         </Grid>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>

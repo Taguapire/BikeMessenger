@@ -2,17 +2,11 @@
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using SQLite;
-using Matrix;
-using Matrix.Srv;
-using Matrix.Extensions.Client.Presence;
-using Matrix.Xmpp;
-using System.Reactive.Linq;
-using Windows.UI.Popups;
-using Matrix.Xml;
+using Auth0.OidcClient;
+using IdentityModel.OidcClient;
+using System.Diagnostics;
+using IdentityModel.OidcClient.Browser;
 using System.Threading.Tasks;
-using System.Linq;
-using Matrix.Xmpp.Base;
-using Newtonsoft.Json;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -25,163 +19,16 @@ namespace BikeMessenger
     {
         private string BM_Ultimo_Item = "";
         private TransferVar LvrTransferVar = new TransferVar();
-        public XmppClient xmppClient;
-        private string MensajeNuevoRecibido;
+        private Auth0Client client;
+        private String NombreDeUsuario = "";
+        private bool UsuarioValido = false;
+        private bool UsuarioEmailVerificado = false;
 
         public MainPage()
         {
             InitializeComponent();
             InicializarBasesDeDatos();
-            if (LvrTransferVar.MOBILES_XMPP == "S")
-            {
-                IniciarXMPP(LvrTransferVar.USUARIO, LvrTransferVar.CLAVE, LvrTransferVar.DOMINIO_XMPP);
-            }
-        }
-
-        //************************************************************************************
-        // Conexión Principal al Servidor XMPP
-        //************************************************************************************
-        private async void IniciarXMPP(string pUsername, string pPassword, string pXmppDomain)
-        {
-            TaskScheduler UISyncContext = TaskScheduler.FromCurrentSynchronizationContext();
-
-            try
-            {
-                xmppClient = new XmppClient
-                {
-                    Username = pUsername,
-                    Password = pPassword,
-                    XmppDomain = pXmppDomain,
-                    Tls = false,
-                    HostnameResolver = new SrvNameResolver(),
-                    Resource = "BikeMessenger"
-                };
-
-                // connect so the server
-                await xmppClient.ConnectAsync();
-
-                await xmppClient.SendPresenceAsync(Show.None, "Online");
-
-                _ = xmppClient.XmppXElementStreamObserver
-                    .Where(el => el is Message)
-                    .Subscribe(async el =>
-                    {
-                        string DetalleDeMensaje = "";
-                        MensajeNuevoRecibido = el.Cast<Message>().Body;
-                        string Usuario = "";
-                        string Recurso = "";
-                        Usuario = el.Cast<Message>().From.User;
-                        if (Usuario != "" && Usuario != null)
-                        {
-                            Usuario = el.Cast<Message>().From.User;
-                            Recurso = el.Cast<Message>().From.Resource;
-                            DetalleDeMensaje = ProcesarMensajeRecibido(Usuario, Recurso, MensajeNuevoRecibido);
-                        }
-                        else
-                        {
-                            Usuario = "ADMINISTRADOR";
-                            DetalleDeMensaje = MensajeNuevoRecibido;
-                        }
-                        MessageDialog dialog = new MessageDialog(DetalleDeMensaje)
-                        {
-                            Title = "Mensaje De: " + Usuario,
-                            Options = MessageDialogOptions.None
-                        };
-                        await Task.Factory.StartNew(() => { _ = dialog.ShowAsync(); }, new System.Threading.CancellationToken(), TaskCreationOptions.PreferFairness, UISyncContext);
-                    });
-            }
-            catch (Matrix.AuthenticationException)
-            {
-                LvrTransferVar.MOBILES_XMPP = "N";
-                LvrTransferVar.EscribirValoresDeAjustes();
-            }
-            catch (DotNetty.Transport.Channels.ConnectException)
-            {
-                LvrTransferVar.MOBILES_XMPP = "N";
-                LvrTransferVar.EscribirValoresDeAjustes();
-            }
-            catch (System.Net.Sockets.SocketException)
-            {
-                LvrTransferVar.MOBILES_XMPP = "N";
-                LvrTransferVar.EscribirValoresDeAjustes();
-            }
-            catch (System.IO.IOException)
-            {
-                LvrTransferVar.MOBILES_XMPP = "N";
-                LvrTransferVar.EscribirValoresDeAjustes();
-            }
-            catch (System.NullReferenceException)
-            {
-                LvrTransferVar.MOBILES_XMPP = "N";
-                LvrTransferVar.EscribirValoresDeAjustes();
-            }
-        }
-
-        public string ProcesarMensajeRecibido(string pUsuario, string pRecurso, string pMensajeJSON)
-        {
-            // Procesar aqui el mensaje recivido
-            // Tipos de Mensajes:
-            //  01.- Aviso General del Administrador
-            //  02.- Aviso de Aceptación de Servicio
-            //  03.- Aviso de Rechazo de Servicio
-            //  04.- Aviso de Entrega de Servicio
-            //  05.- Aviso de No entrega de Servicio
-            //  06.- Aviso de Cancelación de Servicio
-            //  07.- Aviso de Solicitud de Cotización
-            if (pUsuario == "officeboycotizar")
-            {
-                // Procesar Deserializacion
-                Bm_Cotizacion_Database BM_Database_Cotizacion = new Bm_Cotizacion_Database();
-                StructBikeMessengerCotizacion CotizacionIO = JsonConvert.DeserializeObject<StructBikeMessengerCotizacion>(pMensajeJSON);
-                CotizacionIO.PENTALPHA = LvrTransferVar.PENTALPHA_ID;
-                CotizacionIO.COTIZACION = (int.Parse(LvrTransferVar.COT_NROCOTIZACION) + 1).ToString();
-                CotizacionIO.PKCOTIZACION = CotizacionIO.PENTALPHA + CotizacionIO.COTIZACION;
-                CotizacionIO.RESMENSAJE = "OK";
-                CotizacionIO.RESOPERACION = "OK";
-                if (BM_Database_Cotizacion.AgregarCotizacion(CotizacionIO))
-                {
-                    LvrTransferVar.COT_NROCOTIZACION = CotizacionIO.COTIZACION;
-                    LvrTransferVar.COT_PENTALPHA = LvrTransferVar.PENTALPHA_ID;
-                    LvrTransferVar.EscribirValoresDeAjustes();
-                    return "Cotización solicitada por: " + CotizacionIO.NOMBRE;
-                }
-                else
-                {
-                    return "No es cotización";
-                }
-            }
-            //  08.- Aviso de Aceptación de Cotización
-            //  09.- Aviso de Solicitud de Soporte
-            //  10.- Aviso de Reclamo de Cliente
-            //  11.- Aviso de Puntaje de Evaluación de Servicio
-            //  12.- Aviso de Pago de Servicio por Tarjeta
-            //  13.- Aviso de Pago de Servicio por Transferencia
-            //  14.- Aviso de Pago de Servicio en Efectivo
-            //  15.- Aviso de Traspaso de Servicio
-            return "Sin operación definida";
-        }
-
-        private async void TerminarXMPP()
-        {
-            try
-            {
-                if (LvrTransferVar.MOBILES_XMPP == "S")
-                {
-                    await xmppClient.DisconnectAsync();
-                }
-            }
-            catch (DotNetty.Transport.Channels.ClosedChannelException)
-            {
-                ;
-            }
-            catch (DotNetty.Transport.Channels.ConnectException)
-            {
-                ;
-            }
-            catch (System.Net.Sockets.SocketException)
-            {
-                ;
-            }
+            CambioDeEstadoMenu(UsuarioValido,UsuarioEmailVerificado);
         }
 
         private void BM_NavPag_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
@@ -196,6 +43,7 @@ namespace BikeMessenger
                     break;
                 }
             }
+            BM_NavPag.Header = "Estado de Servicios\n";
             _ = CuadroDeContenido.Navigate(typeof(PageInicio));
         }
 
@@ -204,7 +52,7 @@ namespace BikeMessenger
             LvrTransferVar.LeerValoresDeAjustes();
         }
 
-        private void BM_NavPag_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
+        private async void BM_NavPag_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
             LvrTransferVar.LeerValoresDeAjustes();
 
@@ -220,8 +68,8 @@ namespace BikeMessenger
                             if (BM_Ultimo_Item != BM_ItemContent)
                             {
                                 BM_Ultimo_Item = BM_ItemContent;
-                                BM_NavPag.Header = "Servicios";
-                                _ = CuadroDeContenido.Navigate(typeof(PageInicio), xmppClient);
+                                BM_NavPag.Header = "Estado de Servicios\n";
+                                _ = CuadroDeContenido.Navigate(typeof(PageInicio));
                             }
                             break;
 
@@ -236,7 +84,7 @@ namespace BikeMessenger
                                 BM_Ultimo_Item = BM_ItemContent;
                                 BM_NavPag.Header = "Edición de Empresa";
                                 BM_NavPag.IsBackEnabled = true;
-                                _ = CuadroDeContenido.Navigate(typeof(PageEmpresa), xmppClient);
+                                _ = CuadroDeContenido.Navigate(typeof(PageEmpresa));
                             }
                             break;
 
@@ -251,7 +99,7 @@ namespace BikeMessenger
                                 BM_Ultimo_Item = BM_ItemContent;
                                 BM_NavPag.Header = "Administración de Personal";
                                 BM_NavPag.IsBackEnabled = true;
-                                _ = CuadroDeContenido.Navigate(typeof(PagePersonal), xmppClient);
+                                _ = CuadroDeContenido.Navigate(typeof(PagePersonal));
                             }
                             break;
 
@@ -266,7 +114,7 @@ namespace BikeMessenger
                                 BM_Ultimo_Item = BM_ItemContent;
                                 BM_NavPag.Header = "Administración de Recursos";
                                 BM_NavPag.IsBackEnabled = true;
-                                _ = CuadroDeContenido.Navigate(typeof(PageRecursos), xmppClient);
+                                _ = CuadroDeContenido.Navigate(typeof(PageRecursos));
                             }
                             break;
                         case "Clientes":
@@ -280,7 +128,7 @@ namespace BikeMessenger
                                 BM_Ultimo_Item = BM_ItemContent;
                                 BM_NavPag.Header = "Administración de Clientes";
                                 BM_NavPag.IsBackEnabled = true;
-                                _ = CuadroDeContenido.Navigate(typeof(PageClientes), xmppClient);
+                                _ = CuadroDeContenido.Navigate(typeof(PageClientes));
                             }
                             break;
                         case "Cotización":
@@ -292,9 +140,9 @@ namespace BikeMessenger
                             if (BM_Ultimo_Item != BM_ItemContent)
                             {
                                 BM_Ultimo_Item = BM_ItemContent;
-                                BM_NavPag.Header = "Cotizaciones Solicitadas";
+                                BM_NavPag.Header = "Cotizaciones Solicitadas\n";
                                 BM_NavPag.IsBackEnabled = true;
-                                _ = CuadroDeContenido.Navigate(typeof(PageCotizacion), xmppClient);
+                                _ = CuadroDeContenido.Navigate(typeof(PageCotizacion));
                             }
                             break;
                         case "Servicios":
@@ -308,7 +156,7 @@ namespace BikeMessenger
                                 BM_Ultimo_Item = BM_ItemContent;
                                 BM_NavPag.Header = "Administración de Servicios";
                                 BM_NavPag.IsBackEnabled = true;
-                                _ = CuadroDeContenido.Navigate(typeof(PageServicios), xmppClient);
+                                _ = CuadroDeContenido.Navigate(typeof(PageServicios));
                             }
                             break;
                         case "Ajustes":
@@ -317,11 +165,16 @@ namespace BikeMessenger
                                 BM_Ultimo_Item = BM_ItemContent;
                                 BM_NavPag.Header = "Configuración y Ajustes";
                                 BM_NavPag.IsBackEnabled = true;
-                                _ = CuadroDeContenido.Navigate(typeof(PageAjustes), xmppClient);
+                                _ = CuadroDeContenido.Navigate(typeof(PageAjustes));
                             }
                             break;
+                        case "Login":
+                            await ValidarLogin();
+                            break;
+                        case "Logout":
+                            await ValidarLogout();
+                            break;
                         case "Salir":
-                            TerminarXMPP();
                             Application.Current.Exit();
                             break;
                         default:
@@ -336,6 +189,71 @@ namespace BikeMessenger
             }
         }
 
+        private async Task ValidarLogin()
+        {
+            string domain = "dev-smq2mglb7mxcrdgj.us.auth0.com";
+            string clientId = "u4fYvhONqIVYh79ZcDqdSopgRJc3Psgp";
+
+            client = new Auth0Client(new Auth0ClientOptions
+            {
+                Domain = domain,
+                ClientId = clientId
+            });
+
+            LoginResult loginResult = await client.LoginAsync();
+
+            if (loginResult.IsError)
+            {
+                Debug.WriteLine($"An error occurred during login: {loginResult.Error}");
+                UsuarioValido = false;
+                UsuarioEmailVerificado = false;
+            }
+            else if (!loginResult.IsError)
+            {
+                Debug.WriteLine($"id_token: {loginResult.IdentityToken}");
+                Debug.WriteLine($"access_token: {loginResult.AccessToken}");
+                MenuNav_Logout.Visibility = Visibility.Visible;
+                // Display login button
+                MenuNav_Login.Visibility = Visibility.Collapsed;
+                UsuarioValido = true;
+
+                foreach (var claim in loginResult.User.Claims)
+                {
+                    Debug.WriteLine($"{claim.Type} = {claim.Value}");
+                    if (claim.Type.Contains("name"))
+                    {
+                        NombreDeUsuario = claim.Value;
+                        break;
+                    }
+                 }
+                foreach (var claim in loginResult.User.Claims)
+                {
+                    if (claim.Type.Contains("email_verified") && claim.Value.ToUpper().Contains("TRUE"))
+                    {
+                        UsuarioEmailVerificado = true;
+                        break;
+                    }
+                }
+            }
+            CambioDeEstadoMenu(UsuarioValido, UsuarioEmailVerificado);
+        }
+
+        private async Task ValidarLogout()
+        {
+            BrowserResultType browserResult = await client.LogoutAsync();
+            if (browserResult != BrowserResultType.Success)
+            {
+                return;
+            }
+            // Hide logout button
+            MenuNav_Logout.Visibility = Visibility.Collapsed;
+            // Display login button
+            MenuNav_Login.Visibility = Visibility.Visible;
+            // Clean up form
+            UsuarioValido = false;
+            UsuarioEmailVerificado = false;
+            CambioDeEstadoMenu(UsuarioValido, UsuarioEmailVerificado);
+        }
         private void BM_NavPag_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
         {
             if (CuadroDeContenido.CanGoBack)
@@ -400,7 +318,7 @@ namespace BikeMessenger
             DbVistaCotizacionCliMen += "(dcalle || ' ' || dnumero || ' ' || dcomuna) as destino, ";
             DbVistaCotizacionCliMen += "fechaentrega, ";
             DbVistaCotizacionCliMen += "horaentrega, ";
-            DbVistaCotizacionCliMen += "distancia "; 
+            DbVistaCotizacionCliMen += "distancia ";
             DbVistaCotizacionCliMen += "from TbBikeMessengerCotizacion ";
 
             try
@@ -431,9 +349,38 @@ namespace BikeMessenger
             }
         }
 
+        private void CambioDeEstadoMenu(bool pDisponible, bool pEmailVerificado)
+        {
+            MenuNav_Inicio.IsEnabled = pDisponible;
+            MenuNav_Cotizacion.IsEnabled = pDisponible;
+            if (pDisponible && pEmailVerificado)
+            {
+                MenuNav_Empresa.IsEnabled = true;
+                MenuNav_Personal.IsEnabled = true;
+                MenuNav_Recursos.IsEnabled = true;
+                MenuNav_Clientes.IsEnabled = true;
+                MenuNav_Servicios.IsEnabled = true;
+                MenuNav_Configuracion.IsEnabled = true;
+            }
+            else
+            {
+                MenuNav_Empresa.IsEnabled = false;
+                MenuNav_Personal.IsEnabled = false;
+                MenuNav_Recursos.IsEnabled = false;
+                MenuNav_Clientes.IsEnabled = false;
+                MenuNav_Servicios.IsEnabled = false;
+                MenuNav_Configuracion.IsEnabled = false;
+            }
+        }
+
         private void BM_NavPag_Unloaded(object sender, RoutedEventArgs e)
         {
-            ; 
+            ;
+        }
+
+        private void PaginaPrincipalBikeMessenger_Loaded(object sender, RoutedEventArgs e)
+        {
+            ;
         }
     }
 }

@@ -11,7 +11,7 @@
     <Page.BottomAppBar>
         <CommandBar x:Name="CommandBarBottomPersonal" DefaultLabelPosition="Right" HorizontalAlignment="Center">
             <CommandBar.Content>
-                <TextBlock Text="Personal" Margin="12,8"/>
+                <TextBlock Name="VisorDeEstadoUsuario" Text="Personal" Margin="12,8"/>
             </CommandBar.Content>
             <AppBarButton x:Name="appBarAgregar" Icon="Add" Label="Agregar" Click="BtnAgregarPersonal"/>
             <AppBarButton x:Name="appBarModificar" Icon="Edit" Label="Modificar" Click="BtnModificarPersonal"/>
@@ -20,7 +20,7 @@
             <AppBarButton x:Name="appBarSalir" Icon="Go" Label="Salir" Click="BtnSalirPersonal"/>
         </CommandBar>
     </Page.BottomAppBar>
-    <RelativePanel x:Name="LayoutRoot" HorizontalAlignment="Left" VerticalAlignment="Center">
+    <RelativePanel x:Name="LayoutRoot" HorizontalAlignment="Left" VerticalAlignment="Center" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
         <Grid x:Name="GridPersonal" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
             <TextBlock x:Name="labelRutID"  HorizontalAlignment="Left" Margin="15,20,0,0" Text="RUT/ID" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.92,-0.053" Height="32" Width="140" HorizontalTextAlignment="Right"/>
             <TextBlock x:Name="labelApellidos"  HorizontalAlignment="Left" Margin="15,52,0,0" Text="Apellidos" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="140" HorizontalTextAlignment="Right"/>
