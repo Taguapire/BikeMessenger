@@ -153,6 +153,7 @@
     <Compile Include="ListadosGenerales.xaml.cs">
       <DependentUpon>ListadosGenerales.xaml</DependentUpon>
     </Compile>
+    <Compile Include="LvrInternet.cs" />
     <Compile Include="LvrTablaHtml.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
