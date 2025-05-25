@@ -12,7 +12,7 @@
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.20348.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -309,62 +309,62 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Auth0.OidcClient.Core">
+      <Version>4.1.0</Version>
+    </PackageReference>
     <PackageReference Include="Auth0.OidcClient.UWP">
-      <Version>4.0.0</Version>
+      <Version>4.2.0</Version>
+    </PackageReference>
+    <PackageReference Include="Azure.Core">
+      <Version>1.46.1</Version>
+    </PackageReference>
+    <PackageReference Include="Azure.Identity">
+      <Version>1.14.0</Version>
+    </PackageReference>
+    <PackageReference Include="Azure.Security.KeyVault.Certificates">
+      <Version>4.7.0</Version>
+    </PackageReference>
+    <PackageReference Include="CommunityToolkit.Uwp.Controls.Primitives">
+      <Version>8.2.250402</Version>
+    </PackageReference>
+    <PackageReference Include="CommunityToolkit.Uwp.Extensions">
+      <Version>8.2.250402</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens">
-      <Version>7.6.0</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.IdentityModel.KeyVaultExtensions">
-      <Version>7.6.0</Version>
+      <Version>8.11.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.IdentityModel.Logging">
-      <Version>7.6.0</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.IdentityModel.ManagedKeyVaultSecurityKey">
-      <Version>7.6.0</Version>
+      <Version>8.11.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect">
-      <Version>7.6.0</Version>
+      <Version>8.11.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.IdentityModel.Tokens">
-      <Version>7.6.0</Version>
+      <Version>8.11.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.IdentityModel.Tokens.Saml">
-      <Version>7.6.0</Version>
+      <Version>8.11.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.14</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.Rest.ClientRuntime">
-      <Version>2.3.24</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Toolkit.Uwp.UI">
-      <Version>7.1.3</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls">
-      <Version>7.1.3</Version>
-    </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls.DataGrid">
       <Version>7.1.3</Version>
     </PackageReference>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>13.0.3</Version>
-    </PackageReference>
     <PackageReference Include="QRCoder">
-      <Version>1.5.1</Version>
+      <Version>1.6.0</Version>
     </PackageReference>
     <PackageReference Include="RestSharp">
-      <Version>111.2.0</Version>
+      <Version>112.1.0</Version>
     </PackageReference>
     <PackageReference Include="sqlite-net-pcl">
       <Version>1.9.172</Version>
     </PackageReference>
     <PackageReference Include="System.Drawing.Common">
-      <Version>8.0.6</Version>
+      <Version>9.0.5</Version>
     </PackageReference>
     <PackageReference Include="System.IdentityModel.Tokens.Jwt">
-      <Version>7.6.0</Version>
+      <Version>8.11.0</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

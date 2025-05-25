@@ -3,9 +3,9 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using SQLite;
 using Auth0.OidcClient;
-using IdentityModel.OidcClient;
+using Duende.IdentityModel.OidcClient;
 using System.Diagnostics;
-using IdentityModel.OidcClient.Browser;
+using Duende.IdentityModel.OidcClient.Browser;
 using System.Threading.Tasks;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409

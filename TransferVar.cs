@@ -1,5 +1,4 @@
 ﻿using Windows.Storage;
-using SQLite;
 
 namespace BikeMessenger
 {

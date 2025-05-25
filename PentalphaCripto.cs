@@ -7,6 +7,10 @@ namespace BikeMessenger
 {
     class PentalphaCripto
     {
+        public PentalphaCripto()
+        {
+        }
+
         public byte[] LvrCalculoMD5(string pValorAconvertir)
         {
             string sSourceData;
