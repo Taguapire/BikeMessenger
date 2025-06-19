@@ -21,7 +21,3 @@ Para más detalles, consulta el texto completo de la licencia en:
 [https://www.gnu.org/licenses/gpl-3.0.html](https://www.gnu.org/licenses/gpl-3.0.html)
 
 ---
-
-¿Quieres que lo traduzca también al inglés o lo incluimos directamente en el repositorio como está? También puedo ayudarte a crear un archivo `LICENSE` con el texto completo oficial de la GPLv3 si lo deseas. 🚀📄  
-¡Vamos dejando este proyecto tan pulido como un ensamblado sin warnings! 😄🔧✨  
-¿Le damos el toque final?
