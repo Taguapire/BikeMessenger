@@ -37,7 +37,20 @@
 
 ## 📸 Capturas de Pantalla
 
-*(Próximamente)*
+### Pantalla de Registro de Empresa
+![Pantalla Empresa](https://github.com/Taguapire/BikeMessenger/raw/master/Recursos/Pantalla_Empresas.PNG)
+
+### Pantalla de Personal
+![Pantalla Personal](https://github.com/Taguapire/BikeMessenger/raw/master/Recursos/Personal.PNG)
+
+### Recursos de Colaboradores
+![Recursos de Colaboradores](https://github.com/Taguapire/BikeMessenger/raw/master/Recursos/Recursos.PNG)
+
+### Pantalla de Clientes
+![Pantalla Clientes](https://github.com/Taguapire/BikeMessenger/raw/master/Recursos/Clientes.PNG)
+
+### Servicios de Envíos
+![Servicios de Envíos](https://github.com/Taguapire/BikeMessenger/raw/master/Recursos/Servicios.PNG)
 
 ## 📄 Licencia
 
