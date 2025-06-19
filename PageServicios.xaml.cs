@@ -36,7 +36,7 @@ namespace BikeMessenger
         public PageServicios()
         {
             InitializeComponent();
-            mapControlBikeMessenger.MapServiceToken = "kObotinnsvzUnI3k9Smn~hOr - MYZEy_DGqfvj5V0QHQ~AlzXtL5PnD05eblszjnq7bMEEwk4TSFF3szRn_yyu2GaEo9JehDSttrmHwgRFSzi";
+            mapControlBikeMessenger.MapServiceToken = "Agregar Token Microsoft Bing Map Aqui";
             appBarBuscarRuta.IsEnabled = false;
             InicioPantalla();
         }
