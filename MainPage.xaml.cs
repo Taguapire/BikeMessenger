@@ -2,10 +2,7 @@
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using SQLite;
-using Auth0.OidcClient;
-using Duende.IdentityModel.OidcClient;
 using System.Diagnostics;
-using Duende.IdentityModel.OidcClient.Browser;
 using System.Threading.Tasks;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
@@ -19,10 +16,9 @@ namespace BikeMessenger
     {
         private string BM_Ultimo_Item = "";
         private TransferVar LvrTransferVar = new TransferVar();
-        private Auth0Client client;
-        private String NombreDeUsuario = "";
-        private bool UsuarioValido = false;
-        private bool UsuarioEmailVerificado = false;
+        private String NombreDeUsuario = "Luis Vasquez";
+        private bool UsuarioValido = true;
+        private bool UsuarioEmailVerificado = true;
 
         public MainPage()
         {
@@ -191,68 +187,16 @@ namespace BikeMessenger
 
         private async Task ValidarLogin()
         {
-            string domain = "dev-smq2mglb7mxcrdgj.us.auth0.com";
-            string clientId = "u4fYvhONqIVYh79ZcDqdSopgRJc3Psgp";
 
-            client = new Auth0Client(new Auth0ClientOptions
-            {
-                Domain = domain,
-                ClientId = clientId
-            });
-
-            LoginResult loginResult = await client.LoginAsync();
-
-            if (loginResult.IsError)
-            {
-                Debug.WriteLine($"An error occurred during login: {loginResult.Error}");
-                UsuarioValido = false;
-                UsuarioEmailVerificado = false;
-            }
-            else if (!loginResult.IsError)
-            {
-                Debug.WriteLine($"id_token: {loginResult.IdentityToken}");
-                Debug.WriteLine($"access_token: {loginResult.AccessToken}");
-                MenuNav_Logout.Visibility = Visibility.Visible;
-                // Display login button
-                MenuNav_Login.Visibility = Visibility.Collapsed;
-                UsuarioValido = true;
-
-                foreach (var claim in loginResult.User.Claims)
-                {
-                    Debug.WriteLine($"{claim.Type} = {claim.Value}");
-                    if (claim.Type.Contains("name"))
-                    {
-                        NombreDeUsuario = claim.Value;
-                        break;
-                    }
-                 }
-                foreach (var claim in loginResult.User.Claims)
-                {
-                    if (claim.Type.Contains("email_verified") && claim.Value.ToUpper().Contains("TRUE"))
-                    {
-                        UsuarioEmailVerificado = true;
-                        break;
-                    }
-                }
-            }
             CambioDeEstadoMenu(UsuarioValido, UsuarioEmailVerificado);
         }
 
-        private async Task ValidarLogout()
+        private Task ValidarLogout()
         {
-            BrowserResultType browserResult = await client.LogoutAsync();
-            if (browserResult != BrowserResultType.Success)
-            {
-                return;
-            }
-            // Hide logout button
-            MenuNav_Logout.Visibility = Visibility.Collapsed;
-            // Display login button
-            MenuNav_Login.Visibility = Visibility.Visible;
-            // Clean up form
-            UsuarioValido = false;
-            UsuarioEmailVerificado = false;
+            UsuarioValido = true;
+            UsuarioEmailVerificado = true;
             CambioDeEstadoMenu(UsuarioValido, UsuarioEmailVerificado);
+            return Task.CompletedTask;
         }
         private void BM_NavPag_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
         {
